@@ -15,14 +15,19 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'Manrope',system-ui,sans-serif;color:var(--encre);background:#fff;-webkit-font-smoothing:antialiased;line-height:1.6}
+body{font-family:'Manrope',system-ui,sans-serif;color:var(--encre);background-color:#fff;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.09 0 0 0 0 0.075 0 0 0 0 0.12 0 0 0 0.012 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");-webkit-font-smoothing:antialiased;line-height:1.6}
 h1,h2,h3{font-family:'Sora',system-ui,sans-serif;line-height:1.05;letter-spacing:-0.035em;font-weight:600}
+h2:hover,h3:hover{text-shadow:-2px 0 var(--jaune),2px 0 var(--indigo);transition:text-shadow .15s ease-out}
+h2,h3{transition:text-shadow .25s ease-in}
 p{max-width:62ch}
 a{color:inherit}
 .wrap{max-width:var(--max);margin:0 auto;padding:0 28px}
 section{padding:clamp(88px,13vw,166px) 0}
-.s-indigo{background:var(--indigo);color:#fff}
-.s-jaune{background:var(--jaune)}
+.s-indigo{background-color:var(--indigo);background-image:radial-gradient(circle,rgba(255,255,255,.11) 1.1px,transparent 1.6px);background-size:15px 15px;color:#fff}
+.s-jaune{background-color:var(--jaune);background-image:radial-gradient(circle,rgba(23,19,31,.07) 1.1px,transparent 1.6px);background-size:15px 15px}
+
+/* ---------- repère de calage (clin d'œil sérigraphie) ---------- */
+.regmark{position:absolute;width:26px;height:26px;border:1px solid currentColor;border-radius:50%;opacity:.3;pointer-events:none;background:linear-gradient(currentColor,currentColor) center/1px 100% no-repeat,linear-gradient(currentColor,currentColor) center/100% 1px no-repeat}
 
 /* ---------- nav ---------- */
 header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--ligne)}
@@ -44,7 +49,9 @@ header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop
 .btn-gris:hover{background:#57516A}
 
 /* ---------- écran 1 : hero ---------- */
-.hero{padding:clamp(96px,17vh,164px) 0 clamp(84px,12vh,130px);text-align:center}
+.hero{padding:clamp(96px,17vh,164px) 0 clamp(84px,12vh,130px);text-align:center;position:relative}
+.hero .regmark{top:38px;right:38px;color:var(--gris)}
+@media(max-width:700px){.hero .regmark{display:none}}
 .hero h1{font-size:clamp(3rem,12.2vw,10.2rem);letter-spacing:-0.055em;line-height:1}
 .hero-logo{display:inline-block;height:clamp(5rem,17vw,15rem);width:auto}
 .hero p{margin:36px auto 0;color:var(--gris);font-size:clamp(1.08rem,2.4vw,1.5rem);max-width:24ch;font-family:'Sora',sans-serif;letter-spacing:-0.02em;line-height:1.35}
@@ -52,6 +59,9 @@ header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop
 .steps3{margin-top:44px;display:flex;justify-content:center;gap:34px;flex-wrap:wrap;color:var(--gris);font-size:14.5px}
 .steps3 span{display:flex;align-items:center;gap:9px}
 .steps3 b{width:23px;height:23px;border-radius:8px;background:var(--jaune);color:var(--encre);display:grid;place-items:center;font-family:'Sora',sans-serif;font-size:12px;font-weight:600}
+.steps3 span:nth-child(1) b{transform:rotate(-6deg)}
+.steps3 span:nth-child(2) b{transform:rotate(4deg)}
+.steps3 span:nth-child(3) b{transform:rotate(-3deg)}
 
 /* ---------- écran 2 : positionnement ---------- */
 .split{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(40px,7vw,92px);align-items:center}
@@ -126,7 +136,9 @@ h2{font-size:clamp(2.05rem,5.2vw,3.5rem)}
 .t-i{background:var(--indigo)}
 
 /* ---------- footer ---------- */
-footer{border-top:1px solid var(--ligne);padding:66px 0 40px}
+footer{border-top:1px solid var(--ligne);padding:66px 0 40px;position:relative}
+footer .regmark{top:44px;right:28px;color:var(--gris)}
+@media(max-width:700px){footer .regmark{display:none}}
 .fgrid{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:40px}
 .fgrid h4{font-family:'Sora',sans-serif;font-size:13px;font-weight:600;margin-bottom:16px}
 .fgrid a{display:block;text-decoration:none;color:var(--gris);font-size:14.5px;padding:5px 0}

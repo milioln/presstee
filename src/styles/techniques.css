@@ -60,6 +60,10 @@
 .steps-list{display:grid;gap:14px}
 .steps-list .step{display:flex;gap:16px;border:1px solid var(--ligne);border-radius:16px;padding:18px 20px}
 .steps-list .n{width:32px;height:32px;border-radius:10px;background:var(--jaune);color:var(--encre);display:grid;place-items:center;font-family:'Sora',sans-serif;font-weight:600;font-size:14px;flex-shrink:0}
+.steps-list .step:nth-child(1) .n{transform:rotate(-5deg)}
+.steps-list .step:nth-child(2) .n{transform:rotate(4deg)}
+.steps-list .step:nth-child(3) .n{transform:rotate(-3deg)}
+.steps-list .step:nth-child(4) .n{transform:rotate(5deg)}
 .steps-list strong{display:block;font-family:'Sora',sans-serif;font-size:.98rem;margin-bottom:4px}
 .steps-list span{font-size:.92rem;color:var(--gris)}
 
