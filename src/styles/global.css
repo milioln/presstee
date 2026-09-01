@@ -1,0 +1,151 @@
+/*
+  Port direct du CSS de la maquette presstee-homepage.html (V0).
+  Ne pas modifier les valeurs de design sans validation — la direction
+  artistique est figée (document de passage, section 0 et 5).
+*/
+:root{
+  --indigo:#9d83cf;
+  --jaune:#ffd77a;
+  --encre:#17131F;
+  --gris:#6C6580;
+  --gris-clair:#EDEAF6;
+  --ligne:#E7E3F2;
+  --r:18px;
+  --max:1180px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Manrope',system-ui,sans-serif;color:var(--encre);background:#fff;-webkit-font-smoothing:antialiased;line-height:1.6}
+h1,h2,h3{font-family:'Sora',system-ui,sans-serif;line-height:1.05;letter-spacing:-0.035em;font-weight:600}
+p{max-width:62ch}
+a{color:inherit}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 28px}
+section{padding:clamp(88px,13vw,166px) 0}
+.s-indigo{background:var(--indigo);color:#fff}
+.s-jaune{background:var(--jaune)}
+
+/* ---------- nav ---------- */
+header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--ligne)}
+.nav{display:flex;align-items:center;gap:32px;height:76px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+.brand span{font-family:'Shantell Sans',cursive;font-weight:600;font-size:23px;color:var(--indigo);line-height:1;letter-spacing:.01em}
+.links{display:flex;gap:26px;margin-left:auto;align-items:center}
+.links a{text-decoration:none;font-size:14.5px;color:var(--gris);font-weight:500;padding:6px 0;border-bottom:1.5px solid transparent}
+.links a:hover,.links a:focus-visible{color:var(--encre);border-bottom-color:var(--indigo)}
+.burger{display:none;margin-left:auto;background:none;border:0;cursor:pointer;padding:8px}
+.burger rect{fill:var(--encre)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;background:var(--encre);color:#fff;text-decoration:none;font-family:'Sora',sans-serif;font-weight:500;font-size:15.5px;letter-spacing:-0.012em;padding:15px 30px;border-radius:100px;border:0;cursor:pointer;transition:background .18s}
+.btn:hover{background:#332B4A}
+.btn-light{background:#fff;color:var(--encre)}
+.btn-light:hover{background:var(--jaune)}
+
+/* ---------- écran 1 : hero ---------- */
+.hero{padding:clamp(96px,17vh,164px) 0 clamp(84px,12vh,130px);text-align:center}
+.hero h1{font-size:clamp(3rem,12.2vw,10.2rem);letter-spacing:-0.055em}
+.hero h1 em{font-style:normal;color:var(--indigo);font-family:'Shantell Sans',cursive;font-weight:600;letter-spacing:0}
+.hero p{margin:36px auto 0;color:var(--gris);font-size:clamp(1.08rem,2.4vw,1.5rem);max-width:24ch;font-family:'Sora',sans-serif;letter-spacing:-0.02em;line-height:1.35}
+.hero .btn{margin-top:42px}
+.steps3{margin-top:44px;display:flex;justify-content:center;gap:34px;flex-wrap:wrap;color:var(--gris);font-size:14.5px}
+.steps3 span{display:flex;align-items:center;gap:9px}
+.steps3 b{width:23px;height:23px;border-radius:8px;background:var(--jaune);color:var(--encre);display:grid;place-items:center;font-family:'Sora',sans-serif;font-size:12px;font-weight:600}
+
+/* ---------- écran 2 : positionnement ---------- */
+.split{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(40px,7vw,92px);align-items:center}
+h2{font-size:clamp(2.05rem,5.2vw,3.5rem)}
+.lede{margin-top:26px;font-size:1.08rem}
+.lede + .lede{margin-top:18px}
+.pillars{display:grid;gap:14px}
+.pillar{background:#fff;color:var(--encre);padding:26px 28px;border-radius:var(--r)}
+.pillar h3{font-size:1.14rem;margin-bottom:7px;letter-spacing:-0.02em}
+.pillar p{color:var(--gris);font-size:.95rem;margin:0}
+
+/* ---------- écran 3 : processus ---------- */
+.acc{margin-top:52px;display:grid;gap:10px;position:relative}
+.acc::before{content:"";position:absolute;left:46px;top:36px;bottom:36px;width:2px;background:var(--ligne)}
+.acc::after{content:"";position:absolute;left:46px;top:36px;width:2px;height:var(--fill,0%);background:var(--indigo);transition:height .3s linear}
+.stp{border:1px solid var(--ligne);border-radius:18px;background:#fff;position:relative;z-index:1}
+.stp>button{width:100%;display:flex;align-items:center;gap:18px;padding:20px 22px;background:none;border:0;cursor:pointer;text-align:left;font:inherit;color:inherit}
+.stp .n{width:48px;height:48px;border-radius:15px;background:#fff;border:2px solid var(--ligne);display:grid;place-items:center;font-family:'Sora',sans-serif;font-weight:600;font-size:15px;color:var(--gris);flex-shrink:0;transition:.2s}
+.stp.on .n,.stp.open .n{border-color:var(--indigo);background:var(--indigo);color:#fff}
+.stp .tt{flex:1}
+.stp .tt strong{display:block;font-family:'Sora',sans-serif;font-size:1.16rem;font-weight:600;letter-spacing:-0.03em;line-height:1.2}
+.stp .tt span{font-size:.94rem;color:var(--gris)}
+.stp .chev{width:12px;height:12px;border-right:2px solid var(--gris);border-bottom:2px solid var(--gris);transform:rotate(45deg);margin-right:6px;transition:transform .2s;flex-shrink:0}
+.stp.open .chev{transform:rotate(-135deg)}
+.stp .bd{display:none;padding:0 26px 24px 88px}
+.stp.open .bd{display:block}
+.subs{display:grid;gap:11px;border-left:2px solid var(--ligne);padding-left:20px}
+.sub strong{font-family:'Sora',sans-serif;font-size:.96rem;font-weight:600;display:block}
+.sub span{font-size:.93rem;color:var(--gris)}
+
+/* ---------- secteurs ---------- */
+.doms{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-bottom:30px}
+.dom{border:1.5px solid var(--ligne);background:#fff;border-radius:100px;padding:11px 20px;font:inherit;font-size:14.5px;font-weight:500;cursor:pointer;color:var(--encre);transition:.15s}
+.dom:hover{border-color:var(--indigo)}
+.dom.on{border-color:var(--indigo);background:var(--indigo);color:#fff}
+.dompanel{background:#fff;border:1px solid var(--ligne);border-radius:20px;padding:34px;display:grid;grid-template-columns:1.1fr .9fr;gap:34px;align-items:start}
+.dompanel h3{font-size:1.5rem;margin-bottom:12px}
+.dompanel p{color:var(--gris);font-size:1rem}
+.domfacts{display:grid;gap:12px}
+.fact{display:grid;gap:2px;border-left:2px solid var(--jaune);padding-left:14px}
+.fact b{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--gris);font-weight:600}
+.fact span{font-family:'Sora',sans-serif;font-size:.98rem}
+
+/* ---------- écran 4 : comprendre ---------- */
+.head-center{text-align:center;max-width:680px;margin:0 auto 60px}
+.head-center p{margin:22px auto 0}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{border-radius:var(--r);padding:34px 30px;background:#fff;color:var(--encre)}
+.card h3{font-size:1.3rem;margin-bottom:14px}
+.card p{color:var(--gris);font-size:.98rem}
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:24px}
+.chip{font-size:14px;padding:8px 15px;border-radius:100px;border:1px solid var(--ligne);text-decoration:none;font-weight:500;color:var(--encre)}
+.chip:hover{border-color:var(--indigo);background:var(--gris-clair)}
+
+/* ---------- écran 5 : passer commande ---------- */
+.way{background:#fff;color:var(--encre);border-radius:var(--r);padding:30px;border:1px solid var(--ligne);display:flex;flex-direction:column}
+.way-top{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.way .ico{width:44px;height:44px;flex-shrink:0;border-radius:13px;background:var(--indigo);display:grid;place-items:center}
+.way:nth-child(2) .ico{background:var(--jaune)}
+.way h3{font-size:1.22rem;margin:0}
+.way p{color:var(--gris);font-size:.96rem;flex:1}
+.way .go{margin-top:22px;font-size:14.5px;font-weight:600;text-decoration:none;border-bottom:1.5px solid var(--indigo);align-self:flex-start;padding-bottom:2px;color:var(--encre)}
+.coord{margin-top:20px;display:grid;gap:5px}
+.coord a{font-family:'Sora',sans-serif;font-weight:500;font-size:1.02rem;text-decoration:none;letter-spacing:-0.02em;color:var(--encre)}
+.coord a:hover{color:var(--indigo)}
+
+/* ---------- écran 6 : réalisations ---------- */
+.gal{columns:3;column-gap:18px;margin-top:52px}
+.tile{break-inside:avoid;margin-bottom:18px;border-radius:var(--r);display:grid;place-items:center;overflow:hidden}
+.tile svg{width:50%;height:auto}
+.t-w{background:#fff}
+.t-i{background:var(--indigo)}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--ligne);padding:66px 0 40px}
+.fgrid{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:40px}
+.fgrid h4{font-family:'Sora',sans-serif;font-size:13px;font-weight:600;margin-bottom:16px}
+.fgrid a{display:block;text-decoration:none;color:var(--gris);font-size:14.5px;padding:5px 0}
+.fgrid a:hover{color:var(--indigo)}
+.legal{margin-top:52px;padding-top:26px;border-top:1px solid var(--ligne);display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;font-size:13.5px;color:var(--gris)}
+
+@media(max-width:940px){
+  .links{display:none}
+  .links.open{display:flex;position:absolute;top:76px;left:0;right:0;background:#fff;flex-direction:column;gap:0;padding:14px 28px 26px;border-bottom:1px solid var(--ligne)}
+  .links.open a{padding:12px 0;font-size:16px;border-bottom:0}
+  .burger{display:block}
+  .split,.trio{grid-template-columns:1fr}
+  .gal{columns:2}
+  .fgrid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:560px){
+  .gal{columns:1}
+  .fgrid{grid-template-columns:1fr}
+  .stp .bd{padding:0 20px 22px 20px}
+  .subs{padding-left:16px}
+  .acc::before,.acc::after{display:none}
+  .dompanel{grid-template-columns:1fr;gap:24px;padding:26px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+:focus-visible{outline:2.5px solid var(--encre);outline-offset:3px;border-radius:6px}

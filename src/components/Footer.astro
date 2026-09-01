@@ -1,0 +1,41 @@
+---
+import Logo from './Logo.astro';
+import { siteConfig } from '../config/site';
+---
+
+<footer>
+	<div class="wrap">
+		<div class="fgrid">
+			<div>
+				<a class="brand" href="/#top" style="margin-bottom:14px">
+					<Logo size={32} />
+				</a>
+				<p style="color:var(--gris);font-size:14.5px;max-width:30ch">Atelier de personnalisation textile. {siteConfig.adresse.ville}, {siteConfig.adresse.departement}.</p>
+			</div>
+			<div>
+				<h4>Comprendre</h4>
+				<a href="/#techniques">Techniques de marquage</a>
+				<a href="/#pourqui">Pour qui</a>
+				<a href="/#process">Comment ça marche</a>
+				<a href="#">Guides et conseils</a>
+			</div>
+			<div>
+				<h4>Commander</h4>
+				<a href="#">Produits</a>
+				<a href="#">Packs et offres</a>
+				<a href="#">FAQ</a>
+				<a href="/#commander">Contact</a>
+			</div>
+			<div>
+				<h4>Informations</h4>
+				<a href="#">Mentions légales</a>
+				<a href="#">Politique de confidentialité</a>
+				<a href="#">Conditions générales de vente</a>
+			</div>
+		</div>
+		<div class="legal">
+			<span>© 2026 {siteConfig.nom}</span>
+			<span>{siteConfig.siret ? siteConfig.siret : 'SIRET à compléter après immatriculation'}</span>
+		</div>
+	</div>
+</footer>

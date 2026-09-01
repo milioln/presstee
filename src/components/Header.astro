@@ -1,0 +1,31 @@
+---
+import Logo from './Logo.astro';
+---
+
+<header>
+	<div class="wrap nav">
+		<a class="brand" href="/#top">
+			<Logo size={36} />
+		</a>
+		<button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false">
+			<svg width="24" height="16" viewBox="0 0 24 16"><rect width="24" height="2" rx="1"></rect><rect y="7" width="24" height="2" rx="1"></rect><rect y="14" width="18" height="2" rx="1"></rect></svg>
+		</button>
+		<nav class="links" id="links">
+			<a href="/#techniques">Guide</a>
+			<a href="#">Personnalisateur</a>
+			<a href="#">Produits</a>
+			<a href="/#creations">Réalisations</a>
+			<a href="/#commander">Contact</a>
+		</nav>
+	</div>
+</header>
+
+<script>
+	const burger = document.getElementById('burger')!;
+	const links = document.getElementById('links')!;
+	burger.addEventListener('click', () => {
+		const open = links.classList.toggle('open');
+		burger.setAttribute('aria-expanded', String(open));
+	});
+	links.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => links.classList.remove('open')));
+</script>

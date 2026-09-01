@@ -1,0 +1,20 @@
+---
+// Logo provisoire — SVG approximatif de la maquette V0.
+// Le vrai logo (lettrage Ananias vectorisé en tracés) doit remplacer ce
+// composant dès réception des 3 fichiers attendus : icône carrée, lockup
+// horizontal, lockup vertical (document de passage, section 5).
+interface Props {
+  size?: number;
+}
+
+const { size = 36 } = Astro.props;
+---
+
+<svg width={size} height={size} viewBox="0 0 75 75" aria-hidden="true">
+	<rect x="13" y="13" width="60" height="60" rx="14" fill="#9d83cf"></rect>
+	<rect x="2" y="2" width="60" height="60" rx="14" fill="#ffd77a"></rect>
+	<g transform="translate(-5.5,-1) scale(0.75)">
+		<path d="M28,20 L44,12 Q50,22 56,12 L72,20 L90,36 L76,50 L70,44 L70,90 L30,90 L30,44 L24,50 L10,36 Z" fill="#fff"></path>
+	</g>
+</svg>
+<span>PRESSTEE</span>

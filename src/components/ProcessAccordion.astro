@@ -1,0 +1,113 @@
+---
+const steps = [
+	{
+		title: 'Votre projet',
+		subtitle: 'Comprendre le besoin',
+		subs: [
+			{ h: "L'usage réel", t: "Un t-shirt d'événement porté trois fois et une tenue de service lavée deux fois par semaine n'appellent pas le même textile." },
+			{ h: 'La quantité et le budget', t: 'Ce sont eux qui déterminent quelles techniques deviennent intéressantes pour vous.' },
+			{ h: 'Le délai souhaité', t: 'Nous vous disons tout de suite s’il est tenable, avant que vous vous engagiez.' },
+		],
+	},
+	{
+		title: 'Notre recommandation',
+		subtitle: 'Textile + technique',
+		subs: [
+			{ h: 'Le textile', t: 'Grammage, matière et coupe choisis pour votre usage, avec plusieurs niveaux de budget quand c’est pertinent.' },
+			{ h: 'La technique de marquage', t: 'Sérigraphie, transfert sérigraphique, transfert premium ou broderie, selon le visuel, la quantité et le support.' },
+			{ h: 'Le prix, détaillé', t: 'Le coût du textile et celui du marquage sont annoncés séparément. Vous voyez d’où vient chaque euro.' },
+		],
+	},
+	{
+		title: 'Votre validation',
+		subtitle: 'Visualisation + BAT',
+		subs: [
+			{ h: 'La visualisation', t: 'Vous voyez votre visuel placé sur le vêtement, à la bonne taille et au bon endroit, avant d’engager quoi que ce soit.' },
+			{ h: 'La vérification humaine', t: 'Nous contrôlons vos fichiers, la résolution, les dimensions et la faisabilité réelle de l’impression.' },
+			{ h: 'Le bon à tirer', t: 'Vous recevez un BAT et vous le validez. Rien ne part en production avant votre accord écrit.' },
+		],
+	},
+	{
+		title: 'Notre production',
+		subtitle: 'Fabrication + contrôle',
+		subs: [
+			{ h: 'La fabrication', t: 'Le marquage est réalisé dans notre atelier, sur les machines dont nous maîtrisons le planning.' },
+			{ h: 'Le contrôle pièce par pièce', t: 'Avant emballage, chaque pièce est vérifiée : rendu, positionnement, conformité au BAT validé.' },
+		],
+	},
+	{
+		title: 'Votre livraison',
+		subtitle: 'Expédition + suivi',
+		subs: [
+			{ h: "L'expédition", t: "Emballage soigné et envoi suivi, ou remise en main propre dans le secteur d'Angoulême." },
+			{ h: 'Le suivi', t: 'Un interlocuteur unique du premier échange à la réception. Pas de service client anonyme.' },
+		],
+	},
+];
+---
+
+<section id="process">
+	<div class="wrap">
+		<h2 style="max-width:15ch">Un processus clair, étape par étape.</h2>
+		<p style="color:var(--gris);margin-top:16px">Cinq étapes, dont trois où c'est vous qui décidez. Cliquez pour voir le détail.</p>
+		<div class="acc" id="acc">
+			{steps.map((s, i) => (
+				<div class:list={['stp', { open: i === 0 }]} data-i={i}>
+					<button aria-expanded={i === 0 ? 'true' : 'false'}>
+						<span class="n">{i + 1}</span>
+						<span class="tt">
+							<strong>{s.title}</strong>
+							<span>{s.subtitle}</span>
+						</span>
+						<span class="chev"></span>
+					</button>
+					<div class="bd">
+						<div class="subs">
+							{s.subs.map((sub) => (
+								<div class="sub">
+									<strong>{sub.h}</strong>
+									<span>{sub.t}</span>
+								</div>
+							))}
+						</div>
+					</div>
+				</div>
+			))}
+		</div>
+	</div>
+</section>
+
+<script>
+	const acc = document.getElementById('acc')!;
+	const stps = [...acc.querySelectorAll<HTMLElement>('.stp')];
+
+	function paint() {
+		const r = acc.getBoundingClientRect();
+		const mid = innerHeight * 0.6;
+		acc.style.setProperty('--fill', Math.max(0, Math.min(100, ((mid - r.top) / r.height) * 100)) + '%');
+		stps.forEach((s) => {
+			const n = s.querySelector('.n')!;
+			s.classList.toggle('on', n.getBoundingClientRect().top < mid);
+		});
+	}
+
+	acc.addEventListener('click', (e) => {
+		const b = (e.target as HTMLElement).closest('button');
+		if (!b) return;
+		const s = b.parentElement!;
+		const open = s.classList.contains('open');
+		stps.forEach((x) => {
+			x.classList.remove('open');
+			x.querySelector('button')!.setAttribute('aria-expanded', 'false');
+		});
+		if (!open) {
+			s.classList.add('open');
+			b.setAttribute('aria-expanded', 'true');
+		}
+		paint();
+	});
+
+	paint();
+	addEventListener('scroll', paint, { passive: true });
+	addEventListener('resize', paint);
+</script>

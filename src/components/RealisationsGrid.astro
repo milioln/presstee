@@ -1,0 +1,26 @@
+---
+// Galerie provisoire — silhouettes du logo en attendant de vraies
+// réalisations. Deviendra une collection de contenu (Decap CMS, session 5).
+const tiles = [
+	{ tone: 't-w', height: 330, fill: '#9d83cf' },
+	{ tone: 't-i', height: 230, fill: '#FFFFFF' },
+	{ tone: 't-i', height: 280, fill: '#FFFFFF' },
+	{ tone: 't-w', height: 300, fill: '#9d83cf' },
+	{ tone: 't-w', height: 240, fill: '#9d83cf' },
+	{ tone: 't-i', height: 320, fill: '#FFFFFF' },
+];
+const path = 'M28,20 L44,12 Q50,22 56,12 L72,20 L90,36 L76,50 L70,44 L70,90 L30,90 L30,44 L24,50 L10,36 Z';
+---
+
+<section id="creations" class="s-jaune">
+	<div class="wrap">
+		<h2 style="max-width:13ch">Quelques réalisations.</h2>
+		<div class="gal">
+			{tiles.map((t) => (
+				<div class:list={['tile', t.tone]} style={`height:${t.height}px`}>
+					<svg viewBox="0 0 100 100" fill={t.fill}><path d={path}></path></svg>
+				</div>
+			))}
+		</div>
+	</div>
+</section>
