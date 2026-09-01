@@ -7,6 +7,7 @@ import ProcessAccordion from '../components/ProcessAccordion.astro';
 import SectorSelector from '../components/SectorSelector.astro';
 import RealisationsGrid from '../components/RealisationsGrid.astro';
 import { siteConfig } from '../config/site';
+import '../styles/global.css';
 ---
 
 <Layout title={`${siteConfig.nom} — ${siteConfig.baseline}`}>
@@ -18,7 +19,7 @@ import { siteConfig } from '../config/site';
 			<div class="wrap">
 				<h1>Bienvenue chez<br /><em>PRESSTEE</em></h1>
 				<p>Obtenez vos textiles personnalisés en 3 clics.</p>
-				<Button href="#">Commencez votre projet</Button>
+				<Button href="/personnalisateur">Commencez votre projet</Button>
 				<div class="steps3">
 					<span><b>1</b>Choisissez votre textile</span>
 					<span><b>2</b>Ajoutez votre visuel</span>
@@ -101,7 +102,7 @@ import { siteConfig } from '../config/site';
 							<h3>En ligne</h3>
 						</div>
 						<p>Choisissez votre textile, ajoutez votre visuel, validez votre projet. Notre optimisateur et notre concepteur vous accompagnent en autonomie.</p>
-						<a class="go" href="#">Commencer maintenant</a>
+						<a class="go" href="/personnalisateur">Commencer maintenant</a>
 					</div>
 					<div class="way">
 						<div class="way-top">

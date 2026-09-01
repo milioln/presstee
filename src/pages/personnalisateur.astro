@@ -1,0 +1,131 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Logo from '../components/Logo.astro';
+import '../styles/personnalisateur.css';
+---
+
+<Layout title="Presstee — Personnalisateur" description="Composez votre textile personnalisé : vêtement, couleur, visuel et technique de marquage.">
+	<header>
+		<div class="wrap nav">
+			<a class="brand" href="/">
+				<Logo size={32} />
+			</a>
+			<div class="steps">
+				<i class="done"><b>1</b>Textile</i><em>—</em>
+				<i class="done"><b>2</b>Visuel</i><em>—</em>
+				<i><b>3</b>Validation</i>
+			</div>
+		</div>
+	</header>
+
+	<div class="wrap">
+		<div class="intro">
+			<h1>Composez votre textile personnalisé.</h1>
+			<p>Choisissez un modèle, déposez votre visuel, placez-le. Nous analysons votre fichier au passage et vous disons quelle technique convient à votre projet et à votre quantité.</p>
+		</div>
+
+		<div class="layout">
+
+			<div class="viewer">
+				<div class="frame" id="frame">
+					<div class="zoomwrap" id="zoomwrap"><div class="stage" id="stage"></div></div>
+					<div class="zoomctl">
+						<button id="zOut" aria-label="Dézoomer">−</button>
+						<span id="zVal">100 %</span>
+						<button id="zIn" aria-label="Zoomer">+</button>
+						<button id="zRst" aria-label="Réinitialiser le zoom" style="font-size:13px">⟲</button>
+					</div>
+				</div>
+				<div class="strip">
+					<div class="t">Vues du modèle</div>
+					<div class="shots" id="shots"></div>
+				</div>
+			</div>
+
+			<div class="panel">
+
+				<div class="block">
+					<h3><b>1</b>Le vêtement</h3>
+					<div class="opts" id="models"></div>
+				</div>
+
+				<div class="block">
+					<h3><b>2</b>La couleur</h3>
+					<div class="swatches" id="colors"></div>
+					<div class="swname" id="colorName"></div>
+				</div>
+
+				<div class="block">
+					<h3><b>3</b>Votre visuel</h3>
+					<div class="drop" id="drop">
+						<strong>Déposez votre fichier</strong>
+						<p>ou cliquez pour parcourir — PNG, JPG ou SVG</p>
+					</div>
+					<input type="file" id="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" />
+					<div id="fileInfo"></div>
+					<div class="diag" id="diag" style="display:none"></div>
+				</div>
+
+				<div class="block" id="placeBlock" style="display:none">
+					<h3><b>4</b>Emplacement</h3>
+					<div class="seg" id="place">
+						<button data-p="face" class="on">Face avant</button>
+						<button data-p="coeur">Cœur</button>
+						<button data-p="dos">Dos</button>
+					</div>
+					<p class="hint" id="placeHint">Un seul emplacement par pièce. Le recto-verso se chiffre comme deux marquages.</p>
+				</div>
+
+				<div class="block" id="adjust" style="display:none">
+					<h3><b>5</b>Ajustements</h3>
+					<div class="ctl"><label>Largeur <em id="vSize"></em></label><input type="range" id="rSize" min="10" max="120" step="1" /></div>
+					<div class="ctl"><label>Rotation <em id="vRot"></em></label><input type="range" id="rRot" min="-180" max="180" step="1" /></div>
+					<div class="row"><button class="mini-btn" id="center">Recentrer</button><button class="mini-btn" id="reset">Réinitialiser</button></div>
+					<p class="hint">Sur le rendu : glissez le visuel pour le déplacer, la poignée du coin le redimensionne, celle du haut le fait pivoter.</p>
+				</div>
+
+				<div class="block">
+					<h3><b>6</b>La quantité</h3>
+					<div class="qty">
+						<button id="qMinus" aria-label="Diminuer">−</button>
+						<input type="number" id="qVal" min="1" max="5000" value="30" />
+						<button id="qPlus" aria-label="Augmenter">+</button>
+						<span class="pal" id="qPal"></span>
+					</div>
+					<div class="presets" id="qPresets"></div>
+				</div>
+
+				<div class="block">
+					<h3><b>7</b>La technique</h3>
+					<div class="techs" id="techs"></div>
+					<div class="reco" id="recoBox"></div>
+				</div>
+
+				<div class="block">
+					<h3><b>8</b>Le délai de production</h3>
+					<div class="delai" id="delai">
+						<button data-d="standard" class="on"><strong>Standard</strong><em>J+10 ouvrés</em></button>
+						<button data-d="express"><strong>Express</strong><em>J+5 ouvrés</em></button>
+					</div>
+					<p class="hint">Délais indicatifs, à confirmer selon la technique retenue, la quantité et la disponibilité du textile. Le compte à rebours démarre à la validation de votre bon à tirer, pas à la commande.</p>
+				</div>
+
+				<div class="recap">
+					<h3>Récapitulatif</h3>
+					<div id="recap"></div>
+					<div class="cta2">
+						<button class="btn" id="order">Finaliser la commande</button>
+						<button class="btn alt" id="quote">Valider le devis</button>
+					</div>
+					<p class="hint">La commande comme le devis passent d'abord par notre vérification, puis par votre bon à tirer. Rien ne part en production avant votre accord.</p>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<script>
+		import { init } from '../scripts/personnalisateur/main';
+		init();
+	</script>
+</Layout>
