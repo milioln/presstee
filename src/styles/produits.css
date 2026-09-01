@@ -49,7 +49,7 @@
 .pcard{border:1.5px solid var(--ligne);border-radius:18px;padding:20px;background:#fff;color:var(--encre);display:flex;flex-direction:column;gap:10px;transition:.15s;position:relative}
 .pcard:hover{border-color:var(--indigo);box-shadow:0 4px 18px rgba(23,19,31,.06)}
 .pcard-link{text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px}
-.pcard .brand{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--gris);font-weight:600}
+.pcard .brand{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--gris);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:92px}
 .pcard h3{font-family:'Sora',sans-serif;font-size:1.06rem;letter-spacing:-0.01em;line-height:1.25;margin:0}
 .pcard .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
 .pcard .tag{font-size:11px;color:var(--gris);background:var(--voile);padding:3px 9px;border-radius:100px}
@@ -58,11 +58,12 @@
 .pcard-compare{position:absolute;top:16px;right:16px;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--gris);cursor:pointer;background:#fff;padding:3px 8px 3px 3px;border-radius:100px;border:1px solid var(--ligne)}
 .pcard-compare input{accent-color:var(--indigo);width:14px;height:14px;cursor:pointer}
 
-.pcard-price{margin-top:auto;padding-top:10px;border-top:1px dashed var(--ligne);display:flex;align-items:center;justify-content:space-between;gap:10px}
-.qtyrow{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--gris)}
-.qtyInput{width:52px;padding:5px 6px;border:1.5px solid var(--ligne);border-radius:8px;font:inherit;font-size:12.5px;text-align:center}
+.pcard-price{margin-top:auto;padding-top:10px;border-top:1px dashed var(--ligne);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.qtyrow{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--gris);flex-shrink:0}
+.qtyInput{width:48px;padding:5px 4px;border:1.5px solid var(--ligne);border-radius:8px;font:inherit;font-size:12.5px;text-align:center}
 .qtyInput:focus{outline:none;border-color:var(--indigo)}
-.priceOut{font-family:'Sora',sans-serif;font-size:.96rem;text-align:right}
+.priceOut{font-family:'Sora',sans-serif;font-size:.96rem;text-align:right;white-space:nowrap;margin-left:auto}
+.priceOut span{display:block}
 .priceOut b{font-size:1.1rem}
 .priceOut span{color:var(--gris);font-size:.8rem}
 
