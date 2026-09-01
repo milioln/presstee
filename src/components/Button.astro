@@ -1,12 +1,12 @@
 ---
 interface Props {
   href: string;
-  variant?: 'dark' | 'light';
+  variant?: 'dark' | 'light' | 'jaune' | 'gris';
 }
 
 const { href, variant = 'dark' } = Astro.props;
 ---
 
-<a class:list={['btn', { 'btn-light': variant === 'light' }]} href={href}>
+<a class:list={['btn', { 'btn-light': variant === 'light', 'btn-jaune': variant === 'jaune', 'btn-gris': variant === 'gris' }]} href={href}>
 	<slot />
 </a>
