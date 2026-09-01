@@ -42,7 +42,7 @@ header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop
 /* ---------- écran 1 : hero ---------- */
 .hero{padding:clamp(96px,17vh,164px) 0 clamp(84px,12vh,130px);text-align:center}
 .hero h1{font-size:clamp(3rem,12.2vw,10.2rem);letter-spacing:-0.055em}
-.hero h1 em{font-style:normal;color:var(--indigo);font-family:'Shantell Sans',cursive;font-weight:600;letter-spacing:0}
+.hero-logo{display:inline-block;height:clamp(3.2rem,10.6vw,9rem);width:auto;margin-top:10px}
 .hero p{margin:36px auto 0;color:var(--gris);font-size:clamp(1.08rem,2.4vw,1.5rem);max-width:24ch;font-family:'Sora',sans-serif;letter-spacing:-0.02em;line-height:1.35}
 .hero .btn{margin-top:42px}
 .steps3{margin-top:44px;display:flex;justify-content:center;gap:34px;flex-wrap:wrap;color:var(--gris);font-size:14.5px}
