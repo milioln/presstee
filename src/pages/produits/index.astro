@@ -1,0 +1,53 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { TSHIRTS } from '../../data/tshirts';
+import '../../styles/global.css';
+import '../../styles/produits.css';
+
+const familles = [
+  { slug: 't-shirts', nom: 'T-shirts', desc: `${TSHIRTS.length} références prêtes à personnaliser, du plus léger au plus épais.`, actif: true },
+  { slug: 'sweats', nom: 'Sweats', desc: 'Molleton et hoodies — arrive prochainement.', actif: false },
+  { slug: 'polos', nom: 'Polos', desc: 'Piqué et jersey pour l’entreprise — arrive prochainement.', actif: false },
+  { slug: 'chemises', nom: 'Chemises', desc: 'Manches courtes et longues — arrive prochainement.', actif: false },
+  { slug: 'casquettes', nom: 'Casquettes et bonnets', desc: 'Broderie et flocage — arrive prochainement.', actif: false },
+  { slug: 'bagagerie', nom: 'Bagagerie', desc: 'Tote bags et sacs — arrive prochainement.', actif: false },
+];
+---
+
+<Layout title="Produits — Presstee" description="Le catalogue textile Presstee : t-shirts, sweats, polos et plus, à personnaliser dans notre configurateur.">
+	<Header />
+	<main>
+		<section class="prod-hero">
+			<div class="wrap">
+				<div class="crumb"><a href="/">Accueil</a> / Produits</div>
+				<h1>Le catalogue textile.</h1>
+				<p>Chaque référence peut être marquée en sérigraphie, transfert ou broderie selon votre visuel et votre quantité. Choisissez une famille pour voir le détail des grammages, matières et prix par palier.</p>
+			</div>
+		</section>
+
+		<div class="wrap">
+			<div class="cat-grid">
+				{familles.map((f, i) => (
+					f.actif ? (
+						<a class="cat-card" href={`/produits/${f.slug}`}>
+							<div class="n">{String(i + 1).padStart(2, '0')}</div>
+							<h3>{f.nom}</h3>
+							<p>{f.desc}</p>
+							<span class="tag">Voir le catalogue</span>
+						</a>
+					) : (
+						<div class="cat-card soon">
+							<div class="n">{String(i + 1).padStart(2, '0')}</div>
+							<h3>{f.nom}</h3>
+							<p>{f.desc}</p>
+							<span class="tag">Bientôt</span>
+						</div>
+					)
+				))}
+			</div>
+		</div>
+	</main>
+	<Footer />
+</Layout>

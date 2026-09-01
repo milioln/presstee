@@ -1,0 +1,246 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import { TSHIRTS } from '../../../data/tshirts';
+import { LABELS_GENRE, LABELS_MANCHES } from '../../../lib/produits-types';
+import { prixAPartirDe } from '../../../config/tarification';
+import '../../../styles/global.css';
+import '../../../styles/produits.css';
+
+const marques = [...new Set(TSHIRTS.map((t) => t.brand))].sort();
+const genres = ['homme', 'femme', 'enfant', 'unisexe'] as const;
+const manchesOptions = ['courtes', 'longues', 'sans-manches'] as const;
+
+function grammageTier(g: number | null): string {
+  if (g == null) return 'inconnu';
+  if (g < 150) return 'leger';
+  if (g < 185) return 'moyen';
+  if (g < 220) return 'dense';
+  return 'lourd';
+}
+---
+
+<Layout title="T-shirts à personnaliser — Presstee" description={`${TSHIRTS.length} t-shirts vierges à personnaliser : coton, coton-polyester, bio, du plus léger au plus épais. Sérigraphie, transfert ou broderie chez Presstee.`}>
+	<Header />
+	<main>
+		<section class="prod-hero">
+			<div class="wrap">
+				<div class="crumb"><a href="/">Accueil</a> / <a href="/produits">Produits</a> / T-shirts</div>
+				<h1>T-shirts.</h1>
+				<p>{TSHIRTS.length} références, du plus léger pour l'événementiel au plus épais pour un usage quotidien. Filtrez par marque, coupe ou grammage pour trouver la base qui correspond à votre projet.</p>
+			</div>
+		</section>
+
+		<div class="wrap">
+			<div class="plist">
+				<aside class="pfilters">
+					<div class="fgroup">
+						<h4>Recherche</h4>
+						<input class="psearch" id="fSearch" type="text" placeholder="Marque, modèle..." />
+					</div>
+
+					<div class="fgroup">
+						<h4>Public</h4>
+						<div class="pills" id="fGenre">
+							<button class="pill on" data-genre="tous">Tous</button>
+							{genres.map((g) => <button class="pill" data-genre={g}>{LABELS_GENRE[g]}</button>)}
+						</div>
+					</div>
+
+					<div class="fgroup">
+						<h4>Manches</h4>
+						<div class="pills" id="fManches">
+							<button class="pill on" data-manches="toutes">Toutes</button>
+							{manchesOptions.map((m) => <button class="pill" data-manches={m}>{LABELS_MANCHES[m]}</button>)}
+						</div>
+					</div>
+
+					<div class="fgroup">
+						<h4>Grammage</h4>
+						<div class="pills" id="fGrammage">
+							<button class="pill on" data-grammage="tous">Tous</button>
+							<button class="pill" data-grammage="leger">Léger (&lt;150 g/m²)</button>
+							<button class="pill" data-grammage="moyen">Moyen (150–185)</button>
+							<button class="pill" data-grammage="dense">Dense (185–220)</button>
+							<button class="pill" data-grammage="lourd">Lourd (&gt;220 g/m²)</button>
+						</div>
+					</div>
+
+					<div class="fgroup">
+						<h4>Marque</h4>
+						<div class="checks" id="fMarque">
+							{marques.map((m) => (
+								<label class="check">
+									<input type="checkbox" value={m} checked />
+									{m}
+								</label>
+							))}
+						</div>
+					</div>
+
+					<button class="presetreset" id="fReset">Réinitialiser les filtres</button>
+				</aside>
+
+				<div>
+					<div class="ptoolbar">
+						<div class="pcount"><b id="pCountVisible">{TSHIRTS.length}</b> résultats sur {TSHIRTS.length}</div>
+						<select class="psort" id="pSort">
+							<option value="prix-asc">Prix croissant</option>
+							<option value="prix-desc">Prix décroissant</option>
+							<option value="nom">Nom A-Z</option>
+						</select>
+					</div>
+
+					<div class="pgrid" id="pGrid">
+						{TSHIRTS.map((t) => (
+							<a
+								class="pcard"
+								href={`/produits/t-shirts/${t.slug}`}
+								data-search={`${t.brand} ${t.model}`.toLowerCase()}
+								data-genre={t.genre}
+								data-manches={t.manches}
+								data-marque={t.brand}
+								data-grammage={grammageTier(t.grammageNum)}
+								data-prix={prixAPartirDe(t.baseCost)}
+								data-nom={`${t.brand} ${t.model}`}
+							>
+								<div class="brand">{t.brand}</div>
+								<h3>{t.model}</h3>
+								<div class="tags">
+									<span class="tag">{t.grammage}</span>
+									<span class="tag">{LABELS_GENRE[t.genre]}</span>
+								</div>
+								<div class="price"><b>{prixAPartirDe(t.baseCost).toFixed(2).replace('.', ',')} €</b> <span>/ pièce à partir de 250</span></div>
+							</a>
+						))}
+					</div>
+
+					<div class="pempty" id="pEmpty" style="display:none">Aucun t-shirt ne correspond à ces filtres.</div>
+
+					<div class="ppag" id="pPag"></div>
+				</div>
+			</div>
+		</div>
+	</main>
+	<Footer />
+
+	<script>
+		const PAGE_SIZE = 24;
+		const grid = document.getElementById('pGrid')!;
+		const cards = [...grid.querySelectorAll<HTMLAnchorElement>('.pcard')];
+		const countEl = document.getElementById('pCountVisible')!;
+		const emptyEl = document.getElementById('pEmpty')!;
+		const pagEl = document.getElementById('pPag')!;
+		const searchInput = document.getElementById('fSearch') as HTMLInputElement;
+		const sortSelect = document.getElementById('pSort') as HTMLSelectElement;
+		const marqueChecks = [...document.querySelectorAll<HTMLInputElement>('#fMarque input')];
+
+		const state = { genre: 'tous', manches: 'toutes', grammage: 'tous', page: 1 };
+
+		function bindPillGroup(id: string, key: 'genre' | 'manches' | 'grammage') {
+			const group = document.getElementById(id)!;
+			group.addEventListener('click', (e) => {
+				const b = (e.target as HTMLElement).closest<HTMLButtonElement>('.pill');
+				if (!b) return;
+				group.querySelectorAll('.pill').forEach((p) => p.classList.remove('on'));
+				b.classList.add('on');
+				state[key] = b.dataset[key] as string;
+				state.page = 1;
+				apply();
+			});
+		}
+		bindPillGroup('fGenre', 'genre');
+		bindPillGroup('fManches', 'manches');
+		bindPillGroup('fGrammage', 'grammage');
+
+		searchInput.addEventListener('input', () => {
+			state.page = 1;
+			apply();
+		});
+		sortSelect.addEventListener('change', () => {
+			state.page = 1;
+			apply();
+		});
+		marqueChecks.forEach((c) => c.addEventListener('change', () => {
+			state.page = 1;
+			apply();
+		}));
+
+		document.getElementById('fReset')!.addEventListener('click', () => {
+			searchInput.value = '';
+			marqueChecks.forEach((c) => (c.checked = true));
+			document.querySelectorAll('.pill').forEach((p) => p.classList.remove('on'));
+			document.querySelector('[data-genre="tous"]')!.classList.add('on');
+			document.querySelector('[data-manches="toutes"]')!.classList.add('on');
+			document.querySelector('[data-grammage="tous"]')!.classList.add('on');
+			state.genre = 'tous';
+			state.manches = 'toutes';
+			state.grammage = 'tous';
+			state.page = 1;
+			apply();
+		});
+
+		function apply() {
+			const q = searchInput.value.trim().toLowerCase();
+			const activeBrands = new Set(marqueChecks.filter((c) => c.checked).map((c) => c.value));
+
+			let visible = cards.filter((c) => {
+				if (q && !c.dataset.search!.includes(q)) return false;
+				if (state.genre !== 'tous' && c.dataset.genre !== state.genre) return false;
+				if (state.manches !== 'toutes' && c.dataset.manches !== state.manches) return false;
+				if (state.grammage !== 'tous' && c.dataset.grammage !== state.grammage) return false;
+				if (!activeBrands.has(c.dataset.marque!)) return false;
+				return true;
+			});
+
+			const sort = sortSelect.value;
+			visible = visible.sort((a, b) => {
+				if (sort === 'prix-asc') return +a.dataset.prix! - +b.dataset.prix!;
+				if (sort === 'prix-desc') return +b.dataset.prix! - +a.dataset.prix!;
+				return a.dataset.nom!.localeCompare(b.dataset.nom!);
+			});
+
+			cards.forEach((c) => (c.style.display = 'none'));
+
+			const totalPages = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
+			state.page = Math.min(state.page, totalPages);
+			const start = (state.page - 1) * PAGE_SIZE;
+			const pageItems = visible.slice(start, start + PAGE_SIZE);
+
+			pageItems.forEach((c) => {
+				c.style.display = '';
+				grid.appendChild(c);
+			});
+
+			countEl.textContent = String(visible.length);
+			emptyEl.style.display = visible.length === 0 ? 'block' : 'none';
+			grid.style.display = visible.length === 0 ? 'none' : 'grid';
+
+			paintPagination(totalPages);
+		}
+
+		function paintPagination(totalPages: number) {
+			if (totalPages <= 1) {
+				pagEl.innerHTML = '';
+				return;
+			}
+			let html = `<button data-p="${state.page - 1}" ${state.page === 1 ? 'disabled' : ''}>‹</button>`;
+			for (let i = 1; i <= totalPages; i++) {
+				html += `<button data-p="${i}" class="${i === state.page ? 'on' : ''}">${i}</button>`;
+			}
+			html += `<button data-p="${state.page + 1}" ${state.page === totalPages ? 'disabled' : ''}>›</button>`;
+			pagEl.innerHTML = html;
+		}
+
+		pagEl.addEventListener('click', (e) => {
+			const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-p]');
+			if (!b || b.disabled) return;
+			state.page = +b.dataset.p!;
+			apply();
+			window.scrollTo({ top: grid.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' });
+		});
+
+		apply();
+	</script>
+</Layout>

@@ -1,0 +1,105 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import Button from '../../../components/Button.astro';
+import { TSHIRTS, type TShirtCatalogue } from '../../../data/tshirts';
+import { LABELS_GENRE, LABELS_MANCHES, LABELS_COL } from '../../../lib/produits-types';
+import { grilleTarifaire, prixAPartirDe } from '../../../config/tarification';
+import { descriptionProduit, metaDescriptionProduit } from '../../../lib/description-produit';
+import '../../../styles/global.css';
+import '../../../styles/produits.css';
+
+export function getStaticPaths() {
+  return TSHIRTS.map((t) => ({ params: { slug: t.slug }, props: { t } }));
+}
+
+const { t } = Astro.props as { t: TShirtCatalogue };
+const grille = grilleTarifaire(t.baseCost);
+const autres = TSHIRTS.filter((x) => x.brand === t.brand && x.slug !== t.slug).slice(0, 3);
+
+const TEE = 'M148,54 L118,44 L52,92 L96,156 L122,136 L122,420 Q122,428 130,428 L270,428 Q278,428 278,420 L278,136 L304,156 L348,92 L282,44 L252,54 Q200,100 148,54 Z';
+---
+
+<Layout title={`${t.brand} ${t.model} — Presstee`} description={metaDescriptionProduit(t)}>
+	<Header />
+	<main>
+		<section class="prod-hero" style="padding-bottom:0;border-bottom:0">
+			<div class="wrap">
+				<div class="crumb"><a href="/">Accueil</a> / <a href="/produits">Produits</a> / <a href="/produits/t-shirts">T-shirts</a> / {t.brand} {t.model}</div>
+			</div>
+		</section>
+
+		<div class="wrap">
+			<div class="pdetail">
+				<div class="visual">
+					<svg viewBox="0 0 400 460" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d={TEE} fill="#9d83cf"/></svg>
+				</div>
+
+				<div class="side">
+					<div>
+						<div class="brand">{t.brand}</div>
+						<h1>{t.model}</h1>
+					</div>
+
+					<p class="lede">{descriptionProduit(t)}</p>
+
+					<div class="tags">
+						<span class="tag">{t.grammage}</span>
+						<span class="tag">{LABELS_GENRE[t.genre]}</span>
+						<span class="tag">{LABELS_MANCHES[t.manches]}</span>
+						<span class="tag">{LABELS_COL[t.col]}</span>
+					</div>
+
+					<div class="spectable">
+						<div class="row"><b>Marque</b><span>{t.brand}</span></div>
+						<div class="row"><b>Référence</b><span>{t.manufRef}</span></div>
+						<div class="row"><b>Grammage</b><span>{t.grammage}</span></div>
+						<div class="row"><b>Composition</b><span>{t.detail}</span></div>
+						<div class="row"><b>Coupe</b><span>{LABELS_GENRE[t.genre]}, {LABELS_MANCHES[t.manches]}, {LABELS_COL[t.col]}</span></div>
+					</div>
+
+					<div>
+						<h4 style="font-family:'Sora',sans-serif;font-size:.98rem;margin-bottom:10px">Tarif dégressif par quantité</h4>
+						<div class="pricetable">
+							<table>
+								<thead><tr><th>Quantité</th><th>Prix / pièce</th></tr></thead>
+								<tbody>
+									{grille.map((p) => (
+										<tr>
+											<td class="qty">{p.label} pièces</td>
+											<td class="price">{p.prixUnitaire.toFixed(2).replace('.', ',')} €</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+							<div class="note">Tarifs indicatifs hors marquage, à confirmer par devis — le prix inclut le textile seul, le coût du marquage (sérigraphie, transfert ou broderie) s'ajoute selon votre visuel.</div>
+						</div>
+					</div>
+
+					<div class="ctarow">
+						<Button href="/personnalisateur">Personnaliser ce modèle</Button>
+						<Button href="/#commander" variant="light">Demander un devis</Button>
+					</div>
+				</div>
+			</div>
+
+			{autres.length > 0 && (
+				<div style="padding-bottom:80px">
+					<h3 style="font-family:'Sora',sans-serif;font-size:1.1rem;margin-bottom:18px">Autres modèles {t.brand}</h3>
+					<div class="pgrid">
+						{autres.map((a) => (
+							<a class="pcard" href={`/produits/t-shirts/${a.slug}`}>
+								<div class="brand">{a.brand}</div>
+								<h3>{a.model}</h3>
+								<div class="tags"><span class="tag">{a.grammage}</span></div>
+								<div class="price"><b>{prixAPartirDe(a.baseCost).toFixed(2).replace('.', ',')} €</b> <span>/ pièce à partir de 250</span></div>
+							</a>
+						))}
+					</div>
+				</div>
+			)}
+		</div>
+	</main>
+	<Footer />
+</Layout>

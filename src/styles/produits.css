@@ -1,0 +1,98 @@
+/* Page catalogue produits — réutilise les variables de global.css (la
+   page l'importe en plus de celle-ci). */
+
+.prod-hero{padding:56px 0 40px;border-bottom:1px solid var(--ligne)}
+.prod-hero .crumb{font-size:13px;color:var(--gris);margin-bottom:14px}
+.prod-hero .crumb a{text-decoration:none;color:var(--gris)}
+.prod-hero .crumb a:hover{color:var(--indigo)}
+.prod-hero h1{font-size:clamp(2rem,4.4vw,3rem);letter-spacing:-0.03em}
+.prod-hero p{color:var(--gris);margin-top:14px;max-width:62ch;font-size:1.02rem}
+
+/* ---------- catalogue (accueil produits) ---------- */
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:48px 0}
+.cat-card{border:1.5px solid var(--ligne);border-radius:20px;padding:28px;background:#fff;transition:.15s;text-decoration:none;color:var(--encre);display:block}
+.cat-card:hover{border-color:var(--indigo);box-shadow:0 4px 20px rgba(23,19,31,.06)}
+.cat-card .n{font-family:'Sora',sans-serif;font-size:12px;color:var(--gris);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.cat-card h3{font-size:1.3rem;margin-bottom:8px}
+.cat-card p{color:var(--gris);font-size:.94rem;margin:0}
+.cat-card.soon{opacity:.5;cursor:default;pointer-events:none}
+.cat-card .tag{display:inline-block;margin-top:14px;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;font-weight:600;color:var(--indigo);background:rgba(157,131,207,.1);padding:4px 10px;border-radius:100px}
+.cat-card.soon .tag{color:var(--gris);background:var(--voile)}
+
+/* ---------- listing t-shirts ---------- */
+.plist{display:grid;grid-template-columns:260px 1fr;gap:36px;padding:40px 0 90px;align-items:start}
+.pfilters{position:sticky;top:96px;display:grid;gap:22px}
+.pfilters .fgroup{border-bottom:1px solid var(--ligne);padding-bottom:18px}
+.pfilters .fgroup:last-child{border-bottom:0}
+.pfilters h4{font-family:'Sora',sans-serif;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--gris);margin-bottom:12px;font-weight:600}
+.psearch{width:100%;padding:10px 14px;border:1.5px solid var(--ligne);border-radius:11px;font:inherit;font-size:14px}
+.psearch:focus{outline:none;border-color:var(--indigo)}
+.pills{display:flex;flex-wrap:wrap;gap:7px}
+.pill{border:1.5px solid var(--ligne);background:#fff;border-radius:100px;padding:7px 13px;font:inherit;font-size:13px;cursor:pointer;color:var(--encre)}
+.pill:hover{border-color:var(--indigo)}
+.pill.on{border-color:var(--indigo);background:var(--indigo);color:#fff}
+.checks{display:grid;gap:9px;max-height:220px;overflow-y:auto}
+.check{display:flex;align-items:center;gap:9px;font-size:13.5px;cursor:pointer}
+.check input{accent-color:var(--indigo);width:15px;height:15px}
+.presetreset{font-size:12.5px;color:var(--gris);text-decoration:underline;background:none;border:0;cursor:pointer;padding:0}
+.presetreset:hover{color:var(--encre)}
+
+.ptoolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap}
+.pcount{font-size:14px;color:var(--gris)}
+.pcount b{color:var(--encre)}
+.psort{border:1.5px solid var(--ligne);border-radius:11px;padding:9px 12px;font:inherit;font-size:13.5px;background:#fff;color:var(--encre)}
+
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.pcard{border:1.5px solid var(--ligne);border-radius:18px;padding:20px;background:#fff;text-decoration:none;color:var(--encre);display:flex;flex-direction:column;gap:10px;transition:.15s}
+.pcard:hover{border-color:var(--indigo);box-shadow:0 4px 18px rgba(23,19,31,.06);transform:translateY(-1px)}
+.pcard .brand{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--gris);font-weight:600}
+.pcard h3{font-family:'Sora',sans-serif;font-size:1.06rem;letter-spacing:-0.01em;line-height:1.25;margin:0}
+.pcard .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.pcard .tag{font-size:11px;color:var(--gris);background:var(--voile);padding:3px 9px;border-radius:100px}
+.pcard .price{margin-top:auto;padding-top:8px;border-top:1px dashed var(--ligne);font-family:'Sora',sans-serif;font-size:.96rem}
+.pcard .price b{font-size:1.12rem}
+.pcard .price span{color:var(--gris);font-size:.82rem}
+
+.pempty{padding:60px 20px;text-align:center;color:var(--gris)}
+
+.ppag{display:flex;justify-content:center;gap:8px;margin-top:36px}
+.ppag button{width:38px;height:38px;border:1.5px solid var(--ligne);background:#fff;border-radius:10px;cursor:pointer;font:inherit;font-size:13.5px;color:var(--encre)}
+.ppag button.on{border-color:var(--indigo);background:var(--indigo);color:#fff}
+.ppag button:disabled{opacity:.35;cursor:not-allowed}
+
+@media(max-width:860px){
+  .plist{grid-template-columns:1fr}
+  .pfilters{position:static}
+  .pgrid{grid-template-columns:repeat(2,1fr)}
+  .cat-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:560px){
+  .pgrid{grid-template-columns:1fr}
+  .cat-grid{grid-template-columns:1fr}
+}
+
+/* ---------- fiche produit ---------- */
+.pdetail{display:grid;grid-template-columns:1fr 1fr;gap:56px;padding:48px 0 80px;align-items:start}
+.pdetail .visual{background:var(--voile);border-radius:24px;aspect-ratio:1/1;display:grid;place-items:center;position:sticky;top:96px}
+.pdetail .visual svg{width:46%;height:auto;opacity:.85}
+.pdetail .side{display:grid;gap:26px}
+.pdetail .brand{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--gris);font-weight:600}
+.pdetail h1{font-size:clamp(1.7rem,3vw,2.3rem);letter-spacing:-0.025em;margin-top:6px}
+.pdetail .lede{color:var(--gris);font-size:1.02rem;line-height:1.55}
+.pdetail .tags{display:flex;flex-wrap:wrap;gap:8px}
+.pdetail .tag{font-size:12.5px;border:1px solid var(--ligne);border-radius:100px;padding:6px 13px;color:var(--encre)}
+
+.spectable{display:grid;border:1px solid var(--ligne);border-radius:16px;overflow:hidden}
+.spectable .row{display:grid;grid-template-columns:150px 1fr;padding:13px 18px;font-size:13.5px}
+.spectable .row:nth-child(even){background:var(--voile)}
+.spectable .row b{color:var(--gris);font-weight:500}
+
+.pricetable{border:1px solid var(--ligne);border-radius:16px;overflow:hidden}
+.pricetable table{width:100%;border-collapse:collapse;font-size:13.5px}
+.pricetable th{text-align:left;background:var(--voile);padding:11px 16px;font-family:'Sora',sans-serif;font-weight:600;font-size:12px;letter-spacing:.03em;text-transform:uppercase;color:var(--gris)}
+.pricetable td{padding:11px 16px;border-top:1px solid var(--ligne)}
+.pricetable td.qty{color:var(--gris)}
+.pricetable td.price{font-family:'Sora',sans-serif;font-weight:600}
+.pricetable .note{padding:12px 16px;font-size:12px;color:var(--gris);border-top:1px solid var(--ligne);background:var(--voile)}
+
+.pdetail .ctarow{display:flex;gap:12px;flex-wrap:wrap}
