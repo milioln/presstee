@@ -66,15 +66,36 @@ h2{font-size:clamp(2.05rem,5.2vw,3.5rem)}
 .pillar p{color:var(--gris);font-size:.95rem;margin:0}
 
 /* ---------- écran 3 : processus ---------- */
-.rail{position:relative;margin-top:64px;padding-left:78px}
-.rail::before{content:"";position:absolute;left:23px;top:14px;bottom:14px;width:2px;background:var(--ligne)}
-.rail::after{content:"";position:absolute;left:23px;top:14px;width:2px;height:var(--fill,0%);background:var(--indigo);transition:height .25s linear}
-.step{position:relative;padding-bottom:44px}
-.step:last-child{padding-bottom:0}
-.step .n{position:absolute;left:-78px;top:-4px;width:48px;height:48px;border-radius:15px;background:#fff;border:2px solid var(--ligne);display:grid;place-items:center;font-family:'Sora',sans-serif;font-weight:600;font-size:15px;color:var(--gris);transition:.2s}
-.step.on .n{border-color:var(--indigo);background:var(--indigo);color:#fff}
-.step h3{font-size:1.2rem;margin-bottom:7px}
-.step p{color:var(--gris);font-size:.97rem}
+.acc{margin-top:52px;display:grid;gap:10px;position:relative}
+.acc::before{content:"";position:absolute;left:46px;top:36px;bottom:36px;width:2px;background:var(--ligne)}
+.acc::after{content:"";position:absolute;left:46px;top:36px;width:2px;height:var(--fill,0%);background:var(--indigo);transition:height .3s linear}
+.stp{border:1px solid var(--ligne);border-radius:18px;background:#fff;position:relative;z-index:1}
+.stp>button{width:100%;display:flex;align-items:center;gap:18px;padding:20px 22px;background:none;border:0;cursor:pointer;text-align:left;font:inherit;color:inherit}
+.stp .n{width:48px;height:48px;border-radius:15px;background:#fff;border:2px solid var(--ligne);display:grid;place-items:center;font-family:'Sora',sans-serif;font-weight:600;font-size:15px;color:var(--gris);flex-shrink:0;transition:.2s}
+.stp.on .n,.stp.open .n{border-color:var(--indigo);background:var(--indigo);color:#fff}
+.stp .tt{flex:1}
+.stp .tt strong{display:block;font-family:'Sora',sans-serif;font-size:1.16rem;font-weight:600;letter-spacing:-0.03em;line-height:1.2}
+.stp .tt span{font-size:.94rem;color:var(--gris)}
+.stp .chev{width:12px;height:12px;border-right:2px solid var(--gris);border-bottom:2px solid var(--gris);transform:rotate(45deg);margin-right:6px;transition:transform .2s;flex-shrink:0}
+.stp.open .chev{transform:rotate(-135deg)}
+.stp .bd{display:none;padding:0 26px 24px 88px}
+.stp.open .bd{display:block}
+.subs{display:grid;gap:11px;border-left:2px solid var(--ligne);padding-left:20px}
+.sub strong{font-family:'Sora',sans-serif;font-size:.96rem;font-weight:600;display:block}
+.sub span{font-size:.93rem;color:var(--gris)}
+
+/* ---------- secteurs ---------- */
+.doms{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-bottom:30px}
+.dom{border:1.5px solid var(--ligne);background:#fff;border-radius:100px;padding:11px 20px;font:inherit;font-size:14.5px;font-weight:500;cursor:pointer;color:var(--encre);transition:.15s}
+.dom:hover{border-color:var(--indigo)}
+.dom.on{border-color:var(--indigo);background:var(--indigo);color:#fff}
+.dompanel{background:#fff;border:1px solid var(--ligne);border-radius:20px;padding:34px;display:grid;grid-template-columns:1.1fr .9fr;gap:34px;align-items:start}
+.dompanel h3{font-size:1.5rem;margin-bottom:12px}
+.dompanel p{color:var(--gris);font-size:1rem}
+.domfacts{display:grid;gap:12px}
+.fact{display:grid;gap:2px;border-left:2px solid var(--jaune);padding-left:14px}
+.fact b{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--gris);font-weight:600}
+.fact span{font-family:'Sora',sans-serif;font-size:.98rem}
 
 /* ---------- écran 4 : comprendre ---------- */
 .head-center{text-align:center;max-width:680px;margin:0 auto 60px}
@@ -104,7 +125,7 @@ h2{font-size:clamp(2.05rem,5.2vw,3.5rem)}
 .tile{break-inside:avoid;margin-bottom:18px;border-radius:var(--r);display:grid;place-items:center;overflow:hidden}
 .tile svg{width:50%;height:auto}
 .t-w{background:#fff}
-.t-j{background:var(--jaune)}
+.t-i{background:var(--indigo)}
 
 /* ---------- footer ---------- */
 footer{border-top:1px solid var(--ligne);padding:66px 0 40px}
@@ -126,9 +147,10 @@ footer{border-top:1px solid var(--ligne);padding:66px 0 40px}
 @media(max-width:560px){
   .gal{columns:1}
   .fgrid{grid-template-columns:1fr}
-  .rail{padding-left:62px}
-  .step .n{left:-62px;width:40px;height:40px;border-radius:13px}
-  .rail::before,.rail::after{left:19px}
+  .stp .bd{padding:0 20px 22px 20px}
+  .subs{padding-left:16px}
+  .acc::before,.acc::after{display:none}
+  .dompanel{grid-template-columns:1fr;gap:24px;padding:26px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
 :focus-visible{outline:2.5px solid var(--encre);outline-offset:3px;border-radius:6px}
@@ -188,17 +210,52 @@ footer{border-top:1px solid var(--ligne);padding:66px 0 40px}
 <section id="process">
   <div class="wrap">
     <h2 style="max-width:15ch">Un processus clair, étape par étape.</h2>
-    <div class="rail" id="rail">
-      <div class="step"><div class="n">1</div><h3>Compréhension du besoin</h3><p>Nous analysons votre projet, l'usage prévu et vos contraintes de budget et de délai.</p></div>
-      <div class="step"><div class="n">2</div><h3>Choix du textile</h3><p>Nous sélectionnons le vêtement adapté au rendu recherché et au budget.</p></div>
-      <div class="step"><div class="n">3</div><h3>Choix de la technique</h3><p>Sérigraphie, broderie ou transfert, selon le visuel, la quantité et l'usage.</p></div>
-      <div class="step"><div class="n">4</div><h3>Visualisation du projet</h3><p>Vous voyez le rendu sur le vêtement avant d'engager quoi que ce soit.</p></div>
-      <div class="step"><div class="n">5</div><h3>Calcul du prix</h3><p>Le coût du textile et celui du marquage vous sont présentés séparément.</p></div>
-      <div class="step"><div class="n">6</div><h3>Passage de commande</h3><p>Vous validez la demande. Rien n'est lancé à ce stade.</p></div>
-      <div class="step"><div class="n">7</div><h3>Vérification humaine</h3><p>Nous contrôlons vos fichiers, les dimensions, le positionnement et la faisabilité.</p></div>
-      <div class="step"><div class="n">8</div><h3>Validation du bon à tirer</h3><p>Vous recevez un BAT et validez le rendu final. La production ne démarre pas avant.</p></div>
-      <div class="step"><div class="n">9</div><h3>Production</h3><p>Nous lançons la fabrication uniquement après votre accord écrit.</p></div>
-      <div class="step"><div class="n">10</div><h3>Livraison et suivi</h3><p>Expédition et suivi jusqu'à réception, avec un interlocuteur unique.</p></div>
+    <p style="color:var(--gris);margin-top:16px">Cinq étapes, dont trois où c'est vous qui décidez. Cliquez pour voir le détail.</p>
+    <div class="acc" id="acc">
+
+      <div class="stp open" data-i="0">
+        <button aria-expanded="true"><span class="n">1</span><span class="tt"><strong>Votre projet</strong><span>Comprendre le besoin</span></span><span class="chev"></span></button>
+        <div class="bd"><div class="subs">
+          <div class="sub"><strong>L'usage réel</strong><span>Un t-shirt d'événement porté trois fois et une tenue de service lavée deux fois par semaine n'appellent pas le même textile.</span></div>
+          <div class="sub"><strong>La quantité et le budget</strong><span>Ce sont eux qui déterminent quelles techniques deviennent intéressantes pour vous.</span></div>
+          <div class="sub"><strong>Le délai souhaité</strong><span>Nous vous disons tout de suite s'il est tenable, avant que vous vous engagiez.</span></div>
+        </div></div>
+      </div>
+
+      <div class="stp" data-i="1">
+        <button aria-expanded="false"><span class="n">2</span><span class="tt"><strong>Notre recommandation</strong><span>Textile + technique</span></span><span class="chev"></span></button>
+        <div class="bd"><div class="subs">
+          <div class="sub"><strong>Le textile</strong><span>Grammage, matière et coupe choisis pour votre usage, avec plusieurs niveaux de budget quand c'est pertinent.</span></div>
+          <div class="sub"><strong>La technique de marquage</strong><span>Sérigraphie, transfert sérigraphique, transfert premium ou broderie, selon le visuel, la quantité et le support.</span></div>
+          <div class="sub"><strong>Le prix, détaillé</strong><span>Le coût du textile et celui du marquage sont annoncés séparément. Vous voyez d'où vient chaque euro.</span></div>
+        </div></div>
+      </div>
+
+      <div class="stp" data-i="2">
+        <button aria-expanded="false"><span class="n">3</span><span class="tt"><strong>Votre validation</strong><span>Visualisation + BAT</span></span><span class="chev"></span></button>
+        <div class="bd"><div class="subs">
+          <div class="sub"><strong>La visualisation</strong><span>Vous voyez votre visuel placé sur le vêtement, à la bonne taille et au bon endroit, avant d'engager quoi que ce soit.</span></div>
+          <div class="sub"><strong>La vérification humaine</strong><span>Nous contrôlons vos fichiers, la résolution, les dimensions et la faisabilité réelle de l'impression.</span></div>
+          <div class="sub"><strong>Le bon à tirer</strong><span>Vous recevez un BAT et vous le validez. Rien ne part en production avant votre accord écrit.</span></div>
+        </div></div>
+      </div>
+
+      <div class="stp" data-i="3">
+        <button aria-expanded="false"><span class="n">4</span><span class="tt"><strong>Notre production</strong><span>Fabrication + contrôle</span></span><span class="chev"></span></button>
+        <div class="bd"><div class="subs">
+          <div class="sub"><strong>La fabrication</strong><span>Le marquage est réalisé dans notre atelier, sur les machines dont nous maîtrisons le planning.</span></div>
+          <div class="sub"><strong>Le contrôle pièce par pièce</strong><span>Avant emballage, chaque pièce est vérifiée : rendu, positionnement, conformité au BAT validé.</span></div>
+        </div></div>
+      </div>
+
+      <div class="stp" data-i="4">
+        <button aria-expanded="false"><span class="n">5</span><span class="tt"><strong>Votre livraison</strong><span>Expédition + suivi</span></span><span class="chev"></span></button>
+        <div class="bd"><div class="subs">
+          <div class="sub"><strong>L'expédition</strong><span>Emballage soigné et envoi suivi, ou remise en main propre dans le secteur d'Angoulême.</span></div>
+          <div class="sub"><strong>Le suivi</strong><span>Un interlocuteur unique du premier échange à la réception. Pas de service client anonyme.</span></div>
+        </div></div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -245,11 +302,22 @@ footer{border-top:1px solid var(--ligne);padding:66px 0 40px}
   </div>
 </section>
 
-<section id="commander">
+<section id="secteurs">
+  <div class="wrap">
+    <div class="head-center">
+      <h2>Votre activité, vos contraintes.</h2>
+      <p style="color:var(--gris)">Sélectionnez votre domaine : nous vous montrons ce que commandent les structures comme la vôtre, et ce que nous leur conseillons.</p>
+    </div>
+    <div class="doms" id="doms"></div>
+    <div class="dompanel" id="dompanel"></div>
+  </div>
+</section>
+
+<section id="commander" class="s-indigo">
   <div class="wrap">
     <div class="head-center">
       <h2>Trois façons simples de passer commande.</h2>
-      <p style="color:var(--gris)">La personnalisation textile est un domaine technique. Nous vous invitons à nous contacter pour être conseillé, mais vous restez libre de commander comme vous le souhaitez.</p>
+      <p style="color:#EDE8FB">La personnalisation textile est un domaine technique. Nous vous invitons à nous contacter pour être conseillé, mais vous restez libre de commander comme vous le souhaitez.</p>
     </div>
     <div class="trio">
       <div class="way">
@@ -283,16 +351,16 @@ footer{border-top:1px solid var(--ligne);padding:66px 0 40px}
   </div>
 </section>
 
-<section id="creations" class="s-indigo">
+<section id="creations" class="s-jaune">
   <div class="wrap">
     <h2 style="max-width:13ch">Quelques réalisations.</h2>
     <div class="gal">
       <div class="tile t-w" style="height:330px"><svg viewBox="0 0 100 100" fill="#9d83cf"><path d="M28,20 L44,12 Q50,22 56,12 L72,20 L90,36 L76,50 L70,44 L70,90 L30,90 L30,44 L24,50 L10,36 Z"/></svg></div>
-      <div class="tile t-j" style="height:230px"><svg viewBox="0 0 100 100" fill="#fff"><path d="M28,20 L44,12 Q50,22 56,12 L72,20 L90,36 L76,50 L70,44 L70,90 L30,90 L30,44 L24,50 L10,36 Z"/></svg></div>
-      <div class="tile t-j" style="height:280px"><svg viewBox="0 0 100 100" fill="#fff"><path d="M28,20 L44,12 Q50,22 56,12 L72,20 L90,36 L76,50 L70,44 L70,90 L30,90 L30,44 L24,50 L10,36 Z"/></svg></div>
+      <div class="tile t-i" style="height:230px"><svg viewBox="0 0 100 100" fill="#FFFFFF"><path d="M28,20 L44,12 Q50,22 56,12 L72,20 L90,36 L76,50 L70,44 L70,90 L30,90 L30,44 L24,50 L10,36 Z"/></svg></div>
+      <div class="tile t-i" style="height:280px"><svg viewBox="0 0 100 100" fill="#FFFFFF"><path d="M28,20 L44,12 Q50,22 56,12 L72,20 L90,36 L76,50 L70,44 L70,90 L30,90 L30,44 L24,50 L10,36 Z"/></svg></div>
       <div class="tile t-w" style="height:300px"><svg viewBox="0 0 100 100" fill="#9d83cf"><path d="M28,20 L44,12 Q50,22 56,12 L72,20 L90,36 L76,50 L70,44 L70,90 L30,90 L30,44 L24,50 L10,36 Z"/></svg></div>
       <div class="tile t-w" style="height:240px"><svg viewBox="0 0 100 100" fill="#9d83cf"><path d="M28,20 L44,12 Q50,22 56,12 L72,20 L90,36 L76,50 L70,44 L70,90 L30,90 L30,44 L24,50 L10,36 Z"/></svg></div>
-      <div class="tile t-j" style="height:320px"><svg viewBox="0 0 100 100" fill="#fff"><path d="M28,20 L44,12 Q50,22 56,12 L72,20 L90,36 L76,50 L70,44 L70,90 L30,90 L30,44 L24,50 L10,36 Z"/></svg></div>
+      <div class="tile t-i" style="height:320px"><svg viewBox="0 0 100 100" fill="#FFFFFF"><path d="M28,20 L44,12 Q50,22 56,12 L72,20 L90,36 L76,50 L70,44 L70,90 L30,90 L30,44 L24,50 L10,36 Z"/></svg></div>
     </div>
   </div>
 </section>
@@ -325,13 +393,54 @@ const burger=document.getElementById('burger'),links=document.getElementById('li
 burger.addEventListener('click',()=>{const o=links.classList.toggle('open');burger.setAttribute('aria-expanded',o)});
 links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
 
-const rail=document.getElementById('rail'),steps=[...rail.querySelectorAll('.step')];
+/* processus : progression au scroll + dépliage au clic */
+const acc=document.getElementById('acc'),stps=[...acc.querySelectorAll('.stp')];
 function paint(){
-  const r=rail.getBoundingClientRect(),mid=innerHeight*0.62;
-  rail.style.setProperty('--fill',Math.max(0,Math.min(100,(mid-r.top)/r.height*100))+'%');
-  steps.forEach(s=>{s.classList.toggle('on',s.querySelector('.n').getBoundingClientRect().top<mid)});
+  const r=acc.getBoundingClientRect(),mid=innerHeight*0.6;
+  acc.style.setProperty('--fill',Math.max(0,Math.min(100,(mid-r.top)/r.height*100))+'%');
+  stps.forEach(s=>s.classList.toggle('on',s.querySelector('.n').getBoundingClientRect().top<mid));
 }
+acc.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  const s=b.parentElement,open=s.classList.contains('open');
+  stps.forEach(x=>{x.classList.remove('open');x.querySelector('button').setAttribute('aria-expanded','false')});
+  if(!open){s.classList.add('open');b.setAttribute('aria-expanded','true')}
+  paint();
+});
 paint();addEventListener('scroll',paint,{passive:true});addEventListener('resize',paint);
+
+/* secteurs */
+const DOMS=[
+ {k:"Associations",p:"Budgets serrés, commandes groupées et renouvellement régulier au fil des événements. L'enjeu est d'obtenir une pièce correcte sans faire exploser la cotisation des adhérents.",
+  t:"T-shirt coton 150 à 180 g/m²",m:"Sérigraphie à partir d'une trentaine de pièces",q:"30 à 150 pièces"},
+ {k:"BDE et écoles",p:"Intégration, week-ends, soirées : de grosses séries commandées d'un coup, souvent avec un visuel unique et un délai serré autour de la rentrée.",
+  t:"Sweat molleton 280 à 320 g/m²",m:"Sérigraphie, très rentable sur ces volumes",q:"80 à 400 pièces"},
+ {k:"Entreprises",p:"Uniformiser les équipes et porter l'image de marque, avec une exigence de sobriété et de tenue dans le temps plus forte que sur un textile événementiel.",
+  t:"Polo piqué ou chemise",m:"Broderie sur le cœur, ou transfert sérigraphique",q:"10 à 100 pièces"},
+ {k:"Bars et restaurants",p:"Tenues portées tous les jours et lavées à haute température. Le marquage doit tenir plusieurs centaines de lavages sans se fissurer.",
+  t:"T-shirt épais 185 g/m² ou tablier",m:"Sérigraphie, la plus résistante au lavage",q:"10 à 60 pièces"},
+ {k:"Événements",p:"Délai court, quantité parfois incertaine jusqu'au dernier moment, et un visuel souvent riche en couleurs. La réactivité prime sur la durabilité.",
+  t:"T-shirt léger 150 g/m²",m:"Transfert premium, sans frais de calage",q:"20 à 300 pièces"},
+ {k:"Commerces",p:"Petites séries, parfois des collections capsule à tester avant de réassortir. Le rendu compte autant que le prix, puisque la pièce est vendue.",
+  t:"Coton lourd 200 g/m² et plus",m:"Sérigraphie ou transfert sérigraphique",q:"20 à 100 pièces"},
+ {k:"Boulangeries",p:"Image artisanale et tenue professionnelle, avec un textile qui encaisse la farine, la chaleur et les lavages fréquents.",
+  t:"Tablier ou polo",m:"Broderie, pour le rendu et la tenue",q:"5 à 30 pièces"},
+ {k:"Clubs sportifs",p:"Maillots techniques, floquage de noms et de numéros, et un renouvellement partiel chaque saison plutôt qu'une commande unique.",
+  t:"Maillot polyester respirant",m:"Transfert sérigraphique, adapté aux textiles techniques",q:"15 à 60 pièces"}];
+const doms=document.getElementById('doms'),dompanel=document.getElementById('dompanel');
+let dsel=0;
+function paintDoms(){
+  doms.innerHTML=DOMS.map((d,i)=>`<button class="dom${i===dsel?' on':''}" data-d="${i}">${d.k}</button>`).join('');
+  const d=DOMS[dsel];
+  dompanel.innerHTML=`<div><h3>${d.k}</h3><p>${d.p}</p></div>
+    <div class="domfacts">
+      <div class="fact"><b>Textile souvent retenu</b><span>${d.t}</span></div>
+      <div class="fact"><b>Marquage conseillé</b><span>${d.m}</span></div>
+      <div class="fact"><b>Volumes habituels</b><span>${d.q}</span></div>
+    </div>`;
+}
+doms.addEventListener('click',e=>{const b=e.target.closest('[data-d]');if(!b)return;dsel=+b.dataset.d;paintDoms()});
+paintDoms();
 </script>
 </body>
 </html>
