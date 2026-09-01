@@ -1,0 +1,176 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { TECHNIQUES } from '../../lib/techniques-data';
+import '../../styles/global.css';
+import '../../styles/techniques.css';
+---
+
+<Layout title="Guide des techniques de marquage — Presstee" description="Sérigraphie, transfert premium, transfert sérigraphique, broderie : comment ça marche, avantages, limites et comment le prix se calcule pour chaque technique.">
+	<Header />
+	<main>
+		<section class="tech-hero">
+			<div class="wrap">
+				<div class="crumb"><a href="/">Accueil</a> / Guide</div>
+				<h1>Bien choisir sa technique de marquage.</h1>
+				<p>Sérigraphie, transfert ou broderie : chacune a ses forces, ses limites et sa propre façon de calculer le prix. Comparez-les ci-dessous, ou répondez à trois questions pour obtenir une recommandation.</p>
+			</div>
+		</section>
+
+		<div class="wrap">
+			<div class="tgrid" style="margin-top:44px">
+				{TECHNIQUES.map((t) => (
+					<a class="tcard" href={`/techniques/${t.slug}`}>
+						<div class="thumb">
+							{t.image ? (
+								<img src={t.image} alt="" loading="lazy" />
+							) : (
+								<div style="width:100%;height:100%;display:grid;place-items:center;color:var(--gris);font-size:12px">Presstee</div>
+							)}
+						</div>
+						<div class="body">
+							<h3>{t.nom}</h3>
+							<p>{t.accroche}</p>
+						</div>
+					</a>
+				))}
+			</div>
+
+			<div class="tcompare">
+				<table>
+					<thead>
+						<tr>
+							<th></th>
+							{TECHNIQUES.map((t) => <th><a href={`/techniques/${t.slug}`}>{t.nom}</a></th>)}
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th scope="row">Quantité conseillée</th>
+							{TECHNIQUES.map((t) => <td>{t.quantiteMin}</td>)}
+						</tr>
+						<tr>
+							<th scope="row">Couleurs</th>
+							{TECHNIQUES.map((t) => <td>{t.couleurs}</td>)}
+						</tr>
+						<tr>
+							<th scope="row">Le prix dépend de</th>
+							{TECHNIQUES.map((t) => <td>{t.facteurPrix}</td>)}
+						</tr>
+						<tr>
+							<th scope="row">Coût relatif</th>
+							{TECHNIQUES.map((t) => (
+								<td>
+									<span class="prixdots">
+										{[1, 2, 3].map((i) => <span class={i <= t.prixRelatif ? 'on' : ''}></span>)}
+									</span>
+								</td>
+							))}
+						</tr>
+						<tr>
+							<th scope="row">Durabilité</th>
+							{TECHNIQUES.map((t) => <td>{t.durabilite}</td>)}
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="tsim" id="tsim">
+				<h2>Quelle technique pour mon projet ?</h2>
+				<p>Trois questions, une recommandation. C'est la même logique que celle utilisée dans notre configurateur — répondez ici pour vous décider avant de vous lancer, ou directement dans le configurateur avec votre propre visuel.</p>
+				<div class="tsim-grid">
+					<div class="tsim-field">
+						<label>Quantité de pièces</label>
+						<div class="pills" id="simQty">
+							<button class="pill" data-qty="10">Moins de 30</button>
+							<button class="pill" data-qty="50">30 à 100</button>
+							<button class="pill" data-qty="200">Plus de 100</button>
+						</div>
+					</div>
+					<div class="tsim-field">
+						<label>Nombre de couleurs du visuel</label>
+						<div class="pills" id="simColors">
+							<button class="pill" data-colors="2">1 à 3</button>
+							<button class="pill" data-colors="5">4 à 6</button>
+							<button class="pill" data-colors="12">Dégradés / photo</button>
+						</div>
+					</div>
+					<div class="tsim-field">
+						<label>Ce qui compte le plus</label>
+						<div class="pills" id="simPrio">
+							<button class="pill" data-prio="prix">Le prix le plus bas</button>
+							<button class="pill" data-prio="rendu">Le rendu le plus qualitatif</button>
+							<button class="pill" data-prio="duree">La tenue dans le temps</button>
+						</div>
+					</div>
+				</div>
+				<div class="tsim-result" id="simResult">
+					<div class="label">Notre recommandation</div>
+					<h3 id="simTitle"></h3>
+					<p id="simWhy"></p>
+					<a class="btn" id="simCta" href="/personnalisateur">Personnaliser avec cette technique</a>
+				</div>
+			</div>
+		</div>
+	</main>
+	<Footer />
+
+	<script>
+		const state = { qty: 0, colors: 0, prio: '' };
+
+		function bind(id: string, key: 'qty' | 'colors' | 'prio') {
+			const group = document.getElementById(id)!;
+			group.addEventListener('click', (e) => {
+				const b = (e.target as HTMLElement).closest<HTMLButtonElement>('.pill');
+				if (!b) return;
+				group.querySelectorAll('.pill').forEach((p) => p.classList.remove('on'));
+				b.classList.add('on');
+				(state as any)[key] = key === 'prio' ? b.dataset[key] : +b.dataset[key]!;
+				compute();
+			});
+		}
+		bind('simQty', 'qty');
+		bind('simColors', 'colors');
+		bind('simPrio', 'prio');
+
+		function compute() {
+			if (!state.qty || !state.colors || !state.prio) return;
+
+			let slug: string;
+			let why: string;
+
+			if (state.prio === 'rendu' && state.colors >= 10) {
+				slug = 'transfert-premium';
+				why = 'Des dégradés ou une image riche en nuances : seul le transfert premium les reproduit fidèlement.';
+			} else if (state.prio === 'duree' && state.colors <= 6) {
+				slug = state.qty >= 30 ? 'serigraphie' : 'transfert-serigraphique';
+				why = state.qty >= 30
+					? 'Pour la meilleure tenue au lavage sur ce volume, la sérigraphie amortit ses frais d’écran.'
+					: 'Le rendu le plus proche de la sérigraphie côté durabilité, sans frais de calage sur une petite série.';
+			} else if (state.colors >= 10) {
+				slug = 'transfert-premium';
+				why = 'Visuel riche en couleurs : le transfert premium reste la seule option qui le reproduit correctement, quelle que soit la quantité.';
+			} else if (state.qty >= 30 && state.colors <= 4) {
+				slug = 'serigraphie';
+				why = 'Avec ce nombre de couleurs et cette quantité, les frais d’écran sont amortis : la sérigraphie devient la plus économique.';
+			} else {
+				slug = 'transfert-serigraphique';
+				why = 'Trop peu de pièces pour amortir des écrans de sérigraphie : le transfert sérigraphique garde un rendu proche sans ce surcoût.';
+			}
+
+			const titles: Record<string, string> = {
+				serigraphie: 'Sérigraphie',
+				'transfert-premium': 'Transfert premium',
+				'transfert-serigraphique': 'Transfert sérigraphique',
+			};
+
+			document.getElementById('simTitle')!.textContent = titles[slug];
+			document.getElementById('simWhy')!.textContent = why;
+			const cta = document.getElementById('simCta') as HTMLAnchorElement;
+			const techKey = slug === 'serigraphie' ? 'serigraphie' : slug;
+			cta.href = `/personnalisateur?technique=${techKey}`;
+			document.getElementById('simResult')!.classList.add('show');
+		}
+	</script>
+</Layout>

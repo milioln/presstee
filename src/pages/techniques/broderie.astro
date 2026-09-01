@@ -1,0 +1,98 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import Button from '../../components/Button.astro';
+import { TECHNIQUES, getTechnique } from '../../lib/techniques-data';
+import '../../styles/global.css';
+import '../../styles/techniques.css';
+
+const t = getTechnique('broderie')!;
+const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
+---
+
+<Layout title="La broderie — Presstee" description="Comment fonctionne la broderie textile, ses avantages, ses limites, et comment son prix se calcule selon le nombre de points.">
+	<Header />
+	<main>
+		<section class="tech-hero">
+			<div class="wrap">
+				<div class="crumb"><a href="/">Accueil</a> / <a href="/techniques">Guide</a> / Broderie</div>
+				<h1>La broderie.</h1>
+				<p>Un fil tissé directement dans la matière : le rendu le plus texturé et le plus durable, pour les visuels de taille modeste.</p>
+			</div>
+		</section>
+
+		<div class="tdetail-hero">
+			<img src={t.image} alt="Têtes d'une machine à broder multi-couleurs en action" loading="eager" />
+		</div>
+
+		<div class="wrap">
+			<div class="tdetail">
+				<div>
+					<section>
+						<h2>Comment ça marche</h2>
+						<p class="lede">Votre visuel est d'abord numérisé en un fichier de points : chaque zone du dessin est traduite en un type de point (contour, remplissage, lettrage) et un ordre de passage pour l'aiguille. La machine brode ensuite ce fichier, fil après fil, directement dans le tissu.</p>
+						<div class="steps-list">
+							<div class="step"><span class="n">1</span><div><strong>La numérisation (digitalisation)</strong><span>Le visuel est converti en un fichier de points exploitable par la brodeuse, avec un type de point adapté à chaque zone.</span></div></div>
+							<div class="step"><span class="n">2</span><div><strong>Le stabilisateur</strong><span>Un renfort est placé derrière le tissu pour qu'il ne se déforme pas sous la tension du fil.</span></div></div>
+							<div class="step"><span class="n">3</span><div><strong>La broderie</strong><span>La machine brode le motif, changeant de fil à chaque couleur du visuel.</span></div></div>
+							<div class="step"><span class="n">4</span><div><strong>La finition</strong><span>Le stabilisateur excédentaire est retiré et les fils sont coupés.</span></div></div>
+						</div>
+					</section>
+
+					<section>
+						<h2>Avantages et limites</h2>
+						<div class="proscons">
+							<div class="col avantages">
+								<h4>✓ Avantages</h4>
+								<ul>
+									<li>Le fil est tissé dans la matière : c'est la technique la plus résistante au lavage et au temps</li>
+									<li>Un rendu texturé et haut de gamme, particulièrement adapté aux polos, chemises et casquettes</li>
+									<li>Pas de minimum de quantité : aussi pertinente à l'unité qu'en série</li>
+								</ul>
+							</div>
+							<div class="col limites">
+								<h4>⚠ Points de vigilance</h4>
+								<ul>
+									<li>Les très petits détails ou le texte fin ne se brodent pas bien : une largeur minimale de point est nécessaire</li>
+									<li>Pas de dégradés : chaque couleur est un fil distinct</li>
+									<li>Ajoute une légère épaisseur et une rigidité au niveau du visuel</li>
+								</ul>
+							</div>
+						</div>
+					</section>
+
+					<section>
+						<h2>Comment se calcule le prix</h2>
+						<p class="lede">En broderie, <strong>le prix dépend du nombre de points</strong> — c'est-à-dire de la taille du visuel et de la densité de son remplissage, pas directement du nombre de couleurs. Un logo large ou très rempli demande plus de temps machine qu'un petit monogramme, même avec le même nombre de fils.</p>
+					</section>
+				</div>
+
+				<aside>
+					<div class="side-card">
+						<h4>Pour quel projet</h4>
+						<p>{t.quantiteMin.toLowerCase()}. {t.couleurs}. Idéale sur un petit visuel (logo, initiales) destiné à durer.</p>
+					</div>
+					<div class="side-card">
+						<h4>Le prix dépend de</h4>
+						<div class="big">{t.facteurPrix}</div>
+					</div>
+					<div class="side-card">
+						<h4>Durabilité</h4>
+						<p>{t.durabilite}.</p>
+					</div>
+					<Button href="/#commander">Demander un devis broderie</Button>
+					<p class="hint" style="font-size:12.5px;color:var(--gris);margin-top:10px">La broderie n'est pas encore disponible dans le configurateur en ligne — contactez-nous directement pour ce type de projet.</p>
+				</aside>
+			</div>
+
+			<div style="padding-bottom:70px">
+				<h3 style="font-family:'Sora',sans-serif;font-size:1.05rem;margin-bottom:14px">Les autres techniques</h3>
+				<div class="other-techs">
+					{autres.map((a) => <a href={`/techniques/${a.slug}`}>{a.nom}</a>)}
+				</div>
+			</div>
+		</div>
+	</main>
+	<Footer />
+</Layout>

@@ -1,0 +1,98 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import Button from '../../components/Button.astro';
+import { TECHNIQUES, getTechnique } from '../../lib/techniques-data';
+import '../../styles/global.css';
+import '../../styles/techniques.css';
+
+const t = getTechnique('transfert-premium')!;
+const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
+---
+
+<Layout title="Le transfert premium — Presstee" description="Comment fonctionne le transfert premium (impression numérique + pose à chaud), ses avantages, ses limites, et comment son prix se calcule selon le format du visuel.">
+	<Header />
+	<main>
+		<section class="tech-hero">
+			<div class="wrap">
+				<div class="crumb"><a href="/">Accueil</a> / <a href="/techniques">Guide</a> / Transfert premium</div>
+				<h1>Le transfert premium.</h1>
+				<p>Un visuel imprimé numériquement puis posé à chaud : couleurs illimitées, dégradés, photos — sans minimum de quantité.</p>
+			</div>
+		</section>
+
+		<div class="tdetail-hero noimg">
+			<svg viewBox="0 0 24 24" fill="none" stroke="var(--indigo)" stroke-width="1.5"><rect x="3" y="4" width="18" height="14" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 15l-5-5L5 20"/></svg>
+		</div>
+
+		<div class="wrap">
+			<div class="tdetail">
+				<div>
+					<section>
+						<h2>Comment ça marche</h2>
+						<p class="lede">Votre visuel est imprimé numériquement, en couleur, sur un support de transfert. Ce support est ensuite posé sur le vêtement et pressé à chaud : la chaleur et la pression font adhérer le visuel au tissu.</p>
+						<div class="steps-list">
+							<div class="step"><span class="n">1</span><div><strong>L'impression numérique</strong><span>Votre fichier est imprimé tel quel, couleurs et dégradés compris, sur un film de transfert.</span></div></div>
+							<div class="step"><span class="n">2</span><div><strong>Le détourage</strong><span>Le contour du visuel est découpé pour ne laisser que la zone à transférer.</span></div></div>
+							<div class="step"><span class="n">3</span><div><strong>La pose à chaud</strong><span>Le film est positionné sur le vêtement et pressé à haute température pendant quelques secondes.</span></div></div>
+							<div class="step"><span class="n">4</span><div><strong>Le pelage</strong><span>Le film support est retiré, ne laissant que le visuel sur le tissu.</span></div></div>
+						</div>
+					</section>
+
+					<section>
+						<h2>Avantages et limites</h2>
+						<div class="proscons">
+							<div class="col avantages">
+								<h4>✓ Avantages</h4>
+								<ul>
+									<li>Aucune limite de couleurs : dégradés, photos et visuels complexes sont reproduits fidèlement</li>
+									<li>Aucun frais de calage : rentable dès une seule pièce</li>
+									<li>Chaque pièce peut porter un visuel différent, sans surcoût de changement</li>
+								</ul>
+							</div>
+							<div class="col limites">
+								<h4>⚠ Points de vigilance</h4>
+								<ul>
+									<li>Le visuel repose en surface du tissu, avec un léger relief au toucher</li>
+									<li>Sur de grandes séries identiques, la sérigraphie reste plus économique</li>
+									<li>Moins adapté aux textiles très extensibles, qui peuvent faire craqueler le transfert dans le temps</li>
+								</ul>
+							</div>
+						</div>
+					</section>
+
+					<section>
+						<h2>Comment se calcule le prix</h2>
+						<p class="lede">Contrairement à la sérigraphie, <strong>le prix du transfert premium dépend de la taille du visuel</strong>, pas de son nombre de couleurs — l'impression numérique reproduit n'importe quelle palette pour le même coût. Plus le visuel est grand, plus il consomme de support d'impression et plus le temps de pose est long.</p>
+						<p class="lede">Sans frais de calage, cette technique reste au même prix par pièce quelle que soit la quantité commandée : c'est le choix le plus simple pour une petite série ou un visuel unique par personne.</p>
+					</section>
+				</div>
+
+				<aside>
+					<div class="side-card">
+						<h4>Pour quel projet</h4>
+						<p>{t.quantiteMin.toLowerCase()}. {t.couleurs}. Idéal pour un visuel riche en couleurs ou une personnalisation individuelle.</p>
+					</div>
+					<div class="side-card">
+						<h4>Le prix dépend de</h4>
+						<div class="big">{t.facteurPrix}</div>
+					</div>
+					<div class="side-card">
+						<h4>Durabilité</h4>
+						<p>{t.durabilite}.</p>
+					</div>
+					<Button href="/personnalisateur?technique=transfert-premium">Personnaliser en transfert premium</Button>
+				</aside>
+			</div>
+
+			<div style="padding-bottom:70px">
+				<h3 style="font-family:'Sora',sans-serif;font-size:1.05rem;margin-bottom:14px">Les autres techniques</h3>
+				<div class="other-techs">
+					{autres.map((a) => <a href={`/techniques/${a.slug}`}>{a.nom}</a>)}
+				</div>
+			</div>
+		</div>
+	</main>
+	<Footer />
+</Layout>

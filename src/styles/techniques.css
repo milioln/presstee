@@ -1,0 +1,95 @@
+/* Pages Guide (/techniques/*) — réutilise les variables de global.css. */
+
+.tech-hero{padding:56px 0 40px;border-bottom:1px solid var(--ligne)}
+.tech-hero .crumb{font-size:13px;color:var(--gris);margin-bottom:14px}
+.tech-hero .crumb a{text-decoration:none;color:var(--gris)}
+.tech-hero .crumb a:hover{color:var(--indigo)}
+.tech-hero h1{font-size:clamp(2rem,4.4vw,3rem);letter-spacing:-0.03em}
+.tech-hero p{color:var(--gris);margin-top:14px;max-width:64ch;font-size:1.02rem}
+
+/* ---------- hub : tableau comparatif ---------- */
+.tcompare{padding:48px 0;overflow-x:auto}
+.tcompare table{width:100%;border-collapse:collapse;min-width:640px}
+.tcompare th,.tcompare td{padding:16px 18px;text-align:left;border-bottom:1px solid var(--ligne);vertical-align:top}
+.tcompare thead th{font-family:'Sora',sans-serif;font-size:.98rem;font-weight:600;letter-spacing:-0.01em}
+.tcompare thead th a{text-decoration:none;color:var(--encre)}
+.tcompare thead th a:hover{color:var(--indigo)}
+.tcompare tbody th{font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--gris);font-weight:600;white-space:nowrap}
+.tcompare td{font-size:14px}
+.tcompare .prixdots{display:inline-flex;gap:4px}
+.tcompare .prixdots span{width:8px;height:8px;border-radius:50%;background:var(--ligne)}
+.tcompare .prixdots span.on{background:var(--indigo)}
+
+/* ---------- hub : cartes techniques ---------- */
+.tgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding-bottom:20px}
+.tcard{border:1.5px solid var(--ligne);border-radius:20px;overflow:hidden;text-decoration:none;color:var(--encre);background:#fff;transition:.15s;display:flex;flex-direction:column}
+.tcard:hover{border-color:var(--indigo);box-shadow:0 4px 20px rgba(23,19,31,.06)}
+.tcard .thumb{aspect-ratio:4/3;background:var(--voile);overflow:hidden}
+.tcard .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.tcard .body{padding:20px}
+.tcard h3{font-size:1.1rem;margin-bottom:8px}
+.tcard p{color:var(--gris);font-size:.92rem;margin:0}
+
+/* ---------- simulateur ---------- */
+.tsim{background:var(--voile);border-radius:24px;padding:36px;margin:20px 0 60px}
+.tsim h2{font-size:1.5rem;margin-bottom:8px}
+.tsim>p{color:var(--gris);margin-bottom:26px;max-width:62ch}
+.tsim-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.tsim-field label{display:block;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;margin-bottom:10px}
+.tsim-field .pills{display:flex;flex-wrap:wrap;gap:7px}
+.tsim-field .pill{border:1.5px solid var(--ligne);background:#fff;border-radius:100px;padding:8px 14px;font:inherit;font-size:13px;cursor:pointer;color:var(--encre)}
+.tsim-field .pill:hover{border-color:var(--indigo)}
+.tsim-field .pill.on{border-color:var(--indigo);background:var(--indigo);color:#fff}
+.tsim-result{margin-top:26px;background:#fff;border-radius:16px;padding:22px 24px;display:none}
+.tsim-result.show{display:block}
+.tsim-result .label{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--gris);font-weight:600;margin-bottom:8px}
+.tsim-result h3{font-size:1.3rem;margin-bottom:8px}
+.tsim-result p{color:var(--gris);font-size:.95rem;margin-bottom:16px}
+
+/* ---------- fiche technique ---------- */
+.tdetail-hero{position:relative;aspect-ratio:21/9;background:var(--voile);overflow:hidden}
+.tdetail-hero img{width:100%;height:100%;object-fit:cover;display:block}
+.tdetail-hero.noimg{display:grid;place-items:center}
+.tdetail-hero.noimg svg{width:80px;height:80px;opacity:.3}
+
+.tdetail{display:grid;grid-template-columns:1.6fr 1fr;gap:56px;padding:48px 0 80px;align-items:start}
+.tdetail h2{font-size:1.5rem;margin:0 0 16px;letter-spacing:-0.02em}
+.tdetail .lede{font-size:1.08rem;color:var(--gris);margin-bottom:8px}
+.tdetail section{margin-bottom:44px}
+
+.steps-list{display:grid;gap:14px}
+.steps-list .step{display:flex;gap:16px;border:1px solid var(--ligne);border-radius:16px;padding:18px 20px}
+.steps-list .n{width:32px;height:32px;border-radius:10px;background:var(--jaune);color:var(--encre);display:grid;place-items:center;font-family:'Sora',sans-serif;font-weight:600;font-size:14px;flex-shrink:0}
+.steps-list strong{display:block;font-family:'Sora',sans-serif;font-size:.98rem;margin-bottom:4px}
+.steps-list span{font-size:.92rem;color:var(--gris)}
+
+.proscons{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.proscons .col{border-radius:16px;padding:20px 22px}
+.proscons .col.avantages{background:rgba(46,125,91,.07)}
+.proscons .col.limites{background:rgba(178,106,18,.08)}
+.proscons h4{font-family:'Sora',sans-serif;font-size:.92rem;margin-bottom:12px}
+.proscons ul{list-style:none;display:grid;gap:9px}
+.proscons li{font-size:.92rem;color:var(--encre);padding-left:18px;position:relative}
+.proscons li::before{content:"";position:absolute;left:0;top:.55em;width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.5}
+
+.side-card{border:1px solid var(--ligne);border-radius:18px;padding:24px;margin-bottom:18px}
+.side-card h4{font-family:'Sora',sans-serif;font-size:.92rem;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.side-card p{font-size:.92rem;color:var(--gris);margin:0}
+.side-card .big{font-family:'Sora',sans-serif;font-size:1.3rem;color:var(--encre);margin-bottom:4px}
+
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.tags .tag{font-size:12.5px;border:1px solid var(--ligne);border-radius:100px;padding:6px 13px;color:var(--encre)}
+
+.other-techs{display:flex;flex-wrap:wrap;gap:8px}
+.other-techs a{font-size:13px;text-decoration:none;color:var(--gris);border:1px solid var(--ligne);border-radius:100px;padding:7px 14px}
+.other-techs a:hover{border-color:var(--indigo);color:var(--encre)}
+
+@media(max-width:900px){
+  .tdetail{grid-template-columns:1fr}
+  .tgrid{grid-template-columns:repeat(2,1fr)}
+  .tsim-grid{grid-template-columns:1fr}
+  .proscons{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .tgrid{grid-template-columns:1fr}
+}

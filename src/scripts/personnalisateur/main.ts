@@ -12,6 +12,7 @@ import { syncPlace, bindPlacement } from './placement';
 import { bindDeselect } from './interactions';
 import { bindZoom, setZ } from './zoom';
 import { bindFileInput, restoreFileUI } from './file-input';
+import { TECHS } from './recommendation';
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
   return document.getElementById(id) as T;
@@ -189,8 +190,19 @@ function bindShotsClick(): void {
   });
 }
 
+// Pré-sélectionne une technique quand on arrive depuis une page du guide
+// (/personnalisateur?technique=serigraphie) — ne s'applique qu'aux
+// techniques réellement proposées ici (la broderie n'y figure pas encore).
+function applyTechFromUrl(): void {
+  const param = new URLSearchParams(window.location.search).get('technique');
+  if (param && Object.prototype.hasOwnProperty.call(TECHS, param)) {
+    S.tech = param as typeof S.tech;
+  }
+}
+
 export function init(): void {
   loadState();
+  applyTechFromUrl();
 
   paintModels();
   paintCaracteristiques();
