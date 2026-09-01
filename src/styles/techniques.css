@@ -72,6 +72,8 @@
 .proscons li{font-size:.92rem;color:var(--encre);padding-left:18px;position:relative}
 .proscons li::before{content:"";position:absolute;left:0;top:.55em;width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.5}
 
+.tdetail aside{position:sticky;top:96px}
+
 .side-card{border:1px solid var(--ligne);border-radius:18px;padding:24px;margin-bottom:18px}
 .side-card h4{font-family:'Sora',sans-serif;font-size:.92rem;margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .side-card p{font-size:.92rem;color:var(--gris);margin:0}
@@ -86,6 +88,7 @@
 
 @media(max-width:900px){
   .tdetail{grid-template-columns:1fr}
+  .tdetail aside{position:static}
   .tgrid{grid-template-columns:repeat(2,1fr)}
   .tsim-grid{grid-template-columns:1fr}
   .proscons{grid-template-columns:1fr}
