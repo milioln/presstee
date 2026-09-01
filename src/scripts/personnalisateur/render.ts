@@ -20,7 +20,8 @@ function designHTML(vi: number, live: boolean): string {
 function stageHTML(vi: number, live: boolean): string {
   const v = VIEWS[vi];
   const dark = lum(S.color.hex) < 0.42;
-  const svg = v.kind === 'flat' ? flatSVG(S.garment, v.side, S.color.hex, dark) : bustSVG(S.garment, v.side, S.color.hex, dark);
+  const variant = { coupe: S.coupe, manche: S.manche, col: S.col };
+  const svg = v.kind === 'flat' ? flatSVG(S.garment, v.side, S.color.hex, dark, variant) : bustSVG(S.garment, v.side, S.color.hex, dark, variant);
   const p = GARMENTS[S.garment].print[place()][v.kind];
   return svg + `<div class="printarea" style="left:${p.x}%;top:${p.y}%;width:${p.w}%;height:${p.h}%">${designHTML(vi, live)}</div>`;
 }

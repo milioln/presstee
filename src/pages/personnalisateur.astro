@@ -49,14 +49,30 @@ import '../styles/personnalisateur.css';
 					<div class="opts" id="models"></div>
 				</div>
 
+				<div class="block" id="caracBlock">
+					<h3><b>2</b>Caractéristiques</h3>
+					<div class="carac-row" id="caracCol" style="display:none">
+						<p class="carac-label">Col</p>
+						<div class="seg2" id="colSeg"><button data-col="rond">Rond</button><button data-col="v">V</button></div>
+					</div>
+					<div class="carac-row" id="caracManche" style="display:none">
+						<p class="carac-label">Manches</p>
+						<div class="seg2" id="mancheSeg"><button data-manche="courte">Courtes</button><button data-manche="longue">Longues</button></div>
+					</div>
+					<div class="carac-row" id="caracCoupe" style="display:none">
+						<p class="carac-label">Coupe</p>
+						<div class="seg2" id="coupeSeg"><button data-coupe="droite">Droite</button><button data-coupe="oversize">Oversize</button></div>
+					</div>
+				</div>
+
 				<div class="block">
-					<h3><b>2</b>La couleur</h3>
+					<h3><b>3</b>La couleur</h3>
 					<div class="swatches" id="colors"></div>
 					<div class="swname" id="colorName"></div>
 				</div>
 
 				<div class="block">
-					<h3><b>3</b>Votre visuel</h3>
+					<h3><b>4</b>Votre visuel</h3>
 					<div class="drop" id="drop">
 						<strong>Déposez votre fichier</strong>
 						<p>ou cliquez pour parcourir — PNG, JPG ou SVG</p>
@@ -67,7 +83,7 @@ import '../styles/personnalisateur.css';
 				</div>
 
 				<div class="block" id="placeBlock" style="display:none">
-					<h3><b>4</b>Emplacement</h3>
+					<h3><b>5</b>Emplacement</h3>
 					<div class="seg" id="place">
 						<button data-p="face" class="on">Face avant</button>
 						<button data-p="coeur">Cœur</button>
@@ -77,7 +93,7 @@ import '../styles/personnalisateur.css';
 				</div>
 
 				<div class="block" id="adjust" style="display:none">
-					<h3><b>5</b>Ajustements</h3>
+					<h3><b>6</b>Ajustements</h3>
 					<div class="ctl"><label>Largeur <em id="vSize"></em></label><input type="range" id="rSize" min="10" max="120" step="1" /></div>
 					<div class="ctl"><label>Rotation <em id="vRot"></em></label><input type="range" id="rRot" min="-180" max="180" step="1" /></div>
 					<div class="row"><button class="mini-btn" id="center">Recentrer</button><button class="mini-btn" id="reset">Réinitialiser</button></div>
@@ -85,7 +101,7 @@ import '../styles/personnalisateur.css';
 				</div>
 
 				<div class="block">
-					<h3><b>6</b>La quantité</h3>
+					<h3><b>7</b>La quantité</h3>
 					<div class="qty">
 						<button id="qMinus" aria-label="Diminuer">−</button>
 						<input type="number" id="qVal" min="1" max="5000" value="30" />
@@ -96,13 +112,13 @@ import '../styles/personnalisateur.css';
 				</div>
 
 				<div class="block">
-					<h3><b>7</b>La technique</h3>
+					<h3><b>8</b>La technique</h3>
 					<div class="techs" id="techs"></div>
 					<div class="reco" id="recoBox"></div>
 				</div>
 
 				<div class="block">
-					<h3><b>8</b>Le délai de production</h3>
+					<h3><b>9</b>Le délai de production</h3>
 					<div class="delai" id="delai">
 						<button data-d="standard" class="on"><strong>Standard</strong><em>J+10 ouvrés</em></button>
 						<button data-d="express"><strong>Express</strong><em>J+5 ouvrés</em></button>

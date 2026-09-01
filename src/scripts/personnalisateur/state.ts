@@ -3,6 +3,8 @@
 // le navigateur, pour ne rien perdre au rafraîchissement").
 import { catalogueColoris, quantiteParDefaut, type Garment, type Emplacement } from '../../config/parametres-metier';
 import type { TechKey } from './recommendation';
+import { VARIANT_DEFAUT } from './garments';
+import type { Coupe, Manche, Col } from './silhouettes';
 
 export type Coloris = { nom: string; hex: string };
 
@@ -11,6 +13,9 @@ export interface PersonnalisateurState {
   view: number;
   place: Emplacement;
   color: Coloris;
+  coupe: Coupe;
+  manche: Manche;
+  col: Col;
   img: string | null;
   fileName: string;
   vector: boolean;
@@ -36,6 +41,9 @@ export const S: PersonnalisateurState = {
   view: 0,
   place: 'face',
   color: catalogueColoris[0],
+  coupe: VARIANT_DEFAUT.coupe,
+  manche: VARIANT_DEFAUT.manche,
+  col: VARIANT_DEFAUT.col,
   img: null,
   fileName: '',
   vector: false,
@@ -62,7 +70,10 @@ const STORAGE_KEY = 'presstee:personnalisateur:v1';
 // zoom/pan (z, px, py) et la sélection (sel) sont un état d'écran, pas un
 // état de projet — ils repartent à zéro au rechargement, comme
 // natW/natH/colors/dom qui sont recalculés par l'analyse du fichier.
-type Persisted = Pick<PersonnalisateurState, 'garment' | 'view' | 'place' | 'img' | 'fileName' | 'vector' | 'x' | 'y' | 'w' | 'rot' | 'qty' | 'tech' | 'delai'> & {
+type Persisted = Pick<
+  PersonnalisateurState,
+  'garment' | 'view' | 'place' | 'coupe' | 'manche' | 'col' | 'img' | 'fileName' | 'vector' | 'x' | 'y' | 'w' | 'rot' | 'qty' | 'tech' | 'delai'
+> & {
   colorIndex: number;
 };
 
@@ -73,6 +84,9 @@ export function saveState(): void {
       garment: S.garment,
       view: S.view,
       place: S.place,
+      coupe: S.coupe,
+      manche: S.manche,
+      col: S.col,
       colorIndex,
       img: S.img,
       fileName: S.fileName,
@@ -101,6 +115,9 @@ export function loadState(): boolean {
     if (p.garment) S.garment = p.garment;
     if (typeof p.view === 'number') S.view = p.view;
     if (p.place) S.place = p.place;
+    if (p.coupe) S.coupe = p.coupe;
+    if (p.manche) S.manche = p.manche;
+    if (p.col) S.col = p.col;
     if (typeof p.colorIndex === 'number' && catalogueColoris[p.colorIndex]) S.color = catalogueColoris[p.colorIndex];
     if (typeof p.img === 'string') S.img = p.img;
     if (typeof p.fileName === 'string') S.fileName = p.fileName;

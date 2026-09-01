@@ -3,7 +3,7 @@
 // technique, délai, ajustements). Port direct de la V0 + persistance
 // locale (nouveauté V1).
 import { S, loadState } from './state';
-import { GARMENTS } from './garments';
+import { GARMENTS, CARACTERISTIQUES } from './garments';
 import { catalogueColoris, paliersQuantite, quantiteMin, quantiteMax } from '../../config/parametres-metier';
 import { placeSide } from './derived';
 import { render, paintTechs, paintRecap } from './render';
@@ -32,6 +32,63 @@ function paintModels(): void {
     S.view = placeSide();
     models.querySelectorAll('[data-g]').forEach((x) => x.classList.toggle('on', x === b));
     syncPlace();
+    paintCaracteristiques();
+    render();
+  });
+}
+
+// Col / manches / coupe : seules les caractéristiques pertinentes pour
+// la famille en cours sont affichées (CARACTERISTIQUES dans garments.ts).
+function paintCaracteristiques(): void {
+  const attrs = CARACTERISTIQUES[S.garment];
+
+  const colBlock = el('caracCol');
+  colBlock.style.display = attrs.col ? 'block' : 'none';
+  if (attrs.col) {
+    el('colSeg')
+      .querySelectorAll<HTMLButtonElement>('[data-col]')
+      .forEach((b) => b.classList.toggle('on', b.dataset.col === S.col));
+  }
+
+  const mancheBlock = el('caracManche');
+  mancheBlock.style.display = attrs.manche ? 'block' : 'none';
+  if (attrs.manche) {
+    el('mancheSeg')
+      .querySelectorAll<HTMLButtonElement>('[data-manche]')
+      .forEach((b) => b.classList.toggle('on', b.dataset.manche === S.manche));
+  }
+
+  const coupeBlock = el('caracCoupe');
+  coupeBlock.style.display = attrs.coupe ? 'block' : 'none';
+  if (attrs.coupe) {
+    el('coupeSeg')
+      .querySelectorAll<HTMLButtonElement>('[data-coupe]')
+      .forEach((b) => b.classList.toggle('on', b.dataset.coupe === S.coupe));
+  }
+
+  el('caracBlock').style.display = attrs.col || attrs.manche || attrs.coupe ? 'block' : 'none';
+}
+
+function bindCaracteristiques(): void {
+  el('colSeg').addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-col]');
+    if (!b) return;
+    S.col = b.dataset.col as typeof S.col;
+    paintCaracteristiques();
+    render();
+  });
+  el('mancheSeg').addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-manche]');
+    if (!b) return;
+    S.manche = b.dataset.manche as typeof S.manche;
+    paintCaracteristiques();
+    render();
+  });
+  el('coupeSeg').addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-coupe]');
+    if (!b) return;
+    S.coupe = b.dataset.coupe as typeof S.coupe;
+    paintCaracteristiques();
     render();
   });
 }
@@ -136,6 +193,8 @@ export function init(): void {
   loadState();
 
   paintModels();
+  paintCaracteristiques();
+  bindCaracteristiques();
   paintColors();
   bindDelai();
   bindTechs();

@@ -3,6 +3,25 @@
 // SVG eux-mêmes (pas des données métier) : ils restent ici. Les largeurs
 // en cm viennent de src/config/parametres-metier.ts.
 import { getZoneImpressionCm, type Emplacement, type Garment } from '../../config/parametres-metier';
+import { teeLikeBody, chemiseBody, hemBand, sweatHemInfo, type Coupe, type Manche, type Col } from './silhouettes';
+
+export interface Variant {
+  coupe: Coupe;
+  manche: Manche;
+  col: Col;
+}
+
+export const VARIANT_DEFAUT: Variant = { coupe: 'droite', manche: 'courte', col: 'rond' };
+
+// Caractéristiques pertinentes par famille — une casquette n'a ni col ni
+// manches, un sweat n'a pas de version manches courtes, une chemise a un
+// col fixe (patte de boutonnage) donc pas de variante rond/V.
+export const CARACTERISTIQUES: Record<Garment, { col?: Col[]; manche?: Manche[]; coupe?: Coupe[] }> = {
+  tshirt: { col: ['rond', 'v'], manche: ['courte', 'longue'], coupe: ['droite', 'oversize'] },
+  sweat: { coupe: ['droite', 'oversize'] },
+  chemise: { manche: ['courte', 'longue'], coupe: ['droite', 'oversize'] },
+  casquette: {},
+};
 
 const TEE_F = 'M148,54 L118,44 L52,92 L96,156 L122,136 L122,420 Q122,428 130,428 L270,428 Q278,428 278,420 L278,136 L304,156 L348,92 L282,44 L252,54 Q200,100 148,54 Z';
 const TEE_B = 'M148,54 L118,44 L52,92 L96,156 L122,136 L122,420 Q122,428 130,428 L270,428 Q278,428 278,420 L278,136 L304,156 L348,92 L282,44 L252,54 Q200,78 148,54 Z';
@@ -17,17 +36,24 @@ const HAIR = '#3B3242';
 const NEUTRE = '#D8D6DE';
 const BUST = 'M164,178 L136,170 L74,214 L114,274 L142,254 L142,442 L258,442 L258,254 L286,274 L326,214 L264,170 L236,178 Q200,208 164,178 Z';
 const BUST_LONG = 'M164,178 L134,168 L66,220 L112,290 L142,262 L142,442 L258,442 L258,262 L288,290 L334,220 L266,168 L236,178 Q200,208 164,178 Z';
+// Buste porté, coupe oversize : carrure et torse élargis (mêmes écarts
+// que BUST_LONG vs BUST, appliqués à un tour de buste plus large).
+const BUST_OVERSIZE = 'M156,178 L124,168 L60,216 L100,278 L126,256 L126,442 L274,442 L274,256 L300,278 L340,216 L276,168 L244,178 Q200,212 156,178 Z';
+const BUST_LONG_OVERSIZE = 'M156,178 L122,166 L52,222 L98,294 L126,264 L126,442 L274,442 L274,264 L302,294 L348,222 L278,166 L244,178 Q200,212 156,178 Z';
 const ARM_L = 'M114,274 L100,442 L142,442 L142,258 Z';
 const ARM_R = 'M286,274 L300,442 L258,442 L258,258 Z';
 const ARM_WAVE = 'M286,266 L330,176 Q338,162 325,155 Q311,148 304,162 L260,248 Z';
 
-export function bustSVG(g: Garment, side: 0 | 1, color: string, dark: boolean): string {
+export function bustSVG(g: Garment, side: 0 | 1, color: string, dark: boolean, variant: Variant = VARIANT_DEFAUT): string {
   const seam = dark ? 'rgba(255,255,255,.30)' : 'rgba(23,19,31,.16)';
   const edge = dark ? 'rgba(255,255,255,.16)' : 'rgba(23,19,31,.13)';
   const cap = g === 'casquette';
-  const long = g === 'sweat' || g === 'chemise';
+  // Le sweat est toujours manches longues ; le t-shirt et la chemise
+  // suivent le choix de manches courant.
+  const long = g === 'sweat' || variant.manche === 'longue';
+  const oversize = g !== 'casquette' && variant.coupe === 'oversize';
   const body = cap ? NEUTRE : color;
-  const wear = long ? BUST_LONG : BUST;
+  const wear = oversize ? (long ? BUST_LONG_OVERSIZE : BUST_OVERSIZE) : long ? BUST_LONG : BUST;
   let s = `<svg viewBox="0 0 400 460" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">`;
   if (side === 1) {
     s += `<circle cx="200" cy="112" r="47" fill="${HAIR}"/>`;
@@ -55,11 +81,22 @@ export function bustSVG(g: Garment, side: 0 | 1, color: string, dark: boolean): 
     if (!waving) s += `<circle cx="280" cy="446" r="15" fill="${SKIN}"/>`;
   }
   s += `<path d="${wear}" fill="${body}" stroke="${edge}" stroke-width="2" stroke-linejoin="round"/>`;
-  s += `<path d="${side === 0 ? 'M164,178 Q200,208 236,178' : 'M164,178 Q200,192 236,178'}" fill="none" stroke="${cap ? 'rgba(23,19,31,.16)' : seam}" stroke-width="3" stroke-linecap="round"/>`;
+  const neckXin = oversize ? 156 : 164;
+  const neckXout = oversize ? 244 : 236;
+  const isV = g === 'tshirt' && variant.col === 'v';
+  const neckStroke =
+    side === 0
+      ? isV
+        ? `M${neckXin},178 L200,${oversize ? 218 : 214} L${neckXout},178`
+        : `M${neckXin},178 Q200,${oversize ? 212 : 208} ${neckXout},178`
+      : `M${neckXin},178 Q200,${oversize ? 196 : 192} ${neckXout},178`;
+  s += `<path d="${neckStroke}" fill="none" stroke="${cap ? 'rgba(23,19,31,.16)' : seam}" stroke-width="3" stroke-linecap="round"/>`;
   if (g === 'chemise') {
-    s += `<path d="M164,178 L200,214 L178,166 Z" fill="${body}" stroke="${seam}" stroke-width="2" stroke-linejoin="round"/>`;
-    s += `<path d="M236,178 L200,214 L222,166 Z" fill="${body}" stroke="${seam}" stroke-width="2" stroke-linejoin="round"/>`;
-    s += `<path d="M191,206 L191,442 M209,206 L209,442" fill="none" stroke="${seam}" stroke-width="2"/>`;
+    const chinY = oversize ? 218 : 214;
+    const peakY = chinY - 48;
+    s += `<path d="M${neckXin},178 L200,${chinY} L${neckXin + 14},${peakY} Z" fill="${body}" stroke="${seam}" stroke-width="2" stroke-linejoin="round"/>`;
+    s += `<path d="M${neckXout},178 L200,${chinY} L${neckXout - 14},${peakY} Z" fill="${body}" stroke="${seam}" stroke-width="2" stroke-linejoin="round"/>`;
+    s += `<path d="M191,${chinY - 8} L191,442 M209,${chinY - 8} L209,442" fill="none" stroke="${seam}" stroke-width="2"/>`;
     [250, 300, 350, 400].forEach((cy) => (s += `<circle cx="200" cy="${cy}" r="4" fill="${seam}"/>`));
   }
   return s + `</svg>`;
@@ -171,8 +208,33 @@ export function zoneCm(garment: Garment, emplacement: Emplacement): number {
   return getZoneImpressionCm(garment, emplacement);
 }
 
-export function flatSVG(g: Garment, side: 0 | 1, color: string, dark: boolean): string {
-  const v = GARMENTS[g].flat[side];
+// Calcule la vue à plat pour la famille et la variante (col/manches/coupe)
+// choisies. La casquette n'a pas de variante : elle garde son tracé fixe.
+function flatViewFor(g: Garment, side: 0 | 1, variant: Variant): FlatView {
+  if (g === 'casquette') return GARMENTS.casquette.flat[side];
+
+  if (g === 'chemise') {
+    const r = chemiseBody(variant.coupe, variant.manche, side);
+    return { body: r.body, collar: r.collar, placket: r.placket, buttons: r.buttons, pocket: r.pocket };
+  }
+
+  if (g === 'sweat') {
+    // Un sweat est toujours manches longues et col rond, quel que soit
+    // le dernier choix fait sur un t-shirt (S.manche/S.col persistent
+    // entre familles, mais ne s'appliquent pas toutes aux deux).
+    const hem = sweatHemInfo(variant.coupe);
+    const r = teeLikeBody(variant.coupe, 'longue', 'rond', side, hem);
+    const seamLine = `M${200 - hem.halfW},${hem.hemY} L${200 + hem.halfW},${hem.hemY}`;
+    return { body: r.body, extra: hemBand(variant.coupe), lines: [...r.lines, seamLine] };
+  }
+
+  // tshirt
+  const r = teeLikeBody(variant.coupe, variant.manche, variant.col, side);
+  return { body: r.body, lines: r.lines };
+}
+
+export function flatSVG(g: Garment, side: 0 | 1, color: string, dark: boolean, variant: Variant = VARIANT_DEFAUT): string {
+  const v = flatViewFor(g, side, variant);
   const seam = dark ? 'rgba(255,255,255,.30)' : 'rgba(23,19,31,.16)';
   const edge = dark ? 'rgba(255,255,255,.16)' : 'rgba(23,19,31,.13)';
   let s = `<svg viewBox="0 0 400 460" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">`;
