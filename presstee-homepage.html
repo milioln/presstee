@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Presstee — Textile personnalisé à taille humaine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Shantell+Sans:wght@500;600&family=Sora:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --indigo:#9d83cf;
+  --jaune:#ffd77a;
+  --encre:#17131F;
+  --gris:#6C6580;
+  --gris-clair:#EDEAF6;
+  --ligne:#E7E3F2;
+  --r:18px;
+  --max:1180px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Manrope',system-ui,sans-serif;color:var(--encre);background:#fff;-webkit-font-smoothing:antialiased;line-height:1.6}
+h1,h2,h3{font-family:'Sora',system-ui,sans-serif;line-height:1.05;letter-spacing:-0.035em;font-weight:600}
+p{max-width:62ch}
+a{color:inherit}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 28px}
+section{padding:clamp(88px,13vw,166px) 0}
+.s-indigo{background:var(--indigo);color:#fff}
+.s-jaune{background:var(--jaune)}
+
+/* ---------- nav ---------- */
+header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--ligne)}
+.nav{display:flex;align-items:center;gap:32px;height:76px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+.brand span{font-family:'Shantell Sans',cursive;font-weight:600;font-size:23px;color:var(--indigo);line-height:1;letter-spacing:.01em}
+.links{display:flex;gap:26px;margin-left:auto;align-items:center}
+.links a{text-decoration:none;font-size:14.5px;color:var(--gris);font-weight:500;padding:6px 0;border-bottom:1.5px solid transparent}
+.links a:hover,.links a:focus-visible{color:var(--encre);border-bottom-color:var(--indigo)}
+.burger{display:none;margin-left:auto;background:none;border:0;cursor:pointer;padding:8px}
+.burger rect{fill:var(--encre)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;background:var(--encre);color:#fff;text-decoration:none;font-family:'Sora',sans-serif;font-weight:500;font-size:15.5px;letter-spacing:-0.012em;padding:15px 30px;border-radius:100px;border:0;cursor:pointer;transition:background .18s}
+.btn:hover{background:#332B4A}
+.btn-light{background:#fff;color:var(--encre)}
+.btn-light:hover{background:var(--jaune)}
+
+/* ---------- écran 1 : hero ---------- */
+.hero{padding:clamp(96px,17vh,164px) 0 clamp(84px,12vh,130px);text-align:center}
+.hero h1{font-size:clamp(3rem,12.2vw,10.2rem);letter-spacing:-0.055em}
+.hero h1 em{font-style:normal;color:var(--indigo);font-family:'Shantell Sans',cursive;font-weight:600;letter-spacing:0}
+.hero p{margin:36px auto 0;color:var(--gris);font-size:clamp(1.08rem,2.4vw,1.5rem);max-width:24ch;font-family:'Sora',sans-serif;letter-spacing:-0.02em;line-height:1.35}
+.hero .btn{margin-top:42px}
+.steps3{margin-top:44px;display:flex;justify-content:center;gap:34px;flex-wrap:wrap;color:var(--gris);font-size:14.5px}
+.steps3 span{display:flex;align-items:center;gap:9px}
+.steps3 b{width:23px;height:23px;border-radius:8px;background:var(--jaune);color:var(--encre);display:grid;place-items:center;font-family:'Sora',sans-serif;font-size:12px;font-weight:600}
+
+/* ---------- écran 2 : positionnement ---------- */
+.split{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(40px,7vw,92px);align-items:center}
+h2{font-size:clamp(2.05rem,5.2vw,3.5rem)}
+.lede{margin-top:26px;font-size:1.08rem}
+.lede + .lede{margin-top:18px}
+.pillars{display:grid;gap:14px}
+.pillar{background:#fff;color:var(--encre);padding:26px 28px;border-radius:var(--r)}
+.pillar h3{font-size:1.14rem;margin-bottom:7px;letter-spacing:-0.02em}
+.pillar p{color:var(--gris);font-size:.95rem;margin:0}
+
+/* ---------- écran 3 : processus ---------- */
+.rail{position:relative;margin-top:64px;padding-left:78px}
+.rail::before{content:"";position:absolute;left:23px;top:14px;bottom:14px;width:2px;background:var(--ligne)}
+.rail::after{content:"";position:absolute;left:23px;top:14px;width:2px;height:var(--fill,0%);background:var(--indigo);transition:height .25s linear}
+.step{position:relative;padding-bottom:44px}
+.step:last-child{padding-bottom:0}
+.step .n{position:absolute;left:-78px;top:-4px;width:48px;height:48px;border-radius:15px;background:#fff;border:2px solid var(--ligne);display:grid;place-items:center;font-family:'Sora',sans-serif;font-weight:600;font-size:15px;color:var(--gris);transition:.2s}
+.step.on .n{border-color:var(--indigo);background:var(--indigo);color:#fff}
+.step h3{font-size:1.2rem;margin-bottom:7px}
+.step p{color:var(--gris);font-size:.97rem}
+
+/* ---------- écran 4 : comprendre ---------- */
+.head-center{text-align:center;max-width:680px;margin:0 auto 60px}
+.head-center p{margin:22px auto 0}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{border-radius:var(--r);padding:34px 30px;background:#fff;color:var(--encre)}
+.card h3{font-size:1.3rem;margin-bottom:14px}
+.card p{color:var(--gris);font-size:.98rem}
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:24px}
+.chip{font-size:14px;padding:8px 15px;border-radius:100px;border:1px solid var(--ligne);text-decoration:none;font-weight:500;color:var(--encre)}
+.chip:hover{border-color:var(--indigo);background:var(--gris-clair)}
+
+/* ---------- écran 5 : passer commande ---------- */
+.way{background:#fff;color:var(--encre);border-radius:var(--r);padding:30px;border:1px solid var(--ligne);display:flex;flex-direction:column}
+.way-top{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.way .ico{width:44px;height:44px;flex-shrink:0;border-radius:13px;background:var(--indigo);display:grid;place-items:center}
+.way:nth-child(2) .ico{background:var(--jaune)}
+.way h3{font-size:1.22rem;margin:0}
+.way p{color:var(--gris);font-size:.96rem;flex:1}
+.way .go{margin-top:22px;font-size:14.5px;font-weight:600;text-decoration:none;border-bottom:1.5px solid var(--indigo);align-self:flex-start;padding-bottom:2px;color:var(--encre)}
+.coord{margin-top:20px;display:grid;gap:5px}
+.coord a{font-family:'Sora',sans-serif;font-weight:500;font-size:1.02rem;text-decoration:none;letter-spacing:-0.02em;color:var(--encre)}
+.coord a:hover{color:var(--indigo)}
+
+/* ---------- écran 6 : réalisations ---------- */
+.gal{columns:3;column-gap:18px;margin-top:52px}
+.tile{break-inside:avoid;margin-bottom:18px;border-radius:var(--r);display:grid;place-items:center;overflow:hidden}
+.tile svg{width:50%;height:auto}
+.t-w{background:#fff}
+.t-j{background:var(--jaune)}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--ligne);padding:66px 0 40px}
+.fgrid{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:40px}
+.fgrid h4{font-family:'Sora',sans-serif;font-size:13px;font-weight:600;margin-bottom:16px}
+.fgrid a{display:block;text-decoration:none;color:var(--gris);font-size:14.5px;padding:5px 0}
+.fgrid a:hover{color:var(--indigo)}
+.legal{margin-top:52px;padding-top:26px;border-top:1px solid var(--ligne);display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;font-size:13.5px;color:var(--gris)}
+
+@media(max-width:940px){
+  .links{display:none}
+  .links.open{display:flex;position:absolute;top:76px;left:0;right:0;background:#fff;flex-direction:column;gap:0;padding:14px 28px 26px;border-bottom:1px solid var(--ligne)}
+  .links.open a{padding:12px 0;font-size:16px;border-bottom:0}
+  .burger{display:block}
+  .split,.trio{grid-template-columns:1fr}
+  .gal{columns:2}
+  .fgrid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:560px){
+  .gal{columns:1}
+  .fgrid{grid-template-columns:1fr}
+  .rail{padding-left:62px}
+  .step .n{left:-62px;width:40px;height:40px;border-radius:13px}
+  .rail::before,.rail::after{left:19px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+:focus-visible{outline:2.5px solid var(--encre);outline-offset:3px;border-radius:6px}
+</style>
+</head>
+<body>
+
+<header>
+<div class="wrap nav">
+  <a class="brand" href="#top">
+    <svg width="36" height="36" viewBox="0 0 75 75" aria-hidden="true"><rect x="13" y="13" width="60" height="60" rx="14" fill="#9d83cf"/><rect x="2" y="2" width="60" height="60" rx="14" fill="#ffd77a"/><g transform="translate(-5.5,-1) scale(0.75)"><path d="M28,20 L44,12 Q50,22 56,12 L72,20 L90,36 L76,50 L70,44 L70,90 L30,90 L30,44 L24,50 L10,36 Z" fill="#fff"/></g></svg>
+    <span>PRESSTEE</span>
+  </a>
+  <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false">
+    <svg width="24" height="16" viewBox="0 0 24 16"><rect width="24" height="2" rx="1"/><rect y="7" width="24" height="2" rx="1"/><rect y="14" width="18" height="2" rx="1"/></svg>
+  </button>
+  <nav class="links" id="links">
+    <a href="#techniques">Guide</a>
+    <a href="#">Personnalisateur</a>
+    <a href="#">Produits</a>
+    <a href="#creations">Réalisations</a>
+    <a href="#commander">Contact</a>
+  </nav>
+</div>
+</header>
+
+<main id="top">
+
+<section class="hero">
+  <div class="wrap">
+    <h1>Bienvenue chez<br><em>PRESSTEE</em></h1>
+    <p>Obtenez vos textiles personnalisés en 3 clics.</p>
+    <a class="btn" href="#">Commencez votre projet</a>
+    <div class="steps3">
+      <span><b>1</b>Choisissez votre textile</span>
+      <span><b>2</b>Ajoutez votre visuel</span>
+      <span><b>3</b>Validez votre projet</span>
+    </div>
+  </div>
+</section>
+
+<section class="s-indigo">
+  <div class="wrap split">
+    <div>
+      <h2>Le textile personnalisé,<br>à taille humaine.</h2>
+      <p class="lede">Presstee est un atelier, pas une plateforme. Nous choisissons les textiles, nous réalisons nous-mêmes le marquage et nous suivons chaque étape du premier échange jusqu'à la livraison.</p>
+      <p class="lede">Concrètement : moins d'intermédiaires entre votre projet et le vêtement que vous recevez, et quelqu'un qui connaît votre dossier à chaque étape.</p>
+    </div>
+    <div class="pillars">
+      <div class="pillar"><h3>Une qualité contrôlée</h3><p>Nous vérifions vos fichiers, les dimensions et le positionnement. Vous validez un bon à tirer, et rien ne part en production avant votre accord. Avant la livraison, nous prenons le temps de contrôler la qualité et la conformité de notre production.</p></div>
+      <div class="pillar"><h3>Un coût allégé</h3><p>Entre vous et le vêtement fini, il n'y a que nous. Pas d'agence qui sous-traite, pas de marge ajoutée en cours de route. Vous payez le textile et le marquage, rien d'autre.</p></div>
+      <div class="pillar"><h3>Des délais que nous tenons</h3><p>Nos machines et notre planning sont entre nos mains. Le délai que nous annonçons ne dépend pas de la file d'attente d'un prestataire.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="wrap">
+    <h2 style="max-width:15ch">Un processus clair, étape par étape.</h2>
+    <div class="rail" id="rail">
+      <div class="step"><div class="n">1</div><h3>Compréhension du besoin</h3><p>Nous analysons votre projet, l'usage prévu et vos contraintes de budget et de délai.</p></div>
+      <div class="step"><div class="n">2</div><h3>Choix du textile</h3><p>Nous sélectionnons le vêtement adapté au rendu recherché et au budget.</p></div>
+      <div class="step"><div class="n">3</div><h3>Choix de la technique</h3><p>Sérigraphie, broderie ou transfert, selon le visuel, la quantité et l'usage.</p></div>
+      <div class="step"><div class="n">4</div><h3>Visualisation du projet</h3><p>Vous voyez le rendu sur le vêtement avant d'engager quoi que ce soit.</p></div>
+      <div class="step"><div class="n">5</div><h3>Calcul du prix</h3><p>Le coût du textile et celui du marquage vous sont présentés séparément.</p></div>
+      <div class="step"><div class="n">6</div><h3>Passage de commande</h3><p>Vous validez la demande. Rien n'est lancé à ce stade.</p></div>
+      <div class="step"><div class="n">7</div><h3>Vérification humaine</h3><p>Nous contrôlons vos fichiers, les dimensions, le positionnement et la faisabilité.</p></div>
+      <div class="step"><div class="n">8</div><h3>Validation du bon à tirer</h3><p>Vous recevez un BAT et validez le rendu final. La production ne démarre pas avant.</p></div>
+      <div class="step"><div class="n">9</div><h3>Production</h3><p>Nous lançons la fabrication uniquement après votre accord écrit.</p></div>
+      <div class="step"><div class="n">10</div><h3>Livraison et suivi</h3><p>Expédition et suivi jusqu'à réception, avec un interlocuteur unique.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="techniques" class="s-jaune">
+  <div class="wrap">
+    <div class="head-center">
+      <h2>Bien choisir, c'est avant tout comprendre.</h2>
+      <p style="color:#5C4A1F">Le textile et la technique de marquage influencent directement la qualité du rendu, sa durabilité, les délais et le prix. Voici de quoi décider en connaissance de cause.</p>
+    </div>
+    <div class="trio">
+      <div class="card">
+        <h3>Les techniques de marquage</h3>
+        <p>Comment fonctionne chaque technique, à quoi ressemble le rendu, combien de temps elle tient au lavage, à partir de quelle quantité elle devient intéressante, et ce qu'elle ne permet pas de faire.</p>
+        <div class="chips">
+          <a class="chip" href="#">Sérigraphie</a>
+          <a class="chip" href="#">Broderie</a>
+          <a class="chip" href="#">Transfert</a>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Le textile</h3>
+        <p>Le grammage, la matière et l'origine du vêtement pèsent autant sur le rendu et sur le prix que la technique de marquage. Toutes ces informations sont indiquées sur chaque page produit.</p>
+        <div class="chips">
+          <a class="chip" href="#">T-shirts</a>
+          <a class="chip" href="#">Polos</a>
+          <a class="chip" href="#">Sweats</a>
+          <a class="chip" href="#">Chemises</a>
+          <a class="chip" href="#">Tote bags</a>
+        </div>
+      </div>
+      <div class="card" id="pourqui">
+        <h3>Des conseils par activité</h3>
+        <p>Les contraintes d'une association ne sont pas celles d'un restaurant. Nous avons rassemblé les besoins récurrents, les textiles adaptés et les budgets réalistes par profil.</p>
+        <div class="chips">
+          <a class="chip" href="#">Associations</a>
+          <a class="chip" href="#">BDE et écoles</a>
+          <a class="chip" href="#">Entreprises</a>
+          <a class="chip" href="#">Bars et restaurants</a>
+          <a class="chip" href="#">Commerces</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="commander">
+  <div class="wrap">
+    <div class="head-center">
+      <h2>Trois façons simples de passer commande.</h2>
+      <p style="color:var(--gris)">La personnalisation textile est un domaine technique. Nous vous invitons à nous contacter pour être conseillé, mais vous restez libre de commander comme vous le souhaitez.</p>
+    </div>
+    <div class="trio">
+      <div class="way">
+        <div class="way-top">
+          <div class="ico"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M16 16l4.5 4.5"/></svg></div>
+          <h3>En ligne</h3>
+        </div>
+        <p>Choisissez votre textile, ajoutez votre visuel, validez votre projet. Notre optimisateur et notre concepteur vous accompagnent en autonomie.</p>
+        <a class="go" href="#">Commencer maintenant</a>
+      </div>
+      <div class="way">
+        <div class="way-top">
+          <div class="ico"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#17131F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></div>
+          <h3>Par formulaire</h3>
+        </div>
+        <p>Présentez votre projet en quelques lignes. Nous revenons vers vous avec une proposition.</p>
+        <a class="go" href="#">Remplir le formulaire</a>
+      </div>
+      <div class="way">
+        <div class="way-top">
+          <div class="ico"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M4.5 5.5c0 8 6 14 14 14l2.5-3-4-2.5-2 2c-2.5-1.3-4.7-3.5-6-6l2-2L8.5 4l-3 1.5z"/></svg></div>
+          <h3>Par téléphone ou mail</h3>
+        </div>
+        <p>Un doute sur la technique, le textile ou la quantité ? Parlons-en directement.</p>
+        <div class="coord">
+          <a href="tel:+33600000000">06 00 00 00 00</a>
+          <a href="mailto:contact@presstee.fr">contact@presstee.fr</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="creations" class="s-indigo">
+  <div class="wrap">
+    <h2 style="max-width:13ch">Quelques réalisations.</h2>
+    <div class="gal">
+      <div class="tile t-w" style="height:330px"><svg viewBox="0 0 100 100" fill="#9d83cf"><path d="M28,20 L44,12 Q50,22 56,12 L72,20 L90,36 L76,50 L70,44 L70,90 L30,90 L30,44 L24,50 L10,36 Z"/></svg></div>
+      <div class="tile t-j" style="height:230px"><svg viewBox="0 0 100 100" fill="#fff"><path d="M28,20 L44,12 Q50,22 56,12 L72,20 L90,36 L76,50 L70,44 L70,90 L30,90 L30,44 L24,50 L10,36 Z"/></svg></div>
+      <div class="tile t-j" style="height:280px"><svg viewBox="0 0 100 100" fill="#fff"><path d="M28,20 L44,12 Q50,22 56,12 L72,20 L90,36 L76,50 L70,44 L70,90 L30,90 L30,44 L24,50 L10,36 Z"/></svg></div>
+      <div class="tile t-w" style="height:300px"><svg viewBox="0 0 100 100" fill="#9d83cf"><path d="M28,20 L44,12 Q50,22 56,12 L72,20 L90,36 L76,50 L70,44 L70,90 L30,90 L30,44 L24,50 L10,36 Z"/></svg></div>
+      <div class="tile t-w" style="height:240px"><svg viewBox="0 0 100 100" fill="#9d83cf"><path d="M28,20 L44,12 Q50,22 56,12 L72,20 L90,36 L76,50 L70,44 L70,90 L30,90 L30,44 L24,50 L10,36 Z"/></svg></div>
+      <div class="tile t-j" style="height:320px"><svg viewBox="0 0 100 100" fill="#fff"><path d="M28,20 L44,12 Q50,22 56,12 L72,20 L90,36 L76,50 L70,44 L70,90 L30,90 L30,44 L24,50 L10,36 Z"/></svg></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+<div class="wrap">
+  <div class="fgrid">
+    <div>
+      <a class="brand" href="#top" style="margin-bottom:14px">
+        <svg width="32" height="32" viewBox="0 0 75 75" aria-hidden="true"><rect x="13" y="13" width="60" height="60" rx="14" fill="#9d83cf"/><rect x="2" y="2" width="60" height="60" rx="14" fill="#ffd77a"/><g transform="translate(-5.5,-1) scale(0.75)"><path d="M28,20 L44,12 Q50,22 56,12 L72,20 L90,36 L76,50 L70,44 L70,90 L30,90 L30,44 L24,50 L10,36 Z" fill="#fff"/></g></svg>
+        <span>PRESSTEE</span>
+      </a>
+      <p style="color:var(--gris);font-size:14.5px;max-width:30ch">Atelier de personnalisation textile. Angoulême, Charente.</p>
+    </div>
+    <div><h4>Comprendre</h4><a href="#techniques">Techniques de marquage</a><a href="#pourqui">Pour qui</a><a href="#process">Comment ça marche</a><a href="#">Guides et conseils</a></div>
+    <div><h4>Commander</h4><a href="#">Produits</a><a href="#">Packs et offres</a><a href="#">FAQ</a><a href="#commander">Contact</a></div>
+    <div><h4>Informations</h4><a href="#">Mentions légales</a><a href="#">Politique de confidentialité</a><a href="#">Conditions générales de vente</a></div>
+  </div>
+  <div class="legal">
+    <span>© 2026 Presstee</span>
+    <span>SIRET à compléter après immatriculation</span>
+  </div>
+</div>
+</footer>
+
+<script>
+const burger=document.getElementById('burger'),links=document.getElementById('links');
+burger.addEventListener('click',()=>{const o=links.classList.toggle('open');burger.setAttribute('aria-expanded',o)});
+links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
+
+const rail=document.getElementById('rail'),steps=[...rail.querySelectorAll('.step')];
+function paint(){
+  const r=rail.getBoundingClientRect(),mid=innerHeight*0.62;
+  rail.style.setProperty('--fill',Math.max(0,Math.min(100,(mid-r.top)/r.height*100))+'%');
+  steps.forEach(s=>{s.classList.toggle('on',s.querySelector('.n').getBoundingClientRect().top<mid)});
+}
+paint();addEventListener('scroll',paint,{passive:true});addEventListener('resize',paint);
+</script>
+</body>
+</html>
