@@ -53,41 +53,36 @@ function grammageTier(g: number | null): string {
 					</div>
 
 					<div class="fgroup">
-						<h4>Coupe</h4>
+						<h4>Coupe <span class="fhint">plusieurs choix possibles</span></h4>
 						<div class="pills" id="fCoupe">
-							<button class="pill on" data-coupe="toutes">Toutes</button>
 							{coupes.map((c) => <button class="pill" data-coupe={c}>{LABELS_COUPE[c]}</button>)}
 						</div>
 					</div>
 
 					<div class="fgroup">
-						<h4>Gamme de prix</h4>
+						<h4>Gamme de prix <span class="fhint">plusieurs choix possibles</span></h4>
 						<div class="pills" id="fGamme">
-							<button class="pill on" data-gamme="toutes">Toutes</button>
 							{gammes.map((g) => <button class="pill" data-gamme={g}>{LABELS_GAMME_PRIX[g]}</button>)}
 						</div>
 					</div>
 
 					<div class="fgroup">
-						<h4>Public</h4>
+						<h4>Public <span class="fhint">l'unisexe s'affiche avec homme/femme</span></h4>
 						<div class="pills" id="fGenre">
-							<button class="pill on" data-genre="tous">Tous</button>
 							{genres.map((g) => <button class="pill" data-genre={g}>{LABELS_GENRE[g]}</button>)}
 						</div>
 					</div>
 
 					<div class="fgroup">
-						<h4>Manches</h4>
+						<h4>Manches <span class="fhint">plusieurs choix possibles</span></h4>
 						<div class="pills" id="fManches">
-							<button class="pill on" data-manches="toutes">Toutes</button>
 							{manchesOptions.map((m) => <button class="pill" data-manches={m}>{LABELS_MANCHES[m]}</button>)}
 						</div>
 					</div>
 
 					<div class="fgroup">
-						<h4>Grammage</h4>
+						<h4>Grammage <span class="fhint">plusieurs choix possibles</span></h4>
 						<div class="pills" id="fGrammage">
-							<button class="pill on" data-grammage="tous">Tous</button>
 							<button class="pill" data-grammage="leger">Léger (&lt;150 g/m²)</button>
 							<button class="pill" data-grammage="moyen">Moyen (150–185)</button>
 							<button class="pill" data-grammage="dense">Dense (185–220)</button>
@@ -172,26 +167,43 @@ function grammageTier(g: number | null): string {
 		const sortSelect = document.getElementById('pSort') as HTMLSelectElement;
 		const marqueChecks = [...document.querySelectorAll<HTMLInputElement>('#fMarque input')];
 
-		const state = { type: 'toutes', genre: 'tous', manches: 'toutes', grammage: 'tous', coupe: 'toutes', gamme: 'toutes', page: 1 };
+		// Chaque filtre (sauf "Type de textile", qui n'a qu'une seule valeur
+		// active pour l'instant) accepte plusieurs sélections à la fois :
+		// cliquer sur une pastille l'ajoute ou la retire de l'ensemble, sans
+		// désélectionner les autres. Aucune sélection dans un groupe = ce
+		// groupe ne filtre rien.
+		const state: Record<string, Set<string>> & { page: number } = {
+			genre: new Set<string>(),
+			manches: new Set<string>(),
+			grammage: new Set<string>(),
+			coupe: new Set<string>(),
+			gamme: new Set<string>(),
+			page: 1,
+		} as any;
 
-		function bindPillGroup(id: string, key: keyof typeof state) {
+		function bindMultiPillGroup(id: string, key: 'genre' | 'manches' | 'grammage' | 'coupe' | 'gamme') {
 			const group = document.getElementById(id)!;
 			group.addEventListener('click', (e) => {
 				const b = (e.target as HTMLElement).closest<HTMLButtonElement>('.pill');
 				if (!b || b.disabled) return;
-				group.querySelectorAll('.pill').forEach((p) => p.classList.remove('on'));
-				b.classList.add('on');
-				(state as any)[key] = b.dataset[key] as string;
+				const value = b.dataset[key] as string;
+				const set = state[key] as Set<string>;
+				if (set.has(value)) {
+					set.delete(value);
+					b.classList.remove('on');
+				} else {
+					set.add(value);
+					b.classList.add('on');
+				}
 				state.page = 1;
 				apply();
 			});
 		}
-		bindPillGroup('fType', 'type');
-		bindPillGroup('fGenre', 'genre');
-		bindPillGroup('fManches', 'manches');
-		bindPillGroup('fGrammage', 'grammage');
-		bindPillGroup('fCoupe', 'coupe');
-		bindPillGroup('fGamme', 'gamme');
+		bindMultiPillGroup('fGenre', 'genre');
+		bindMultiPillGroup('fManches', 'manches');
+		bindMultiPillGroup('fGrammage', 'grammage');
+		bindMultiPillGroup('fCoupe', 'coupe');
+		bindMultiPillGroup('fGamme', 'gamme');
 
 		searchInput.addEventListener('input', () => {
 			state.page = 1;
@@ -210,13 +222,8 @@ function grammageTier(g: number | null): string {
 			searchInput.value = '';
 			marqueChecks.forEach((c) => (c.checked = true));
 			document.querySelectorAll('.pill:not(.soon)').forEach((p) => p.classList.remove('on'));
-			document.querySelector('#fType [data-type]')!.classList.add('on');
-			document.querySelector('[data-genre="tous"]')!.classList.add('on');
-			document.querySelector('[data-manches="toutes"]')!.classList.add('on');
-			document.querySelector('[data-grammage="tous"]')!.classList.add('on');
-			document.querySelector('[data-coupe="toutes"]')!.classList.add('on');
-			document.querySelector('[data-gamme="toutes"]')!.classList.add('on');
-			Object.assign(state, { type: 'toutes', genre: 'tous', manches: 'toutes', grammage: 'tous', coupe: 'toutes', gamme: 'toutes', page: 1 });
+			(['genre', 'manches', 'grammage', 'coupe', 'gamme'] as const).forEach((k) => state[k].clear());
+			state.page = 1;
 			apply();
 		});
 
@@ -226,11 +233,15 @@ function grammageTier(g: number | null): string {
 
 			let visible = cards.filter((c) => {
 				if (q && !c.dataset.search!.includes(q)) return false;
-				if (state.genre !== 'tous' && c.dataset.genre !== state.genre) return false;
-				if (state.manches !== 'toutes' && c.dataset.manches !== state.manches) return false;
-				if (state.grammage !== 'tous' && c.dataset.grammage !== state.grammage) return false;
-				if (state.coupe !== 'toutes' && c.dataset.coupe !== state.coupe) return false;
-				if (state.gamme !== 'toutes' && c.dataset.gamme !== state.gamme) return false;
+				if (state.genre.size > 0) {
+					const g = c.dataset.genre!;
+					const matches = state.genre.has(g) || (g === 'unisexe' && (state.genre.has('homme') || state.genre.has('femme')));
+					if (!matches) return false;
+				}
+				if (state.manches.size > 0 && !state.manches.has(c.dataset.manches!)) return false;
+				if (state.grammage.size > 0 && !state.grammage.has(c.dataset.grammage!)) return false;
+				if (state.coupe.size > 0 && !state.coupe.has(c.dataset.coupe!)) return false;
+				if (state.gamme.size > 0 && !state.gamme.has(c.dataset.gamme!)) return false;
 				if (!activeBrands.has(c.dataset.marque!)) return false;
 				return true;
 			});

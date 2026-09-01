@@ -24,7 +24,8 @@
 .pfilters{position:sticky;top:96px;display:grid;gap:22px}
 .pfilters .fgroup{border-bottom:1px solid var(--ligne);padding-bottom:18px}
 .pfilters .fgroup:last-child{border-bottom:0}
-.pfilters h4{font-family:'Sora',sans-serif;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--gris);margin-bottom:12px;font-weight:600}
+.pfilters h4{font-family:'Sora',sans-serif;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--gris);margin-bottom:12px;font-weight:600;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.pfilters h4 .fhint{font-family:'Manrope',sans-serif;font-size:11px;letter-spacing:0;text-transform:none;color:var(--gris);opacity:.75;font-weight:400}
 .psearch{width:100%;padding:10px 14px;border:1.5px solid var(--ligne);border-radius:11px;font:inherit;font-size:14px}
 .psearch:focus{outline:none;border-color:var(--indigo)}
 .pills{display:flex;flex-wrap:wrap;gap:7px}
