@@ -38,6 +38,13 @@ export function inferGammePrix(prixUnitaire: number): GammePrix {
   return 'premium';
 }
 
+// Détecte les matières bio, recyclées ou labellisées à partir du texte
+// de composition (ex. "certifié biologique", "polyester recyclé",
+// "certifié RCS", "Better Cotton").
+export function inferResponsable(detail: string): boolean {
+  return /biologique|\bbio\b|organique|recycl|\brcs\b|better cotton/i.test(detail);
+}
+
 export const LABELS_TYPE_TEXTILE: Record<TypeTextile, string> = {
   't-shirts': 'T-shirts',
   sweats: 'Sweats',

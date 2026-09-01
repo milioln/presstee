@@ -46,15 +46,25 @@
 .psort{border:1.5px solid var(--ligne);border-radius:11px;padding:9px 12px;font:inherit;font-size:13.5px;background:#fff;color:var(--encre)}
 
 .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.pcard{border:1.5px solid var(--ligne);border-radius:18px;padding:20px;background:#fff;text-decoration:none;color:var(--encre);display:flex;flex-direction:column;gap:10px;transition:.15s}
-.pcard:hover{border-color:var(--indigo);box-shadow:0 4px 18px rgba(23,19,31,.06);transform:translateY(-1px)}
+.pcard{border:1.5px solid var(--ligne);border-radius:18px;padding:20px;background:#fff;color:var(--encre);display:flex;flex-direction:column;gap:10px;transition:.15s;position:relative}
+.pcard:hover{border-color:var(--indigo);box-shadow:0 4px 18px rgba(23,19,31,.06)}
+.pcard-link{text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px}
 .pcard .brand{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--gris);font-weight:600}
 .pcard h3{font-family:'Sora',sans-serif;font-size:1.06rem;letter-spacing:-0.01em;line-height:1.25;margin:0}
 .pcard .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
 .pcard .tag{font-size:11px;color:var(--gris);background:var(--voile);padding:3px 9px;border-radius:100px}
-.pcard .price{margin-top:auto;padding-top:8px;border-top:1px dashed var(--ligne);font-family:'Sora',sans-serif;font-size:.96rem}
-.pcard .price b{font-size:1.12rem}
-.pcard .price span{color:var(--gris);font-size:.82rem}
+.pcard .tag-eco{color:#2E7D5B;background:rgba(46,125,91,.09)}
+
+.pcard-compare{position:absolute;top:16px;right:16px;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--gris);cursor:pointer;background:#fff;padding:3px 8px 3px 3px;border-radius:100px;border:1px solid var(--ligne)}
+.pcard-compare input{accent-color:var(--indigo);width:14px;height:14px;cursor:pointer}
+
+.pcard-price{margin-top:auto;padding-top:10px;border-top:1px dashed var(--ligne);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.qtyrow{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--gris)}
+.qtyInput{width:52px;padding:5px 6px;border:1.5px solid var(--ligne);border-radius:8px;font:inherit;font-size:12.5px;text-align:center}
+.qtyInput:focus{outline:none;border-color:var(--indigo)}
+.priceOut{font-family:'Sora',sans-serif;font-size:.96rem;text-align:right}
+.priceOut b{font-size:1.1rem}
+.priceOut span{color:var(--gris);font-size:.8rem}
 
 .pempty{padding:60px 20px;text-align:center;color:var(--gris)}
 
@@ -62,6 +72,32 @@
 .ppag button{width:38px;height:38px;border:1.5px solid var(--ligne);background:#fff;border-radius:10px;cursor:pointer;font:inherit;font-size:13.5px;color:var(--encre)}
 .ppag button.on{border-color:var(--indigo);background:var(--indigo);color:#fff}
 .ppag button:disabled{opacity:.35;cursor:not-allowed}
+
+/* ---------- comparateur ---------- */
+.mini-btn{background:none;border:0;font:inherit;font-size:13px;color:var(--gris);cursor:pointer;text-decoration:underline;padding:4px}
+.mini-btn:hover{color:var(--encre)}
+
+.comparetray{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120%);opacity:0;transition:transform .25s,opacity .25s;background:var(--encre);color:#fff;border-radius:100px;padding:12px 14px 12px 22px;display:flex;align-items:center;gap:18px;box-shadow:0 10px 30px rgba(23,19,31,.25);z-index:60;font-size:14px}
+.comparetray.show{transform:translateX(-50%) translateY(0);opacity:1}
+.comparetray.shake{animation:comparetray-shake .4s}
+@keyframes comparetray-shake{0%,100%{transform:translateX(-50%) translateY(0)}25%{transform:translateX(calc(-50% - 6px)) translateY(0)}75%{transform:translateX(calc(-50% + 6px)) translateY(0)}}
+.comparetray .compareMax{color:rgba(255,255,255,.55);font-size:12.5px}
+.comparetray-actions{display:flex;align-items:center;gap:10px}
+.comparetray .mini-btn{color:rgba(255,255,255,.7)}
+.comparetray .mini-btn:hover{color:#fff}
+.comparetray .btn{margin-top:0;width:auto;padding:10px 20px;font-size:14px}
+
+.comparemodal{position:fixed;inset:0;background:rgba(23,19,31,.5);z-index:70;display:none;align-items:center;justify-content:center;padding:24px}
+.comparemodal.open{display:flex}
+.comparemodal-inner{background:#fff;border-radius:20px;max-width:960px;width:100%;max-height:85vh;overflow-y:auto;padding:32px;position:relative}
+.comparemodal-close{position:absolute;top:20px;right:20px;width:34px;height:34px;border-radius:50%;border:1px solid var(--ligne);background:#fff;font-size:18px;cursor:pointer;color:var(--gris)}
+.comparemodal-close:hover{border-color:var(--indigo);color:var(--encre)}
+.comparemodal h3{font-size:1.25rem;margin-bottom:20px}
+.comparemodal-scroll{overflow-x:auto}
+#compareTable{border-collapse:collapse;width:100%;font-size:13.5px;min-width:480px}
+#compareTable th,#compareTable td{padding:11px 16px;border-bottom:1px solid var(--ligne);text-align:left;vertical-align:top}
+#compareTable thead th{font-family:'Sora',sans-serif;font-weight:600;color:var(--encre);background:var(--voile);white-space:nowrap}
+#compareTable tbody td:first-child{color:var(--gris);font-weight:500;white-space:nowrap}
 
 @media(max-width:860px){
   .plist{grid-template-columns:1fr}
