@@ -57,7 +57,7 @@ header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop
 .split{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(40px,7vw,92px);align-items:center}
 h2{font-size:clamp(2.05rem,5.2vw,3.5rem)}
 .lede{margin-top:26px;font-size:1.08rem}
-.lede + .lede{margin-top:18px}
+.lede + .lede{margin-top:10px}
 .pillars{display:grid;gap:14px}
 .pillar{background:#fff;color:var(--encre);padding:26px 28px;border-radius:var(--r)}
 .pillar h3{font-size:1.14rem;margin-bottom:7px;letter-spacing:-0.02em}
