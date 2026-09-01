@@ -37,7 +37,7 @@ export const TECHNIQUES: Technique[] = [
     couleurs: 'Illimitées, dégradés et photos possibles',
     prixRelatif: 2,
     durabilite: 'Bonne — le visuel est appliqué en surface',
-    image: null,
+    image: '/techniques/transfert-premium-1.jpg',
   },
   {
     slug: 'transfert-serigraphique',

@@ -8,6 +8,7 @@ import SectorSelector from '../components/SectorSelector.astro';
 import RealisationsGrid from '../components/RealisationsGrid.astro';
 import { siteConfig } from '../config/site';
 import '../styles/global.css';
+import '../styles/techniques.css';
 ---
 
 <Layout title={`${siteConfig.nom} — ${siteConfig.baseline}`}>
@@ -40,6 +41,22 @@ import '../styles/global.css';
 					<div class="pillar"><h3>Une qualité contrôlée</h3><p>Nous vérifions vos fichiers, les dimensions et le positionnement. Vous validez un bon à tirer, et rien ne part en production avant votre accord. Avant la livraison, nous prenons le temps de contrôler la qualité et la conformité de notre production.</p></div>
 					<div class="pillar"><h3>Un coût allégé</h3><p>Entre vous et le vêtement fini, il n'y a que nous. Pas d'agence qui sous-traite, pas de marge ajoutée en cours de route. Vous payez le textile et le marquage, rien d'autre.</p></div>
 					<div class="pillar"><h3>Des délais que nous tenons</h3><p>Nos machines et notre planning sont entre nos mains. Le délai que nous annonçons ne dépend pas de la file d'attente d'un prestataire.</p></div>
+				</div>
+			</div>
+		</section>
+
+		<section class="s-simteaser">
+			<div class="wrap">
+				<div class="tsim simteaser">
+					<span class="tsim-eyebrow"><span class="regmark" aria-hidden="true"></span>Simulateur — 30 secondes</span>
+					<h2>Pas sûr de la technique qu'il vous faut ?</h2>
+					<p>Quantité de pièces, nombre de couleurs, ce qui compte le plus pour vous : trois questions, une recommandation claire entre sérigraphie, transfert et broderie.</p>
+					<div class="simteaser-qs">
+						<span>1. Quantité de pièces</span>
+						<span>2. Couleurs du visuel</span>
+						<span>3. Ce qui compte le plus</span>
+					</div>
+					<a class="btn btn-jaune" href="/techniques#tsim">Faire le test →</a>
 				</div>
 			</div>
 		</section>
