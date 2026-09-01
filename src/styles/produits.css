@@ -31,6 +31,8 @@
 .pill{border:1.5px solid var(--ligne);background:#fff;border-radius:100px;padding:7px 13px;font:inherit;font-size:13px;cursor:pointer;color:var(--encre)}
 .pill:hover{border-color:var(--indigo)}
 .pill.on{border-color:var(--indigo);background:var(--indigo);color:#fff}
+.pill.soon{opacity:.45;cursor:not-allowed;color:var(--gris)}
+.pill.soon:hover{border-color:var(--ligne)}
 .checks{display:grid;gap:9px;max-height:220px;overflow-y:auto}
 .check{display:flex;align-items:center;gap:9px;font-size:13.5px;cursor:pointer}
 .check input{accent-color:var(--indigo);width:15px;height:15px}
