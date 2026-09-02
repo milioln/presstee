@@ -1,9 +1,8 @@
 // Dépôt de fichier par glisser-déposer ou par clic — port direct de la V0.
 import { S } from './state';
-import { render } from './render';
+import { render, paintWidth } from './render';
 import { analyse } from './file-analysis';
 import { syncPlace } from './placement';
-import { syncSliders } from './sliders';
 
 function loadFile(f: File): void {
   const r = new FileReader();
@@ -25,7 +24,7 @@ function loadFile(f: File): void {
     paintFileInfo(f.name);
     showPostUploadBlocks();
     syncPlace();
-    syncSliders();
+    paintWidth();
     analyse();
     render();
   };
@@ -96,6 +95,6 @@ export function restoreFileUI(): void {
   paintFileInfo(S.fileName || 'Visuel restauré');
   showPostUploadBlocks();
   syncPlace();
-  syncSliders();
+  paintWidth();
   analyse();
 }

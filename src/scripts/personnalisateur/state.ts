@@ -1,7 +1,7 @@
 // État partagé du personnalisateur + persistance locale (nouveauté V1,
 // document de passage section 6 : "Persistance du projet en cours dans
 // le navigateur, pour ne rien perdre au rafraîchissement").
-import { catalogueColoris, quantiteParDefaut, type Garment, type Emplacement } from '../../config/parametres-metier';
+import { catalogueColoris, repartitionTaillesParDefaut, type Garment, type Emplacement, type TailleCode } from '../../config/parametres-metier';
 import type { TechKey } from './recommendation';
 import { VARIANT_DEFAUT } from './garments';
 import type { Coupe, Manche, Col } from './silhouettes';
@@ -31,7 +31,7 @@ export interface PersonnalisateurState {
   z: number;
   px: number;
   py: number;
-  qty: number;
+  sizeDist: Record<TailleCode, number>;
   tech: TechKey | 'auto';
   delai: 'standard' | 'express';
 }
@@ -59,7 +59,7 @@ export const S: PersonnalisateurState = {
   z: 1,
   px: 0,
   py: 0,
-  qty: quantiteParDefaut,
+  sizeDist: { ...repartitionTaillesParDefaut },
   tech: 'auto',
   delai: 'standard',
 };
@@ -72,7 +72,7 @@ const STORAGE_KEY = 'presstee:personnalisateur:v1';
 // natW/natH/colors/dom qui sont recalculés par l'analyse du fichier.
 type Persisted = Pick<
   PersonnalisateurState,
-  'garment' | 'view' | 'place' | 'coupe' | 'manche' | 'col' | 'img' | 'fileName' | 'vector' | 'x' | 'y' | 'w' | 'rot' | 'qty' | 'tech' | 'delai'
+  'garment' | 'view' | 'place' | 'coupe' | 'manche' | 'col' | 'img' | 'fileName' | 'vector' | 'x' | 'y' | 'w' | 'rot' | 'sizeDist' | 'tech' | 'delai'
 > & {
   colorIndex: number;
 };
@@ -95,7 +95,7 @@ export function saveState(): void {
       y: S.y,
       w: S.w,
       rot: S.rot,
-      qty: S.qty,
+      sizeDist: S.sizeDist,
       tech: S.tech,
       delai: S.delai,
     };
@@ -126,7 +126,7 @@ export function loadState(): boolean {
     if (typeof p.y === 'number') S.y = p.y;
     if (typeof p.w === 'number') S.w = p.w;
     if (typeof p.rot === 'number') S.rot = p.rot;
-    if (typeof p.qty === 'number') S.qty = p.qty;
+    if (p.sizeDist && typeof p.sizeDist === 'object') Object.assign(S.sizeDist, p.sizeDist);
     if (p.tech) S.tech = p.tech;
     if (p.delai) S.delai = p.delai;
     return true;

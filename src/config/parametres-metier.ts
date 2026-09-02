@@ -61,11 +61,17 @@ export const delais = {
   expressJoursOuvres: 5,
 };
 
-// Paliers rapides du sélecteur de quantité.
-export const paliersQuantite = [10, 25, 50, 100, 250];
-export const quantiteParDefaut = 30;
-export const quantiteMin = 1;
-export const quantiteMax = 5000;
+// Coût fournisseur de base du support unique du personnalisateur —
+// PROVISOIRE. Le personnalisateur ne modélise pour l'instant qu'un seul
+// produit générique ("T-shirt col rond unisexe, 180 g/m²") ; il sera
+// décliné par référence réelle du catalogue quand celles-ci auront
+// chacune leur propre coût (voir src/data/tshirts.ts pour le modèle à
+// terme). Valeur reprise telle quelle de la maquette validée.
+export const coutBaseSupportUnique = 4.1;
+
+export type TailleCode = 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL';
+export const TAILLES: TailleCode[] = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+export const repartitionTaillesParDefaut: Record<TailleCode, number> = { XS: 0, S: 6, M: 10, L: 8, XL: 4, XXL: 2 };
 
 // Catalogue coloris — 10 teintes génériques, à remplacer par les vrais
 // coloris des références fournisseur (section 7).

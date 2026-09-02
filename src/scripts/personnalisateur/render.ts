@@ -2,13 +2,14 @@
 // port direct de la V0.
 import { S } from './state';
 import { GARMENTS, VIEWS, flatSVG, bustSVG } from './garments';
-import { place, placeSide, widthCm, heightCm, dpi } from './derived';
+import { place, placeSide, widthCm, heightCm, dpi, qtyTotal, palierActuel, prixUnitaire, prixTotal, currentZoneCm } from './derived';
 import { lum, lumRGB } from './color-utils';
 import { TECHS, reco } from './recommendation';
 import { bindStage } from './interactions';
 import { saveState } from './state';
+import { TAILLES } from '../../config/parametres-metier';
 
-export const activeTech = () => (S.tech === 'auto' ? reco(S.colors, S.qty).k : S.tech);
+export const activeTech = () => (S.tech === 'auto' ? reco(S.colors, qtyTotal()).k : S.tech);
 
 function designHTML(vi: number, live: boolean): string {
   if (VIEWS[vi].side !== placeSide()) return '';
@@ -55,25 +56,43 @@ export function applyZoom(): void {
 }
 
 export function paintTechs(): void {
-  const r = reco(S.colors, S.qty);
+  const r = reco(S.colors, qtyTotal());
   const act = activeTech();
-  el('techs').innerHTML =
-    `<button class="tech${S.tech === 'auto' ? ' on' : ''}" data-t="auto">
-      <div class="th">Choix conseillé<span class="tag">Recommandé</span></div>
-      <p>Nous analysons votre visuel et votre quantité, puis retenons la technique la plus pertinente.</p></button>` +
-    (Object.keys(TECHS) as (keyof typeof TECHS)[])
-      .map(
-        (k) => `<button class="tech${S.tech === k ? ' on' : ''}" data-t="${k}">
-      <div class="th">${TECHS[k].n}${S.tech === 'auto' && act === k ? '<span class="tag">Retenue</span>' : ''}</div>
-      <p>${TECHS[k].d}</p></button>`
-      )
-      .join('');
+  el('techs').innerHTML = (Object.keys(TECHS) as (keyof typeof TECHS)[])
+    .map((k) => {
+      const note = S.tech === 'auto' && act === k ? 'Recommandé' : S.tech === k ? 'Choisi' : '';
+      return `<button class="tech${act === k ? ' on' : ''}" data-t="${k}">
+      <div class="th">${TECHS[k].n}${note ? `<span class="tag">${note}</span>` : ''}</div>
+      <p>${TECHS[k].d}</p></button>`;
+    })
+    .join('');
+  el('resetTech').style.display = S.tech === 'auto' ? 'none' : 'block';
   let box = `<strong>${TECHS[r.k].n}</strong> — ${r.why}`;
   if (S.tech !== 'auto' && S.tech !== r.k) box += `<br><br>Vous avez choisi ${TECHS[S.tech].n}. ${TECHS[S.tech].good}`;
   if (activeTech() === 'serigraphie' && S.colors != null && S.colors > 5) {
     box += `<br><br>Attention : ${S.colors} couleurs en sérigraphie, c'est autant d'écrans à préparer. Le calage devient long et le prix grimpe vite.`;
   }
   el('recoBox').innerHTML = box;
+}
+
+export function paintWidth(): void {
+  const zone = currentZoneCm();
+  el('wCm').textContent = (S.w * zone).toFixed(1).replace('.', ',') + ' cm';
+  el('wPct').textContent = `${Math.round(S.w * 100)} % de la zone imprimable (${zone} cm)`;
+}
+
+export function paintSizeDist(): void {
+  const max = Math.max(1, ...TAILLES.map((t) => S.sizeDist[t]));
+  el('sizeRows').innerHTML = TAILLES.map(
+    (t) => `<div class="szrow">
+      <span class="szcode">${t}</span>
+      <div class="szbar"><div style="width:${Math.min(100, (S.sizeDist[t] / max) * 100)}%"></div></div>
+      <span class="szn">${S.sizeDist[t]}</span>
+      <button class="mini-step" data-sz="${t}" data-d="-1" aria-label="Moins de ${t}">−</button>
+      <button class="mini-step" data-sz="${t}" data-d="1" aria-label="Plus de ${t}">+</button>
+    </div>`
+  ).join('');
+  el('sizeTotal').textContent = `${qtyTotal()} pièce${qtyTotal() > 1 ? 's' : ''}`;
 }
 
 export function paintDiag(): void {
@@ -110,16 +129,12 @@ export function paintDiag(): void {
 
 export function paintRecap(): void {
   const t = activeTech();
-  const w = widthCm();
-  const h = heightCm();
-  const labels: Record<string, string> = { face: 'Face avant', coeur: 'Cœur', dos: 'Dos' };
+  const qty = qtyTotal();
+  const palier = palierActuel();
   el('recap').innerHTML =
-    `<div class="line"><b>Vêtement</b><span>${GARMENTS[S.garment].name}, ${S.color.nom.toLowerCase()}</span></div>` +
-    `<div class="line"><b>Emplacement</b><span>${labels[place()]}</span></div>` +
-    `<div class="line"><b>Marquage</b><span>${S.img ? `${w.toFixed(1)} cm${h ? ` × ${h.toFixed(1)} cm` : ''}` : 'visuel à déposer'}</span></div>` +
-    `<div class="line"><b>Technique</b><span>${TECHS[t].n}${S.tech === 'auto' ? ' (conseillée)' : ''}</span></div>` +
-    `<div class="line"><b>Quantité</b><span>${S.qty} pièce${S.qty > 1 ? 's' : ''}</span></div>` +
-    `<div class="line"><b>Délai</b><span>${S.delai === 'express' ? 'Express, J+5 ouvrés' : 'Standard, J+10 ouvrés'} (à confirmer)</span></div>`;
+    `<div class="line"><b>Textile · palier ${palier.label}</b><span>${prixUnitaire().toFixed(2).replace('.', ',')} € / pièce</span></div>` +
+    `<div class="line"><b>${qty} pièce${qty > 1 ? 's' : ''}</b><span>${prixTotal().toFixed(2).replace('.', ',')} €</span></div>` +
+    `<div class="line"><b>Marquage ${TECHS[t].n}</b><span>chiffré à l'atelier</span></div>`;
 }
 
 export function syncShots(): void {
