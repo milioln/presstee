@@ -1,13 +1,61 @@
 // Analyse automatique du visuel actif : dimensions natives, estimation
 // du nombre de couleurs, couleur dominante — port direct de la V0,
 // étendu pour opérer sur le calque sélectionné plutôt que sur un
-// visuel unique.
-import { activeLayer } from './state';
+// visuel unique. Les SVG sont aussi comptés : un <img> chargé depuis un
+// SVG se dessine sur un canvas comme n'importe quelle image, ce qui
+// permet d'appliquer le même échantillonnage de pixels — utile car la
+// plupart des logos importés sont vectoriels.
+import { activeLayer, saveState } from './state';
 import { paintDiag, paintTechs, paintRecap } from './render';
 
 function toHex(r: number, g: number, b: number): string {
   const h = (n: number) => Math.round(n).toString(16).padStart(2, '0');
   return `#${h(r)}${h(g)}${h(b)}`;
+}
+
+interface Sample {
+  colors: number;
+  swatches: string[];
+  dom: [number, number, number] | null;
+}
+
+// Échantillonne l'image sur une petite grille pour estimer ses couleurs
+// dominantes. Peut lever (canvas "taint" si un SVG référence une
+// ressource externe non same-origin) : l'appelant décide de la suite.
+function sampleColors(im: HTMLImageElement): Sample {
+  const n = 96;
+  const c = document.createElement('canvas');
+  c.width = c.height = n;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!;
+  // Pas de lissage à la réduction : l'interpolation par défaut mélange
+  // les pixels voisins et invente des teintes intermédiaires qui
+  // n'existent pas dans le fichier d'origine (faux positifs sur des
+  // visuels à aplats francs).
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(im, 0, 0, n, n);
+  const d = ctx.getImageData(0, 0, n, n).data;
+  const map = new Map<number, { c: number; r: number; g: number; b: number }>();
+  let tot = 0;
+  for (let i = 0; i < d.length; i += 4) {
+    // Seuil relevé : les pixels à demi transparents des contours
+    // anti-crénelés (texte, formes) ne comptent pas comme une couleur.
+    if (d[i + 3] < 128) continue;
+    tot++;
+    const k = ((d[i] >> 5) << 10) | ((d[i + 1] >> 5) << 5) | (d[i + 2] >> 5);
+    const e = map.get(k) || { c: 0, r: 0, g: 0, b: 0 };
+    e.c++;
+    e.r += d[i];
+    e.g += d[i + 1];
+    e.b += d[i + 2];
+    map.set(k, e);
+  }
+  const sig = [...map.values()].filter((e) => e.c > tot * 0.015).sort((a, b) => b.c - a.c);
+  const t = sig[0];
+  return {
+    colors: Math.max(1, sig.length),
+    swatches: sig.slice(0, 12).map((e) => toHex(e.r / e.c, e.g / e.c, e.b / e.c)),
+    dom: t ? [t.r / t.c, t.g / t.c, t.b / t.c] : null,
+  };
 }
 
 // Le mode "Texte" connaît sa couleur avec certitude (c'est lui qui l'a
@@ -41,29 +89,7 @@ export function analyse(): void {
       paintDiag();
       paintTechs();
       paintRecap();
-    };
-    im.src = layer.img;
-    return;
-  }
-
-  if (layer.vector) {
-    // Toujours mesurer les dimensions natives (pour l'affichage "Taille
-    // imprimée"), même si le nombre de couleurs d'un SVG ne se déduit
-    // pas d'un échantillonnage pixel.
-    const im = new Image();
-    im.onload = () => {
-      layer.natW = im.naturalWidth || 0;
-      layer.natH = im.naturalHeight || 0;
-      layer.colors = null;
-      layer.dom = null;
-      layer.colorSwatches = null;
-      paintDiag();
-      paintTechs();
-      paintRecap();
-    };
-    im.onerror = () => {
-      layer.colors = null;
-      paintDiag();
+      saveState();
     };
     im.src = layer.img;
     return;
@@ -71,41 +97,17 @@ export function analyse(): void {
 
   const im = new Image();
   im.onload = () => {
-    layer.natW = im.naturalWidth;
-    layer.natH = im.naturalHeight;
+    layer.natW = im.naturalWidth || 0;
+    layer.natH = im.naturalHeight || 0;
     try {
-      const n = 96;
-      const c = document.createElement('canvas');
-      c.width = c.height = n;
-      const ctx = c.getContext('2d', { willReadFrequently: true })!;
-      // Pas de lissage à la réduction : l'interpolation par défaut mélange
-      // les pixels voisins et invente des teintes intermédiaires qui
-      // n'existent pas dans le fichier d'origine (faux positifs sur des
-      // visuels à aplats francs).
-      ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(im, 0, 0, n, n);
-      const d = ctx.getImageData(0, 0, n, n).data;
-      const map = new Map<number, { c: number; r: number; g: number; b: number }>();
-      let tot = 0;
-      for (let i = 0; i < d.length; i += 4) {
-        // Seuil relevé : les pixels à demi transparents des contours
-        // anti-crénelés (texte, formes) ne comptent pas comme une couleur.
-        if (d[i + 3] < 128) continue;
-        tot++;
-        const k = ((d[i] >> 5) << 10) | ((d[i + 1] >> 5) << 5) | (d[i + 2] >> 5);
-        const e = map.get(k) || { c: 0, r: 0, g: 0, b: 0 };
-        e.c++;
-        e.r += d[i];
-        e.g += d[i + 1];
-        e.b += d[i + 2];
-        map.set(k, e);
-      }
-      const sig = [...map.values()].filter((e) => e.c > tot * 0.015).sort((a, b) => b.c - a.c);
-      layer.colors = Math.max(1, sig.length);
-      layer.colorSwatches = sig.slice(0, 12).map((e) => toHex(e.r / e.c, e.g / e.c, e.b / e.c));
-      const t = sig[0];
-      layer.dom = t ? [t.r / t.c, t.g / t.c, t.b / t.c] : null;
+      const sample = sampleColors(im);
+      layer.colors = sample.colors;
+      layer.colorSwatches = sample.swatches;
+      layer.dom = sample.dom;
     } catch {
+      // SVG référençant une ressource externe (canvas "tainted"), ou
+      // autre échec de rasterisation : on retombe sur "à contrôler
+      // manuellement" plutôt que de casser l'affichage.
       layer.colors = null;
       layer.dom = null;
       layer.colorSwatches = null;
@@ -113,10 +115,12 @@ export function analyse(): void {
     paintDiag();
     paintTechs();
     paintRecap();
+    saveState();
   };
   im.onerror = () => {
     layer.colors = null;
     paintDiag();
+    saveState();
   };
   im.src = layer.img;
 }

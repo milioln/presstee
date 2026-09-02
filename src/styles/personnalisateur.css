@@ -5,7 +5,7 @@
   arrondies. Feuille de style dédiée à cette page — les variables
   diffèrent volontairement de global.css. Ne pas fusionner sans validation.
 */
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Playfair+Display:wght@700&family=Anton&family=Caveat:wght@700&family=Space+Mono:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Oswald:wght@600&family=Playfair+Display:wght@700&family=Anton&family=Bebas+Neue&family=Caveat:wght@700&family=Pacifico&family=Permanent+Marker&family=Space+Mono:wght@700&display=swap');
 
 :root{
   --bg:#f3f2f2;--surface:#eae9e9;--text:#201e1d;
@@ -114,6 +114,8 @@
 .layerchip.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
 .layerchip-rm{position:absolute;top:-8px;right:-8px;width:18px;height:18px;border:1px solid var(--divider);background:var(--bg);color:var(--text);font-size:12px;line-height:1;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}
 .layerchip-rm:hover{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.layerchip-crop{position:absolute;bottom:-8px;left:-8px;width:18px;height:18px;border:1px solid var(--divider);background:var(--bg);color:var(--text);font-size:11px;line-height:1;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}
+.layerchip-crop:hover{background:var(--accent);color:var(--bg);border-color:var(--accent)}
 
 .diag{margin-top:14px;border-top:1px solid var(--divider);padding-top:14px;display:grid;gap:8px}
 .diag .dt{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600}

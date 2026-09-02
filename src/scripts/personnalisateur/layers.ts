@@ -24,12 +24,14 @@ export function paintLayers(): void {
   const layers = S.layers.filter((l) => l.place === S.place);
   strip.style.display = layers.length ? 'flex' : 'none';
   strip.innerHTML = layers
-    .map(
-      (l) => `<div class="layerchip${l.id === S.activeLayerId ? ' on' : ''}" data-l="${l.id}" title="${l.fileName}">
+    .map((l) => {
+      const croppable = !l.vector && !l.knownColor;
+      return `<div class="layerchip${l.id === S.activeLayerId ? ' on' : ''}" data-l="${l.id}" title="${l.fileName}">
         <img src="${l.img}" alt="" />
+        ${croppable ? `<button type="button" class="layerchip-crop" data-crop="${l.id}" aria-label="Recadrer ce visuel">⤢</button>` : ''}
         <button type="button" class="layerchip-rm" data-rm="${l.id}" aria-label="Retirer ce visuel">×</button>
-      </div>`
-    )
+      </div>`;
+    })
     .join('');
 }
 
@@ -66,6 +68,16 @@ export function bindLayers(): void {
     if (rm) {
       S.layers = S.layers.filter((l) => l.id !== rm.dataset.rm);
       syncEditor();
+      return;
+    }
+    const cropChip = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-crop]');
+    if (cropChip) {
+      S.activeLayerId = cropChip.dataset.crop!;
+      syncEditor();
+      // #cropBtn est rendu visible par syncEditor() ci-dessus (le calque
+      // ciblé est recadrable) juste avant ce clic programmatique — ouvre
+      // directement l'outil sans repasser par le panneau "4".
+      document.getElementById('cropBtn')?.click();
       return;
     }
     const chip = (e.target as HTMLElement).closest<HTMLElement>('[data-l]');

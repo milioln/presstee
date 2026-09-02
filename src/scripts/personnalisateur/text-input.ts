@@ -7,9 +7,13 @@ import { loadDataUrl } from './file-input';
 
 export const FONTS = {
   archivo: { css: "'Archivo', sans-serif", weight: '800', label: 'Sans' },
+  oswald: { css: "'Oswald', sans-serif", weight: '600', label: 'Condensé' },
   playfair: { css: "'Playfair Display', serif", weight: '700', label: 'Serif' },
   anton: { css: "'Anton', sans-serif", weight: '400', label: 'Impact' },
+  bebas: { css: "'Bebas Neue', sans-serif", weight: '400', label: 'Affiche' },
   caveat: { css: "'Caveat', cursive", weight: '700', label: 'Script' },
+  pacifico: { css: "'Pacifico', cursive", weight: '400', label: 'Manuscrit' },
+  marker: { css: "'Permanent Marker', cursive", weight: '400', label: 'Feutre' },
   spacemono: { css: "'Space Mono', monospace", weight: '700', label: 'Mono' },
 } as const;
 type FontId = keyof typeof FONTS;

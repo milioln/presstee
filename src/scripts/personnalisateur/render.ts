@@ -222,7 +222,7 @@ export function paintDiag(): void {
   let rows = `<div class="dt">Analyse du visuel sélectionné</div>`;
   rows += `<div class="line"><b>Format</b><span>${layer.vector ? 'Vectoriel (SVG)' : `${layer.natW} × ${layer.natH} px`}</span></div>`;
   rows += `<div class="line"><b>Taille imprimée</b><span>${w.toFixed(1)} cm${h ? ` × ${h.toFixed(1)} cm` : ''}</span></div>`;
-  rows += `<div class="line"><b>Couleurs</b><span>${layer.vector ? 'à contrôler manuellement' : layer.colors == null ? 'non analysées' : layer.colors >= 12 ? '12 et plus' : layer.colors}</span></div>`;
+  rows += `<div class="line"><b>Couleurs</b><span>${layer.colors == null ? 'à contrôler manuellement' : layer.colors >= 12 ? '12 et plus' : layer.colors}</span></div>`;
   if (layer.colorSwatches && layer.colorSwatches.length) {
     rows += `<div class="line"><b>Détail</b><span class="colorswatches">${layer.colorSwatches.map((h) => `<i style="background:${h}" title="${h}"></i>`).join('')}</span></div>`;
   }

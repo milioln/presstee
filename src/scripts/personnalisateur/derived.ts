@@ -30,10 +30,11 @@ export function dpi(): number | null {
 // Nombre de couleurs total, tous calques confondus — c'est ce qui
 // détermine réellement le coût de calage en sérigraphie (autant
 // d'écrans à préparer que de couleurs cumulées sur l'ensemble du
-// projet, pas seulement sur le visuel actuellement sélectionné).
+// projet, pas seulement sur le visuel actuellement sélectionné). Un
+// calque dont l'analyse a échoué (SVG non rasterisable) compte pour 1
+// par défaut plutôt que de rendre le total entier inutilisable.
 export function totalColors(): number | null {
   if (S.layers.length === 0) return null;
-  if (S.layers.some((l) => l.vector)) return null;
   const sum = S.layers.reduce((s, l) => s + (l.colors ?? 1), 0);
   return Math.max(1, sum);
 }
