@@ -28,8 +28,10 @@ export function paintLayers(): void {
       const croppable = !l.vector && !l.knownColor;
       return `<div class="layerchip${l.id === S.activeLayerId ? ' on' : ''}" data-l="${l.id}" title="${l.fileName}">
         <img src="${l.img}" alt="" />
-        ${croppable ? `<button type="button" class="layerchip-crop" data-crop="${l.id}" aria-label="Recadrer ce visuel">⤢</button>` : ''}
-        <button type="button" class="layerchip-rm" data-rm="${l.id}" aria-label="Retirer ce visuel">×</button>
+        <div class="layerchip-actions">
+          ${croppable ? `<button type="button" data-crop="${l.id}" aria-label="Recadrer ce visuel">⤢</button>` : ''}
+          <button type="button" data-rm="${l.id}" aria-label="Retirer ce visuel">×</button>
+        </div>
       </div>`;
     })
     .join('');

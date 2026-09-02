@@ -108,14 +108,19 @@
 .textcolors button{width:28px;height:28px;border:1px solid var(--divider);cursor:pointer;padding:0}
 .textcolors button.on{outline:2px solid var(--accent);outline-offset:2px}
 
-.layerStrip{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
-.layerchip{position:relative;width:52px;height:52px;border:1.5px solid var(--divider);cursor:pointer;background:var(--surface);padding:0}
+.layerStrip{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.layerchip{position:relative;width:60px;height:60px;border:1.5px solid var(--divider);cursor:pointer;background:var(--surface);padding:0;overflow:hidden}
 .layerchip img{width:100%;height:100%;object-fit:contain;display:block}
 .layerchip.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
-.layerchip-rm{position:absolute;top:-8px;right:-8px;width:18px;height:18px;border:1px solid var(--divider);background:var(--bg);color:var(--text);font-size:12px;line-height:1;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}
-.layerchip-rm:hover{background:var(--accent);color:var(--bg);border-color:var(--accent)}
-.layerchip-crop{position:absolute;bottom:-8px;left:-8px;width:18px;height:18px;border:1px solid var(--divider);background:var(--bg);color:var(--text);font-size:11px;line-height:1;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}
-.layerchip-crop:hover{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+/* Barre d'actions à l'intérieur du cadre de la vignette plutôt que des
+   pastilles flottantes à cheval sur son bord : plus grande cible de
+   clic/tap, et surtout visible en toutes circonstances — le fond
+   translucide fonce garantit le contraste même sur une vignette claire,
+   ce qu'un badge de la couleur de la page ne garantissait pas. */
+.layerchip-actions{position:absolute;left:0;right:0;bottom:0;display:flex;background:rgba(20,18,17,.72)}
+.layerchip-actions button{flex:1;border:0;background:transparent;color:#fff;font-size:13px;line-height:1;height:20px;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}
+.layerchip-actions button + button{border-left:1px solid rgba(255,255,255,.25)}
+.layerchip-actions button:hover{background:var(--accent)}
 
 .diag{margin-top:14px;border-top:1px solid var(--divider);padding-top:14px;display:grid;gap:8px}
 .diag .dt{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600}
