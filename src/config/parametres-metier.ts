@@ -47,12 +47,15 @@ export function getZoneImpressionCm(garment: Garment, emplacement: Emplacement, 
   return zonesImpressionCm[garment][emplacement][taille];
 }
 
-// Seuils de recommandation sérigraphie vs transfert — à recaler sur le
-// coût réel de calage (section 7).
+// Seuils de recommandation de technique — à recaler sur le coût réel
+// de calage (section 7). Confirmés par Milio (2026-09-02) :
+// sérigraphie à partir de 25 pièces (jusqu'à 4 couleurs), broderie à
+// partir de 10 pièces (jusqu'à 8 couleurs de fil).
 export const seuils = {
-  quantitePiecesSerigraphie: 30,
-  couleursSerigraphieSousLeSeuilQuantite: 4,
-  couleursSerigraphieAuDessusDuSeuilQuantite: 6,
+  quantitePiecesSerigraphie: 25,
+  couleursMaxSerigraphie: 4,
+  quantitePiecesBroderie: 10,
+  couleursMaxBroderie: 8,
 };
 
 // Délais annoncés — à confirmer selon la charge atelier (section 7).

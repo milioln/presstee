@@ -48,15 +48,16 @@ const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 								<ul>
 									<li>Le fil est tissé dans la matière : c'est la technique la plus résistante au lavage et au temps</li>
 									<li>Un rendu texturé et haut de gamme, particulièrement adapté aux polos, chemises et casquettes</li>
-									<li>Pas de minimum de quantité : aussi pertinente à l'unité qu'en série</li>
+									<li>Jusqu'à 8 couleurs de fil sur un même visuel</li>
 								</ul>
 							</div>
 							<div class="col limites">
 								<h4>⚠ Points de vigilance</h4>
 								<ul>
-									<li>Les très petits détails ou le texte fin ne se brodent pas bien : une largeur minimale de point est nécessaire</li>
-									<li>Pas de dégradés : chaque couleur est un fil distinct</li>
-									<li>Ajoute une légère épaisseur et une rigidité au niveau du visuel</li>
+									<li>Rentable à partir de 10 pièces : pas adaptée à la pièce unique</li>
+									<li>Les très petits détails ou le texte fin ne se brodent pas bien : mieux vaut un logo simple, sans trop de détails</li>
+									<li>Pas de dégradés : chaque couleur est un fil distinct, dans la limite de 8</li>
+									<li>Demande un textile assez épais (180 g/m² minimum pour un t-shirt) pour bien tenir la tension du fil</li>
 								</ul>
 							</div>
 						</div>
@@ -71,7 +72,7 @@ const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 				<aside>
 					<div class="side-card">
 						<h4>Pour quel projet</h4>
-						<p>{t.quantiteMin.toLowerCase()}. {t.couleurs}. Idéale sur un petit visuel (logo, initiales) destiné à durer.</p>
+						<p>{t.quantiteMin.toLowerCase()}. {t.couleurs}. Idéale sur un petit visuel (logo, initiales) destiné à durer, sur un textile à partir de 180 g/m².</p>
 					</div>
 					<div class="side-card">
 						<h4>Le prix dépend de</h4>
@@ -81,8 +82,7 @@ const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 						<h4>Durabilité</h4>
 						<p>{t.durabilite}.</p>
 					</div>
-					<Button href="/#commander">Demander un devis broderie</Button>
-					<p class="hint" style="font-size:12.5px;color:var(--gris);margin-top:10px">La broderie n'est pas encore disponible dans le configurateur en ligne — contactez-nous directement pour ce type de projet.</p>
+					<Button href="/personnalisateur?technique=broderie">Personnaliser en broderie</Button>
 				</aside>
 			</div>
 

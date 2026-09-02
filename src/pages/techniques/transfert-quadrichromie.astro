@@ -7,18 +7,18 @@ import { TECHNIQUES, getTechnique } from '../../lib/techniques-data';
 import '../../styles/global.css';
 import '../../styles/techniques.css';
 
-const t = getTechnique('transfert-premium')!;
+const t = getTechnique('transfert-quadrichromie')!;
 const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 ---
 
-<Layout title="Le transfert premium — Presstee" description="Comment fonctionne le transfert premium (impression numérique + pose à chaud), ses avantages, ses limites, et comment son prix se calcule selon le format du visuel.">
+<Layout title="Le transfert quadrichromie — Presstee" description="Comment fonctionne le transfert quadrichromie (impression numérique CMJN + pose à chaud), ses avantages, ses limites, et comment son prix se calcule selon le format du visuel.">
 	<Header />
 	<main>
 		<section class="tech-hero">
 			<div class="wrap">
-				<div class="crumb"><a href="/">Accueil</a> / <a href="/techniques">Guide</a> / Transfert premium</div>
-				<h1>Le transfert premium.</h1>
-				<p>Un visuel imprimé numériquement puis posé à chaud : couleurs illimitées, dégradés, photos — sans minimum de quantité.</p>
+				<div class="crumb"><a href="/">Accueil</a> / <a href="/techniques">Guide</a> / Transfert quadrichromie</div>
+				<h1>Le transfert quadrichromie.</h1>
+				<p>Un visuel imprimé numériquement en quadrichromie (CMJN) puis posé à chaud : couleurs illimitées, dégradés, photos — sans minimum de quantité.</p>
 			</div>
 		</section>
 
@@ -31,9 +31,9 @@ const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 				<div>
 					<section>
 						<h2>Comment ça marche</h2>
-						<p class="lede">Votre visuel est imprimé numériquement, en couleur, sur un support de transfert. Ce support est ensuite posé sur le vêtement et pressé à chaud : la chaleur et la pression font adhérer le visuel au tissu.</p>
+						<p class="lede">Votre visuel est imprimé numériquement en quadrichromie (cyan, magenta, jaune, noir) sur un support de transfert. Ce support est ensuite posé sur le vêtement et pressé à chaud : la chaleur et la pression font adhérer le visuel au tissu.</p>
 						<div class="steps-list">
-							<div class="step"><span class="n">1</span><div><strong>L'impression numérique</strong><span>Votre fichier est imprimé tel quel, couleurs et dégradés compris, sur un film de transfert.</span></div></div>
+							<div class="step"><span class="n">1</span><div><strong>L'impression numérique</strong><span>Votre fichier est imprimé en quadrichromie, couleurs et dégradés compris, sur un film de transfert.</span></div></div>
 							<div class="step"><span class="n">2</span><div><strong>Le détourage</strong><span>Le contour du visuel est découpé pour ne laisser que la zone à transférer.</span></div></div>
 							<div class="step"><span class="n">3</span><div><strong>La pose à chaud</strong><span>Le film est positionné sur le vêtement et pressé à haute température pendant quelques secondes.</span></div></div>
 							<div class="step"><span class="n">4</span><div><strong>Le pelage</strong><span>Le film support est retiré, ne laissant que le visuel sur le tissu.</span></div></div>
@@ -64,7 +64,7 @@ const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 
 					<section>
 						<h2>Comment se calcule le prix</h2>
-						<p class="lede">Contrairement à la sérigraphie, <strong>le prix du transfert premium dépend de la taille du visuel</strong>, pas de son nombre de couleurs — l'impression numérique reproduit n'importe quelle palette pour le même coût. Plus le visuel est grand, plus il consomme de support d'impression et plus le temps de pose est long.</p>
+						<p class="lede">Contrairement à la sérigraphie, <strong>le prix du transfert quadrichromie dépend de la taille du visuel</strong>, pas de son nombre de couleurs — l'impression en quadrichromie reproduit n'importe quelle palette pour le même coût. Plus le visuel est grand, plus il consomme de support d'impression et plus le temps de pose est long.</p>
 						<p class="lede">Sans frais de calage, cette technique reste au même prix par pièce quelle que soit la quantité commandée : c'est le choix le plus simple pour une petite série ou un visuel unique par personne.</p>
 					</section>
 				</div>
@@ -82,7 +82,7 @@ const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 						<h4>Durabilité</h4>
 						<p>{t.durabilite}.</p>
 					</div>
-					<Button href="/personnalisateur?technique=transfert-premium">Personnaliser en transfert premium</Button>
+					<Button href="/personnalisateur?technique=transfert-quadrichromie">Personnaliser en transfert quadrichromie</Button>
 				</aside>
 			</div>
 

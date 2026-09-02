@@ -11,7 +11,7 @@ import { place, widthCm, heightCm, dpi, qtyTotal, palierActuel, prixUnitaire, pr
 import { lum, lumRGB } from './color-utils';
 import { TECHS, reco } from './recommendation';
 import { saveState } from './state';
-import { TAILLES, type Emplacement } from '../../config/parametres-metier';
+import { TAILLES, seuils, type Emplacement } from '../../config/parametres-metier';
 
 export const activeTech = () => (S.tech === 'auto' ? reco(totalColors(), qtyTotal()).k : S.tech);
 
@@ -169,7 +169,7 @@ export function paintTechs(): void {
   el('resetTech').style.display = S.tech === 'auto' ? 'none' : 'block';
   let box = `<strong>${TECHS[r.k].n}</strong> — ${r.why}`;
   if (S.tech !== 'auto' && S.tech !== r.k) box += `<br><br>Vous avez choisi ${TECHS[S.tech].n}. ${TECHS[S.tech].good}`;
-  if (activeTech() === 'serigraphie' && total != null && total > 5) {
+  if (activeTech() === 'serigraphie' && total != null && total > seuils.couleursMaxSerigraphie) {
     box += `<br><br>Attention : ${total} couleurs cumulées en sérigraphie, c'est autant d'écrans à préparer. Le calage devient long et le prix grimpe vite.`;
   }
   el('recoBox').innerHTML = box;

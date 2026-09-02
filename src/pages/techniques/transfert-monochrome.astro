@@ -7,18 +7,18 @@ import { TECHNIQUES, getTechnique } from '../../lib/techniques-data';
 import '../../styles/global.css';
 import '../../styles/techniques.css';
 
-const t = getTechnique('transfert-serigraphique')!;
+const t = getTechnique('transfert-monochrome')!;
 const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 ---
 
-<Layout title="Le transfert sérigraphique — Presstee" description="Comment fonctionne le transfert sérigraphique, un entre-deux entre sérigraphie et transfert : avantages, limites, et calcul du prix.">
+<Layout title="Le transfert monochrome — Presstee" description="Comment fonctionne le transfert monochrome (une seule couleur), un entre-deux entre sérigraphie et transfert : avantages, limites, et calcul du prix.">
 	<Header />
 	<main>
 		<section class="tech-hero">
 			<div class="wrap">
-				<div class="crumb"><a href="/">Accueil</a> / <a href="/techniques">Guide</a> / Transfert sérigraphique</div>
-				<h1>Le transfert sérigraphique.</h1>
-				<p>Le rendu de la sérigraphie, sans le calage direct sur la pièce : le visuel est sérigraphié sur un support, puis transféré à chaud.</p>
+				<div class="crumb"><a href="/">Accueil</a> / <a href="/techniques">Guide</a> / Transfert monochrome</div>
+				<h1>Le transfert monochrome.</h1>
+				<p>Le rendu de la sérigraphie en une seule couleur, sans le calage direct sur la pièce : le visuel est sérigraphié sur un support, puis transféré à chaud.</p>
 			</div>
 		</section>
 
@@ -31,9 +31,9 @@ const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 				<div>
 					<section>
 						<h2>Comment ça marche</h2>
-						<p class="lede">Le principe de la sérigraphie reste le même — un écran par couleur, de l'encre poussée à la raclette — mais l'impression se fait sur un support intermédiaire plutôt que directement sur le vêtement. Ce support est ensuite posé à chaud sur la pièce, comme un transfert.</p>
+						<p class="lede">Le principe de la sérigraphie reste le même — un écran, de l'encre poussée à la raclette — mais l'impression se fait sur un support intermédiaire plutôt que directement sur le vêtement. Ce support est ensuite posé à chaud sur la pièce, comme un transfert. Un seul écran suffit puisque le visuel est en une seule couleur.</p>
 						<div class="steps-list">
-							<div class="step"><span class="n">1</span><div><strong>La sérigraphie sur support</strong><span>Le visuel est imprimé, écran par écran, sur un film support plutôt que sur le textile.</span></div></div>
+							<div class="step"><span class="n">1</span><div><strong>La sérigraphie sur support</strong><span>Le visuel, en une couleur, est imprimé sur un film support plutôt que sur le textile.</span></div></div>
 							<div class="step"><span class="n">2</span><div><strong>Le détourage</strong><span>Le support est découpé aux contours du visuel.</span></div></div>
 							<div class="step"><span class="n">3</span><div><strong>La pose à chaud</strong><span>Le transfert est positionné et pressé sur chaque pièce individuellement.</span></div></div>
 						</div>
@@ -47,15 +47,15 @@ const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 								<ul>
 									<li>Un rendu très proche de la sérigraphie directe, y compris la tenue au lavage</li>
 									<li>Pas de calage individuel sur chaque pièce : utile sur des emplacements difficiles d'accès (manches, capuches) ou des textiles techniques</li>
-									<li>Les transferts peuvent être préparés à l'avance et posés au fur et à mesure</li>
+									<li>Aucun frais de calage à amortir : rentable dès les petites séries, sans minimum de quantité</li>
 								</ul>
 							</div>
 							<div class="col limites">
 								<h4>⚠ Points de vigilance</h4>
 								<ul>
-									<li>Toujours limité en nombre de couleurs, comme la sérigraphie classique</li>
+									<li>Une seule couleur : ne convient pas aux visuels multicolores ou aux dégradés</li>
 									<li>Une étape supplémentaire (impression puis pose) par rapport à la sérigraphie directe</li>
-									<li>Sur de très gros volumes, la sérigraphie directe reste généralement plus économique</li>
+									<li>Passé 25 pièces environ, la sérigraphie directe redevient plus économique</li>
 								</ul>
 							</div>
 						</div>
@@ -63,7 +63,7 @@ const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 
 					<section>
 						<h2>Comment se calcule le prix</h2>
-						<p class="lede">Comme pour la sérigraphie directe, <strong>le prix dépend du nombre de couleurs</strong> du visuel — chaque couleur reste un écran à préparer. La différence se joue sur la quantité : sans calage direct sur chaque pièce, cette technique reste intéressante sur des séries plus petites que la sérigraphie classique.</p>
+						<p class="lede">Le visuel étant toujours en une seule couleur, il n'y a pas de calage supplémentaire à multiplier : <strong>le prix dépend surtout de la taille du visuel et de la quantité commandée</strong>, sans les frais de calage par couleur de la sérigraphie classique.</p>
 					</section>
 				</div>
 
@@ -80,7 +80,7 @@ const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 						<h4>Durabilité</h4>
 						<p>{t.durabilite}.</p>
 					</div>
-					<Button href="/personnalisateur?technique=transfert-serigraphique">Personnaliser en transfert sérigraphique</Button>
+					<Button href="/personnalisateur?technique=transfert-monochrome">Personnaliser en transfert monochrome</Button>
 				</aside>
 			</div>
 
