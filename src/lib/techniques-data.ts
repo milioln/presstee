@@ -2,11 +2,8 @@
 // par le tableau du hub et par le simulateur. Le texte détaillé de
 // chaque fiche vit dans sa propre page (src/pages/techniques/*.astro).
 //
-// Images : transfert-monochrome-1.jpg est une photo Pexels (licence
-// Pexels — gratuite, usage commercial autorisé, attribution non
-// requise), à remplacer par une vraie photo d'atelier dès que possible.
-// atelier-serigraphie-textile-presstee.jpg et
-// atelier-transfert-quadrichromie-dtf-presstee.jpg fournies par Milio.
+// Images des 4 techniques fournies par Milio (photos d'atelier Presstee
+// réelles, nommées pour le référencement).
 export interface Technique {
   slug: string;
   nom: string;
@@ -51,7 +48,7 @@ export const TECHNIQUES: Technique[] = [
     couleurs: 'Une seule couleur',
     prixRelatif: 2,
     durabilite: 'Très bonne — proche de la sérigraphie directe',
-    image: '/techniques/transfert-monochrome-1.jpg',
+    image: '/techniques/atelier-transfert-monochrome-presstee.jpg',
   },
   {
     slug: 'broderie',
