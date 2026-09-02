@@ -3,7 +3,6 @@
 // chaque fiche vit dans sa propre page (src/pages/techniques/*.astro).
 export interface Technique {
   slug: string;
-  techKey: 'serigraphie' | 'transfert-premium' | 'transfert-serigraphique' | null;
   nom: string;
   accroche: string;
   quantiteMin: string;
@@ -17,7 +16,6 @@ export interface Technique {
 export const TECHNIQUES: Technique[] = [
   {
     slug: 'serigraphie',
-    techKey: 'serigraphie',
     nom: 'Sérigraphie',
     accroche: 'Le plus économique et le plus résistant, à partir d’une trentaine de pièces.',
     quantiteMin: 'Rentable à partir d’environ 30 pièces',
@@ -29,7 +27,6 @@ export const TECHNIQUES: Technique[] = [
   },
   {
     slug: 'transfert-premium',
-    techKey: 'transfert-premium',
     nom: 'Transfert premium',
     accroche: 'Couleurs illimitées et dégradés, sans minimum de quantité.',
     quantiteMin: 'Aucun minimum, rentable dès 1 pièce',
@@ -41,7 +38,6 @@ export const TECHNIQUES: Technique[] = [
   },
   {
     slug: 'transfert-serigraphique',
-    techKey: 'transfert-serigraphique',
     nom: 'Transfert sérigraphique',
     accroche: 'Le rendu de la sérigraphie, sans calage sur la pièce, dès les petites séries.',
     quantiteMin: 'Rentable dès les petites séries',
@@ -53,7 +49,6 @@ export const TECHNIQUES: Technique[] = [
   },
   {
     slug: 'broderie',
-    techKey: null,
     nom: 'Broderie',
     accroche: 'Un rendu texturé et haut de gamme, pour les petits visuels.',
     quantiteMin: 'Adaptée à toutes les quantités',

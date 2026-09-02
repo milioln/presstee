@@ -323,7 +323,15 @@ function grammageTier(g: number | null): string {
 		// cliquer sur une pastille l'ajoute ou la retire de l'ensemble, sans
 		// désélectionner les autres. Aucune sélection dans un groupe = ce
 		// groupe ne filtre rien.
-		const state: Record<string, Set<string>> & { page: number } = {
+		const state: {
+			genre: Set<string>;
+			manches: Set<string>;
+			grammage: Set<string>;
+			coupe: Set<string>;
+			gamme: Set<string>;
+			responsable: Set<string>;
+			page: number;
+		} = {
 			genre: new Set<string>(),
 			manches: new Set<string>(),
 			grammage: new Set<string>(),
@@ -331,7 +339,7 @@ function grammageTier(g: number | null): string {
 			gamme: new Set<string>(),
 			responsable: new Set<string>(),
 			page: 1,
-		} as any;
+		};
 
 		function bindMultiPillGroup(id: string, key: 'genre' | 'manches' | 'grammage' | 'coupe' | 'gamme' | 'responsable') {
 			const group = document.getElementById(id)!;

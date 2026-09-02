@@ -49,6 +49,8 @@ const { class: className } = Astro.props;
 </div>
 
 <script>
+	import { getTechnique } from '../lib/techniques-data';
+
 	const state = { qty: 0, colors: 0, prio: '' };
 
 	function bind(id: string, key: 'qty' | 'colors' | 'prio') {
@@ -91,17 +93,10 @@ const { class: className } = Astro.props;
 			why = 'Trop peu de pièces pour amortir des écrans de sérigraphie : le transfert sérigraphique garde un rendu proche sans ce surcoût.';
 		}
 
-		const titles: Record<string, string> = {
-			serigraphie: 'Sérigraphie',
-			'transfert-premium': 'Transfert premium',
-			'transfert-serigraphique': 'Transfert sérigraphique',
-		};
-
-		document.getElementById('simTitle')!.textContent = titles[slug];
+		document.getElementById('simTitle')!.textContent = getTechnique(slug)?.nom ?? '';
 		document.getElementById('simWhy')!.textContent = why;
 		const cta = document.getElementById('simCta') as HTMLAnchorElement;
-		const techKey = slug === 'serigraphie' ? 'serigraphie' : slug;
-		cta.href = `/personnalisateur?technique=${techKey}`;
+		cta.href = `/personnalisateur?technique=${slug}`;
 		document.getElementById('simResult')!.classList.add('show');
 	}
 </script>

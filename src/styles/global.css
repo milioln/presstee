@@ -10,6 +10,12 @@
   --gris:#6C6580;
   --gris-clair:#EDEAF6;
   --ligne:#E7E3F2;
+  /* Utilisée par produits.css/techniques.css (fonds de vignette, en-têtes
+     de tableau...) mais jamais définie : var(--voile) y retombait donc
+     silencieusement sur transparent. Fixée ici à sa valeur de fait pour
+     ne rien changer visuellement — une vraie teinte (à valider) rendrait
+     probablement ces zones plus lisibles. */
+  --voile:transparent;
   --r:18px;
   --max:1180px;
 }

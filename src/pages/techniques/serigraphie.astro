@@ -86,8 +86,8 @@ const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 				</aside>
 			</div>
 
-			<div style="padding-bottom:70px">
-				<h3 style="font-family:'Sora',sans-serif;font-size:1.05rem;margin-bottom:14px">Les autres techniques</h3>
+			<div class="other-techs-wrap">
+				<h3 class="other-techs-title">Les autres techniques</h3>
 				<div class="other-techs">
 					{autres.map((a) => <a href={`/techniques/${a.slug}`}>{a.nom}</a>)}
 				</div>

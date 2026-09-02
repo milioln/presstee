@@ -15,7 +15,7 @@ function grammagePropos(g: number | null): string {
 
 function matierePropos(detail: string): string {
   const d = detail.toLowerCase();
-  if (d.includes('100% coton') || d.includes('100% coton')) return '100 % coton, pour une impression nette en sérigraphie comme en transfert';
+  if (d.includes('100% coton')) return '100 % coton, pour une impression nette en sérigraphie comme en transfert';
   if (d.includes('organique') || d.includes('biologique')) return 'coton issu de filières biologiques ou en conversion';
   if (d.includes('polyester') && (d.includes('coton') || d.includes('viscose'))) return 'un mélange coton-polyester qui limite le retrait au lavage';
   if (d.includes('100% polyester')) return '100 % polyester, adapté à la sublimation et aux marquages techniques';
