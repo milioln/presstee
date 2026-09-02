@@ -105,8 +105,8 @@ function bindPosition(): void {
     S.y = Math.max(0, Math.min(1, Math.round((S.y + dy) * 100) / 100));
     render();
   };
-  el('pUp').addEventListener('click', () => move(0, -step));
-  el('pDown').addEventListener('click', () => move(0, step));
+  el('pUp').addEventListener('click', () => move(0, step));
+  el('pDown').addEventListener('click', () => move(0, -step));
   el('pLeft').addEventListener('click', () => move(-step, 0));
   el('pRight').addEventListener('click', () => move(step, 0));
   el('pCenter').addEventListener('click', () => {

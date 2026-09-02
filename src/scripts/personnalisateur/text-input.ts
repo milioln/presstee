@@ -41,7 +41,7 @@ export function bindTextInput(): void {
     const text = input.value.trim();
     if (!text) return;
     const dataUrl = await renderTextToDataUrl(text, textColor);
-    loadDataUrl(dataUrl, `Texte : « ${text} »`, false);
+    loadDataUrl(dataUrl, `Texte : « ${text} »`, false, textColor);
   };
   el('textApply').addEventListener('click', apply);
   input.addEventListener('keydown', (e) => {

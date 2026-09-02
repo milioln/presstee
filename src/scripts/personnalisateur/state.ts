@@ -22,6 +22,7 @@ export interface PersonnalisateurState {
   natH: number;
   colors: number | null;
   dom: [number, number, number] | null;
+  colorSwatches: string[] | null;
   x: number;
   y: number;
   w: number;
@@ -45,6 +46,7 @@ export const S: PersonnalisateurState = {
   natH: 0,
   colors: null,
   dom: null,
+  colorSwatches: null,
   x: 0.5,
   y: 0.5,
   w: 0.62,

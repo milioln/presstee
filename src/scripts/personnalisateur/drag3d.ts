@@ -80,7 +80,7 @@ function onPointerDown(e: PointerEvent): void {
     const du = duPerPxX * (ev.clientX - startX);
     const dv = dvPerPxY * (ev.clientY - startY);
     const dSx = (du * TEXTURE_SIZE) / rect.w;
-    const dSy = (-dv * TEXTURE_SIZE) / rect.h;
+    const dSy = (dv * TEXTURE_SIZE) / rect.h;
     S.x = Math.max(0, Math.min(1, x0 + dSx));
     S.y = Math.max(0, Math.min(1, y0 + dSy));
     render();

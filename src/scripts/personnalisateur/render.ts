@@ -25,9 +25,9 @@ export const TEXTURE_SIZE = 2048;
 // Exporté : réutilisé par drag3d.ts pour convertir les coordonnées UV
 // du raycast en repère du visuel (S.x/S.y).
 export const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: number }> = {
-  face: { x: 370, y: 280, w: 360, h: 340 },
-  coeur: { x: 630, y: 230, w: 130, h: 130 },
-  dos: { x: 1270, y: 280, w: 360, h: 340 },
+  face: { x: 370, y: 210, w: 360, h: 340 },
+  coeur: { x: 630, y: 170, w: 130, h: 130 },
+  dos: { x: 1270, y: 210, w: 360, h: 340 },
 };
 
 let baseImgPromise: Promise<HTMLImageElement> | null = null;
@@ -68,7 +68,8 @@ async function buildTextureDataUrl(): Promise<string> {
     const rect = PRINT_RECT[place()];
     const logo = await loadImg(S.img);
     const w = rect.w * S.w;
-    const h = w * (logo.naturalHeight / logo.naturalWidth);
+    const ratio = logo.naturalWidth && logo.naturalHeight ? logo.naturalHeight / logo.naturalWidth : 1;
+    const h = w * ratio;
     const cx = rect.x + rect.w * S.x;
     const cy = rect.y + rect.h * S.y;
     ctx.save();
@@ -195,6 +196,9 @@ export function paintDiag(): void {
   rows += `<div class="line"><b>Format</b><span>${S.vector ? 'Vectoriel (SVG)' : `${S.natW} × ${S.natH} px`}</span></div>`;
   rows += `<div class="line"><b>Taille imprimée</b><span>${w.toFixed(1)} cm${h ? ` × ${h.toFixed(1)} cm` : ''}</span></div>`;
   rows += `<div class="line"><b>Couleurs</b><span>${S.vector ? 'à contrôler manuellement' : S.colors == null ? 'non analysées' : S.colors >= 12 ? '12 et plus' : S.colors}</span></div>`;
+  if (S.colorSwatches && S.colorSwatches.length) {
+    rows += `<div class="line"><b>Détail</b><span class="colorswatches">${S.colorSwatches.map((h) => `<i style="background:${h}" title="${h}"></i>`).join('')}</span></div>`;
+  }
   const flags: [string, string][] = [];
   if (S.vector) {
     flags.push(['ok', 'Fichier vectoriel : la qualité sera parfaite quelle que soit la taille d’impression.']);

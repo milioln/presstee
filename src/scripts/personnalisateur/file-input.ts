@@ -7,7 +7,7 @@ import { render, paintWidth } from './render';
 import { analyse } from './file-analysis';
 import { syncPlace } from './placement';
 
-export function loadDataUrl(dataUrl: string, name: string, isVector: boolean): void {
+export function loadDataUrl(dataUrl: string, name: string, isVector: boolean, forcedColor?: string): void {
   Object.assign(S, {
     img: dataUrl,
     fileName: name,
@@ -18,6 +18,7 @@ export function loadDataUrl(dataUrl: string, name: string, isVector: boolean): v
     rot: 0,
     colors: null,
     dom: null,
+    colorSwatches: null,
     natW: 0,
     natH: 0,
   });
@@ -25,7 +26,7 @@ export function loadDataUrl(dataUrl: string, name: string, isVector: boolean): v
   showPostUploadBlocks();
   syncPlace();
   paintWidth();
-  analyse();
+  analyse(forcedColor);
   render();
 }
 
@@ -39,7 +40,7 @@ function paintFileInfo(name: string): void {
   const info = document.getElementById('fileInfo')!;
   info.innerHTML = `<div class="filerow"><img src="${S.img}" alt=""><span>${name}</span><button class="mini-btn" id="rm">Retirer</button></div>`;
   document.getElementById('rm')!.addEventListener('click', () => {
-    Object.assign(S, { img: null, colors: null, dom: null });
+    Object.assign(S, { img: null, colors: null, dom: null, colorSwatches: null });
     info.innerHTML = '';
     hidePostUploadBlocks();
     // render() persiste l'état courant (saveState), y compris img:null —

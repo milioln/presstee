@@ -112,6 +112,8 @@
 .line{display:flex;align-items:baseline;gap:8px;font-size:13px}
 .line b{font-weight:500;color:var(--muted);min-width:104px}
 .line span{font-family:'Archivo',sans-serif;font-size:13px}
+.colorswatches{display:flex;gap:5px;flex-wrap:wrap}
+.colorswatches i{width:16px;height:16px;border:1px solid var(--divider);display:inline-block;flex-shrink:0}
 .flag{display:flex;gap:8px;font-size:12px;padding:9px 11px;line-height:1.45;font-family:'Manrope',system-ui,sans-serif}
 .flag.ok{background:var(--ok-bg);color:var(--ok)}
 .flag.warn{background:var(--warn-bg);color:var(--warn)}
