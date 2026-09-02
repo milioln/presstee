@@ -155,7 +155,13 @@ import '../styles/personnalisateur.css';
 
 					<div class="recap">
 						<div id="recap"></div>
-						<button class="btn btn-primary btn-block" id="order">Demander le devis</button>
+						<div class="recapLinks">
+							<button type="button" class="mini-btn" id="openCart">Panier (<span id="cartCount">0</span>)</button>
+							<button type="button" class="mini-btn" id="openSaved">Mes projets (<span id="savedCount">0</span>)</button>
+						</div>
+						<button class="btn btn-secondary btn-block" id="addToCart">Ajouter au panier</button>
+						<button class="btn btn-primary btn-block" id="sendQuote">Envoyer le devis</button>
+						<button class="btn btn-secondary btn-block" id="saveProject">Enregistrer le projet</button>
 						<p class="hint">Réponse sous 24 h ouvrées · projet enregistré dans ce navigateur.</p>
 					</div>
 
@@ -191,6 +197,21 @@ import '../styles/personnalisateur.css';
 		<button type="button" id="lpCrop" aria-label="Recadrer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M2 6h14a2 2 0 0 1 2 2v14"/></svg></button>
 		<div class="layerPopup-colors" id="lpColors"></div>
 		<button type="button" id="lpDelete" aria-label="Supprimer">×</button>
+	</div>
+
+	<div class="listOverlay" id="listOverlay" style="display:none">
+		<div class="listBox">
+			<div class="listHead">
+				<h6 id="listTitle">Panier</h6>
+				<button type="button" id="listClose" aria-label="Fermer">×</button>
+			</div>
+			<div class="listItems" id="listItems"></div>
+			<p class="listEmpty" id="listEmpty" style="display:none"></p>
+			<div class="listFoot" id="listFoot" style="display:none">
+				<div class="listTotal" id="listTotal"></div>
+				<button class="btn btn-primary btn-block" id="listAction">Demander un devis pour le panier</button>
+			</div>
+		</div>
 	</div>
 
 	<script>

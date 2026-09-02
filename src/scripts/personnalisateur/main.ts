@@ -14,6 +14,8 @@ import { bindModelDrag } from './drag3d';
 import { bindLayers, syncEditor } from './layers';
 import { bindCrop } from './crop';
 import { bindLayerPopup } from './layer-popup';
+import { bindCartUI, paintBadges } from './cart-ui';
+import { bindOnLoaded } from './cart';
 import { TECHS } from './recommendation';
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
@@ -29,22 +31,29 @@ function paintDarkNote(): void {
   el('darkNote').textContent = dark ? 'Coloris foncé : prévoir une sous-couche blanche en sérigraphie.' : 'Coloris clair : marquage direct, sans sous-couche.';
 }
 
+// Peinture pure, séparée du branchement des clics (bindColors) : un
+// rechargement de projet enregistré (cart.ts) doit pouvoir repeindre la
+// palette sans reposer un deuxième écouteur par-dessus le premier.
 function paintColors(): void {
-  const colors = el('colors');
-  colors.innerHTML = catalogueColoris
+  el('colors').innerHTML = catalogueColoris
     .map((c, i) => `<button class="sw${c.hex === S.color.hex ? ' on' : ''}" data-c="${i}" style="background:${c.hex}" aria-label="${c.nom}"></button>`)
     .join('');
   paintColorName();
   paintDarkNote();
-  colors.addEventListener('click', (e) => {
+}
+
+function bindColors(): void {
+  el('colors').addEventListener('click', (e) => {
     const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-c]');
     if (!b) return;
     S.color = catalogueColoris[+b.dataset.c!];
-    colors.querySelectorAll('[data-c]').forEach((x) => x.classList.toggle('on', x === b));
-    paintColorName();
-    paintDarkNote();
+    paintColors();
     render();
   });
+}
+
+function syncDelai(): void {
+  document.querySelectorAll<HTMLButtonElement>('[data-d]').forEach((b) => b.classList.toggle('on', b.dataset.d === S.delai));
 }
 
 function bindDelai(): void {
@@ -158,8 +167,7 @@ function bindResetView(): void {
 }
 
 // Pré-sélectionne une technique quand on arrive depuis une page du guide
-// (/personnalisateur?technique=serigraphie) — ne s'applique qu'aux
-// techniques réellement proposées ici (la broderie n'y figure pas encore).
+// (/personnalisateur?technique=serigraphie).
 function applyTechFromUrl(): void {
   const param = new URLSearchParams(window.location.search).get('technique');
   if (param && Object.prototype.hasOwnProperty.call(TECHS, param)) {
@@ -167,11 +175,23 @@ function applyTechFromUrl(): void {
   }
 }
 
+// Repeint tout l'écran depuis S — utilisé au chargement initial, et par
+// cart.ts après avoir rechargé un projet enregistré (qui remplace S en
+// bloc : coloris, calques, répartition des tailles, technique, délai
+// peuvent tous avoir changé d'un coup).
+function refreshAll(): void {
+  paintColors();
+  syncDelai();
+  syncPlace();
+  paintSizeDist();
+  syncEditor();
+}
+
 export function init(): void {
   loadState();
   applyTechFromUrl();
 
-  paintColors();
+  bindColors();
   bindDelai();
   bindTechs();
   bindSizeDist();
@@ -187,12 +207,11 @@ export function init(): void {
   bindLayers();
   bindCrop();
   bindLayerPopup();
+  bindCartUI();
+  bindOnLoaded(() => {
+    refreshAll();
+    paintBadges();
+  });
 
-  // Reflète les valeurs restaurées (ou par défaut) dans les commandes du
-  // délai avant le premier rendu.
-  document.querySelectorAll<HTMLButtonElement>('[data-d]').forEach((b) => b.classList.toggle('on', b.dataset.d === S.delai));
-
-  syncPlace();
-  paintSizeDist();
-  syncEditor();
+  refreshAll();
 }
