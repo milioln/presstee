@@ -1,6 +1,11 @@
 // Contenu des pages Guide — synthèse comparable par technique, utilisée
 // par le tableau du hub et par le simulateur. Le texte détaillé de
 // chaque fiche vit dans sa propre page (src/pages/techniques/*.astro).
+//
+// Images : photos Pexels (licence Pexels — gratuite, usage commercial
+// autorisé, attribution non requise). transfert-quadrichromie-1.jpg et
+// transfert-monochrome-1.jpg à remplacer par de vraies photos d'atelier
+// dès que possible.
 export interface Technique {
   slug: string;
   nom: string;
@@ -34,7 +39,7 @@ export const TECHNIQUES: Technique[] = [
     couleurs: 'Illimitées (quadrichromie), dégradés et photos possibles',
     prixRelatif: 2,
     durabilite: 'Bonne — le visuel est appliqué en surface',
-    image: '/techniques/transfert-premium-1.jpg',
+    image: '/techniques/transfert-quadrichromie-1.jpg',
   },
   {
     slug: 'transfert-monochrome',
@@ -45,7 +50,7 @@ export const TECHNIQUES: Technique[] = [
     couleurs: 'Une seule couleur',
     prixRelatif: 2,
     durabilite: 'Très bonne — proche de la sérigraphie directe',
-    image: null,
+    image: '/techniques/transfert-monochrome-1.jpg',
   },
   {
     slug: 'broderie',
