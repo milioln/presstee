@@ -24,17 +24,21 @@ jobs:
         run: npm run build
 
       # OVH mutualisé ne compile pas et ne détecte pas les push : le dossier
-      # dist/ compilé ici est déposé par FTPS dans le dossier www.
+      # dist/ compilé ici est déposé par FTP dans le dossier www.
       # Secrets attendus dans les paramètres GitHub du dépôt (jamais dans le code) :
       #   OVH_FTP_SERVER   → ftp.cluster0XX.hosting.ovh.net (ou l'hôte fourni par OVH)
       #   OVH_FTP_USERNAME
       #   OVH_FTP_PASSWORD
-      - name: Déploiement FTPS vers OVH
+      # protocol: ftp (pas ftps) — l'hébergement mutualisé OVH renvoie
+      # "500 This security scheme is not implemented" dès que l'action
+      # tente une négociation TLS (AUTH TLS) : ce serveur ne gère que le
+      # FTP en clair, pas le FTPS.
+      - name: Déploiement FTP vers OVH
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.OVH_FTP_SERVER }}
           username: ${{ secrets.OVH_FTP_USERNAME }}
           password: ${{ secrets.OVH_FTP_PASSWORD }}
-          protocol: ftps
+          protocol: ftp
           local-dir: ./dist/
           server-dir: /www/
