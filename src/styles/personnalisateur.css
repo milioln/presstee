@@ -85,14 +85,6 @@ h6{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--acce
 .zoomctl span{display:grid;place-items:center;min-width:56px;font-size:12px;border:1px solid var(--divider);border-left:0;border-right:0;font-variant-numeric:tabular-nums}
 
 .filebar{border-top:2px solid var(--divider);padding:18px 22px}
-.strip .t{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:9px}
-.shots{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--divider);border:1px solid var(--divider);margin-bottom:16px}
-.shot{background:var(--bg);padding:7px 7px 5px;cursor:pointer;border:0;transition:.15s}
-.shot.on{background:var(--accent-100)}
-.shot .mini{position:relative;aspect-ratio:400/460;pointer-events:none}
-.shot .mini svg{position:absolute;inset:0;width:100%;height:100%}
-.shot .lbl{text-align:center;font-size:10.5px;color:var(--muted);margin-top:5px;font-weight:500}
-.shot.on .lbl{color:var(--accent-800)}
 
 .techs{display:grid;gap:0;border:1px solid var(--divider);margin-top:14px}
 .tech{border:0;border-bottom:1px solid var(--divider);background:transparent;padding:12px 14px;cursor:pointer;text-align:left;font:inherit;color:var(--text);transition:.15s}

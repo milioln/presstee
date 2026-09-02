@@ -2,7 +2,7 @@
 // à la souris et au doigt — port direct de la V0 (événements Pointer,
 // compatibles souris et tactile).
 import { S } from './state';
-import { syncShots, paintDiag, paintRecap, paintWidth } from './render';
+import { paintDiag, paintRecap, paintWidth } from './render';
 
 export function bindStage(): void {
   const stage = document.getElementById('stage')!;
@@ -30,7 +30,6 @@ export function bindStage(): void {
       S.y = cl(oy + (ev.clientY - sy) / r.height);
       d.style.left = S.x * 100 + '%';
       d.style.top = S.y * 100 + '%';
-      syncShots();
     };
     const up = () => {
       guide(false);
@@ -58,7 +57,6 @@ export function bindStage(): void {
       S.w = Math.max(0.08, Math.min(1.2, w0 * (Math.hypot(ev.clientX - cx, ev.clientY - cy) / d0)));
       d.style.width = S.w * 100 + '%';
       paintWidth();
-      syncShots();
     };
     const up = () => {
       guide(false);
@@ -86,7 +84,6 @@ export function bindStage(): void {
       let g = r0 + ((Math.atan2(ev.clientY - cy, ev.clientX - cx) - a0) * 180) / Math.PI;
       S.rot = Math.round((((g + 180) % 360) + 360) % 360) - 180;
       d.style.transform = `translate(-50%,-50%) rotate(${S.rot}deg)`;
-      syncShots();
     };
     const up = () => {
       guide(false);

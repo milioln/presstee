@@ -1,7 +1,7 @@
 // Sélecteur d'emplacement (face / cœur / dos) — port direct de la V0.
 // Le cœur est désactivé sur casquette (GARMENTS.casquette.noCoeur).
 import { S } from './state';
-import { place, placeSide } from './derived';
+import { place } from './derived';
 import { render, paintWidth } from './render';
 
 export function syncPlace(): void {
@@ -17,7 +17,6 @@ export function bindPlacement(): void {
     S.place = b.dataset.p as typeof S.place;
     S.x = 0.5;
     S.y = 0.5;
-    S.view = placeSide();
     syncPlace();
     paintWidth();
     render();

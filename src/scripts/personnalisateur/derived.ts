@@ -8,10 +8,6 @@ export function place(): Emplacement {
   return GARMENTS[S.garment].noCoeur && S.place === 'coeur' ? 'face' : S.place;
 }
 
-export function placeSide(): 0 | 1 {
-  return place() === 'dos' ? 1 : 0;
-}
-
 export function currentZoneCm(): number {
   return zoneCm(S.garment, place());
 }

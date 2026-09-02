@@ -1,8 +1,14 @@
-// Rendu de la scène, des vignettes, du diagnostic et du récapitulatif —
-// port direct de la V0.
+// Rendu de la scène, du diagnostic et du récapitulatif — le support est
+// une vraie photo produit (assets/tshirt-col-rond-blanc.webp de la
+// maquette), teintée à la couleur choisie par un calque de fond en
+// mix-blend-mode:multiply — technique de mockup standard, pas un
+// habillage SVG. Les zones d'impression (GARMENTS.tshirt.print) sont
+// réutilisées telles quelles : calibrées à l'origine sur le tracé
+// vectoriel, elles restent une bonne approximation sur la photo,
+// cadrée de façon comparable.
 import { S } from './state';
-import { GARMENTS, VIEWS, flatSVG, bustSVG } from './garments';
-import { place, placeSide, widthCm, heightCm, dpi, qtyTotal, palierActuel, prixUnitaire, prixTotal, currentZoneCm } from './derived';
+import { GARMENTS } from './garments';
+import { place, widthCm, heightCm, dpi, qtyTotal, palierActuel, prixUnitaire, prixTotal, currentZoneCm } from './derived';
 import { lum, lumRGB } from './color-utils';
 import { TECHS, reco } from './recommendation';
 import { bindStage } from './interactions';
@@ -11,20 +17,17 @@ import { TAILLES } from '../../config/parametres-metier';
 
 export const activeTech = () => (S.tech === 'auto' ? reco(S.colors, qtyTotal()).k : S.tech);
 
-function designHTML(vi: number, live: boolean): string {
-  if (VIEWS[vi].side !== placeSide()) return '';
+function designHTML(live: boolean): string {
   if (!S.img) return live ? `<div class="empty">Déposez votre visuel</div>` : '';
   return `<div class="design${live && S.sel ? ' sel' : ''}" style="left:${S.x * 100}%;top:${S.y * 100}%;width:${S.w * 100}%;transform:translate(-50%,-50%) rotate(${S.rot}deg)">
     <img src="${S.img}" alt="">${live ? '<div class="ring"></div><div class="hdl rz"></div><div class="hdl rt"></div>' : ''}</div>`;
 }
 
-function stageHTML(vi: number, live: boolean): string {
-  const v = VIEWS[vi];
-  const dark = lum(S.color.hex) < 0.42;
-  const variant = { coupe: S.coupe, manche: S.manche, col: S.col };
-  const svg = v.kind === 'flat' ? flatSVG(S.garment, v.side, S.color.hex, dark, variant) : bustSVG(S.garment, v.side, S.color.hex, dark, variant);
-  const p = GARMENTS[S.garment].print[place()][v.kind];
-  return svg + `<div class="printarea" style="left:${p.x}%;top:${p.y}%;width:${p.w}%;height:${p.h}%">${designHTML(vi, live)}</div>`;
+function stageHTML(live: boolean): string {
+  const p = GARMENTS.tshirt.print[place()].flat;
+  const tee = `<div style="position:absolute;inset:0;background:${S.color.hex}"></div>
+    <img src="/personnalisateur/tshirt-col-rond-blanc.webp" alt="T-shirt col rond" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply">`;
+  return tee + `<div class="printarea" style="left:${p.x}%;top:${p.y}%;width:${p.w}%;height:${p.h}%">${designHTML(live)}</div>`;
 }
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
@@ -32,12 +35,7 @@ function el<T extends HTMLElement = HTMLElement>(id: string): T {
 }
 
 export function render(): void {
-  const stage = el('stage');
-  const shots = el('shots');
-  stage.innerHTML = stageHTML(S.view, true);
-  shots.innerHTML = VIEWS.map(
-    (v, i) => `<button class="shot${i === S.view ? ' on' : ''}" data-v="${i}"><div class="mini">${stageHTML(i, false)}</div><div class="lbl">${v.label}</div></button>`
-  ).join('');
+  el('stage').innerHTML = stageHTML(true);
   applyZoom();
   bindStage();
   paintTechs();
@@ -135,13 +133,4 @@ export function paintRecap(): void {
     `<div class="line"><b>Textile · palier ${palier.label}</b><span>${prixUnitaire().toFixed(2).replace('.', ',')} € / pièce</span></div>` +
     `<div class="line"><b>${qty} pièce${qty > 1 ? 's' : ''}</b><span>${prixTotal().toFixed(2).replace('.', ',')} €</span></div>` +
     `<div class="line"><b>Marquage ${TECHS[t].n}</b><span>chiffré à l'atelier</span></div>`;
-}
-
-export function syncShots(): void {
-  document.querySelectorAll<HTMLElement>('#shots .design').forEach((m) => {
-    m.style.left = S.x * 100 + '%';
-    m.style.top = S.y * 100 + '%';
-    m.style.width = S.w * 100 + '%';
-    m.style.transform = `translate(-50%,-50%) rotate(${S.rot}deg)`;
-  });
 }

@@ -10,7 +10,6 @@ export type Coloris = { nom: string; hex: string };
 
 export interface PersonnalisateurState {
   garment: Garment;
-  view: number;
   place: Emplacement;
   color: Coloris;
   coupe: Coupe;
@@ -38,7 +37,6 @@ export interface PersonnalisateurState {
 
 export const S: PersonnalisateurState = {
   garment: 'tshirt',
-  view: 0,
   place: 'face',
   color: catalogueColoris[0],
   coupe: VARIANT_DEFAUT.coupe,
@@ -72,7 +70,7 @@ const STORAGE_KEY = 'presstee:personnalisateur:v1';
 // natW/natH/colors/dom qui sont recalculés par l'analyse du fichier.
 type Persisted = Pick<
   PersonnalisateurState,
-  'garment' | 'view' | 'place' | 'coupe' | 'manche' | 'col' | 'img' | 'fileName' | 'vector' | 'x' | 'y' | 'w' | 'rot' | 'sizeDist' | 'tech' | 'delai'
+  'garment' | 'place' | 'coupe' | 'manche' | 'col' | 'img' | 'fileName' | 'vector' | 'x' | 'y' | 'w' | 'rot' | 'sizeDist' | 'tech' | 'delai'
 > & {
   colorIndex: number;
 };
@@ -82,7 +80,6 @@ export function saveState(): void {
     const colorIndex = Math.max(0, catalogueColoris.findIndex((c) => c.hex === S.color.hex));
     const payload: Persisted = {
       garment: S.garment,
-      view: S.view,
       place: S.place,
       coupe: S.coupe,
       manche: S.manche,
@@ -113,7 +110,6 @@ export function loadState(): boolean {
     const p = JSON.parse(raw) as Partial<Persisted>;
     if (!p || typeof p !== 'object') return false;
     if (p.garment) S.garment = p.garment;
-    if (typeof p.view === 'number') S.view = p.view;
     if (p.place) S.place = p.place;
     if (p.coupe) S.coupe = p.coupe;
     if (p.manche) S.manche = p.manche;

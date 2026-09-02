@@ -95,15 +95,6 @@ function bindAdjust(): void {
   });
 }
 
-function bindShotsClick(): void {
-  el('shots').addEventListener('click', (e) => {
-    const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-v]');
-    if (!b) return;
-    S.view = +b.dataset.v!;
-    render();
-  });
-}
-
 // Pré-sélectionne une technique quand on arrive depuis une page du guide
 // (/personnalisateur?technique=serigraphie) — ne s'applique qu'aux
 // techniques réellement proposées ici (la broderie n'y figure pas encore).
@@ -124,7 +115,6 @@ export function init(): void {
   bindSizeDist();
   bindAdjust();
   bindPlacement();
-  bindShotsClick();
   bindZoom();
   bindFileInput();
   bindDeselect();
