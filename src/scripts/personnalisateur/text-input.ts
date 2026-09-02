@@ -1,15 +1,27 @@
 // Mode "Texte" : une alternative au dépôt de fichier — le texte tapé
 // est rendu sur un canvas puis injecté dans le même circuit que
 // n'importe quel visuel (loadDataUrl), donc l'analyse, le
-// positionnement et le rendu 3D fonctionnent sans changement.
+// positionnement et le rendu 3D fonctionnent sans changement. Chaque
+// validation ajoute un nouveau calque texte (cf. file-input.ts).
 import { loadDataUrl } from './file-input';
 
-let textColor = '#17131F';
+export const FONTS = {
+  archivo: { css: "'Archivo', sans-serif", weight: '800', label: 'Sans' },
+  playfair: { css: "'Playfair Display', serif", weight: '700', label: 'Serif' },
+  anton: { css: "'Anton', sans-serif", weight: '400', label: 'Impact' },
+  caveat: { css: "'Caveat', cursive", weight: '700', label: 'Script' },
+  spacemono: { css: "'Space Mono', monospace", weight: '700', label: 'Mono' },
+} as const;
+type FontId = keyof typeof FONTS;
 
-async function renderTextToDataUrl(text: string, color: string): Promise<string> {
+let textColor = '#17131F';
+let fontId: FontId = 'archivo';
+
+async function renderTextToDataUrl(text: string, color: string, fid: FontId): Promise<string> {
+  const f = FONTS[fid];
   const fontSize = 140;
   const padding = 28;
-  const font = `800 ${fontSize}px Archivo, sans-serif`;
+  const font = `${f.weight} ${fontSize}px ${f.css}`;
   try {
     await document.fonts.load(font);
   } catch {
@@ -40,8 +52,10 @@ export function bindTextInput(): void {
   const apply = async () => {
     const text = input.value.trim();
     if (!text) return;
-    const dataUrl = await renderTextToDataUrl(text, textColor);
+    const dataUrl = await renderTextToDataUrl(text, textColor, fontId);
     loadDataUrl(dataUrl, `Texte : « ${text} »`, false, textColor);
+    input.value = '';
+    input.focus();
   };
   el('textApply').addEventListener('click', apply);
   input.addEventListener('keydown', (e) => {
@@ -53,6 +67,14 @@ export function bindTextInput(): void {
     textColor = b.dataset.tc!;
     el('textColors')
       .querySelectorAll('[data-tc]')
+      .forEach((x) => x.classList.toggle('on', x === b));
+  });
+  el('textFonts').addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-tf]');
+    if (!b) return;
+    fontId = b.dataset.tf as FontId;
+    el('textFonts')
+      .querySelectorAll('[data-tf]')
       .forEach((x) => x.classList.toggle('on', x === b));
   });
 }

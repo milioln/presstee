@@ -39,32 +39,36 @@ import '../styles/personnalisateur.css';
 							<button data-p="coeur"><strong>Cœur</strong><em>10 cm max</em></button>
 							<button data-p="dos"><strong>Dos</strong><em>30 cm max</em></button>
 						</div>
-						<p class="hint">Un seul emplacement par pièce. Le recto-verso se chiffre comme deux marquages.</p>
+						<p class="hint">Plusieurs visuels peuvent partager un même emplacement (un logo et un texte, par exemple). Le recto-verso se chiffre comme deux marquages.</p>
 					</div>
 
 					<div class="cell" id="adjust" style="display:none">
 						<h6>4 — Taille et position du visuel</h6>
-						<div class="widthctl">
-							<button class="btn btn-secondary btn-icon" id="wMinus" aria-label="Réduire">−</button>
-							<div class="widthval" id="wCm"></div>
-							<button class="btn btn-secondary btn-icon" id="wPlus" aria-label="Agrandir">+</button>
-						</div>
-						<p class="hint" id="wPct"></p>
-						<p class="hint">Le visuel se déplace aussi directement à la souris ou au doigt, sur le vêtement.</p>
-						<div class="posctl">
-							<button class="btn btn-secondary btn-icon" id="pUp" aria-label="Déplacer vers le haut">↑</button>
-							<div class="posrow">
-								<button class="btn btn-secondary btn-icon" id="pLeft" aria-label="Déplacer vers la gauche">←</button>
-								<button class="btn btn-secondary" id="pCenter">Recentrer</button>
-								<button class="btn btn-secondary btn-icon" id="pRight" aria-label="Déplacer vers la droite">→</button>
+						<div id="adjustControls" style="display:none">
+							<div class="widthctl">
+								<button class="btn btn-secondary btn-icon" id="wMinus" aria-label="Réduire">−</button>
+								<div class="widthval" id="wCm"></div>
+								<button class="btn btn-secondary btn-icon" id="wPlus" aria-label="Agrandir">+</button>
 							</div>
-							<button class="btn btn-secondary btn-icon" id="pDown" aria-label="Déplacer vers le bas">↓</button>
+							<p class="hint" id="wPct"></p>
+							<p class="hint">Le visuel se déplace aussi directement à la souris ou au doigt, sur le vêtement.</p>
+							<div class="posctl">
+								<button class="btn btn-secondary btn-icon" id="pUp" aria-label="Déplacer vers le haut">↑</button>
+								<div class="posrow">
+									<button class="btn btn-secondary btn-icon" id="pLeft" aria-label="Déplacer vers la gauche">←</button>
+									<button class="btn btn-secondary" id="pCenter">Recentrer</button>
+									<button class="btn btn-secondary btn-icon" id="pRight" aria-label="Déplacer vers la droite">→</button>
+								</div>
+								<button class="btn btn-secondary btn-icon" id="pDown" aria-label="Déplacer vers le bas">↓</button>
+							</div>
+							<div class="widthctl" style="margin-top:14px">
+								<button class="btn btn-secondary btn-icon" id="rMinus" aria-label="Incliner vers la gauche">⟲</button>
+								<div class="widthval" id="rDeg">0°</div>
+								<button class="btn btn-secondary btn-icon" id="rPlus" aria-label="Incliner vers la droite">⟳</button>
+							</div>
+							<button class="btn btn-secondary btn-block" id="cropBtn" style="display:none">Recadrer l'image</button>
 						</div>
-						<div class="widthctl" style="margin-top:14px">
-							<button class="btn btn-secondary btn-icon" id="rMinus" aria-label="Incliner vers la gauche">⟲</button>
-							<div class="widthval" id="rDeg">0°</div>
-							<button class="btn btn-secondary btn-icon" id="rPlus" aria-label="Incliner vers la droite">⟳</button>
-						</div>
+						<p class="hint" id="adjustEmpty" style="display:none">Ajoutez un visuel pour cet emplacement pour le positionner.</p>
 					</div>
 
 				</div>
@@ -85,6 +89,7 @@ import '../styles/personnalisateur.css';
 						<button class="btn btn-secondary" id="vReset">Réinitialiser la vue</button>
 					</div>
 					<div class="filebar">
+						<div class="layerStrip" id="layerStrip" style="display:none"></div>
 						<div class="modetabs">
 							<button class="on" data-mode="image">Image</button>
 							<button data-mode="text">Texte</button>
@@ -95,6 +100,13 @@ import '../styles/personnalisateur.css';
 						</div>
 						<div class="textmode" id="textMode" style="display:none">
 							<input type="text" id="textInput" placeholder="Votre texte" maxlength="24" />
+							<div class="fontpicker" id="textFonts">
+								<button class="on" data-tf="archivo" style="font-family:'Archivo',sans-serif;font-weight:800">Sans</button>
+								<button data-tf="playfair" style="font-family:'Playfair Display',serif;font-weight:700">Serif</button>
+								<button data-tf="anton" style="font-family:'Anton',sans-serif">Impact</button>
+								<button data-tf="caveat" style="font-family:'Caveat',cursive;font-weight:700">Script</button>
+								<button data-tf="spacemono" style="font-family:'Space Mono',monospace;font-weight:700">Mono</button>
+							</div>
 							<div class="textcolors" id="textColors">
 								<button class="on" data-tc="#17131F" aria-label="Texte noir" style="background:#17131F"></button>
 								<button data-tc="#ffffff" aria-label="Texte blanc" style="background:#ffffff"></button>
@@ -106,7 +118,6 @@ import '../styles/personnalisateur.css';
 							<button class="btn btn-primary btn-block" id="textApply">Ajouter le texte</button>
 						</div>
 						<input type="file" id="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" />
-						<div id="fileInfo"></div>
 						<div class="diag" id="diag" style="display:none"></div>
 					</div>
 				</div>
@@ -146,6 +157,25 @@ import '../styles/personnalisateur.css';
 
 		<p class="credit">Modèle 3D « T-Shirt Low Poly » par <a href="https://sketchfab.com/Chirag.Vijay" target="_blank" rel="noopener">Chirag.Vijay</a>, sous licence <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.</p>
 	</div>
+	</div>
+
+	<div class="cropOverlay" id="cropOverlay" style="display:none">
+		<div class="cropBox">
+			<h6>Recadrer le visuel</h6>
+			<div class="cropStage" id="cropStage">
+				<img id="cropImg" alt="" />
+				<div class="cropRect" id="cropRect">
+					<div class="cropHandle" data-h="nw"></div>
+					<div class="cropHandle" data-h="ne"></div>
+					<div class="cropHandle" data-h="sw"></div>
+					<div class="cropHandle" data-h="se"></div>
+				</div>
+			</div>
+			<div class="cropActions">
+				<button class="btn btn-secondary" id="cropCancel">Annuler</button>
+				<button class="btn btn-primary" id="cropApply">Valider le recadrage</button>
+			</div>
+		</div>
 	</div>
 
 	<script>

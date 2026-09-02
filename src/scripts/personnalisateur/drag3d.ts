@@ -25,8 +25,7 @@
 // et l'orbite aurait déjà démarré avant qu'on ait pu l'annuler. En
 // phase capture, le nôtre passe en premier et peut couper net la
 // propagation avec stopImmediatePropagation().
-import { S } from './state';
-import { place } from './derived';
+import { activeLayer } from './state';
 import { render, PRINT_RECT, TEXTURE_SIZE } from './render';
 
 function stage(): any {
@@ -39,14 +38,17 @@ function uvFrac(u: number): number {
 
 function onPointerDown(e: PointerEvent): void {
   const mv = stage();
-  if (!mv || !S.img) return;
+  const layer = activeLayer();
+  if (!mv || !layer) return;
   const hit = mv.positionAndNormalFromPoint(e.clientX, e.clientY);
   if (!hit) return;
   // Face avant pour face/cœur, face arrière pour dos — sinon (manche,
-  // tranche) on laisse la caméra tourner.
+  // tranche) on laisse la caméra tourner. On teste contre l'emplacement
+  // du calque actif : glisser ne doit engager que le calque qu'on est
+  // en train d'éditer, sur sa propre face.
   const front = hit.normal.z > 0.25;
   const back = hit.normal.z < -0.25;
-  if (place() === 'dos' ? !back : !front) return;
+  if (layer.place === 'dos' ? !back : !front) return;
 
   const probe = 24;
   const px = mv.positionAndNormalFromPoint(e.clientX + probe, e.clientY);
@@ -70,9 +72,9 @@ function onPointerDown(e: PointerEvent): void {
     // ignore
   }
 
-  const rect = PRINT_RECT[place()];
-  const x0 = S.x;
-  const y0 = S.y;
+  const rect = PRINT_RECT[layer.place];
+  const x0 = layer.x;
+  const y0 = layer.y;
   const startX = e.clientX;
   const startY = e.clientY;
 
@@ -81,8 +83,8 @@ function onPointerDown(e: PointerEvent): void {
     const dv = dvPerPxY * (ev.clientY - startY);
     const dSx = (du * TEXTURE_SIZE) / rect.w;
     const dSy = (dv * TEXTURE_SIZE) / rect.h;
-    S.x = Math.max(0, Math.min(1, x0 + dSx));
-    S.y = Math.max(0, Math.min(1, y0 + dSy));
+    layer.x = Math.max(0, Math.min(1, x0 + dSx));
+    layer.y = Math.max(0, Math.min(1, y0 + dSy));
     render();
   };
   const up = () => {

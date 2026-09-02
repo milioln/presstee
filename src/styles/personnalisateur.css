@@ -5,7 +5,7 @@
   arrondies. Feuille de style dédiée à cette page — les variables
   diffèrent volontairement de global.css. Ne pas fusionner sans validation.
 */
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Playfair+Display:wght@700&family=Anton&family=Caveat:wght@700&family=Space+Mono:wght@700&display=swap');
 
 :root{
   --bg:#f3f2f2;--surface:#eae9e9;--text:#201e1d;
@@ -100,12 +100,20 @@
 .textmode{display:grid;gap:10px}
 .textmode input[type=text]{width:100%;padding:11px 12px;border:1px solid var(--divider);background:var(--bg);font:inherit;font-size:14px;color:var(--text)}
 .textmode input[type=text]:focus-visible{outline:2px solid var(--accent);outline-offset:-1px}
-.textcolors{display:flex;gap:8px}
+.fontpicker{display:flex;flex-wrap:wrap;gap:6px;border:1px solid var(--divider);padding:6px}
+.fontpicker button{flex:1;min-width:56px;border:0;background:transparent;padding:8px 6px;cursor:pointer;color:var(--text);font-size:15px;transition:.15s}
+.fontpicker button:hover{background:color-mix(in srgb,var(--text) 6%,transparent)}
+.fontpicker button.on{background:var(--accent);color:var(--bg)}
+.textcolors{display:flex;gap:8px;flex-wrap:wrap}
 .textcolors button{width:28px;height:28px;border:1px solid var(--divider);cursor:pointer;padding:0}
 .textcolors button.on{outline:2px solid var(--accent);outline-offset:2px}
-.filerow{display:flex;align-items:center;gap:11px;margin-top:12px;font-size:13px}
-.filerow img{width:40px;height:40px;object-fit:contain;background:var(--surface);padding:3px}
-.filerow span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Manrope',system-ui,sans-serif}
+
+.layerStrip{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.layerchip{position:relative;width:52px;height:52px;border:1.5px solid var(--divider);cursor:pointer;background:var(--surface);padding:0}
+.layerchip img{width:100%;height:100%;object-fit:contain;display:block}
+.layerchip.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.layerchip-rm{position:absolute;top:-8px;right:-8px;width:18px;height:18px;border:1px solid var(--divider);background:var(--bg);color:var(--text);font-size:12px;line-height:1;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}
+.layerchip-rm:hover{background:var(--accent);color:var(--bg);border-color:var(--accent)}
 
 .diag{margin-top:14px;border-top:1px solid var(--divider);padding-top:14px;display:grid;gap:8px}
 .diag .dt{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600}
@@ -143,6 +151,23 @@ input[type=file]{display:none}
 
 .credit{font-size:11px;color:var(--muted);margin-top:16px;font-family:'Manrope',system-ui,sans-serif}
 .credit a{color:inherit}
+
+.cropOverlay{position:fixed;inset:0;background:rgba(20,18,17,.72);z-index:80;display:flex;align-items:center;justify-content:center;padding:24px}
+.cropBox{background:var(--bg);padding:22px;width:100%;max-width:560px;border:1px solid var(--divider)}
+.cropStage{position:relative;width:fit-content;max-width:100%;max-height:56vh;margin:0 auto;overflow:hidden;background:
+  linear-gradient(45deg,var(--surface) 25%,transparent 25%) -8px 0/16px 16px,
+  linear-gradient(-45deg,var(--surface) 25%,transparent 25%) -8px 0/16px 16px,
+  linear-gradient(45deg,transparent 75%,var(--surface) 75%) 0 0/16px 16px,
+  linear-gradient(-45deg,transparent 75%,var(--surface) 75%) 0 0/16px 16px;
+  touch-action:none}
+.cropStage img{max-width:100%;max-height:56vh;display:block;user-select:none;-webkit-user-drag:none;pointer-events:none}
+.cropRect{position:absolute;border:2px solid var(--accent);box-shadow:0 0 0 9999px rgba(20,18,17,.55);cursor:move;touch-action:none}
+.cropHandle{position:absolute;width:16px;height:16px;background:var(--accent);border:2px solid var(--bg);touch-action:none}
+.cropHandle[data-h=nw]{left:-9px;top:-9px;cursor:nwse-resize}
+.cropHandle[data-h=ne]{right:-9px;top:-9px;cursor:nesw-resize}
+.cropHandle[data-h=sw]{left:-9px;bottom:-9px;cursor:nesw-resize}
+.cropHandle[data-h=se]{right:-9px;bottom:-9px;cursor:nwse-resize}
+.cropActions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
 
 @media(max-width:980px){
   .layout3{grid-template-columns:1fr}

@@ -1,5 +1,5 @@
 // Valeurs dérivées de l'état — port direct de la V0.
-import { S } from './state';
+import { S, activeLayer } from './state';
 import { GARMENTS, zoneCm } from './garments';
 import { PALIERS_TARIF, prixVente, type PalierTarif } from '../../config/tarification';
 import { coutBaseSupportUnique, TAILLES, type Emplacement } from '../../config/parametres-metier';
@@ -13,15 +13,29 @@ export function currentZoneCm(): number {
 }
 
 export function widthCm(): number {
-  return S.w * currentZoneCm();
+  const layer = activeLayer();
+  return layer ? layer.w * currentZoneCm() : 0;
 }
 
 export function heightCm(): number | null {
-  return S.natW ? widthCm() * (S.natH / S.natW) : null;
+  const layer = activeLayer();
+  return layer && layer.natW ? widthCm() * (layer.natH / layer.natW) : null;
 }
 
 export function dpi(): number | null {
-  return S.natW && widthCm() > 0 ? S.natW / (widthCm() / 2.54) : null;
+  const layer = activeLayer();
+  return layer && layer.natW && widthCm() > 0 ? layer.natW / (widthCm() / 2.54) : null;
+}
+
+// Nombre de couleurs total, tous calques confondus — c'est ce qui
+// détermine réellement le coût de calage en sérigraphie (autant
+// d'écrans à préparer que de couleurs cumulées sur l'ensemble du
+// projet, pas seulement sur le visuel actuellement sélectionné).
+export function totalColors(): number | null {
+  if (S.layers.length === 0) return null;
+  if (S.layers.some((l) => l.vector)) return null;
+  const sum = S.layers.reduce((s, l) => s + (l.colors ?? 1), 0);
+  return Math.max(1, sum);
 }
 
 export function qtyTotal(): number {

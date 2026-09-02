@@ -1,12 +1,36 @@
 // État partagé du personnalisateur + persistance locale (nouveauté V1,
 // document de passage section 6 : "Persistance du projet en cours dans
 // le navigateur, pour ne rien perdre au rafraîchissement").
+//
+// Le visuel n'est plus unique : plusieurs calques (logo + texte, texte
+// recto + texte dos...) peuvent coexister, chacun avec sa propre
+// position/taille/rotation et son propre emplacement (face/cœur/dos).
 import { catalogueColoris, repartitionTaillesParDefaut, type Garment, type Emplacement, type TailleCode } from '../../config/parametres-metier';
 import type { TechKey } from './recommendation';
 import { VARIANT_DEFAUT } from './garments';
 import type { Coupe, Manche, Col } from './silhouettes';
 
 export type Coloris = { nom: string; hex: string };
+
+export interface Layer {
+  id: string;
+  place: Emplacement;
+  img: string;
+  fileName: string;
+  vector: boolean;
+  // Couleur connue avec certitude (visuel généré par le mode Texte) :
+  // court-circuite l'analyse pixel, cf. file-analysis.ts.
+  knownColor: string | null;
+  natW: number;
+  natH: number;
+  colors: number | null;
+  dom: [number, number, number] | null;
+  colorSwatches: string[] | null;
+  x: number;
+  y: number;
+  w: number;
+  rot: number;
+}
 
 export interface PersonnalisateurState {
   garment: Garment;
@@ -15,19 +39,8 @@ export interface PersonnalisateurState {
   coupe: Coupe;
   manche: Manche;
   col: Col;
-  img: string | null;
-  fileName: string;
-  vector: boolean;
-  natW: number;
-  natH: number;
-  colors: number | null;
-  dom: [number, number, number] | null;
-  colorSwatches: string[] | null;
-  knownColor: string | null;
-  x: number;
-  y: number;
-  w: number;
-  rot: number;
+  layers: Layer[];
+  activeLayerId: string | null;
   sizeDist: Record<TailleCode, number>;
   tech: TechKey | 'auto';
   delai: 'standard' | 'express';
@@ -40,33 +53,43 @@ export const S: PersonnalisateurState = {
   coupe: VARIANT_DEFAUT.coupe,
   manche: VARIANT_DEFAUT.manche,
   col: VARIANT_DEFAUT.col,
-  img: null,
-  fileName: '',
-  vector: false,
-  natW: 0,
-  natH: 0,
-  colors: null,
-  dom: null,
-  colorSwatches: null,
-  knownColor: null,
-  x: 0.5,
-  y: 0.5,
-  w: 0.62,
-  rot: 0,
+  layers: [],
+  activeLayerId: null,
   sizeDist: { ...repartitionTaillesParDefaut },
   tech: 'auto',
   delai: 'standard',
 };
 
-const STORAGE_KEY = 'presstee:personnalisateur:v1';
+let layerSeq = 0;
 
-// Champs persistés : uniquement ce qui décrit le projet du client.
-// natW/natH/colors/dom repartent à zéro au rechargement : ils sont
-// recalculés par l'analyse du fichier.
-type Persisted = Pick<
-  PersonnalisateurState,
-  'garment' | 'place' | 'coupe' | 'manche' | 'col' | 'img' | 'fileName' | 'vector' | 'knownColor' | 'x' | 'y' | 'w' | 'rot' | 'sizeDist' | 'tech' | 'delai'
-> & {
+export function activeLayer(): Layer | null {
+  return S.layers.find((l) => l.id === S.activeLayerId) || null;
+}
+
+export function createLayer(partial: { img: string; fileName: string; vector: boolean; knownColor?: string | null }): Layer {
+  layerSeq += 1;
+  return {
+    id: `l${Date.now().toString(36)}${layerSeq}`,
+    place: S.place,
+    img: partial.img,
+    fileName: partial.fileName,
+    vector: partial.vector,
+    knownColor: partial.knownColor ?? null,
+    natW: 0,
+    natH: 0,
+    colors: null,
+    dom: null,
+    colorSwatches: null,
+    x: 0.5,
+    y: 0.5,
+    w: 0.62,
+    rot: 0,
+  };
+}
+
+const STORAGE_KEY = 'presstee:personnalisateur:v2';
+
+type Persisted = Pick<PersonnalisateurState, 'garment' | 'place' | 'coupe' | 'manche' | 'col' | 'layers' | 'activeLayerId' | 'sizeDist' | 'tech' | 'delai'> & {
   colorIndex: number;
 };
 
@@ -80,14 +103,8 @@ export function saveState(): void {
       manche: S.manche,
       col: S.col,
       colorIndex,
-      img: S.img,
-      fileName: S.fileName,
-      vector: S.vector,
-      knownColor: S.knownColor,
-      x: S.x,
-      y: S.y,
-      w: S.w,
-      rot: S.rot,
+      layers: S.layers,
+      activeLayerId: S.activeLayerId,
       sizeDist: S.sizeDist,
       tech: S.tech,
       delai: S.delai,
@@ -97,6 +114,10 @@ export function saveState(): void {
     // Stockage indisponible (navigation privée, quota dépassé...) : on
     // n'interrompt jamais l'expérience pour une persistance qui échoue.
   }
+}
+
+function isLayer(v: unknown): v is Layer {
+  return !!v && typeof v === 'object' && typeof (v as Layer).id === 'string' && typeof (v as Layer).img === 'string';
 }
 
 export function loadState(): boolean {
@@ -111,14 +132,8 @@ export function loadState(): boolean {
     if (p.manche) S.manche = p.manche;
     if (p.col) S.col = p.col;
     if (typeof p.colorIndex === 'number' && catalogueColoris[p.colorIndex]) S.color = catalogueColoris[p.colorIndex];
-    if (typeof p.img === 'string') S.img = p.img;
-    if (typeof p.fileName === 'string') S.fileName = p.fileName;
-    if (typeof p.vector === 'boolean') S.vector = p.vector;
-    if (typeof p.knownColor === 'string' || p.knownColor === null) S.knownColor = p.knownColor;
-    if (typeof p.x === 'number') S.x = p.x;
-    if (typeof p.y === 'number') S.y = p.y;
-    if (typeof p.w === 'number') S.w = p.w;
-    if (typeof p.rot === 'number') S.rot = p.rot;
+    if (Array.isArray(p.layers)) S.layers = p.layers.filter(isLayer);
+    if (typeof p.activeLayerId === 'string' || p.activeLayerId === null) S.activeLayerId = p.activeLayerId;
     if (p.sizeDist && typeof p.sizeDist === 'object') Object.assign(S.sizeDist, p.sizeDist);
     if (p.tech) S.tech = p.tech;
     if (p.delai) S.delai = p.delai;

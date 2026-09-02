@@ -4,13 +4,15 @@
 // ("T-shirt col rond unisexe, 180 g/m²") : le choix du support et des
 // caractéristiques (col/manches/coupe) reviendra quand chaque référence
 // du catalogue aura son propre personnalisateur.
-import { S, loadState } from './state';
+import { S, activeLayer, loadState } from './state';
 import { catalogueColoris, TAILLES } from '../../config/parametres-metier';
 import { render, paintTechs, paintRecap, paintSizeDist, paintWidth, paintRotate, syncCamera } from './render';
 import { syncPlace, bindPlacement } from './placement';
-import { bindFileInput, restoreFileUI } from './file-input';
+import { bindFileInput } from './file-input';
 import { bindModeTabs, bindTextInput } from './text-input';
 import { bindModelDrag } from './drag3d';
+import { bindLayers, syncEditor } from './layers';
+import { bindCrop } from './crop';
 import { TECHS } from './recommendation';
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
@@ -82,27 +84,37 @@ function bindSizeDist(): void {
   });
 }
 
+// Repositionner, redimensionner ou incliner un calque ne change pas
+// son contenu : inutile de relancer l'analyse couleur/résolution à
+// chaque clic ou frame de glisser, seul paintWidth()/render() suffit.
 function bindAdjust(): void {
   el('wMinus').addEventListener('click', () => {
-    S.w = Math.max(0.12, Math.round((S.w - 0.06) * 100) / 100);
+    const layer = activeLayer();
+    if (!layer) return;
+    layer.w = Math.max(0.12, Math.round((layer.w - 0.06) * 100) / 100);
     paintWidth();
     render();
   });
   el('wPlus').addEventListener('click', () => {
-    S.w = Math.min(1, Math.round((S.w + 0.06) * 100) / 100);
+    const layer = activeLayer();
+    if (!layer) return;
+    layer.w = Math.min(1, Math.round((layer.w + 0.06) * 100) / 100);
     paintWidth();
     render();
   });
 }
 
 // Le glisser sur le canevas 3D fait tourner la caméra (pas le
-// visuel) : le repositionnement passe par ces flèches, qui déplacent
-// le visuel dans la zone d'impression (S.x/S.y en fraction 0–1).
+// visuel) sauf sur le calque actif lui-même : le repositionnement
+// passe aussi par ces flèches, qui déplacent le calque actif dans la
+// zone d'impression (layer.x/layer.y en fraction 0–1).
 function bindPosition(): void {
   const step = 0.08;
   const move = (dx: number, dy: number): void => {
-    S.x = Math.max(0, Math.min(1, Math.round((S.x + dx) * 100) / 100));
-    S.y = Math.max(0, Math.min(1, Math.round((S.y + dy) * 100) / 100));
+    const layer = activeLayer();
+    if (!layer) return;
+    layer.x = Math.max(0, Math.min(1, Math.round((layer.x + dx) * 100) / 100));
+    layer.y = Math.max(0, Math.min(1, Math.round((layer.y + dy) * 100) / 100));
     render();
   };
   el('pUp').addEventListener('click', () => move(0, step));
@@ -110,8 +122,10 @@ function bindPosition(): void {
   el('pLeft').addEventListener('click', () => move(-step, 0));
   el('pRight').addEventListener('click', () => move(step, 0));
   el('pCenter').addEventListener('click', () => {
-    S.x = 0.5;
-    S.y = 0.5;
+    const layer = activeLayer();
+    if (!layer) return;
+    layer.x = 0.5;
+    layer.y = 0.5;
     render();
   });
 }
@@ -119,12 +133,16 @@ function bindPosition(): void {
 function bindRotate(): void {
   const step = 15;
   el('rMinus').addEventListener('click', () => {
-    S.rot = Math.round(S.rot - step);
+    const layer = activeLayer();
+    if (!layer) return;
+    layer.rot = Math.round(layer.rot - step);
     paintRotate();
     render();
   });
   el('rPlus').addEventListener('click', () => {
-    S.rot = Math.round(S.rot + step);
+    const layer = activeLayer();
+    if (!layer) return;
+    layer.rot = Math.round(layer.rot + step);
     paintRotate();
     render();
   });
@@ -165,6 +183,8 @@ export function init(): void {
   bindModeTabs();
   bindTextInput();
   bindModelDrag();
+  bindLayers();
+  bindCrop();
 
   // Reflète les valeurs restaurées (ou par défaut) dans les commandes du
   // délai avant le premier rendu.
@@ -172,8 +192,5 @@ export function init(): void {
 
   syncPlace();
   paintSizeDist();
-  paintWidth();
-  paintRotate();
-  restoreFileUI();
-  render();
+  syncEditor();
 }
