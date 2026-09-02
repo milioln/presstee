@@ -1,64 +1,141 @@
-// Rendu de la scène, du diagnostic et du récapitulatif — le support est
-// une vraie photo produit (assets/tshirt-col-rond-blanc.webp de la
-// maquette), teintée à la couleur choisie par un calque de fond en
-// mix-blend-mode:multiply — technique de mockup standard, pas un
-// habillage SVG. Les zones d'impression (GARMENTS.tshirt.print) sont
-// réutilisées telles quelles : calibrées à l'origine sur le tracé
-// vectoriel, elles restent une bonne approximation sur la photo,
-// cadrée de façon comparable.
+// Rendu de la scène (modèle 3D rotatif), du diagnostic et du
+// récapitulatif. Le support est un vrai modèle 3D (glTF, licence
+// CC-BY-4.0 — crédit affiché en bas de page) : la couleur choisie et le visuel
+// déposé sont composités dans la texture du vêtement (canvas 2D),
+// puis appliqués comme baseColorTexture du matériau — le visuel suit
+// donc le tissu quand on fait pivoter le modèle, au lieu d'un calque
+// plat superposé à l'écran.
 import { S } from './state';
-import { GARMENTS } from './garments';
 import { place, widthCm, heightCm, dpi, qtyTotal, palierActuel, prixUnitaire, prixTotal, currentZoneCm } from './derived';
 import { lum, lumRGB } from './color-utils';
 import { TECHS, reco } from './recommendation';
-import { bindStage } from './interactions';
 import { saveState } from './state';
-import { TAILLES } from '../../config/parametres-metier';
+import { TAILLES, type Emplacement } from '../../config/parametres-metier';
 
 export const activeTech = () => (S.tech === 'auto' ? reco(S.colors, qtyTotal()).k : S.tech);
 
-function designHTML(live: boolean): string {
-  if (!S.img) return live ? `<div class="empty">Déposez votre visuel</div>` : '';
-  return `<div class="design${live && S.sel ? ' sel' : ''}" style="left:${S.x * 100}%;top:${S.y * 100}%;width:${S.w * 100}%;transform:translate(-50%,-50%) rotate(${S.rot}deg)">
-    <img src="${S.img}" alt="">${live ? '<div class="ring"></div><div class="hdl rz"></div><div class="hdl rt"></div>' : ''}</div>`;
+const TEXTURE_URL = '/personnalisateur/model/textures/Material_baseColor.png';
+
+// Zones d'impression calibrées empiriquement sur l'atlas de texture
+// (patron à plat 2048×2048) en affichant une grille de repères sur le
+// modèle chargé et en relevant où ils tombent sur le tissu. Le
+// panneau "dos" est estimé par symétrie horizontale du panneau
+// "face" — non calibré aussi précisément faute de vue arrière testée.
+const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: number }> = {
+  face: { x: 370, y: 280, w: 360, h: 340 },
+  coeur: { x: 630, y: 230, w: 130, h: 130 },
+  dos: { x: 1270, y: 280, w: 360, h: 340 },
+};
+
+let baseImgPromise: Promise<HTMLImageElement> | null = null;
+function loadBaseImg(): Promise<HTMLImageElement> {
+  if (!baseImgPromise) {
+    baseImgPromise = new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = TEXTURE_URL;
+    });
+  }
+  return baseImgPromise;
 }
 
-const TEE_PHOTO = '/personnalisateur/tshirt-col-rond-blanc.webp';
+function loadImg(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+}
 
-function stageHTML(live: boolean): string {
-  const p = GARMENTS.tshirt.print[place()].flat;
-  // La photo a un fond transparent (silhouette découpée) : le calque de
-  // teinte est masqué sur cette même silhouette (mask-image), sinon il
-  // déborde en aplat sur tout le cadre au lieu de ne colorer que le
-  // vêtement.
-  const tee = `<div style="position:absolute;inset:0;background:${S.color.hex};
-      -webkit-mask-image:url(${TEE_PHOTO});-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;-webkit-mask-position:center;
-      mask-image:url(${TEE_PHOTO});mask-size:contain;mask-repeat:no-repeat;mask-position:center"></div>
-    <img src="${TEE_PHOTO}" alt="T-shirt col rond" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply">`;
-  return tee + `<div class="printarea" style="left:${p.x}%;top:${p.y}%;width:${p.w}%;height:${p.h}%">${designHTML(live)}</div>`;
+async function buildTextureDataUrl(): Promise<string> {
+  const base = await loadBaseImg();
+  const c = document.createElement('canvas');
+  c.width = base.naturalWidth;
+  c.height = base.naturalHeight;
+  const ctx = c.getContext('2d')!;
+  ctx.drawImage(base, 0, 0);
+  // Teinte tout le vêtement (silhouette préservée par l'alpha du PNG).
+  ctx.globalCompositeOperation = 'source-atop';
+  ctx.fillStyle = S.color.hex;
+  ctx.fillRect(0, 0, c.width, c.height);
+  ctx.globalCompositeOperation = 'source-over';
+  if (S.img) {
+    const rect = PRINT_RECT[place()];
+    const logo = await loadImg(S.img);
+    const w = rect.w * S.w;
+    const h = w * (logo.naturalHeight / logo.naturalWidth);
+    const cx = rect.x + rect.w * S.x;
+    const cy = rect.y + rect.h * S.y;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate((S.rot * Math.PI) / 180);
+    // Le panneau avant du modèle est retourné verticalement dans l'atlas
+    // UV (vérifié empiriquement avec un visuel directionnel) : on
+    // recompense en dessinant le visuel inversé sur l'axe Y, pour qu'il
+    // se lise normalement une fois plaqué sur le tissu.
+    ctx.scale(1, -1);
+    ctx.drawImage(logo, -w / 2, -h / 2, w, h);
+    ctx.restore();
+  }
+  return c.toDataURL('image/png');
 }
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
   return document.getElementById(id) as T;
 }
 
+// Le typage de <model-viewer> vient du package mais son API interne
+// (model.materials, createTexture) n'est pas exposée dans les .d.ts —
+// on la traite en any à cette frontière précise.
+function stage(): any {
+  return document.getElementById('stage');
+}
+
+let applying = false;
+let reapplyQueued = false;
+
+async function applyTexture(): Promise<void> {
+  const mv = stage();
+  if (!mv || !mv.model) return;
+  if (applying) {
+    reapplyQueued = true;
+    return;
+  }
+  applying = true;
+  try {
+    const dataUrl = await buildTextureDataUrl();
+    const material = mv.model.materials[0];
+    const texture = await mv.createTexture(dataUrl);
+    material.pbrMetallicRoughness.baseColorTexture.setTexture(texture);
+  } finally {
+    applying = false;
+    if (reapplyQueued) {
+      reapplyQueued = false;
+      applyTexture();
+    }
+  }
+}
+
+export function syncCamera(): void {
+  const mv = stage();
+  if (!mv) return;
+  mv.cameraOrbit = place() === 'dos' ? '180deg 85deg 105%' : '0deg 85deg 105%';
+}
+
 export function render(): void {
-  el('stage').innerHTML = stageHTML(true);
-  applyZoom();
-  bindStage();
+  const mv = stage();
+  if (mv && mv.loaded) {
+    applyTexture();
+  } else if (mv) {
+    mv.addEventListener('load', () => applyTexture(), { once: true });
+  }
+  syncCamera();
   paintTechs();
   paintDiag();
   paintRecap();
   saveState();
-}
-
-export function applyZoom(): void {
-  const zoomwrap = el('zoomwrap');
-  const m = ((S.z - 1) / 2) * 100;
-  S.px = Math.max(-m, Math.min(m, S.px));
-  S.py = Math.max(-m, Math.min(m, S.py));
-  zoomwrap.style.transform = `translate(${S.px}%,${S.py}%) scale(${S.z})`;
-  el('zVal').textContent = Math.round(S.z * 100) + ' %';
 }
 
 export function paintTechs(): void {

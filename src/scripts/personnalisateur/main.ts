@@ -6,10 +6,8 @@
 // du catalogue aura son propre personnalisateur.
 import { S, loadState } from './state';
 import { catalogueColoris, TAILLES } from '../../config/parametres-metier';
-import { render, paintTechs, paintRecap, paintSizeDist, paintWidth } from './render';
+import { render, paintTechs, paintRecap, paintSizeDist, paintWidth, syncCamera } from './render';
 import { syncPlace, bindPlacement } from './placement';
-import { bindDeselect } from './interactions';
-import { bindZoom, setZ } from './zoom';
 import { bindFileInput, restoreFileUI } from './file-input';
 import { TECHS } from './recommendation';
 
@@ -95,6 +93,14 @@ function bindAdjust(): void {
   });
 }
 
+function bindResetView(): void {
+  el('vReset').addEventListener('click', () => {
+    const mv = el<any>('stage');
+    mv.fieldOfView = 'auto';
+    syncCamera();
+  });
+}
+
 // Pré-sélectionne une technique quand on arrive depuis une page du guide
 // (/personnalisateur?technique=serigraphie) — ne s'applique qu'aux
 // techniques réellement proposées ici (la broderie n'y figure pas encore).
@@ -115,9 +121,8 @@ export function init(): void {
   bindSizeDist();
   bindAdjust();
   bindPlacement();
-  bindZoom();
+  bindResetView();
   bindFileInput();
-  bindDeselect();
 
   // Reflète les valeurs restaurées (ou par défaut) dans les commandes du
   // délai avant le premier rendu.
@@ -126,7 +131,6 @@ export function init(): void {
   syncPlace();
   paintSizeDist();
   paintWidth();
-  setZ(1);
   restoreFileUI();
   render();
 }

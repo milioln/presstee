@@ -26,10 +26,6 @@ export interface PersonnalisateurState {
   y: number;
   w: number;
   rot: number;
-  sel: boolean;
-  z: number;
-  px: number;
-  py: number;
   sizeDist: Record<TailleCode, number>;
   tech: TechKey | 'auto';
   delai: 'standard' | 'express';
@@ -53,10 +49,6 @@ export const S: PersonnalisateurState = {
   y: 0.5,
   w: 0.62,
   rot: 0,
-  sel: false,
-  z: 1,
-  px: 0,
-  py: 0,
   sizeDist: { ...repartitionTaillesParDefaut },
   tech: 'auto',
   delai: 'standard',
@@ -64,10 +56,9 @@ export const S: PersonnalisateurState = {
 
 const STORAGE_KEY = 'presstee:personnalisateur:v1';
 
-// Champs persistés : uniquement ce qui décrit le projet du client. Le
-// zoom/pan (z, px, py) et la sélection (sel) sont un état d'écran, pas un
-// état de projet — ils repartent à zéro au rechargement, comme
-// natW/natH/colors/dom qui sont recalculés par l'analyse du fichier.
+// Champs persistés : uniquement ce qui décrit le projet du client.
+// natW/natH/colors/dom repartent à zéro au rechargement : ils sont
+// recalculés par l'analyse du fichier.
 type Persisted = Pick<
   PersonnalisateurState,
   'garment' | 'place' | 'coupe' | 'manche' | 'col' | 'img' | 'fileName' | 'vector' | 'x' | 'y' | 'w' | 'rot' | 'sizeDist' | 'tech' | 'delai'

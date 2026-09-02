@@ -62,27 +62,11 @@ h6{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--acce
 .widthval{flex:1;text-align:center;font-family:'Archivo',sans-serif;font-weight:800;font-size:15px}
 
 .viewer{display:flex;flex-direction:column}
-.frame{position:relative;flex:1;min-height:480px;overflow:hidden;touch-action:none;cursor:grab;
+.frame{position:relative;flex:1;min-height:480px;overflow:hidden;
   background-image:linear-gradient(color-mix(in srgb,var(--text) 6%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--text) 6%,transparent) 1px,transparent 1px);
   background-size:26px 26px}
-.frame.panning{cursor:grabbing}
-.zoomwrap{position:absolute;inset:26px;transform-origin:center center}
-.stage{position:absolute;inset:0}
-.stage svg{position:absolute;inset:0;width:100%;height:100%}
-.printarea{position:absolute;overflow:hidden}
-.printarea.show{outline:1.5px dashed var(--accent)}
-.design{position:absolute;cursor:grab;user-select:none}
-.design img{width:100%;display:block;pointer-events:none}
-.design .ring{position:absolute;inset:-1px;border:1.5px solid var(--accent);display:none}
-.design.sel .ring{display:block}
-.hdl{position:absolute;width:16px;height:16px;border-radius:50%;background:var(--bg);border:1.5px solid var(--accent);display:none}
-.design.sel .hdl{display:block}
-.hdl.rz{right:-8px;bottom:-8px;cursor:nwse-resize}
-.hdl.rt{left:50%;top:-26px;margin-left:-8px;cursor:grab;background:var(--accent)}
-.empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;border:1.5px dashed var(--divider);color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:6px;pointer-events:none}
-
-.zoomctl{position:absolute;left:20px;top:20px;display:flex;align-items:stretch;background:var(--bg)}
-.zoomctl span{display:grid;place-items:center;min-width:56px;font-size:12px;border:1px solid var(--divider);border-left:0;border-right:0;font-variant-numeric:tabular-nums}
+#stage{position:absolute;inset:0;width:100%;height:100%;--poster-color:transparent}
+#vReset{position:absolute;left:20px;top:20px;background:var(--bg)}
 
 .filebar{border-top:2px solid var(--divider);padding:18px 22px}
 
@@ -145,6 +129,9 @@ h6{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--acce
 .btn-block{width:100%;margin-top:12px;justify-content:flex-start;padding:13px 16px}
 .recap .btn-block{justify-content:center}
 input[type=file]{display:none}
+
+.credit{font-size:11px;color:var(--muted);margin-top:16px;font-family:'Manrope',system-ui,sans-serif}
+.credit a{color:inherit}
 
 @media(max-width:980px){
   .layout3{grid-template-columns:1fr}

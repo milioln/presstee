@@ -1,0 +1,11 @@
+Model Information:
+* title:	T-Shirt Low Poly
+* source:	https://sketchfab.com/3d-models/t-shirt-low-poly-3e4b13a502884acfbd79cee0f9cd8876
+* author:	Chirag.Vijay (https://sketchfab.com/Chirag.Vijay)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "T-Shirt Low Poly" (https://sketchfab.com/3d-models/t-shirt-low-poly-3e4b13a502884acfbd79cee0f9cd8876) by Chirag.Vijay (https://sketchfab.com/Chirag.Vijay) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

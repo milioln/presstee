@@ -15,7 +15,6 @@ function loadFile(f: File): void {
       y: 0.5,
       w: 0.62,
       rot: 0,
-      sel: true,
       colors: null,
       dom: null,
       natW: 0,

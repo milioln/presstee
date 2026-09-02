@@ -58,13 +58,18 @@ import '../styles/personnalisateur.css';
 
 				<div class="viewer">
 					<div class="frame" id="frame">
-						<div class="zoomwrap" id="zoomwrap"><div class="stage" id="stage"></div></div>
-						<div class="zoomctl">
-							<button class="btn btn-secondary btn-icon" id="zOut" aria-label="Dézoomer">−</button>
-							<span id="zVal">100 %</span>
-							<button class="btn btn-secondary btn-icon" id="zIn" aria-label="Zoomer">+</button>
-							<button class="btn btn-secondary" id="zRst" aria-label="Réinitialiser le zoom">Réinit.</button>
-						</div>
+						<model-viewer
+							id="stage"
+							src="/personnalisateur/model/scene.gltf"
+							camera-controls
+							touch-action="pan-y"
+							interaction-prompt="none"
+							shadow-intensity="1"
+							camera-orbit="0deg 85deg 105%"
+							min-camera-orbit="auto 55deg auto"
+							max-camera-orbit="auto 115deg auto"
+						></model-viewer>
+						<button class="btn btn-secondary" id="vReset">Réinitialiser la vue</button>
 					</div>
 					<div class="filebar">
 						<div class="drop" id="drop">
@@ -109,9 +114,12 @@ import '../styles/personnalisateur.css';
 
 			</div>
 		</div>
+
+		<p class="credit">Modèle 3D « T-Shirt Low Poly » par <a href="https://sketchfab.com/Chirag.Vijay" target="_blank" rel="noopener">Chirag.Vijay</a>, sous licence <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.</p>
 	</div>
 
 	<script>
+		import '@google/model-viewer';
 		import { init } from '../scripts/personnalisateur/main';
 		init();
 	</script>
