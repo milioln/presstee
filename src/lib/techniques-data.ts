@@ -2,10 +2,11 @@
 // par le tableau du hub et par le simulateur. Le texte détaillé de
 // chaque fiche vit dans sa propre page (src/pages/techniques/*.astro).
 //
-// Images : photos Pexels (licence Pexels — gratuite, usage commercial
-// autorisé, attribution non requise). transfert-quadrichromie-1.jpg et
-// transfert-monochrome-1.jpg à remplacer par de vraies photos d'atelier
-// dès que possible.
+// Images : transfert-quadrichromie-1.jpg et transfert-monochrome-1.jpg
+// sont des photos Pexels (licence Pexels — gratuite, usage commercial
+// autorisé, attribution non requise), à remplacer par de vraies photos
+// d'atelier dès que possible. atelier-serigraphie-textile-presstee.jpg
+// fournie par Milio.
 export interface Technique {
   slug: string;
   nom: string;
@@ -28,7 +29,7 @@ export const TECHNIQUES: Technique[] = [
     couleurs: 'Aplats, jusqu’à 4 couleurs',
     prixRelatif: 1,
     durabilite: 'Très bonne — l’encre est absorbée dans la fibre',
-    image: '/techniques/serigraphie-1.jpg',
+    image: '/techniques/atelier-serigraphie-textile-presstee.jpg',
   },
   {
     slug: 'transfert-quadrichromie',
