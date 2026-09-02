@@ -26,7 +26,7 @@ export function paintLayers(): void {
   strip.style.display = layers.length ? 'flex' : 'none';
   strip.innerHTML = layers
     .map((l) => {
-      const croppable = !l.vector && !l.knownColor;
+      const croppable = !l.knownColor;
       return `<div class="layerchip${l.id === S.activeLayerId ? ' on' : ''}" data-l="${l.id}" title="${l.fileName}">
         <img src="${l.img}" alt="" />
         <div class="layerchip-actions">
@@ -40,7 +40,7 @@ export function paintLayers(): void {
 
 function paintCropVisibility(): void {
   const layer = activeLayer();
-  toggle('cropBtn', !!layer && !layer.vector && !layer.knownColor);
+  toggle('cropBtn', !!layer && !layer.knownColor);
 }
 
 // Point de passage central : appelé après tout ajout, sélection ou

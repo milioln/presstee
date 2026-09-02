@@ -1,8 +1,10 @@
 // Recadrage du visuel actif : overlay plein écran avec un cadre de
 // sélection redimensionnable posé sur l'image, sans dépendance externe.
-// Ne s'applique qu'aux visuels raster importés (pas au texte généré, ni
-// au SVG, cf. paintCropVisibility dans layers.ts qui masque le bouton
-// dans ces cas).
+// S'applique à tout fichier importé, y compris SVG (rasterisé comme
+// n'importe quelle image via <img>/canvas, cf. file-analysis.ts qui
+// fait de même pour le comptage de couleurs) — seul le texte généré
+// (couleur connue) n'a pas de bouton, cf. paintCropVisibility dans
+// layers.ts.
 import { activeLayer } from './state';
 import { syncEditor } from './layers';
 
@@ -113,6 +115,8 @@ function applyCrop(): void {
   const ctx = c.getContext('2d')!;
   ctx.drawImage(img, sx, sy, sw, sh, 0, 0, c.width, c.height);
   layer.img = c.toDataURL('image/png');
+  // Le résultat est toujours un raster, même si la source était un SVG.
+  layer.vector = false;
   layer.natW = 0;
   layer.natH = 0;
   layer.colors = null;

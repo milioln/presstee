@@ -57,7 +57,7 @@ export function closeLayerPopup(): void {
 export function openLayerPopup(layer: Layer, clientX: number, clientY: number): void {
   S.activeLayerId = layer.id;
   const popup = el('layerPopup');
-  const croppable = !layer.vector && !layer.knownColor;
+  const croppable = !layer.knownColor;
   const recolorable = !!layer.knownColor;
 
   el('lpCrop').style.display = croppable ? '' : 'none';
