@@ -9,6 +9,7 @@
 import { S, activeLayer } from './state';
 import { render, paintWidth, paintRotate } from './render';
 import { analyse } from './file-analysis';
+import { CROP_ICON_SVG } from './icons';
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
   return document.getElementById(id) as T;
@@ -29,7 +30,7 @@ export function paintLayers(): void {
       return `<div class="layerchip${l.id === S.activeLayerId ? ' on' : ''}" data-l="${l.id}" title="${l.fileName}">
         <img src="${l.img}" alt="" />
         <div class="layerchip-actions">
-          ${croppable ? `<button type="button" data-crop="${l.id}" aria-label="Recadrer ce visuel">⤢</button>` : ''}
+          ${croppable ? `<button type="button" data-crop="${l.id}" aria-label="Recadrer ce visuel">${CROP_ICON_SVG}</button>` : ''}
           <button type="button" data-rm="${l.id}" aria-label="Retirer ce visuel">×</button>
         </div>
       </div>`;

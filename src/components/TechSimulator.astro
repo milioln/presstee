@@ -1,0 +1,107 @@
+---
+// Simulateur de technique de marquage — trois questions, une
+// recommandation. Composant partagé entre la page Guide (/techniques,
+// où il vivait à l'origine) et la page d'accueil, pour que le
+// simulateur soit réellement utilisable aux deux endroits plutôt que
+// remplacé par un simple teaser statique sur l'accueil.
+export interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<div class:list={['tsim', className]} id="tsim">
+	<span class="tsim-eyebrow"><span class="regmark" aria-hidden="true"></span>Simulateur — 30 secondes</span>
+	<h2>Quelle technique pour mon projet ?</h2>
+	<p>Trois questions, une recommandation. C'est la même logique que celle utilisée dans notre configurateur — répondez ici pour vous décider avant de vous lancer, ou directement dans le configurateur avec votre propre visuel.</p>
+	<div class="tsim-grid">
+		<div class="tsim-field">
+			<label>Quantité de pièces</label>
+			<div class="pills" id="simQty">
+				<button class="pill" data-qty="10">Moins de 30</button>
+				<button class="pill" data-qty="50">30 à 100</button>
+				<button class="pill" data-qty="200">Plus de 100</button>
+			</div>
+		</div>
+		<div class="tsim-field">
+			<label>Nombre de couleurs du visuel</label>
+			<div class="pills" id="simColors">
+				<button class="pill" data-colors="2">1 à 3</button>
+				<button class="pill" data-colors="5">4 à 6</button>
+				<button class="pill" data-colors="12">Dégradés / photo</button>
+			</div>
+		</div>
+		<div class="tsim-field">
+			<label>Ce qui compte le plus</label>
+			<div class="pills" id="simPrio">
+				<button class="pill" data-prio="prix">Le prix le plus bas</button>
+				<button class="pill" data-prio="rendu">Le rendu le plus qualitatif</button>
+				<button class="pill" data-prio="duree">La tenue dans le temps</button>
+			</div>
+		</div>
+	</div>
+	<div class="tsim-result" id="simResult">
+		<div class="label">Notre recommandation</div>
+		<h3 id="simTitle"></h3>
+		<p id="simWhy"></p>
+		<a class="btn" id="simCta" href="/personnalisateur">Personnaliser avec cette technique</a>
+	</div>
+</div>
+
+<script>
+	const state = { qty: 0, colors: 0, prio: '' };
+
+	function bind(id: string, key: 'qty' | 'colors' | 'prio') {
+		const group = document.getElementById(id)!;
+		group.addEventListener('click', (e) => {
+			const b = (e.target as HTMLElement).closest<HTMLButtonElement>('.pill');
+			if (!b) return;
+			group.querySelectorAll('.pill').forEach((p) => p.classList.remove('on'));
+			b.classList.add('on');
+			(state as any)[key] = key === 'prio' ? b.dataset[key] : +b.dataset[key]!;
+			compute();
+		});
+	}
+	bind('simQty', 'qty');
+	bind('simColors', 'colors');
+	bind('simPrio', 'prio');
+
+	function compute() {
+		if (!state.qty || !state.colors || !state.prio) return;
+
+		let slug: string;
+		let why: string;
+
+		if (state.prio === 'rendu' && state.colors >= 10) {
+			slug = 'transfert-premium';
+			why = 'Des dégradés ou une image riche en nuances : seul le transfert premium les reproduit fidèlement.';
+		} else if (state.prio === 'duree' && state.colors <= 6) {
+			slug = state.qty >= 30 ? 'serigraphie' : 'transfert-serigraphique';
+			why = state.qty >= 30
+				? 'Pour la meilleure tenue au lavage sur ce volume, la sérigraphie amortit ses frais d’écran.'
+				: 'Le rendu le plus proche de la sérigraphie côté durabilité, sans frais de calage sur une petite série.';
+		} else if (state.colors >= 10) {
+			slug = 'transfert-premium';
+			why = 'Visuel riche en couleurs : le transfert premium reste la seule option qui le reproduit correctement, quelle que soit la quantité.';
+		} else if (state.qty >= 30 && state.colors <= 4) {
+			slug = 'serigraphie';
+			why = 'Avec ce nombre de couleurs et cette quantité, les frais d’écran sont amortis : la sérigraphie devient la plus économique.';
+		} else {
+			slug = 'transfert-serigraphique';
+			why = 'Trop peu de pièces pour amortir des écrans de sérigraphie : le transfert sérigraphique garde un rendu proche sans ce surcoût.';
+		}
+
+		const titles: Record<string, string> = {
+			serigraphie: 'Sérigraphie',
+			'transfert-premium': 'Transfert premium',
+			'transfert-serigraphique': 'Transfert sérigraphique',
+		};
+
+		document.getElementById('simTitle')!.textContent = titles[slug];
+		document.getElementById('simWhy')!.textContent = why;
+		const cta = document.getElementById('simCta') as HTMLAnchorElement;
+		const techKey = slug === 'serigraphie' ? 'serigraphie' : slug;
+		cta.href = `/personnalisateur?technique=${techKey}`;
+		document.getElementById('simResult')!.classList.add('show');
+	}
+</script>

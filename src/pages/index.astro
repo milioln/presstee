@@ -6,6 +6,7 @@ import Button from '../components/Button.astro';
 import ProcessAccordion from '../components/ProcessAccordion.astro';
 import SectorSelector from '../components/SectorSelector.astro';
 import RealisationsGrid from '../components/RealisationsGrid.astro';
+import TechSimulator from '../components/TechSimulator.astro';
 import { siteConfig } from '../config/site';
 import '../styles/global.css';
 import '../styles/techniques.css';
@@ -93,17 +94,7 @@ import '../styles/techniques.css';
 
 		<section class="s-simteaser">
 			<div class="wrap">
-				<div class="tsim simteaser">
-					<span class="tsim-eyebrow"><span class="regmark" aria-hidden="true"></span>Simulateur — 30 secondes</span>
-					<h2>Pas sûr de la technique qu'il vous faut ?</h2>
-					<p>Quantité de pièces, nombre de couleurs, ce qui compte le plus pour vous : trois questions, une recommandation claire entre sérigraphie, transfert et broderie.</p>
-					<div class="simteaser-qs">
-						<span>1. Quantité de pièces</span>
-						<span>2. Couleurs du visuel</span>
-						<span>3. Ce qui compte le plus</span>
-					</div>
-					<a class="btn btn-jaune" href="/techniques#tsim">Faire le test →</a>
-				</div>
+				<TechSimulator class="simteaser" />
 			</div>
 		</section>
 
@@ -128,7 +119,7 @@ import '../styles/techniques.css';
 							<h3>Via le simulateur</h3>
 						</div>
 						<p>Pas sûr de la technique qu'il vous faut ? Trois questions, une recommandation claire, puis direction le configurateur déjà pré-rempli.</p>
-						<a class="go" href="/techniques#tsim">Faire le test</a>
+						<a class="go" href="#tsim">Faire le test</a>
 					</div>
 					<div class="way">
 						<div class="way-top">
