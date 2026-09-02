@@ -85,8 +85,9 @@ h2{font-size:clamp(2.05rem,5.2vw,3.5rem)}
 .acc::after{content:"";position:absolute;left:46px;top:36px;width:2px;height:var(--fill,0%);background:var(--indigo);transition:height .3s linear}
 .stp{border:1px solid var(--ligne);border-radius:18px;background:#fff;position:relative;z-index:1}
 .stp>button{width:100%;display:flex;align-items:center;gap:18px;padding:20px 22px;background:none;border:0;cursor:pointer;text-align:left;font:inherit;color:inherit}
-.stp .n{width:48px;height:48px;border-radius:15px;background:#fff;border:2px solid var(--ligne);display:grid;place-items:center;font-family:'Sora',sans-serif;font-weight:600;font-size:15px;color:var(--gris);flex-shrink:0;transition:.2s}
-.stp.on .n,.stp.open .n{border-color:var(--indigo);background:var(--indigo);color:#fff}
+.stp .n{width:48px;height:48px;border-radius:999px;background:var(--gris-clair);display:grid;place-items:center;color:var(--indigo);flex-shrink:0;transition:.2s}
+.stp .n svg{width:22px;height:22px}
+.stp.on .n,.stp.open .n{background:var(--indigo);color:#fff}
 .stp .tt{flex:1}
 .stp .tt strong{display:block;font-family:'Sora',sans-serif;font-size:1.16rem;font-weight:600;letter-spacing:-0.03em;line-height:1.2}
 .stp .tt span{font-size:.94rem;color:var(--gris)}

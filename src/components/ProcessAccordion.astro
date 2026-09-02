@@ -1,8 +1,23 @@
 ---
+// Icônes par étape — reprises telles quelles de la maquette Claude
+// Design "Icônes étapes" (pastilles rondes), une par étape, associées
+// au sens de chacune (recherche, recommandation, visualisation,
+// production, livraison). Le trait utilise currentColor : la même
+// icône suit donc le changement de couleur actif/inactif du marqueur
+// (cf. .stp .n / .stp.on .n dans global.css) sans variante séparée.
+const ICONS = {
+	recherche: '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
+	sac: '<path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>',
+	oeil: '<path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/>',
+	usine: '<path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3h12v6"/><rect x="6" y="14" width="12" height="8" rx="1"/>',
+	camion: '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35a1 1 0 0 0-.78-.38H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+};
+
 const steps = [
 	{
 		title: 'Votre projet',
 		subtitle: 'Comprendre le besoin',
+		icon: ICONS.recherche,
 		subs: [
 			{ h: "L'usage réel", t: "Un t-shirt d'événement porté trois fois et une tenue de service lavée deux fois par semaine n'appellent pas le même textile." },
 			{ h: 'La quantité et le budget', t: 'Ce sont eux qui déterminent quelles techniques deviennent intéressantes pour vous.' },
@@ -12,6 +27,7 @@ const steps = [
 	{
 		title: 'Notre recommandation',
 		subtitle: 'Textile + technique',
+		icon: ICONS.sac,
 		subs: [
 			{ h: 'Le textile', t: 'Grammage, matière et coupe choisis pour votre usage, avec plusieurs niveaux de budget quand c’est pertinent.' },
 			{ h: 'La technique de marquage', t: 'Sérigraphie, transfert sérigraphique, transfert premium ou broderie, selon le visuel, la quantité et le support.' },
@@ -21,6 +37,7 @@ const steps = [
 	{
 		title: 'Votre validation',
 		subtitle: 'Visualisation + BAT',
+		icon: ICONS.oeil,
 		subs: [
 			{ h: 'La visualisation', t: 'Vous voyez votre visuel placé sur le vêtement, à la bonne taille et au bon endroit, avant d’engager quoi que ce soit.' },
 			{ h: 'La vérification humaine', t: 'Nous contrôlons vos fichiers, la résolution, les dimensions et la faisabilité réelle de l’impression.' },
@@ -30,6 +47,7 @@ const steps = [
 	{
 		title: 'Notre production',
 		subtitle: 'Fabrication + contrôle',
+		icon: ICONS.usine,
 		subs: [
 			{ h: 'La fabrication', t: 'Le marquage est réalisé dans notre atelier, sur les machines dont nous maîtrisons le planning.' },
 			{ h: 'Le contrôle pièce par pièce', t: 'Avant emballage, chaque pièce est vérifiée : rendu, positionnement, conformité au BAT validé.' },
@@ -38,6 +56,7 @@ const steps = [
 	{
 		title: 'Votre livraison',
 		subtitle: 'Expédition + suivi',
+		icon: ICONS.camion,
 		subs: [
 			{ h: "L'expédition", t: "Emballage soigné et envoi suivi, ou remise en main propre dans le secteur d'Angoulême." },
 			{ h: 'Le suivi', t: 'Un interlocuteur unique du premier échange à la réception. Pas de service client anonyme.' },
@@ -54,7 +73,9 @@ const steps = [
 			{steps.map((s, i) => (
 				<div class:list={['stp', { open: i === 0 }]} data-i={i}>
 					<button aria-expanded={i === 0 ? 'true' : 'false'}>
-						<span class="n">{i + 1}</span>
+						<span class="n">
+							<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" set:html={s.icon} />
+						</span>
 						<span class="tt">
 							<strong>{s.title}</strong>
 							<span>{s.subtitle}</span>
