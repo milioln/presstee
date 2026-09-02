@@ -13,6 +13,7 @@ import { bindModeTabs, bindTextInput } from './text-input';
 import { bindModelDrag } from './drag3d';
 import { bindLayers, syncEditor } from './layers';
 import { bindCrop } from './crop';
+import { bindLayerPopup } from './layer-popup';
 import { TECHS } from './recommendation';
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
@@ -185,6 +186,7 @@ export function init(): void {
   bindModelDrag();
   bindLayers();
   bindCrop();
+  bindLayerPopup();
 
   // Reflète les valeurs restaurées (ou par défaut) dans les commandes du
   // délai avant le premier rendu.

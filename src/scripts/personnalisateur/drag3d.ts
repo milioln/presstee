@@ -27,6 +27,7 @@
 // propagation avec stopImmediatePropagation().
 import { activeLayer } from './state';
 import { render, PRINT_RECT, TEXTURE_SIZE } from './render';
+import { openLayerPopup } from './layer-popup';
 
 function stage(): any {
   return document.getElementById('stage');
@@ -87,15 +88,24 @@ function onPointerDown(e: PointerEvent): void {
     layer.y = Math.max(0, Math.min(1, y0 + dSy));
     render();
   };
-  const up = () => {
+  const cleanup = () => {
     mv.removeEventListener('pointermove', move);
-    mv.removeEventListener('pointerup', up);
-    mv.removeEventListener('pointercancel', up);
+    mv.removeEventListener('pointerup', onUp);
+    mv.removeEventListener('pointercancel', onCancel);
     if (hadControls) mv.setAttribute('camera-controls', '');
   };
+  // Un tap (relâché à peu près là où le geste a commencé) ouvre la
+  // popup contextuelle du calque plutôt que de simplement terminer un
+  // glisser de quelques pixels sans effet perceptible.
+  const onUp = (ev: PointerEvent) => {
+    cleanup();
+    const moved = Math.hypot(ev.clientX - startX, ev.clientY - startY);
+    if (moved < 6) openLayerPopup(layer, ev.clientX, ev.clientY);
+  };
+  const onCancel = () => cleanup();
   mv.addEventListener('pointermove', move);
-  mv.addEventListener('pointerup', up);
-  mv.addEventListener('pointercancel', up);
+  mv.addEventListener('pointerup', onUp);
+  mv.addEventListener('pointercancel', onCancel);
 }
 
 export function bindModelDrag(): void {
