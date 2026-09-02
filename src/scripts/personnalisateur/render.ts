@@ -15,13 +15,16 @@ import { TAILLES, type Emplacement } from '../../config/parametres-metier';
 export const activeTech = () => (S.tech === 'auto' ? reco(S.colors, qtyTotal()).k : S.tech);
 
 const TEXTURE_URL = '/personnalisateur/model/textures/Material_baseColor.png';
+export const TEXTURE_SIZE = 2048;
 
 // Zones d'impression calibrées empiriquement sur l'atlas de texture
 // (patron à plat 2048×2048) en affichant une grille de repères sur le
 // modèle chargé et en relevant où ils tombent sur le tissu. Le
 // panneau "dos" est estimé par symétrie horizontale du panneau
 // "face" — non calibré aussi précisément faute de vue arrière testée.
-const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: number }> = {
+// Exporté : réutilisé par drag3d.ts pour convertir les coordonnées UV
+// du raycast en repère du visuel (S.x/S.y).
+export const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: number }> = {
   face: { x: 370, y: 280, w: 360, h: 340 },
   coeur: { x: 630, y: 230, w: 130, h: 130 },
   dos: { x: 1270, y: 280, w: 360, h: 340 },
@@ -162,6 +165,10 @@ export function paintWidth(): void {
   const zone = currentZoneCm();
   el('wCm').textContent = (S.w * zone).toFixed(1).replace('.', ',') + ' cm';
   el('wPct').textContent = `${Math.round(S.w * 100)} % de la zone imprimable (${zone} cm)`;
+}
+
+export function paintRotate(): void {
+  el('rDeg').textContent = `${Math.round(S.rot)}°`;
 }
 
 export function paintSizeDist(): void {

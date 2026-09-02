@@ -87,10 +87,22 @@
 .mini-step:hover{border-color:var(--accent)}
 #sizeRows{margin-top:6px}
 
+.modetabs{display:flex;border:1px solid var(--divider);margin-bottom:14px}
+.modetabs button{flex:1;border:0;background:transparent;padding:9px;font-family:'Archivo',sans-serif;font-weight:800;font-size:12.5px;cursor:pointer;color:var(--muted)}
+.modetabs button+button{border-left:1px solid var(--divider)}
+.modetabs button.on{background:var(--accent);color:var(--bg)}
+
 .drop{border:1.5px dashed var(--divider);padding:22px 16px;text-align:center;cursor:pointer;transition:.15s}
 .drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-100)}
 .drop p{font-size:13px;color:var(--muted);margin-top:6px;font-family:'Manrope',system-ui,sans-serif}
 .drop strong{font-family:'Archivo',sans-serif;font-size:14px;font-weight:800}
+
+.textmode{display:grid;gap:10px}
+.textmode input[type=text]{width:100%;padding:11px 12px;border:1px solid var(--divider);background:var(--bg);font:inherit;font-size:14px;color:var(--text)}
+.textmode input[type=text]:focus-visible{outline:2px solid var(--accent);outline-offset:-1px}
+.textcolors{display:flex;gap:8px}
+.textcolors button{width:28px;height:28px;border:1px solid var(--divider);cursor:pointer;padding:0}
+.textcolors button.on{outline:2px solid var(--accent);outline-offset:2px}
 .filerow{display:flex;align-items:center;gap:11px;margin-top:12px;font-size:13px}
 .filerow img{width:40px;height:40px;object-fit:contain;background:var(--surface);padding:3px}
 .filerow span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Manrope',system-ui,sans-serif}

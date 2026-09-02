@@ -1,32 +1,37 @@
 // Dépôt de fichier par glisser-déposer ou par clic — port direct de la V0.
+// loadDataUrl() est le cœur partagé, réutilisé par le mode "Texte"
+// (text-input.ts) qui produit lui aussi un visuel sous forme de data
+// URL plutôt qu'un vrai fichier.
 import { S } from './state';
 import { render, paintWidth } from './render';
 import { analyse } from './file-analysis';
 import { syncPlace } from './placement';
 
+export function loadDataUrl(dataUrl: string, name: string, isVector: boolean): void {
+  Object.assign(S, {
+    img: dataUrl,
+    fileName: name,
+    vector: isVector,
+    x: 0.5,
+    y: 0.5,
+    w: 0.62,
+    rot: 0,
+    colors: null,
+    dom: null,
+    natW: 0,
+    natH: 0,
+  });
+  paintFileInfo(name);
+  showPostUploadBlocks();
+  syncPlace();
+  paintWidth();
+  analyse();
+  render();
+}
+
 function loadFile(f: File): void {
   const r = new FileReader();
-  r.onload = () => {
-    Object.assign(S, {
-      img: r.result as string,
-      fileName: f.name,
-      vector: f.type.includes('svg'),
-      x: 0.5,
-      y: 0.5,
-      w: 0.62,
-      rot: 0,
-      colors: null,
-      dom: null,
-      natW: 0,
-      natH: 0,
-    });
-    paintFileInfo(f.name);
-    showPostUploadBlocks();
-    syncPlace();
-    paintWidth();
-    analyse();
-    render();
-  };
+  r.onload = () => loadDataUrl(r.result as string, f.name, f.type.includes('svg'));
   r.readAsDataURL(f);
 }
 

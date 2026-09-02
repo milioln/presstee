@@ -50,6 +50,7 @@ import '../styles/personnalisateur.css';
 							<button class="btn btn-secondary btn-icon" id="wPlus" aria-label="Agrandir">+</button>
 						</div>
 						<p class="hint" id="wPct"></p>
+						<p class="hint">Le visuel se déplace aussi directement à la souris ou au doigt, sur le vêtement.</p>
 						<div class="posctl">
 							<button class="btn btn-secondary btn-icon" id="pUp" aria-label="Déplacer vers le haut">↑</button>
 							<div class="posrow">
@@ -58,6 +59,11 @@ import '../styles/personnalisateur.css';
 								<button class="btn btn-secondary btn-icon" id="pRight" aria-label="Déplacer vers la droite">→</button>
 							</div>
 							<button class="btn btn-secondary btn-icon" id="pDown" aria-label="Déplacer vers le bas">↓</button>
+						</div>
+						<div class="widthctl" style="margin-top:14px">
+							<button class="btn btn-secondary btn-icon" id="rMinus" aria-label="Incliner vers la gauche">⟲</button>
+							<div class="widthval" id="rDeg">0°</div>
+							<button class="btn btn-secondary btn-icon" id="rPlus" aria-label="Incliner vers la droite">⟳</button>
 						</div>
 					</div>
 
@@ -79,9 +85,21 @@ import '../styles/personnalisateur.css';
 						<button class="btn btn-secondary" id="vReset">Réinitialiser la vue</button>
 					</div>
 					<div class="filebar">
+						<div class="modetabs">
+							<button class="on" data-mode="image">Image</button>
+							<button data-mode="text">Texte</button>
+						</div>
 						<div class="drop" id="drop">
 							<strong>Déposez votre fichier</strong>
 							<p>ou cliquez pour parcourir — PNG, JPG ou SVG</p>
+						</div>
+						<div class="textmode" id="textMode" style="display:none">
+							<input type="text" id="textInput" placeholder="Votre texte" maxlength="24" />
+							<div class="textcolors" id="textColors">
+								<button class="on" data-tc="#17131F" aria-label="Texte noir" style="background:#17131F"></button>
+								<button data-tc="#ffffff" aria-label="Texte blanc" style="background:#ffffff"></button>
+							</div>
+							<button class="btn btn-primary btn-block" id="textApply">Ajouter le texte</button>
 						</div>
 						<input type="file" id="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" />
 						<div id="fileInfo"></div>

@@ -6,9 +6,11 @@
 // du catalogue aura son propre personnalisateur.
 import { S, loadState } from './state';
 import { catalogueColoris, TAILLES } from '../../config/parametres-metier';
-import { render, paintTechs, paintRecap, paintSizeDist, paintWidth, syncCamera } from './render';
+import { render, paintTechs, paintRecap, paintSizeDist, paintWidth, paintRotate, syncCamera } from './render';
 import { syncPlace, bindPlacement } from './placement';
 import { bindFileInput, restoreFileUI } from './file-input';
+import { bindModeTabs, bindTextInput } from './text-input';
+import { bindModelDrag } from './drag3d';
 import { TECHS } from './recommendation';
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
@@ -114,6 +116,20 @@ function bindPosition(): void {
   });
 }
 
+function bindRotate(): void {
+  const step = 15;
+  el('rMinus').addEventListener('click', () => {
+    S.rot = Math.round(S.rot - step);
+    paintRotate();
+    render();
+  });
+  el('rPlus').addEventListener('click', () => {
+    S.rot = Math.round(S.rot + step);
+    paintRotate();
+    render();
+  });
+}
+
 function bindResetView(): void {
   el('vReset').addEventListener('click', () => {
     const mv = el<any>('stage');
@@ -142,9 +158,13 @@ export function init(): void {
   bindSizeDist();
   bindAdjust();
   bindPosition();
+  bindRotate();
   bindPlacement();
   bindResetView();
   bindFileInput();
+  bindModeTabs();
+  bindTextInput();
+  bindModelDrag();
 
   // Reflète les valeurs restaurées (ou par défaut) dans les commandes du
   // délai avant le premier rendu.
@@ -153,6 +173,7 @@ export function init(): void {
   syncPlace();
   paintSizeDist();
   paintWidth();
+  paintRotate();
   restoreFileUI();
   render();
 }
