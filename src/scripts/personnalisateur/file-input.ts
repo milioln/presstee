@@ -12,6 +12,7 @@ export function loadDataUrl(dataUrl: string, name: string, isVector: boolean, fo
     img: dataUrl,
     fileName: name,
     vector: isVector,
+    knownColor: forcedColor ?? null,
     x: 0.5,
     y: 0.5,
     w: 0.62,
@@ -26,7 +27,7 @@ export function loadDataUrl(dataUrl: string, name: string, isVector: boolean, fo
   showPostUploadBlocks();
   syncPlace();
   paintWidth();
-  analyse(forcedColor);
+  analyse();
   render();
 }
 
@@ -40,7 +41,7 @@ function paintFileInfo(name: string): void {
   const info = document.getElementById('fileInfo')!;
   info.innerHTML = `<div class="filerow"><img src="${S.img}" alt=""><span>${name}</span><button class="mini-btn" id="rm">Retirer</button></div>`;
   document.getElementById('rm')!.addEventListener('click', () => {
-    Object.assign(S, { img: null, colors: null, dom: null, colorSwatches: null });
+    Object.assign(S, { img: null, colors: null, dom: null, colorSwatches: null, knownColor: null });
     info.innerHTML = '';
     hidePostUploadBlocks();
     // render() persiste l'état courant (saveState), y compris img:null —

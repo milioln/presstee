@@ -9,11 +9,13 @@ function toHex(r: number, g: number, b: number): string {
 }
 
 // Le mode "Texte" connaît sa couleur avec certitude (c'est lui qui l'a
-// dessinée) : forcedColor court-circuite l'échantillonnage de pixels,
+// dessinée) : S.knownColor court-circuite l'échantillonnage de pixels,
 // qui se laisse sinon tromper par l'anti-crénelage des contours de
 // lettres (des pixels à moitié transparents, comptés à tort comme une
-// deuxième couleur).
-export function analyse(forcedColor?: string): void {
+// deuxième couleur). Persisté avec le visuel : ce raccourci doit aussi
+// s'appliquer après un rechargement de page, pas seulement à la
+// création du texte.
+export function analyse(): void {
   const diag = document.getElementById('diag')!;
   if (!S.img) {
     diag.style.display = 'none';
@@ -21,7 +23,8 @@ export function analyse(forcedColor?: string): void {
   }
   diag.style.display = 'grid';
 
-  if (forcedColor) {
+  if (S.knownColor) {
+    const forcedColor = S.knownColor;
     const im = new Image();
     im.onload = () => {
       S.natW = im.naturalWidth;

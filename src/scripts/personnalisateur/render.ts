@@ -25,9 +25,9 @@ export const TEXTURE_SIZE = 2048;
 // Exporté : réutilisé par drag3d.ts pour convertir les coordonnées UV
 // du raycast en repère du visuel (S.x/S.y).
 export const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: number }> = {
-  face: { x: 370, y: 210, w: 360, h: 340 },
-  coeur: { x: 630, y: 170, w: 130, h: 130 },
-  dos: { x: 1270, y: 210, w: 360, h: 340 },
+  face: { x: 370, y: 210, w: 360, h: 620 },
+  coeur: { x: 630, y: 170, w: 130, h: 260 },
+  dos: { x: 1270, y: 210, w: 360, h: 620 },
 };
 
 let baseImgPromise: Promise<HTMLImageElement> | null = null;

@@ -23,6 +23,7 @@ export interface PersonnalisateurState {
   colors: number | null;
   dom: [number, number, number] | null;
   colorSwatches: string[] | null;
+  knownColor: string | null;
   x: number;
   y: number;
   w: number;
@@ -47,6 +48,7 @@ export const S: PersonnalisateurState = {
   colors: null,
   dom: null,
   colorSwatches: null,
+  knownColor: null,
   x: 0.5,
   y: 0.5,
   w: 0.62,
@@ -63,7 +65,7 @@ const STORAGE_KEY = 'presstee:personnalisateur:v1';
 // recalculés par l'analyse du fichier.
 type Persisted = Pick<
   PersonnalisateurState,
-  'garment' | 'place' | 'coupe' | 'manche' | 'col' | 'img' | 'fileName' | 'vector' | 'x' | 'y' | 'w' | 'rot' | 'sizeDist' | 'tech' | 'delai'
+  'garment' | 'place' | 'coupe' | 'manche' | 'col' | 'img' | 'fileName' | 'vector' | 'knownColor' | 'x' | 'y' | 'w' | 'rot' | 'sizeDist' | 'tech' | 'delai'
 > & {
   colorIndex: number;
 };
@@ -81,6 +83,7 @@ export function saveState(): void {
       img: S.img,
       fileName: S.fileName,
       vector: S.vector,
+      knownColor: S.knownColor,
       x: S.x,
       y: S.y,
       w: S.w,
@@ -111,6 +114,7 @@ export function loadState(): boolean {
     if (typeof p.img === 'string') S.img = p.img;
     if (typeof p.fileName === 'string') S.fileName = p.fileName;
     if (typeof p.vector === 'boolean') S.vector = p.vector;
+    if (typeof p.knownColor === 'string' || p.knownColor === null) S.knownColor = p.knownColor;
     if (typeof p.x === 'number') S.x = p.x;
     if (typeof p.y === 'number') S.y = p.y;
     if (typeof p.w === 'number') S.w = p.w;
