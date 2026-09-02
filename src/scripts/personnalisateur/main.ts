@@ -93,6 +93,27 @@ function bindAdjust(): void {
   });
 }
 
+// Le glisser sur le canevas 3D fait tourner la caméra (pas le
+// visuel) : le repositionnement passe par ces flèches, qui déplacent
+// le visuel dans la zone d'impression (S.x/S.y en fraction 0–1).
+function bindPosition(): void {
+  const step = 0.08;
+  const move = (dx: number, dy: number): void => {
+    S.x = Math.max(0, Math.min(1, Math.round((S.x + dx) * 100) / 100));
+    S.y = Math.max(0, Math.min(1, Math.round((S.y + dy) * 100) / 100));
+    render();
+  };
+  el('pUp').addEventListener('click', () => move(0, -step));
+  el('pDown').addEventListener('click', () => move(0, step));
+  el('pLeft').addEventListener('click', () => move(-step, 0));
+  el('pRight').addEventListener('click', () => move(step, 0));
+  el('pCenter').addEventListener('click', () => {
+    S.x = 0.5;
+    S.y = 0.5;
+    render();
+  });
+}
+
 function bindResetView(): void {
   el('vReset').addEventListener('click', () => {
     const mv = el<any>('stage');
@@ -120,6 +141,7 @@ export function init(): void {
   bindTechs();
   bindSizeDist();
   bindAdjust();
+  bindPosition();
   bindPlacement();
   bindResetView();
   bindFileInput();

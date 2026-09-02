@@ -1,9 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import '../styles/global.css';
 import '../styles/personnalisateur.css';
 ---
 
 <Layout title="Presstee — Personnalisateur" description="Composez votre textile personnalisé : vêtement, couleur, visuel et technique de marquage.">
+	<Header />
+	<div class="pz-page">
 	<div class="wrap">
 		<div class="intro">
 			<h1>Composez votre textile personnalisé.</h1>
@@ -11,12 +15,6 @@ import '../styles/personnalisateur.css';
 		</div>
 
 		<div class="board">
-			<nav class="board-nav">
-				<span class="nav-brand">PRESSTEE</span>
-				<a href="/produits">Produits</a><a href="/techniques">Techniques</a><a href="/personnalisateur" aria-current="page">Personnalisateur</a><a href="/#commander">Contact</a>
-				<span class="nav-loc">ANGOULÊME</span>
-			</nav>
-
 			<div class="layout3">
 
 				<div class="panel">
@@ -45,13 +43,22 @@ import '../styles/personnalisateur.css';
 					</div>
 
 					<div class="cell" id="adjust" style="display:none">
-						<h6>4 — Taille du visuel</h6>
+						<h6>4 — Taille et position du visuel</h6>
 						<div class="widthctl">
 							<button class="btn btn-secondary btn-icon" id="wMinus" aria-label="Réduire">−</button>
 							<div class="widthval" id="wCm"></div>
 							<button class="btn btn-secondary btn-icon" id="wPlus" aria-label="Agrandir">+</button>
 						</div>
 						<p class="hint" id="wPct"></p>
+						<div class="posctl">
+							<button class="btn btn-secondary btn-icon" id="pUp" aria-label="Déplacer vers le haut">↑</button>
+							<div class="posrow">
+								<button class="btn btn-secondary btn-icon" id="pLeft" aria-label="Déplacer vers la gauche">←</button>
+								<button class="btn btn-secondary" id="pCenter">Recentrer</button>
+								<button class="btn btn-secondary btn-icon" id="pRight" aria-label="Déplacer vers la droite">→</button>
+							</div>
+							<button class="btn btn-secondary btn-icon" id="pDown" aria-label="Déplacer vers le bas">↓</button>
+						</div>
 					</div>
 
 				</div>
@@ -116,6 +123,7 @@ import '../styles/personnalisateur.css';
 		</div>
 
 		<p class="credit">Modèle 3D « T-Shirt Low Poly » par <a href="https://sketchfab.com/Chirag.Vijay" target="_blank" rel="noopener">Chirag.Vijay</a>, sous licence <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.</p>
+	</div>
 	</div>
 
 	<script>

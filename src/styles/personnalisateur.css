@@ -14,11 +14,10 @@
   --ok:#1F5A4A;--ok-bg:rgba(31,90,74,.09);--warn:#8a4a0f;--warn-bg:rgba(178,106,18,.1);
   --r:0px;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Archivo',system-ui,sans-serif;color:var(--text);background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased}
-h1,h6{font-family:'Archivo',system-ui,sans-serif;font-weight:800;letter-spacing:-0.015em;line-height:1.12}
-h6{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
-.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.pz-page{font-family:'Archivo',system-ui,sans-serif;color:var(--text);background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased}
+.pz-page h1,.pz-page h6{font-family:'Archivo',system-ui,sans-serif;font-weight:800;letter-spacing:-0.015em;line-height:1.12}
+.pz-page h6{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.pz-page .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
 .text-muted{color:var(--muted)}
 
 .intro{padding:42px 0 24px}
@@ -26,11 +25,6 @@ h6{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--acce
 .intro p{color:var(--muted);margin-top:12px;max-width:62ch;font-family:'Manrope',system-ui,sans-serif}
 
 .board{border:1px solid var(--divider);background:var(--bg);margin-bottom:80px}
-.board-nav{display:flex;align-items:center;gap:24px;padding:14px 20px;border-bottom:2px solid var(--divider)}
-.nav-brand{font-family:'Archivo',sans-serif;font-weight:800;font-size:16px;letter-spacing:.02em}
-.board-nav a{color:inherit;text-decoration:none;font-size:13.5px}
-.board-nav a:hover,.board-nav a[aria-current='page']{color:var(--accent)}
-.nav-loc{margin-left:auto;font-size:12px;letter-spacing:.06em;color:var(--muted)}
 
 .layout3{display:grid;grid-template-columns:296px 1fr 344px}
 .panel{display:flex;flex-direction:column;border-right:2px solid var(--divider)}
@@ -61,10 +55,13 @@ h6{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--acce
 .widthctl{display:flex;align-items:center;gap:10px;margin-top:14px}
 .widthval{flex:1;text-align:center;font-family:'Archivo',sans-serif;font-weight:800;font-size:15px}
 
+.posctl{display:grid;justify-items:center;gap:6px;margin-top:14px}
+.posrow{display:flex;align-items:center;gap:6px}
+
 .viewer{display:flex;flex-direction:column}
 .frame{position:relative;flex:1;min-height:480px;overflow:hidden;
   background-image:linear-gradient(color-mix(in srgb,var(--text) 6%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--text) 6%,transparent) 1px,transparent 1px);
-  background-size:26px 26px}
+  background-size:26px 26px;background-position:center center}
 #stage{position:absolute;inset:0;width:100%;height:100%;--poster-color:transparent}
 #vReset{position:absolute;left:20px;top:20px;background:var(--bg)}
 
@@ -138,7 +135,6 @@ input[type=file]{display:none}
   .panel{border-right:0;border-bottom:2px solid var(--divider)}
   .viewer{border-bottom:2px solid var(--divider);order:-1}
   .frame{min-height:380px}
-  .board-nav a{display:none}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
