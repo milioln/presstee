@@ -103,7 +103,7 @@ function palierPour(qty: number) {
 
 type LigneAffichee =
   | { kind: 'produit'; vignetteHex: string; titre: string; detail: string; tailles: Partial<Record<TailleCode, number>>; quantite: number; prixUnitaireHT: number }
-  | { kind: 'marquage'; visuelUrl: string | null; titre: string; detail: string; quantite: number; prixUnitaireHT: number };
+  | { kind: 'marquage'; visuelUrl: string | null; vignetteHex: string; titre: string; detail: string; quantite: number; prixUnitaireHT: number };
 
 // Chaque support de la commande devient plusieurs lignes du document :
 // une pour le support vierge (photo du textile sans visuel), une par
@@ -134,6 +134,7 @@ const lignesAffichees: LigneAffichee[] = commande.flatMap((c) => {
   const lignesMarquage: LigneAffichee[] = c.marquages.map((m) => ({
     kind: 'marquage',
     visuelUrl: m.visuelUrl,
+    vignetteHex: c.coloris.hex,
     titre: m.technique,
     detail: `${m.nbCouleurs >= 12 ? '12 et plus' : m.nbCouleurs} couleur${m.nbCouleurs > 1 ? 's' : ''} · ${EMPLACEMENT_LABEL[m.emplacement]}, largeur ${getZoneImpressionCm(c.garment, m.emplacement)} cm`,
     quantite: c.quantite,
@@ -239,7 +240,13 @@ const siretEmetteur = siteConfig.siret || 'à compléter';
 						</div>
 					) : (
 						<div class="ligne ligne-marquage">
-							<div class="vignette vignette-frais">{l.visuelUrl ? <img src={l.visuelUrl} alt="" /> : l.titre}</div>
+							{l.visuelUrl ? (
+								<div class="vignette" style={{ background: l.vignetteHex, borderColor: estClair(l.vignetteHex) ? 'var(--ligne)' : l.vignetteHex }}>
+									<img src={l.visuelUrl} alt="" />
+								</div>
+							) : (
+								<div class="vignette vignette-frais">{l.titre}</div>
+							)}
 							<div class="designation">
 								<span class="nom-support">{l.titre}</span>
 								<span class="detail">{l.detail}</span>

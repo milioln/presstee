@@ -8,3 +8,8 @@ dist/
 # Identifiants de la base de données du compte client — jamais dans git,
 # créé directement sur le serveur OVH à partir de config.example.php.
 public/api/config.php
+
+# Visuels exportés du configurateur au moment de la création d'un devis/
+# facture (public/api/creer-commande.php) — créés à l'exécution sur le
+# serveur, jamais versionnés.
+public/uploads/

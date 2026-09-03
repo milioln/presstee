@@ -16,3 +16,11 @@ define('DB_HOST', 'localhost');
 define('DB_NAME', 'nom_de_la_base');
 define('DB_USER', 'nom_utilisateur');
 define('DB_PASS', 'mot_de_passe');
+
+// Clé partagée pour créer un devis/facture (public/api/creer-commande.php)
+// — il n'y a pas encore de vrai compte administrateur/staff distinct des
+// comptes clients, donc cette clé fait office de garde-fou minimal en
+// attendant. Choisis une chaîne longue et aléatoire (par exemple générée
+// par un gestionnaire de mots de passe), à fournir dans l'en-tête
+// X-Admin-Key de chaque appel à cet endpoint.
+define('ADMIN_KEY', 'à-changer-avant-la-mise-en-ligne');
