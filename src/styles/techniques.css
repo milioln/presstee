@@ -30,29 +30,17 @@
 .tcard h3{font-size:1.1rem;margin-bottom:8px}
 .tcard p{color:var(--gris);font-size:.92rem;margin:0}
 
-/* ---------- simulateur ---------- */
+/* ---------- teaser simulateur (renvoie vers /simulateur) ---------- */
 .tech-hero .btn{margin-top:26px}
-.tsim{position:relative;overflow:hidden;scroll-margin-top:96px;background-color:var(--indigo);background-image:radial-gradient(circle,rgba(255,255,255,.13) 1.2px,transparent 1.6px);background-size:16px 16px;border-radius:28px;padding:44px 40px;margin:36px 0 60px;color:#fff;box-shadow:0 24px 56px rgba(75,58,120,.32)}
-.tsim-eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--jaune);margin-bottom:16px}
-.tsim-eyebrow .regmark{position:static;width:17px;height:17px;border-color:var(--jaune);color:var(--jaune);opacity:1;flex-shrink:0}
-.tsim h2{font-size:1.75rem;margin-bottom:10px;color:#fff}
-.tsim>p{color:rgba(255,255,255,.8);margin-bottom:30px;max-width:60ch;font-size:1.02rem}
-.tsim-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-.tsim-field label{display:block;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;margin-bottom:10px;color:#fff}
-.tsim-field .pills{display:flex;flex-wrap:wrap;gap:7px}
-.tsim-field .pill{border:1.5px solid rgba(255,255,255,.38);background:rgba(255,255,255,.07);border-radius:100px;padding:9px 15px;font:inherit;font-size:13px;cursor:pointer;color:#fff;transition:.15s}
-.tsim-field .pill:hover{border-color:var(--jaune)}
-.tsim-field .pill.on{border-color:var(--jaune);background:var(--jaune);color:var(--encre)}
-.tsim-result{margin-top:28px;background:#fff;border-radius:16px;padding:24px 26px;display:none}
-.tsim-result.show{display:block}
-.tsim-result .label{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--gris);font-weight:600;margin-bottom:8px}
-.tsim-result h3{font-size:1.3rem;margin-bottom:8px;color:var(--encre)}
-.tsim-result p{color:var(--gris);font-size:.95rem;margin-bottom:16px}
-@media(max-width:560px){.tsim{padding:30px 24px}}
+.simteaser{position:relative;overflow:hidden;scroll-margin-top:96px;background-color:var(--indigo);background-image:radial-gradient(circle,rgba(255,255,255,.13) 1.2px,transparent 1.6px);background-size:16px 16px;border-radius:28px;padding:44px 40px;margin:36px 0 60px;color:#fff;box-shadow:0 24px 56px rgba(75,58,120,.32)}
+.simteaser-eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--jaune);margin-bottom:16px}
+.simteaser-eyebrow .regmark{position:static;width:17px;height:17px;border-color:var(--jaune);color:var(--jaune);opacity:1;flex-shrink:0}
+.simteaser h2{font-size:1.75rem;margin-bottom:10px;color:#fff}
+.simteaser>p{color:rgba(255,255,255,.8);margin-bottom:26px;max-width:60ch;font-size:1.02rem}
+@media(max-width:560px){.simteaser{padding:30px 24px}}
 
-/* ---------- simulateur en contexte compact (page d'accueil) ---------- */
-.tsim.simteaser{margin:0;max-width:760px}
-.tsim.simteaser .btn{margin-top:0}
+/* ---------- teaser en contexte compact (page d'accueil) ---------- */
+.simteaser.simteaser-compact{margin:0;max-width:760px}
 
 /* ---------- fiche technique ---------- */
 .tdetail-hero{position:relative;aspect-ratio:21/9;background:var(--voile);overflow:hidden}

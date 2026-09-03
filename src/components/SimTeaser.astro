@@ -1,0 +1,17 @@
+---
+// Bandeau d'appel vers /simulateur — remplace l'ancien TechSimulator
+// intégré (3 questions embarquées). Le simulateur est désormais une
+// page dédiée à part entière (plusieurs produits, plusieurs visuels
+// chacun), donc ce composant n'est plus qu'un teaser qui y renvoie.
+export interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<div class:list={['simteaser', className]} id="tsim">
+	<span class="simteaser-eyebrow"><span class="regmark" aria-hidden="true"></span>Simulateur — chiffrez votre projet</span>
+	<h2>Combien coûtera votre projet ?</h2>
+	<p>Un ou plusieurs textiles, un ou plusieurs visuels par textile, avec ou sans fichier prêt : notre simulateur recommande la bonne technique et donne un ordre de prix pour chaque visuel, en quelques clics.</p>
+	<a class="btn" href="/simulateur">Lancer le simulateur →</a>
+</div>

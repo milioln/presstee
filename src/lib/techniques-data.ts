@@ -59,7 +59,7 @@ export const TECHNIQUES: Technique[] = [
     couleurs: 'Jusqu’à 8 couleurs de fil, sans dégradé',
     prixRelatif: 3,
     durabilite: 'Excellente — le fil est tissé dans la matière',
-    image: '/techniques/broderie-1.jpg',
+    image: '/techniques/atelier-broderie-textile-presstee.jpg',
   },
 ];
 
