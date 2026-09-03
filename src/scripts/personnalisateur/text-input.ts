@@ -91,6 +91,7 @@ export function bindModeTabs(): void {
       const mode = b.dataset.mode;
       el('drop').style.display = mode === 'image' ? 'block' : 'none';
       el('textMode').style.display = mode === 'text' ? 'grid' : 'none';
+      el('designMode').style.display = mode === 'design' ? 'grid' : 'none';
     })
   );
 }

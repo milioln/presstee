@@ -37,6 +37,17 @@ export interface Layer {
   rot: number;
 }
 
+// Le client n'a pas encore de visuel : plutôt que de bloquer la
+// commande, il peut décrire son projet pour que l'équipe le crée. Le
+// nombre de couleurs saisi ici nourrit quand même la recommandation de
+// technique (cf. derived.ts, totalColors()) — format/notes restent de
+// l'information libre à l'attention de l'atelier, sans effet sur le prix.
+export interface DesignHelp {
+  colors: number | null;
+  format: string;
+  notes: string;
+}
+
 export interface PersonnalisateurState {
   garment: Garment;
   place: Emplacement;
@@ -49,6 +60,7 @@ export interface PersonnalisateurState {
   sizeDist: Record<TailleCode, number>;
   tech: TechKey | 'auto';
   delai: 'standard' | 'express';
+  designHelp: DesignHelp;
 }
 
 export const S: PersonnalisateurState = {
@@ -63,6 +75,7 @@ export const S: PersonnalisateurState = {
   sizeDist: { ...repartitionTaillesParDefaut },
   tech: 'auto',
   delai: 'standard',
+  designHelp: { colors: null, format: '', notes: '' },
 };
 
 let layerSeq = 0;
@@ -94,7 +107,7 @@ export function createLayer(partial: { img: string; fileName: string; vector: bo
 
 export const STORAGE_KEY = 'presstee:personnalisateur:v2';
 
-export type Persisted = Pick<PersonnalisateurState, 'garment' | 'place' | 'coupe' | 'manche' | 'col' | 'layers' | 'activeLayerId' | 'sizeDist' | 'tech' | 'delai'> & {
+export type Persisted = Pick<PersonnalisateurState, 'garment' | 'place' | 'coupe' | 'manche' | 'col' | 'layers' | 'activeLayerId' | 'sizeDist' | 'tech' | 'delai' | 'designHelp'> & {
   colorIndex: number;
 };
 
@@ -113,6 +126,7 @@ export function saveState(): void {
       sizeDist: S.sizeDist,
       tech: S.tech,
       delai: S.delai,
+      designHelp: S.designHelp,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   } catch {
@@ -142,6 +156,7 @@ export function loadState(): boolean {
     if (p.sizeDist && typeof p.sizeDist === 'object') Object.assign(S.sizeDist, p.sizeDist);
     if (p.tech) S.tech = p.tech;
     if (p.delai) S.delai = p.delai;
+    if (p.designHelp && typeof p.designHelp === 'object') Object.assign(S.designHelp, p.designHelp);
     return true;
   } catch {
     return false;
@@ -159,7 +174,7 @@ export function clearState(): void {
 // Écrit directement le stockage du projet en cours à partir d'un
 // article externe (panier), sans passer par S — utilisé par la page
 // /panier pour "Modifier" un article : on sème le stockage puis on
-// navigue vers /personnalisateur, qui le charge normalement au
+// navigue vers /configurateur, qui le charge normalement au
 // démarrage via loadState(). coupe/manche/col ne font pas partie d'un
 // article de panier (toujours VARIANT_DEFAUT tant qu'un seul produit
 // est modélisé) : on les régénère ici plutôt que de les stocker en double.
@@ -170,6 +185,7 @@ export function seedFromItem(item: {
   sizeDist: Record<TailleCode, number>;
   tech: TechKey | 'auto';
   delai: 'standard' | 'express';
+  designHelp?: DesignHelp;
 }): void {
   try {
     const colorIndex = Math.max(0, catalogueColoris.findIndex((c) => c.hex === item.color.hex));
@@ -185,6 +201,7 @@ export function seedFromItem(item: {
       sizeDist: item.sizeDist,
       tech: item.tech,
       delai: item.delai,
+      designHelp: item.designHelp ?? { colors: null, format: '', notes: '' },
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   } catch {

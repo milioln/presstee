@@ -9,7 +9,7 @@
 // Chaque entrée est un instantané (snapshot) : les prix sont figés au
 // moment de l'ajout, pour que le panier n'affiche pas un total qui
 // change silencieusement si les tarifs évoluent ensuite.
-import { S, type Coloris, type Layer } from './state';
+import { S, type Coloris, type Layer, type DesignHelp } from './state';
 import { qtyTotal, prixUnitaire, prixTotal } from './derived';
 import { activeTech } from './render';
 import { TECHS, type TechKey } from './recommendation';
@@ -29,6 +29,7 @@ export interface SavedItem {
   qty: number;
   prixUnitaire: number;
   prixTotal: number;
+  designHelp: DesignHelp;
 }
 
 const CART_KEY = 'presstee:personnalisateur:panier';
@@ -76,6 +77,7 @@ function snapshotCurrent(): SavedItem {
     qty: qtyTotal(),
     prixUnitaire: prixUnitaire(),
     prixTotal: prixTotal(),
+    designHelp: { ...S.designHelp },
   };
 }
 
@@ -129,6 +131,7 @@ export function loadSaved(id: string): void {
   S.sizeDist = { ...item.sizeDist };
   S.tech = item.tech;
   S.delai = item.delai;
+  S.designHelp = { ...item.designHelp };
   onLoaded();
 }
 
@@ -137,6 +140,8 @@ function summarizeItem(item: SavedItem, index?: number): string {
     .filter(([, n]) => (n as number) > 0)
     .map(([taille, n]) => `${taille}: ${n}`)
     .join(', ');
+  const dh = item.designHelp;
+  const wantsDesignHelp = item.layers.length === 0 && (dh.colors != null || dh.format || dh.notes);
   const lines = [
     index != null ? `Projet ${index + 1}` : null,
     `- Coloris : ${item.color.nom}`,
@@ -144,6 +149,10 @@ function summarizeItem(item: SavedItem, index?: number): string {
     `- Tailles : ${sizes || 'non renseignées'} (${item.qty} pièce${item.qty > 1 ? 's' : ''})`,
     `- Délai : ${item.delai === 'express' ? 'Express (5 jours ouvrés)' : 'Standard (10 jours ouvrés)'}`,
     `- Estimation : ${item.prixUnitaire.toFixed(2).replace('.', ',')} € / pièce, soit ${item.prixTotal.toFixed(2).replace('.', ',')} € au total`,
+    item.layers.length === 0 ? "- Visuel : pas encore de fichier — le client souhaite un accompagnement design" : null,
+    wantsDesignHelp && dh.colors != null ? `  · Couleurs souhaitées : ${dh.colors >= 12 ? '12 et plus / dégradé' : dh.colors}` : null,
+    wantsDesignHelp && dh.format ? `  · Format ou emplacement : ${dh.format}` : null,
+    wantsDesignHelp && dh.notes ? `  · Description : ${dh.notes}` : null,
   ].filter((l): l is string => l != null);
   return lines.join('\n');
 }

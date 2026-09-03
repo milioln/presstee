@@ -34,7 +34,10 @@ export function dpi(): number | null {
 // calque dont l'analyse a échoué (SVG non rasterisable) compte pour 1
 // par défaut plutôt que de rendre le total entier inutilisable.
 export function totalColors(): number | null {
-  if (S.layers.length === 0) return null;
+  // Sans visuel déposé, le client peut avoir indiqué un nombre de
+  // couleurs souhaité dans l'espace "Pas de visuel ?" — ça suffit pour
+  // que la recommandation de technique reste pertinente.
+  if (S.layers.length === 0) return S.designHelp.colors;
   const sum = S.layers.reduce((s, l) => s + (l.colors ?? 1), 0);
   return Math.max(1, sum);
 }

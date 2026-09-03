@@ -11,7 +11,7 @@ import '../styles/personnalisateur.css';
 	<div class="wrap">
 		<div class="intro">
 			<h1>Composez votre textile personnalisé.</h1>
-			<p>Choisissez un modèle, déposez votre visuel, placez-le. Nous analysons votre fichier au passage et vous disons quelle technique convient à votre projet et à votre quantité.</p>
+			<p>Choisissez un modèle, déposez votre visuel, placez-le. Nous analysons votre fichier au passage et vous disons quelle technique convient à votre projet et à votre quantité. Pas encore de visuel ? Décrivez-nous votre projet dans l'onglet « Aide design », ça n'empêche pas de continuer votre commande.</p>
 		</div>
 
 		<div class="board">
@@ -93,10 +93,34 @@ import '../styles/personnalisateur.css';
 						<div class="modetabs">
 							<button class="on" data-mode="image">Image</button>
 							<button data-mode="text">Texte</button>
+							<button data-mode="design">Aide design</button>
 						</div>
 						<div class="drop" id="drop">
 							<strong>Déposez votre fichier</strong>
 							<p>ou cliquez pour parcourir — PNG, JPG ou SVG</p>
+						</div>
+						<div class="designmode" id="designMode" style="display:none">
+							<p class="hint">Pas encore de visuel ? Décrivez votre projet, notre équipe peut le créer avec vous — ça n'empêche pas de continuer votre commande.</p>
+							<div>
+								<label for="designColors">Nombre de couleurs souhaité</label>
+								<select id="designColors">
+									<option value="">Je ne sais pas encore</option>
+									<option value="1">1 couleur</option>
+									<option value="2">2 couleurs</option>
+									<option value="3">3 couleurs</option>
+									<option value="4">4 couleurs</option>
+									<option value="6">5 à 8 couleurs</option>
+									<option value="12">Dégradés / photo</option>
+								</select>
+							</div>
+							<div>
+								<label for="designFormat">Format ou emplacement souhaité</label>
+								<input type="text" id="designFormat" placeholder="ex. logo poitrine 10 cm, dos A4…" />
+							</div>
+							<div>
+								<label for="designNotes">Décrivez votre projet</label>
+								<textarea id="designNotes" placeholder="Style, texte à inclure, inspiration, logo existant à moderniser…"></textarea>
+							</div>
 						</div>
 						<div class="textmode" id="textMode" style="display:none">
 							<input type="text" id="textInput" placeholder="Votre texte" maxlength="24" />

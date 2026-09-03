@@ -90,9 +90,17 @@ import '../styles/panier.css';
 			</div>`;
 		}
 
+		function designHelpLine(it: SavedItem): string {
+			const dh = it.designHelp;
+			const colorsLabel = dh.colors == null ? null : dh.colors >= 12 ? '12 et plus / dégradé' : `${dh.colors} couleur${dh.colors > 1 ? 's' : ''}`;
+			const parts = [colorsLabel, dh.format || null].filter((p): p is string => !!p);
+			const detail = parts.length ? parts.join(' · ') : null;
+			return `<p class="panierMark-empty">Pas de visuel déposé — accompagnement design demandé${detail ? ` (${detail})` : ''}.${dh.notes ? ` « ${dh.notes} »` : ''}</p>`;
+		}
+
 		function itemCard(it: SavedItem): string {
 			const garmentName = GARMENTS[it.garment].name;
-			const marks = it.layers.length ? it.layers.map((l) => markLine(it, l)).join('') : `<p class="panierMark-empty">Aucun visuel déposé pour ce projet.</p>`;
+			const marks = it.layers.length ? it.layers.map((l) => markLine(it, l)).join('') : designHelpLine(it);
 			return `<div class="panierItem" data-id="${it.id}">
 				<div class="panierItem-head">
 					<div class="panierItem-thumb" style="background:${it.color.hex}"></div>

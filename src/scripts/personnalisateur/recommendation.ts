@@ -39,7 +39,10 @@ export interface Reco {
 
 export function reco(colors: number | null, qty: number): Reco {
   if (colors == null) {
-    return { k: 'transfert-quadrichromie', why: 'Aucun visuel analysé pour l’instant. Le transfert quadrichromie reste le choix qui convient dans tous les cas.' };
+    return {
+      k: 'transfert-quadrichromie',
+      why: 'Aucune information sur les couleurs pour l’instant. Le transfert quadrichromie reste le choix qui convient dans tous les cas — la recommandation s’affinera si vous précisez le nombre de couleurs souhaité.',
+    };
   }
   const { quantitePiecesSerigraphie, couleursMaxSerigraphie, quantitePiecesBroderie, couleursMaxBroderie } = seuils;
 

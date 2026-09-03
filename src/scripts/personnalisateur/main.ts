@@ -10,6 +10,7 @@ import { render, paintTechs, paintRecap, paintSizeDist, paintWidth, paintRotate,
 import { syncPlace, bindPlacement } from './placement';
 import { bindFileInput } from './file-input';
 import { bindModeTabs, bindTextInput } from './text-input';
+import { bindDesignHelp, syncDesignHelp } from './design-help';
 import { bindModelDrag } from './drag3d';
 import { bindLayers, syncEditor } from './layers';
 import { bindCrop } from './crop';
@@ -193,6 +194,7 @@ function refreshAll(): void {
   syncPlace();
   paintSizeDist();
   syncEditor();
+  syncDesignHelp();
 }
 
 export function init(): void {
@@ -212,6 +214,7 @@ export function init(): void {
   bindFileInput();
   bindModeTabs();
   bindTextInput();
+  bindDesignHelp();
   bindModelDrag();
   bindLayers();
   bindCrop();

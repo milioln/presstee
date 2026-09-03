@@ -108,6 +108,13 @@
 .textcolors button{width:28px;height:28px;border:1px solid var(--divider);cursor:pointer;padding:0}
 .textcolors button.on{outline:2px solid var(--accent);outline-offset:2px}
 
+.designmode{display:grid;gap:10px}
+.designmode .hint{margin-top:0}
+.designmode label{display:block;font-family:'Archivo',sans-serif;font-weight:800;font-size:12px;margin-bottom:6px}
+.designmode select,.designmode input[type=text],.designmode textarea{width:100%;padding:11px 12px;border:1px solid var(--divider);background:var(--bg);font:inherit;font-size:14px;color:var(--text)}
+.designmode textarea{resize:vertical;min-height:76px}
+.designmode select:focus-visible,.designmode input[type=text]:focus-visible,.designmode textarea:focus-visible{outline:2px solid var(--accent);outline-offset:-1px}
+
 .layerStrip{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
 .layerchip{position:relative;width:60px;height:60px;border:1.5px solid var(--divider);cursor:pointer;background:var(--surface);padding:0;overflow:hidden}
 .layerchip img{width:100%;height:100%;object-fit:contain;display:block}
