@@ -29,7 +29,22 @@ const familles: { type: TypeTextile; desc: string; actif: boolean }[] = [
 	{ type: 'bagagerie', desc: 'Totes, sacs à dos, sacs de sport.', actif: false },
 ];
 
-const bestSellers = [...TSHIRTS].sort((a, b) => a.baseCost - b.baseCost).slice(0, 6);
+// Sélection éditoriale plutôt que calculée : le site n'a pas encore de
+// commandes réelles pour établir un vrai classement de ventes. Mélange
+// de classiques reconnus (Fruit of the Loom, Gildan, B&C) et de la
+// référence Sol's Regent, citée comme meilleure vente chez plusieurs
+// concurrents comparés lors de la veille du 2026-09-03 (voir commit
+// d'ajout du catalogue Sol's/Kariban) — à remplacer par un vrai
+// classement dès que l'historique de commandes existe.
+const BEST_SELLER_SLUGS = [
+	'sol-s-11380-regent',
+	'fruit-of-the-loom-original-t',
+	'gildan-softstyle-adult-t-shirt',
+	'b-c-e150-t-shirt',
+	'fruit-of-the-loom-ladies-original-t',
+	'kariban-k356-t-shirt-col-rond',
+];
+const bestSellers = BEST_SELLER_SLUGS.map((slug) => TSHIRTS.find((t) => t.slug === slug)!).filter(Boolean);
 
 const margeMin = Math.min(...PALIERS_TARIF.map((p) => p.marge));
 const margeMax = Math.max(...PALIERS_TARIF.map((p) => p.marge));
@@ -114,7 +129,7 @@ function barWidth(marge: number): number {
 		<section class="phome-section">
 			<div class="wrap">
 				<div class="phome-section-head">
-					<h2>Les prix les plus bas</h2>
+					<h2>Les best-sellers</h2>
 					<a class="phome-section-link" href="/produits/t-shirts">Tout le catalogue, avec filtres →</a>
 				</div>
 				<div class="bs-grid">
@@ -189,7 +204,7 @@ function barWidth(marge: number): number {
 					<p>Envoyez votre visuel et votre quantité : on vous répond avec une recommandation de textile, un devis et un bon à tirer avant lancement.</p>
 				</div>
 				<div class="phome-hero-cta">
-					<a class="btn" href="/#commander">Demander un devis</a>
+					<a class="btn" href="/contact">Demander un devis</a>
 					<a class="btn btn-light" href="/simulateur">Estimer au simulateur</a>
 				</div>
 			</div>

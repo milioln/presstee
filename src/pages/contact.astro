@@ -1,0 +1,198 @@
+---
+// Page Contact dédiée — remplace l'ancre /#commander de l'accueil,
+// recréée en Astro à partir du gabarit fourni par Milio (Contact.dc.html).
+// Le formulaire envoie par mailto: comme partout ailleurs sur le site
+// (panier, simulateur, bon à tirer) plutôt que d'être désactivé en
+// attendant un vrai backend : mailto ne dépend d'aucun SIRET ni serveur,
+// c'est justement pour ça qu'il est déjà utilisé partout ici (cf.
+// cart.ts). Le champ "joindre un fichier" du gabarit ne peut pas
+// fonctionner par e-mail (un lien mailto: ne peut pas attacher de
+// pièce jointe) : remplacé par une consigne claire plutôt que par un
+// bouton qui ne ferait rien.
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { siteConfig } from '../config/site';
+import '../styles/global.css';
+import '../styles/contact.css';
+---
+
+<Layout title="Contact — Presstee" description="Décrivez votre projet, recevez une recommandation de textile et un devis chiffré sous 24 heures ouvrées.">
+	<Header />
+	<main>
+		<section class="contact-hero">
+			<div class="wrap">
+				<div class="crumb"><a href="/">Accueil</a> / Contact</div>
+				<h1>Décrire le projet,<br />obtenir un prix.</h1>
+				<p>Un visuel, une quantité, une date : c'est assez pour recevoir une recommandation de textile et un devis chiffré. Réponse sous 24 heures ouvrées.</p>
+			</div>
+		</section>
+
+		<section class="contact-body">
+			<div class="wrap contact-grid">
+				<div class="contact-form-card">
+					<h2>Demande de devis</h2>
+					<p class="contact-form-hint">Les champs marqués d'un astérisque sont nécessaires pour chiffrer.</p>
+
+					<form id="contactForm">
+						<div class="contact-row2">
+							<label>
+								<span>Nom *</span>
+								<input type="text" id="cNom" placeholder="Prénom et nom" required />
+							</label>
+							<label>
+								<span>Structure</span>
+								<input type="text" id="cStructure" placeholder="Association, entreprise, club…" />
+							</label>
+							<label>
+								<span>E-mail *</span>
+								<input type="email" id="cEmail" placeholder="vous@exemple.fr" required />
+							</label>
+							<label>
+								<span>Téléphone</span>
+								<input type="tel" id="cTel" placeholder="06 …" />
+							</label>
+						</div>
+
+						<div class="contact-sep"></div>
+
+						<div class="contact-field">
+							<span class="contact-label">Technique souhaitée</span>
+							<div class="contact-pills">
+								<label class="contact-pill"><input type="radio" name="technique" value="Sérigraphie" />Sérigraphie</label>
+								<label class="contact-pill"><input type="radio" name="technique" value="Transfert" />Transfert</label>
+								<label class="contact-pill"><input type="radio" name="technique" value="Broderie" />Broderie</label>
+								<label class="contact-pill"><input type="radio" name="technique" value="À conseiller" checked />À conseiller</label>
+							</div>
+						</div>
+
+						<div class="contact-row2">
+							<label>
+								<span>Quantité *</span>
+								<input type="number" id="cQte" value="25" min="1" required />
+							</label>
+							<label>
+								<span>Date souhaitée</span>
+								<input type="date" id="cDate" />
+							</label>
+						</div>
+
+						<label class="contact-field">
+							<span class="contact-label">Le projet *</span>
+							<textarea id="cProjet" rows="5" placeholder="Support, nombre de couleurs, emplacement du marquage, tailles…" required></textarea>
+						</label>
+
+						<div class="contact-file">
+							<div>
+								<div class="contact-file-title">Visuel à imprimer</div>
+								<div class="contact-file-note">Une fois l'e-mail ouvert, joignez votre fichier (PDF, AI, EPS, SVG ou PNG en haute résolution) directement dedans — un lien de demande ne peut pas transporter de pièce jointe à votre place.</div>
+							</div>
+						</div>
+
+						<button type="submit" class="btn contact-submit">Envoyer la demande</button>
+					</form>
+				</div>
+
+				<aside class="contact-side">
+					<div class="contact-card">
+						<h3>Contact direct</h3>
+						<div class="contact-direct">
+							<div>
+								<span class="contact-side-label">E-mail</span>
+								<a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
+							</div>
+							<div>
+								<span class="contact-side-label">Téléphone</span>
+								<a href={`tel:${siteConfig.telephone.replace(/\s/g, '')}`}>{siteConfig.telephone}</a>
+							</div>
+							<div>
+								<span class="contact-side-label">Atelier</span>
+								<span class="contact-static">{siteConfig.adresse.ville}, {siteConfig.adresse.departement}</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="contact-delay">
+						<div class="contact-delay-num">24 h ouvrées</div>
+						<div class="contact-delay-label">délai de réponse habituel sur une demande de devis</div>
+					</div>
+
+					<div class="contact-card">
+						<h3>Ce qui accélère le chiffrage</h3>
+						<div class="contact-tips">
+							<div class="contact-tip"><span class="contact-tip-num" style="transform:rotate(-6deg)">1</span><span>Le visuel en vectoriel, ou en 300 dpi à la taille d'impression.</span></div>
+							<div class="contact-tip"><span class="contact-tip-num" style="transform:rotate(4deg)">2</span><span>Le nombre de couleurs du marquage et son emplacement.</span></div>
+							<div class="contact-tip"><span class="contact-tip-num" style="transform:rotate(-3deg)">3</span><span>La répartition des tailles, même approximative.</span></div>
+						</div>
+					</div>
+
+					<div class="contact-card">
+						<h3>Retrait et rendez-vous</h3>
+						<p>Retrait sur place à Angoulême ou envoi par transporteur. Les rendez-vous à l'atelier se prennent par e-mail ou par téléphone.</p>
+					</div>
+				</aside>
+			</div>
+		</section>
+
+		<section class="contact-band">
+			<div class="wrap">
+				<h2>Pas besoin d'attendre une réponse pour avancer</h2>
+				<div class="contact-band-grid">
+					<a class="contact-band-card" href="/configurateur">
+						<h3>Configurateur</h3>
+						<p>Placer le visuel sur le textile et voir le rendu avant de commander.</p>
+						<span>Ouvrir</span>
+					</a>
+					<a class="contact-band-card" href="/simulateur">
+						<h3>Simulateur de prix</h3>
+						<p>Une estimation immédiate selon la quantité, la technique et le textile.</p>
+						<span>Estimer</span>
+					</a>
+					<a class="contact-band-card" href="/produits">
+						<h3>Catalogue textile</h3>
+						<p>Les bases disponibles, avec grammage, coupe et prix dégressifs.</p>
+						<span>Parcourir</span>
+					</a>
+				</div>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>
+
+<script>
+	import { siteConfig } from '../config/site';
+
+	function el<T extends HTMLElement = HTMLElement>(id: string): T {
+		return document.getElementById(id) as T;
+	}
+
+	document.getElementById('contactForm')!.addEventListener('submit', (e) => {
+		e.preventDefault();
+		const nom = el<HTMLInputElement>('cNom').value.trim();
+		const structure = el<HTMLInputElement>('cStructure').value.trim();
+		const emailClient = el<HTMLInputElement>('cEmail').value.trim();
+		const tel = el<HTMLInputElement>('cTel').value.trim();
+		const technique = (document.querySelector('input[name="technique"]:checked') as HTMLInputElement)?.value || 'À conseiller';
+		const qte = el<HTMLInputElement>('cQte').value.trim();
+		const date = el<HTMLInputElement>('cDate').value.trim();
+		const projet = el<HTMLTextAreaElement>('cProjet').value.trim();
+
+		const lignes = [
+			`Nom : ${nom}`,
+			structure ? `Structure : ${structure}` : null,
+			`E-mail : ${emailClient}`,
+			tel ? `Téléphone : ${tel}` : null,
+			`Technique souhaitée : ${technique}`,
+			`Quantité : ${qte}`,
+			date ? `Date souhaitée : ${date}` : null,
+			'',
+			'Le projet :',
+			projet,
+		].filter((l): l is string => l != null);
+
+		const body = `Bonjour,\n\n${lignes.join('\n')}\n\n(Pensez à joindre votre visuel à cet e-mail avant de l'envoyer.)`;
+		const url = `mailto:${siteConfig.email}?subject=${encodeURIComponent(`Demande de devis — ${nom || 'contact site'}`)}&body=${encodeURIComponent(body)}`;
+		window.location.href = url;
+	});
+</script>
