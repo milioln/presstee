@@ -48,6 +48,16 @@ export interface DesignHelp {
   notes: string;
 }
 
+// Confirmation client du bon à tirer (vue "Bon à tirer" du viewer,
+// configurateur.astro) : une signature du projet au moment de la
+// confirmation, comparée à la volée à une signature recalculée sur
+// l'état courant pour savoir si la confirmation est encore valable ou
+// si le projet a changé depuis (cf. bat-view.ts).
+export interface BATConfirmation {
+  at: number;
+  signature: string;
+}
+
 export interface PersonnalisateurState {
   garment: Garment;
   place: Emplacement;
@@ -61,6 +71,7 @@ export interface PersonnalisateurState {
   tech: TechKey | 'auto';
   delai: 'standard' | 'express';
   designHelp: DesignHelp;
+  batConfirme: BATConfirmation | null;
 }
 
 export const S: PersonnalisateurState = {
@@ -76,6 +87,7 @@ export const S: PersonnalisateurState = {
   tech: 'auto',
   delai: 'standard',
   designHelp: { colors: null, format: '', notes: '' },
+  batConfirme: null,
 };
 
 let layerSeq = 0;
@@ -107,7 +119,7 @@ export function createLayer(partial: { img: string; fileName: string; vector: bo
 
 export const STORAGE_KEY = 'presstee:personnalisateur:v2';
 
-export type Persisted = Pick<PersonnalisateurState, 'garment' | 'place' | 'coupe' | 'manche' | 'col' | 'layers' | 'activeLayerId' | 'sizeDist' | 'tech' | 'delai' | 'designHelp'> & {
+export type Persisted = Pick<PersonnalisateurState, 'garment' | 'place' | 'coupe' | 'manche' | 'col' | 'layers' | 'activeLayerId' | 'sizeDist' | 'tech' | 'delai' | 'designHelp' | 'batConfirme'> & {
   colorIndex: number;
 };
 
@@ -127,6 +139,7 @@ export function saveState(): void {
       tech: S.tech,
       delai: S.delai,
       designHelp: S.designHelp,
+      batConfirme: S.batConfirme,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   } catch {
@@ -157,6 +170,7 @@ export function loadState(): boolean {
     if (p.tech) S.tech = p.tech;
     if (p.delai) S.delai = p.delai;
     if (p.designHelp && typeof p.designHelp === 'object') Object.assign(S.designHelp, p.designHelp);
+    if (p.batConfirme && typeof p.batConfirme === 'object') S.batConfirme = p.batConfirme;
     return true;
   } catch {
     return false;
@@ -202,6 +216,11 @@ export function seedFromItem(item: {
       tech: item.tech,
       delai: item.delai,
       designHelp: item.designHelp ?? { colors: null, format: '', notes: '' },
+      // Repart sans confirmation : "Modifier" charge un article déjà
+      // ajouté au panier, potentiellement modifié depuis sa confirmation
+      // (si elle avait eu lieu) — mieux vaut la redemander que la
+      // reporter à tort sur un projet qui a pu changer entretemps.
+      batConfirme: null,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   } catch {

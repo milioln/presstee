@@ -58,7 +58,7 @@ function layerVisu(item: SavedItem, layer: Layer): string {
     <div class="bat-visu-zone" style="width:${box.width};height:${box.height};margin:${box.margin}">
       ${layer.img ? `<img src="${layer.img}" alt="Visuel à valider" />` : ''}
     </div>
-    <span class="bat-visu-pos" style="color:${estClair(bg) ? 'var(--indigo)' : '#fff'};left:10px;${layer.place === 'coeur' ? 'bottom:10px' : 'top:22px'}">${PLACE_NOTE[layer.place]}</span>
+    <span class="bat-visu-pos" style="color:${estClair(bg) ? 'var(--bat-accent)' : '#fff'};left:10px;${layer.place === 'coeur' ? 'bottom:10px' : 'top:22px'}">${PLACE_NOTE[layer.place]}</span>
   </div>
   <div class="bat-cotes">
     <span class="tick"></span><span class="trait"></span>
@@ -67,7 +67,7 @@ function layerVisu(item: SavedItem, layer: Layer): string {
   </div>`;
 }
 
-function pieceCard(item: SavedItem, index: number): string {
+export function pieceCard(item: SavedItem, index: number): string {
   const garmentName = GARMENTS[item.garment].name;
   const badges = item.layers.length ? [...new Set(item.layers.map((l) => PLACE_LABEL[l.place]))].join(' + ') : 'Accompagnement design';
   const visuHtml = item.layers.length

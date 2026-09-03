@@ -17,6 +17,7 @@ import { bindCrop } from './crop';
 import { bindLayerPopup } from './layer-popup';
 import { bindCartUI, paintBadges } from './cart-ui';
 import { bindOnLoaded } from './cart';
+import { bindBATView } from './bat-view';
 import { TECHS } from './recommendation';
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
@@ -220,6 +221,7 @@ export function init(): void {
   bindCrop();
   bindLayerPopup();
   bindCartUI();
+  bindBATView();
   bindOnLoaded(() => {
     refreshAll();
     paintBadges();

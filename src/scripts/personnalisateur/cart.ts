@@ -63,7 +63,7 @@ export function getSaved(): SavedItem[] {
   return readList(SAVED_KEY);
 }
 
-function snapshotCurrent(): SavedItem {
+export function snapshotCurrent(): SavedItem {
   return {
     id: `s${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`,
     savedAt: Date.now(),

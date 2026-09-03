@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import '../styles/global.css';
+import '../styles/bat.css';
 import '../styles/personnalisateur.css';
 ---
 
@@ -74,6 +75,12 @@ import '../styles/personnalisateur.css';
 				</div>
 
 				<div class="viewer">
+					<div class="seg2 viewToggle" id="viewToggle">
+						<button type="button" data-view="3d" class="on"><strong>Modèle 3D</strong></button>
+						<button type="button" data-view="bat"><strong>Bon à tirer</strong></button>
+					</div>
+
+					<div id="editView">
 					<div class="frame" id="frame">
 						<model-viewer
 							id="stage"
@@ -152,6 +159,19 @@ import '../styles/personnalisateur.css';
 						</div>
 						<input type="file" id="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" />
 						<div class="diag" id="diag" style="display:none"></div>
+					</div>
+					</div>
+
+					<div id="batView" style="display:none">
+						<div id="batViewRoot"></div>
+						<div class="batConfirm" id="batConfirm">
+							<p class="hint">Vérifiez le visuel, le coloris, la technique et l'emplacement avant de confirmer.</p>
+							<button type="button" class="btn btn-primary btn-block" id="batConfirmBtn">Je confirme les informations de ce bon à tirer</button>
+						</div>
+						<div class="batConfirmed" id="batConfirmed" style="display:none">
+							<p class="batConfirmed-msg">✓ Informations confirmées le <span id="batConfirmedDate"></span> — en attente de la validation de notre équipe avant lancement en production.</p>
+							<button type="button" class="mini-btn" id="batUnconfirm">Annuler la confirmation</button>
+						</div>
 					</div>
 				</div>
 
