@@ -73,6 +73,8 @@
 .steps-list strong{display:block;font-family:'Sora',sans-serif;font-size:.98rem;margin-bottom:4px}
 .steps-list span{font-size:.92rem;color:var(--gris)}
 
+.steps-infographic{width:100%;height:auto;display:block;border-radius:16px;border:1px solid var(--ligne)}
+
 .proscons{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .proscons .col{border-radius:16px;padding:20px 22px}
 .proscons .col.avantages{background:rgba(46,125,91,.07)}

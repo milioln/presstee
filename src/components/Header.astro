@@ -17,6 +17,7 @@ import Logo from './Logo.astro';
 			<a href="/produits">Produits</a>
 			<a href="/#creations">Réalisations</a>
 			<a href="/#commander">Contact</a>
+			<a href="/panier" class="cart-link">Panier<span class="cart-badge" id="headerCartCount" style="display:none">0</span></a>
 		</nav>
 	</div>
 </header>
@@ -29,4 +30,17 @@ import Logo from './Logo.astro';
 		burger.setAttribute('aria-expanded', String(open));
 	});
 	links.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => links.classList.remove('open')));
+
+	try {
+		const raw = localStorage.getItem('presstee:personnalisateur:panier');
+		const items = raw ? JSON.parse(raw) : [];
+		const n = Array.isArray(items) ? items.length : 0;
+		const badge = document.getElementById('headerCartCount')!;
+		if (n > 0) {
+			badge.textContent = String(n);
+			badge.style.display = 'inline-flex';
+		}
+	} catch {
+		// Stockage indisponible (navigation privée...) : le badge reste masqué.
+	}
 </script>
