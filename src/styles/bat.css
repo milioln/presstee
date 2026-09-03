@@ -1,0 +1,486 @@
+/* Aperçu automatique du bon à tirer — recréation de BAT.dc.html (dossier
+   BAt/ fourni par Milio), généré entièrement côté client depuis le
+   panier (aucune donnée serveur : le site est statique et ce document
+   n'est qu'un aperçu, pas le BAT définitif numéroté que l'atelier
+   enverra pour signature). Mêmes tokens et la même structure sheet/doc
+   que DocumentCommercial.astro (devis/facture) pour rester cohérent
+   visuellement — mais en CSS globale plutôt qu'un style Astro scopé,
+   puisque ce gabarit est injecté en innerHTML par bat.ts. */
+
+.sheet {
+	width: 210mm;
+	margin: 0 auto;
+	background: #fff;
+	border-collapse: collapse;
+	font-family: 'Manrope', system-ui, sans-serif;
+	color: var(--encre);
+	font-size: 14px;
+	line-height: 1.5;
+}
+.sheet-cell {
+	padding: 13mm 13mm 0 13mm;
+}
+.sheet-cell-foot {
+	padding: 0 13mm 13mm 13mm;
+}
+
+.print-actions {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 20px;
+}
+
+.doc {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.watermark {
+	position: absolute;
+	width: 460px;
+	height: auto;
+	left: 130px;
+	top: 300px;
+	opacity: 0.06;
+	pointer-events: none;
+}
+
+.doc-head {
+	position: relative;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 32px;
+}
+.doc-head .logo {
+	width: 186px;
+	height: auto;
+}
+.doc-head-right {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 8px;
+}
+.badge {
+	display: inline-flex;
+	align-items: center;
+	height: 30px;
+	padding: 0 18px;
+	border-radius: 999px;
+	background: var(--jaune);
+	font-family: 'Sora', sans-serif;
+	font-size: 12.5px;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+.numero {
+	font-family: 'Sora', sans-serif;
+	font-size: 27px;
+	font-weight: 600;
+	letter-spacing: -0.035em;
+	line-height: 1;
+}
+.dates {
+	display: grid;
+	grid-template-columns: auto auto;
+	gap: 2px 14px;
+	font-size: 12.5px;
+	color: var(--gris);
+	text-align: right;
+}
+.dates .val {
+	color: var(--encre);
+	font-weight: 600;
+}
+
+.parties {
+	position: relative;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+}
+.carte {
+	border: 1px solid var(--ligne);
+	border-radius: var(--r);
+	padding: 13px 18px;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+.carte-client {
+	background: var(--lavande);
+}
+.surtitre {
+	font-family: 'Sora', sans-serif;
+	font-size: 10.5px;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--gris);
+}
+.nom {
+	font-family: 'Sora', sans-serif;
+	font-size: 16px;
+	font-weight: 600;
+	letter-spacing: -0.02em;
+}
+.adresse {
+	color: var(--gris);
+	font-size: 13px;
+}
+.appoint {
+	margin-top: 4px;
+	font-size: 12px;
+	color: var(--gris);
+}
+.appoint .val {
+	color: var(--encre);
+	font-weight: 600;
+}
+
+.avertir {
+	position: relative;
+	display: flex;
+	align-items: baseline;
+	gap: 10px;
+	padding-left: 14px;
+	border-left: 2px solid var(--jaune);
+}
+.avertir .label {
+	font-size: 12px;
+	color: var(--gris);
+}
+.avertir .valeur {
+	font-family: 'Sora', sans-serif;
+	font-size: 15px;
+	font-weight: 500;
+	letter-spacing: -0.02em;
+}
+
+.bat-pieces {
+	position: relative;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+}
+.bat-piece {
+	border: 1px solid var(--ligne);
+	border-radius: var(--r);
+	padding: 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	break-inside: avoid;
+}
+.bat-piece-head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 10px;
+}
+.bat-piece-head span.titre {
+	font-family: 'Sora', sans-serif;
+	font-size: 15px;
+	font-weight: 600;
+	letter-spacing: -0.02em;
+}
+.bat-piece-badges {
+	display: flex;
+	gap: 6px;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+}
+.bat-piece-badge {
+	font-size: 11px;
+	font-weight: 600;
+	padding: 3px 10px;
+	border-radius: 999px;
+	background: var(--gris-clair);
+	color: var(--encre);
+}
+
+.bat-visu {
+	position: relative;
+	height: 196px;
+	border-radius: 14px;
+	border: 1px solid var(--ligne);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+}
+.bat-visu-collar {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 62px;
+	height: 15px;
+	border-radius: 0 0 999px 999px;
+	background: var(--lavande);
+	border: 1px solid var(--ligne);
+	border-top: 0;
+}
+.bat-visu-zone {
+	border: 1.5px dashed var(--indigo);
+	border-radius: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+}
+.bat-visu-zone img {
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: contain;
+}
+.bat-visu-zone.vide {
+	font-size: 11px;
+	color: var(--indigo);
+	text-align: center;
+	padding: 6px;
+	line-height: 1.3;
+}
+.bat-visu-pos {
+	position: absolute;
+	font-family: 'Sora', sans-serif;
+	font-size: 9.5px;
+	font-weight: 600;
+}
+
+.bat-cotes {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+.bat-cotes .trait {
+	flex: 1;
+	height: 1px;
+	background: var(--indigo);
+}
+.bat-cotes .tick {
+	width: 1px;
+	height: 9px;
+	background: var(--indigo);
+}
+.bat-cotes .val {
+	font-family: 'Sora', sans-serif;
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--indigo);
+	white-space: nowrap;
+}
+
+.bat-info {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 4px 14px;
+	font-size: 12.5px;
+}
+.bat-info span.label {
+	color: var(--gris);
+}
+
+.bat-controle-wrap {
+	position: relative;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+	break-inside: avoid;
+}
+.bat-controle {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+.bat-check {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	font-size: 12.5px;
+}
+.bat-check-row {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+}
+.bat-check-box {
+	width: 12px;
+	height: 12px;
+	border: 1.5px solid var(--indigo);
+	border-radius: 4px;
+	flex-shrink: 0;
+}
+.bat-savoir {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 14px 18px;
+	border-radius: var(--r);
+	background: var(--jaune);
+}
+.bat-savoir .titre {
+	font-family: 'Sora', sans-serif;
+	font-size: 10.5px;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+}
+.bat-savoir .texte {
+	font-size: 12.5px;
+	line-height: 1.5;
+}
+
+.bat-decision-wrap {
+	position: relative;
+	display: grid;
+	grid-template-columns: 1fr 268px;
+	gap: 16px;
+	align-items: stretch;
+	break-inside: avoid;
+}
+.bat-decision {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 14px 18px;
+	border: 1px solid var(--ligne);
+	border-radius: var(--r);
+}
+.bat-decision .titre {
+	font-family: 'Sora', sans-serif;
+	font-size: 12.5px;
+	font-weight: 600;
+	letter-spacing: -0.02em;
+}
+.bat-decision-opts {
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
+	font-size: 12.5px;
+}
+.bat-decision-opt {
+	display: flex;
+	align-items: flex-start;
+	gap: 9px;
+}
+.bat-decision-radio {
+	width: 13px;
+	height: 13px;
+	border: 1.5px solid var(--indigo);
+	border-radius: 999px;
+	flex-shrink: 0;
+	margin-top: 2px;
+}
+.bat-decision .espace {
+	flex: 1;
+	min-height: 26px;
+	border-bottom: 1px solid var(--gris-clair);
+}
+.bat-decision .espace2 {
+	min-height: 16px;
+	border-bottom: 1px solid var(--gris-clair);
+}
+.bat-signature {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 14px 16px;
+	border: 1.5px dashed var(--indigo);
+	border-radius: var(--r);
+}
+.bat-signature .titre {
+	font-family: 'Sora', sans-serif;
+	font-size: 12.5px;
+	font-weight: 600;
+	letter-spacing: -0.02em;
+}
+.bat-signature .soustitre {
+	font-size: 11.5px;
+	color: var(--gris);
+	line-height: 1.4;
+}
+.bat-signature .espace {
+	flex: 1;
+	min-height: 38px;
+}
+.bat-signature .trait {
+	border-top: 1px solid var(--ligne);
+}
+
+.doc-foot {
+	margin-top: 14px;
+	padding-top: 10px;
+	border-top: 1px solid var(--ligne);
+	display: flex;
+	justify-content: space-between;
+	gap: 20px;
+	font-family: 'Manrope', system-ui, sans-serif;
+	font-size: 10.5px;
+	color: var(--gris);
+	line-height: 1.5;
+}
+.numero-foot {
+	white-space: nowrap;
+}
+
+.bat-avertissement {
+	display: flex;
+	align-items: baseline;
+	gap: 10px;
+	padding: 12px 16px;
+	border-radius: 12px;
+	background: var(--lavande);
+	font-size: 12.5px;
+	color: var(--gris);
+	margin-bottom: 20px;
+}
+.bat-avertissement b {
+	color: var(--encre);
+}
+
+.bat-empty {
+	max-width: 520px;
+	margin: 60px auto;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 14px;
+}
+.bat-empty p {
+	color: var(--gris);
+}
+
+@page {
+	size: A4;
+	margin: 0;
+}
+
+@media print {
+	.print-actions,
+	.bat-avertissement {
+		display: none;
+	}
+}
+
+@media (max-width: 900px) {
+	.sheet {
+		width: 100%;
+	}
+	.sheet-cell,
+	.sheet-cell-foot {
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+	.parties,
+	.bat-pieces,
+	.bat-controle-wrap,
+	.bat-decision-wrap {
+		grid-template-columns: 1fr;
+	}
+}

@@ -78,9 +78,12 @@ export function bindCartUI(): void {
   });
 
   el('addToCart').addEventListener('click', () => {
-    addToCart();
+    const item = addToCart();
     paintBadges();
     flash('addToCart', 'Ajouté ✓');
+    const batLink = el('batLink');
+    batLink.querySelector('a')!.setAttribute('href', `/bon-a-tirer?id=${item.id}`);
+    batLink.style.display = 'block';
   });
   el('saveProject').addEventListener('click', () => {
     saveProject();

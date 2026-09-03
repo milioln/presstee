@@ -1,0 +1,57 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+import '../styles/bat.css';
+---
+
+<Layout title="Aperçu du bon à tirer — Presstee" description="Aperçu automatique de votre projet avant production : visuel, coloris, emplacement et tailles de chaque pièce.">
+	<Header />
+	<main>
+		<div class="wrap" style="padding:32px 0 80px">
+			<div class="bat-avertissement">
+				<span>ℹ️</span>
+				<span><b>Aperçu automatique</b> généré depuis votre panier — ce n'est pas encore le bon à tirer définitif que nous vous enverrons à signer avant production.</span>
+			</div>
+
+			<div class="print-actions">
+				<button type="button" class="btn btn-jaune" id="batSend">Envoyer ma demande de devis</button>
+				<button type="button" class="btn" id="batPrint" style="margin-left:10px">Imprimer / Enregistrer en PDF</button>
+			</div>
+
+			<div id="batRoot"></div>
+		</div>
+	</main>
+	<Footer />
+</Layout>
+
+<script>
+	import { getCart, sendQuoteForItems } from '../scripts/personnalisateur/cart';
+	import { buildBATHtml } from '../scripts/personnalisateur/bat';
+	import { siteConfig } from '../config/site';
+
+	function el<T extends HTMLElement = HTMLElement>(id: string): T {
+		return document.getElementById(id) as T;
+	}
+
+	const params = new URLSearchParams(window.location.search);
+	const onlyId = params.get('id');
+	const cart = getCart();
+	const items = onlyId ? cart.filter((it) => it.id === onlyId) : cart;
+
+	const root = el('batRoot');
+	if (!items.length) {
+		root.innerHTML = `<div class="bat-empty">
+			<h3>Rien à prévisualiser pour l'instant.</h3>
+			<p>Composez un projet dans le configurateur et ajoutez-le au panier pour en voir ici l'aperçu du bon à tirer.</p>
+			<a class="btn" href="/configurateur">Aller au configurateur</a>
+		</div>`;
+		el('batPrint').style.display = 'none';
+		el('batSend').style.display = 'none';
+	} else {
+		root.innerHTML = buildBATHtml(items, { emailContact: siteConfig.email, telephoneContact: siteConfig.telephone });
+		el('batPrint').addEventListener('click', () => window.print());
+		el('batSend').addEventListener('click', () => sendQuoteForItems(items));
+	}
+</script>

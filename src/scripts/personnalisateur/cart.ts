@@ -173,7 +173,13 @@ export function sendQuoteForCurrent(): void {
 }
 
 export function sendQuoteForCart(): void {
-  const items = getCart();
+  sendQuoteForItems(getCart());
+}
+
+// Sous-ensemble explicite du panier (ex. un seul article visé depuis
+// l'aperçu du bon à tirer, /bon-a-tirer?id=...) — même gabarit de
+// message que sendQuoteForCart, sans dépendre de tout le panier.
+export function sendQuoteForItems(items: SavedItem[]): void {
   if (!items.length) return;
   const body = `Bonjour,\n\nJe souhaite un devis pour les projets suivants :\n\n${items.map((it, i) => summarizeItem(it, i)).join('\n\n')}\n\nMerci de me recontacter pour finaliser ces projets.`;
   openMailto(`Demande de devis — ${items.length} projet${items.length > 1 ? 's' : ''} — Presstee`, body);

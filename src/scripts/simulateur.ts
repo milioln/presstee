@@ -334,7 +334,7 @@ function produitCard(pc: ProduitCalcule, index: number, retirable: boolean): str
   </div>`;
 }
 
-function resumeMail(mode: 'commande' | 'attente'): string {
+function resumeMail(mode: 'devis' | 'commande' | 'attente'): string {
   const lignes: string[] = [];
   let totalQty = 0;
   let total = 0;
@@ -356,9 +356,13 @@ function resumeMail(mode: 'commande' | 'attente'): string {
 
   const intro = mode === 'commande'
     ? 'Suite à ma simulation sur presstee.fr, je souhaite passer commande pour le projet suivant :'
+    : mode === 'devis'
+    ? 'Suite à ma simulation sur presstee.fr, je souhaite un devis pour le projet suivant :'
     : "Suite à ma simulation sur presstee.fr, voici mon projet — je ne suis pas encore prêt(e) à commander, merci de le garder de côté et de me recontacter :";
   const closing = mode === 'commande'
     ? 'Merci de me recontacter pour finaliser cette commande.'
+    : mode === 'devis'
+    ? 'Merci de me recontacter pour affiner ce devis.'
     : 'Merci de me recontacter quand vous le pourrez pour en discuter.';
   return `Bonjour,\n\n${intro}\n\n${lignes.join('\n\n')}\n\n${closing}`;
 }
@@ -453,7 +457,9 @@ export function bindSimulateur(): void {
 
   el('simSauvegarder').addEventListener('click', () => {
     persistProduits();
-    feedback('Simulation sauvegardée sur cet appareil — retrouvez-la en revenant sur cette page.');
+    feedback('Simulation sauvegardée sur cet appareil — retrouvez-la en revenant sur cette page. Votre demande de devis part par e-mail.');
+    const url = `mailto:${siteConfig.email}?subject=${encodeURIComponent('Demande de devis — simulation presstee.fr')}&body=${encodeURIComponent(resumeMail('devis'))}`;
+    window.location.href = url;
   });
 
   el('simAttente').addEventListener('click', () => {
