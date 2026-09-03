@@ -22,3 +22,19 @@
   ExpiresByType image/jpeg "access plus 1 month"
   ExpiresByType text/html "access plus 0 seconds"
 </IfModule>
+
+# Mode maintenance — répond 503 (« indisponible pour l'instant ») à toute
+# page plutôt qu'un 404, pour ne pas faire désindexer le site par Google
+# pendant la coupure. Les fichiers statiques (CSS/JS/images/polices)
+# restent accessibles pour que maintenance.html s'affiche correctement.
+# Pour remettre le site en ligne : supprimer ou commenter ce bloc, puis
+# redéployer.
+<IfModule mod_rewrite.c>
+  RewriteCond %{REQUEST_URI} !^/maintenance\.html$
+  RewriteCond %{REQUEST_URI} !\.(css|js|svg|png|jpe?g|gif|webp|woff2?|ico)$
+  RewriteRule .* /maintenance.html [R=503,L]
+</IfModule>
+ErrorDocument 503 /maintenance.html
+<IfModule mod_headers.c>
+  Header always set Retry-After "3600"
+</IfModule>
