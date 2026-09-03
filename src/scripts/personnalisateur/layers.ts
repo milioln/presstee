@@ -6,10 +6,25 @@
 // toute mutation de S.layers ou de S.place : il maintient l'invariant
 // "le calque actif appartient à l'emplacement affiché" et rafraîchit
 // tout l'écran en conséquence.
-import { S, activeLayer } from './state';
+import { S, saveState, activeLayer } from './state';
 import { render, paintWidth, paintRotate } from './render';
 import { analyse } from './file-analysis';
-import { CROP_ICON_SVG } from './icons';
+import { CROP_ICON_SVG, MOVE_ICON_SVG } from './icons';
+import { syncPlace } from './placement';
+import { GARMENTS } from './garments';
+import type { Emplacement } from '../../config/parametres-metier';
+
+const PLACE_LABEL: Record<Emplacement, string> = { face: 'Face', coeur: 'Cœur', dos: 'Dos' };
+const PLACE_ORDER: Emplacement[] = ['face', 'coeur', 'dos'];
+
+// Même cycle que layer-popup.ts (dupliqué plutôt que partagé : les deux
+// modules n'ont sinon aucune dépendance commune, et ce calcul tient en
+// trois lignes).
+function nextPlace(current: Emplacement): Emplacement {
+  const available = PLACE_ORDER.filter((p) => p !== 'coeur' || !GARMENTS[S.garment].noCoeur);
+  const idx = available.indexOf(current);
+  return available[(idx + 1) % available.length];
+}
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
   return document.getElementById(id) as T;
@@ -27,10 +42,12 @@ export function paintLayers(): void {
   strip.innerHTML = layers
     .map((l) => {
       const croppable = !l.knownColor;
+      const dest = nextPlace(l.place);
       return `<div class="layerchip${l.id === S.activeLayerId ? ' on' : ''}" data-l="${l.id}" title="${l.fileName}">
         <img src="${l.img}" alt="" />
         <div class="layerchip-actions">
           ${croppable ? `<button type="button" data-crop="${l.id}" aria-label="Recadrer ce visuel">${CROP_ICON_SVG}</button>` : ''}
+          <button type="button" data-move="${l.id}" aria-label="Déplacer ce visuel vers ${PLACE_LABEL[dest]}" title="Déplacer vers ${PLACE_LABEL[dest]}">${MOVE_ICON_SVG}</button>
           <button type="button" data-rm="${l.id}" aria-label="Retirer ce visuel">×</button>
         </div>
       </div>`;
@@ -81,6 +98,24 @@ export function bindLayers(): void {
       // ciblé est recadrable) juste avant ce clic programmatique — ouvre
       // directement l'outil sans repasser par le panneau "4".
       document.getElementById('cropBtn')?.click();
+      return;
+    }
+    const moveChip = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-move]');
+    if (moveChip) {
+      const layer = S.layers.find((l) => l.id === moveChip.dataset.move);
+      if (!layer) return;
+      // Recentré plutôt que de reporter x/y à l'identique : ces
+      // coordonnées sont relatives à la zone d'impression de
+      // l'emplacement d'origine, pas transposables telles quelles vers
+      // celle d'un autre emplacement (cf. layer-popup.ts, même logique).
+      layer.place = nextPlace(layer.place);
+      layer.x = 0.5;
+      layer.y = 0.5;
+      S.activeLayerId = layer.id;
+      S.place = layer.place;
+      saveState();
+      syncPlace();
+      syncEditor();
       return;
     }
     const chip = (e.target as HTMLElement).closest<HTMLElement>('[data-l]');

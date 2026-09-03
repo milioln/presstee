@@ -3,14 +3,28 @@
 // sans repasser par la bande de vignettes. drag3d.ts distingue le tap
 // du glisser par le déplacement total du pointeur entre pointerdown et
 // pointerup : sous quelques pixels, c'est un tap.
-import { S, activeLayer, type Layer } from './state';
+import { S, saveState, activeLayer, type Layer } from './state';
 import { syncEditor } from './layers';
+import { syncPlace } from './placement';
+import { GARMENTS } from './garments';
+import type { Emplacement } from '../../config/parametres-metier';
 
 // Même palette que le mode Texte (text-input.ts) — dupliquée plutôt que
 // partagée pour ne pas coupler ce module au panneau texte : elle
 // s'applique ici à n'importe quel calque à couleur connue, pas
 // seulement au texte fraîchement créé.
 const RECOLOR_SWATCHES = ['#17131F', '#ffffff', '#C81E1E', '#1E4FC8', '#F2C230', '#1F8A4C', '#F2790C', '#E0499B', '#6D28D9', '#7A4B2A', '#6B7280'];
+
+const PLACE_LABEL: Record<Emplacement, string> = { face: 'Face', coeur: 'Cœur', dos: 'Dos' };
+const PLACE_ORDER: Emplacement[] = ['face', 'coeur', 'dos'];
+
+// Emplacement suivant dans le cycle Face → Cœur → Dos → Face, en
+// sautant Cœur sur les vêtements qui ne l'ont pas (casquette).
+function nextPlace(current: Emplacement): Emplacement {
+  const available = PLACE_ORDER.filter((p) => p !== 'coeur' || !GARMENTS[S.garment].noCoeur);
+  const idx = available.indexOf(current);
+  return available[(idx + 1) % available.length];
+}
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
   return document.getElementById(id) as T;
@@ -62,6 +76,10 @@ export function openLayerPopup(layer: Layer, clientX: number, clientY: number): 
   const recolorable = !!layer.knownColor;
 
   el('lpCrop').style.display = croppable ? '' : 'none';
+  const moveBtn = el<HTMLButtonElement>('lpMove');
+  const dest = nextPlace(layer.place);
+  moveBtn.title = `Déplacer vers ${PLACE_LABEL[dest]}`;
+  moveBtn.setAttribute('aria-label', `Déplacer ce visuel vers ${PLACE_LABEL[dest]}`);
   const colors = el('lpColors');
   colors.style.display = recolorable ? 'flex' : 'none';
   if (recolorable && !colors.childElementCount) {
@@ -87,6 +105,23 @@ export function bindLayerPopup(): void {
     // ciblé vient d'être confirmé recadrable) juste avant ce clic
     // programmatique — ouvre directement l'outil de recadrage.
     document.getElementById('cropBtn')?.click();
+  });
+
+  el('lpMove').addEventListener('click', () => {
+    const layer = activeLayer();
+    if (!layer) return;
+    // Change d'emplacement plutôt que de position dans le même repère :
+    // la position n'a de sens que relative à la zone d'impression de son
+    // emplacement, donc on la recentre plutôt que de reporter à tort des
+    // coordonnées pensées pour une autre zone (cf. state.ts, Layer.place).
+    layer.place = nextPlace(layer.place);
+    layer.x = 0.5;
+    layer.y = 0.5;
+    S.place = layer.place;
+    saveState();
+    closeLayerPopup();
+    syncPlace();
+    syncEditor();
   });
 
   el('lpDelete').addEventListener('click', () => {
