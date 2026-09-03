@@ -217,6 +217,7 @@ input[type=file]{display:none}
    page plutôt que le violet/jaune du site (cf. note de tête du fichier :
    ne pas fusionner les design systems). */
 .viewToggle{margin-bottom:14px}
+.viewToggle .stepnum{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:1.5px solid currentColor;font-size:10px;margin-right:5px;vertical-align:2px}
 .pz-page{--bat-accent:var(--accent)}
 .pz-page .bat-pieces{grid-template-columns:1fr;gap:0}
 .pz-page .bat-piece{border:1px solid var(--divider);border-radius:0;padding:20px}

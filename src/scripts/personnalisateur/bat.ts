@@ -25,12 +25,48 @@ const PLACE_NOTE: Record<Emplacement, string> = {
 };
 // Boîte illustrative par emplacement (mêmes proportions que BAt/BAT.dc.html) :
 // une mise en page stylisée, pas une reproduction pixel du positionnement
-// réel choisi dans le configurateur — cf. commentaire de tête.
+// réel choisi dans le configurateur — cf. commentaire de tête. Sert de
+// repli tant qu'aucune vraie photo n'existe pour la combinaison
+// garment/coloris (cf. PHOTO_MOCKUPS ci-dessous).
 const PLACE_BOX: Record<Emplacement, { width: string; height: string; margin: string }> = {
   face: { width: '74%', height: '96px', margin: '14px auto 0' },
   coeur: { width: '30%', height: '48px', margin: '18px auto 0 22%' },
   dos: { width: '70%', height: '100px', margin: '16px auto 0' },
 };
+
+// Vraies photos du textile porté, fournies par Milio, sur lesquelles le
+// visuel choisi est composé automatiquement à l'emplacement choisi — un
+// aperçu bien plus parlant que la boîte colorée stylisée. Clé
+// "garment:hex" : une seule existe pour l'instant (t-shirt coloris
+// Sable), donc toute autre combinaison retombe sur PLACE_BOX plutôt que
+// d'afficher cette photo dans la mauvaise teinte. cx/cy/widthPctAt100
+// sont calibrés à l'œil sur cette photo précise (centre de la zone
+// d'impression en % de l'image, largeur en % à layer.w = 1) — à
+// recalibrer si la photo change.
+interface PhotoZone {
+  cx: number;
+  cy: number;
+  widthPctAt100: number;
+}
+interface PhotoMockup {
+  src: string;
+  places: Partial<Record<Emplacement, PhotoZone>>;
+}
+const PHOTO_MOCKUPS: Record<string, PhotoMockup> = {
+  'tshirt:#E4D6BD': {
+    src: '/personnalisateur/mockups/tshirt-sable-face.jpg',
+    places: {
+      face: { cx: 50, cy: 47, widthPctAt100: 24 },
+      coeur: { cx: 62, cy: 39, widthPctAt100: 9.5 },
+    },
+  },
+};
+
+function photoMockupFor(item: SavedItem, place: Emplacement): { mockup: PhotoMockup; zone: PhotoZone } | null {
+  const mockup = PHOTO_MOCKUPS[`${item.garment}:${item.color.hex}`];
+  const zone = mockup?.places[place];
+  return mockup && zone ? { mockup, zone } : null;
+}
 
 function estClair(hex: string): boolean {
   return lum(hex) > 0.6;
@@ -48,9 +84,26 @@ function sizesLabel(sizeDist: SavedItem['sizeDist']): string {
 }
 
 function layerVisu(item: SavedItem, layer: Layer): string {
-  const box = PLACE_BOX[layer.place];
   const zoneCm = getZoneImpressionCm(item.garment, layer.place);
   const largeurCm = Math.round(layer.w * zoneCm * 10) / 10;
+  const cotes = `<div class="bat-cotes">
+    <span class="tick"></span><span class="trait"></span>
+    <span class="val">largeur ${largeurCm} cm</span>
+    <span class="trait"></span><span class="tick"></span>
+  </div>`;
+
+  const photo = photoMockupFor(item, layer.place);
+  if (photo) {
+    const w = photo.zone.widthPctAt100 * layer.w;
+    return `<div class="bat-visu bat-visu-photo">
+    <img class="bat-visu-photo-bg" src="${photo.mockup.src}" alt="Textile porté" />
+    ${layer.img ? `<img class="bat-visu-photo-overlay" src="${layer.img}" alt="Visuel à valider" style="left:${photo.zone.cx}%;top:${photo.zone.cy}%;width:${w}%;transform:translate(-50%,-50%) rotate(${layer.rot}deg)" />` : ''}
+    <span class="bat-visu-pos bat-visu-pos-photo">${PLACE_NOTE[layer.place]}</span>
+  </div>
+  ${cotes}`;
+  }
+
+  const box = PLACE_BOX[layer.place];
   const bg = item.color.hex;
   const border = estClair(bg) ? 'var(--ligne)' : bg;
   return `<div class="bat-visu" style="background:${bg};border-color:${border}">
@@ -60,11 +113,7 @@ function layerVisu(item: SavedItem, layer: Layer): string {
     </div>
     <span class="bat-visu-pos" style="color:${estClair(bg) ? 'var(--bat-accent)' : '#fff'};left:10px;${layer.place === 'coeur' ? 'bottom:10px' : 'top:22px'}">${PLACE_NOTE[layer.place]}</span>
   </div>
-  <div class="bat-cotes">
-    <span class="tick"></span><span class="trait"></span>
-    <span class="val">largeur ${largeurCm} cm</span>
-    <span class="trait"></span><span class="tick"></span>
-  </div>`;
+  ${cotes}`;
 }
 
 export function pieceCard(item: SavedItem, index: number): string {
