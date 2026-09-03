@@ -1,462 +1,199 @@
 ---
+// Page d'accueil du catalogue produits — remplace l'ancienne page qui
+// listait directement les t-shirts (déplacée telle quelle vers
+// /produits/t-shirts). Reprend le gabarit fourni par Milio
+// (Accueil produits.dc.html) recréé en Astro avec les conventions du
+// repo : composants Header/Footer, données réelles plutôt que les
+// valeurs d'exemple du gabarit, pas de photo produit tant qu'aucune
+// vraie photo n'existe (le gabarit les rendait déjà optionnelles via
+// des props d'affichage — ici la décision est prise une fois pour
+// toutes plutôt que configurable).
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { TSHIRTS } from '../../data/tshirts';
-import { LABELS_GENRE, LABELS_MANCHES, LABELS_COUPE, LABELS_GAMME_PRIX, LABELS_TYPE_TEXTILE, inferCoupe, inferGammePrix, inferResponsable } from '../../lib/produits-types';
+import { LABELS_GENRE, LABELS_TYPE_TEXTILE, type TypeTextile } from '../../lib/produits-types';
 import { prixAPartirDe, PALIERS_TARIF } from '../../config/tarification';
+import { seuils } from '../../config/parametres-metier';
 import '../../styles/global.css';
 import '../../styles/produits.css';
 
-const marques = [...new Set(TSHIRTS.map((t) => t.brand))].sort();
-const genres = ['homme', 'femme', 'enfant', 'unisexe'] as const;
-const manchesOptions = ['courtes', 'longues', 'sans-manches'] as const;
-const coupes = ['rond', 'v', 'oversize', 'autre'] as const;
-const gammes = ['petit-prix', 'qualite-prix', 'premium'] as const;
-const typesActifs = ['t-shirts'] as const;
-const typesBientot = ['sweats', 'polos', 'chemises', 'casquettes', 'bagagerie'] as const;
+const prixTShirt = prixAPartirDe(Math.min(...TSHIRTS.map((t) => t.baseCost)));
 
-function grammageTier(g: number | null): string {
-	if (g == null) return 'inconnu';
-	if (g < 150) return 'leger';
-	if (g < 185) return 'moyen';
-	if (g < 220) return 'dense';
-	return 'lourd';
+const familles: { type: TypeTextile; desc: string; actif: boolean }[] = [
+	{ type: 't-shirts', desc: 'De 130 à 300 g/m², col rond, col V ou oversize, en coupes homme, femme, enfant et unisexe.', actif: true },
+	{ type: 'sweats', desc: 'Crewneck, capuche et zippés.', actif: false },
+	{ type: 'polos', desc: 'Piqué coton, broderie poitrine.', actif: false },
+	{ type: 'chemises', desc: 'Coupes ajustées, marquage discret.', actif: false },
+	{ type: 'casquettes', desc: '5 et 6 panneaux, broderie frontale.', actif: false },
+	{ type: 'bagagerie', desc: 'Totes, sacs à dos, sacs de sport.', actif: false },
+];
+
+const bestSellers = [...TSHIRTS].sort((a, b) => a.baseCost - b.baseCost).slice(0, 6);
+
+const margeMin = Math.min(...PALIERS_TARIF.map((p) => p.marge));
+const margeMax = Math.max(...PALIERS_TARIF.map((p) => p.marge));
+function barWidth(marge: number): number {
+	if (margeMax === margeMin) return 100;
+	return Math.round((32 + ((marge - margeMin) / (margeMax - margeMin)) * 68) * 10) / 10;
 }
 ---
 
-<Layout title="Produits — Presstee" description={`${TSHIRTS.length} textiles vierges à personnaliser chez Presstee : t-shirts, bientôt sweats, polos et plus. Filtrez par coupe, prix, marque ou grammage.`}>
+<Layout title="Produits — Presstee" description="Le catalogue textile Presstee : t-shirts en ligne, sweats/polos/chemises/casquettes/bagagerie à venir. Grammages, coupes et grille de prix dégressive.">
 	<Header />
 	<main>
-		<section class="prod-hero">
+		<section class="phome-hero">
 			<div class="wrap">
 				<div class="crumb"><a href="/">Accueil</a> / Produits</div>
-				<h1>Le catalogue textile.</h1>
-				<p>{TSHIRTS.length} références à personnaliser en sérigraphie, transfert ou broderie. Filtrez par type de textile, coupe, prix, marque ou grammage pour trouver la base qui correspond à votre projet.</p>
+				<div class="phome-hero-grid">
+					<div>
+						<h1>Le catalogue<br />textile.</h1>
+						<p>Des bases sélectionnées pour bien recevoir le marquage, à personnaliser en sérigraphie, transfert ou broderie. Atelier à Angoulême, séries à partir de 10 pièces.</p>
+						<div class="phome-hero-cta">
+							<a class="btn" href="/produits/t-shirts">Voir le catalogue</a>
+							<a class="btn btn-jaune" href="/configurateur">Ouvrir le configurateur</a>
+						</div>
+					</div>
+					<div class="phome-stats">
+						<div>
+							<div class="phome-stat-num">{TSHIRTS.length}</div>
+							<div class="phome-stat-label">références textiles en ligne</div>
+						</div>
+						<div>
+							<div class="phome-stat-num">{seuils.quantitePiecesSerigraphie} / {seuils.quantitePiecesBroderie}</div>
+							<div class="phome-stat-label">pièces minimum en sérigraphie / broderie</div>
+						</div>
+						<div>
+							<div class="phome-stat-num">{PALIERS_TARIF.length}</div>
+							<div class="phome-stat-label">paliers de prix dégressifs, jusqu'à {PALIERS_TARIF[PALIERS_TARIF.length - 1].max} pièces</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</section>
 
-		<div class="wrap">
-			<div class="plist">
-				<aside class="pfilters">
-					<div class="fgroup">
-						<h4>Recherche</h4>
-						<input class="psearch" id="fSearch" type="text" placeholder="Marque, modèle..." />
-					</div>
-
-					<div class="fgroup">
-						<h4>Type de textile</h4>
-						<div class="pills" id="fType">
-							{typesActifs.map((t) => <button class="pill on" data-type={t}>{LABELS_TYPE_TEXTILE[t]}</button>)}
-							{typesBientot.map((t) => <button class="pill soon" disabled title="Bientôt disponible">{LABELS_TYPE_TEXTILE[t]}</button>)}
+		<section class="phome-section">
+			<div class="wrap">
+				<div class="phome-section-head">
+					<h2>Par famille de textile</h2>
+					<span class="phome-section-note">Les t-shirts sont en ligne, le reste arrive au fil des accords fournisseurs.</span>
+				</div>
+				<div class="fam-grid">
+					<div class="fam-card fam-card-big">
+						<div class="fam-eyebrow">Famille 01</div>
+						<h3>T-shirts</h3>
+						<p>{familles[0].desc}</p>
+						<div class="fam-tags">
+							<span class="fam-tag fam-tag-indigo">{TSHIRTS.length} références</span>
+							<span class="fam-tag">Dès {prixTShirt.toFixed(2).replace('.', ',')} € / pièce</span>
 						</div>
+						<a class="fam-link" href="/produits/t-shirts">Parcourir les t-shirts</a>
 					</div>
-
-					<div class="fgroup">
-						<h4>Coupe <span class="fhint">plusieurs choix possibles</span></h4>
-						<div class="pills" id="fCoupe">
-							{coupes.map((c) => <button class="pill" data-coupe={c}>{LABELS_COUPE[c]}</button>)}
+					<a class="fam-card fam-card-soon" href="/produits/t-shirts">
+						<div>
+							<div class="fam-eyebrow">Famille 02</div>
+							<h3>Sweats</h3>
+							<p>{familles[1].desc}</p>
 						</div>
-					</div>
-
-					<div class="fgroup">
-						<h4>Gamme de prix <span class="fhint">plusieurs choix possibles</span></h4>
-						<div class="pills" id="fGamme">
-							{gammes.map((g) => <button class="pill" data-gamme={g}>{LABELS_GAMME_PRIX[g]}</button>)}
+						<span class="fam-tag">Bientôt</span>
+					</a>
+				</div>
+				<div class="fam-grid fam-grid-small">
+					{familles.slice(2).map((f, i) => (
+						<div class="fam-card fam-card-mini">
+							<div class="fam-eyebrow">Famille {String(i + 3).padStart(2, '0')}</div>
+							<h3>{LABELS_TYPE_TEXTILE[f.type]}</h3>
+							<p>{f.desc}</p>
+							<span class="fam-tag">Bientôt</span>
 						</div>
-					</div>
-
-					<div class="fgroup">
-						<h4>Public <span class="fhint">l'unisexe s'affiche avec homme/femme</span></h4>
-						<div class="pills" id="fGenre">
-							{genres.map((g) => <button class="pill" data-genre={g}>{LABELS_GENRE[g]}</button>)}
-						</div>
-					</div>
-
-					<div class="fgroup">
-						<h4>Manches <span class="fhint">plusieurs choix possibles</span></h4>
-						<div class="pills" id="fManches">
-							{manchesOptions.map((m) => <button class="pill" data-manches={m}>{LABELS_MANCHES[m]}</button>)}
-						</div>
-					</div>
-
-					<div class="fgroup">
-						<h4>Grammage <span class="fhint">plusieurs choix possibles</span></h4>
-						<div class="pills" id="fGrammage">
-							<button class="pill" data-grammage="leger">Léger (&lt;150 g/m²)</button>
-							<button class="pill" data-grammage="moyen">Moyen (150–185)</button>
-							<button class="pill" data-grammage="dense">Dense (185–220)</button>
-							<button class="pill" data-grammage="lourd">Lourd (&gt;220 g/m²)</button>
-						</div>
-					</div>
-
-					<div class="fgroup">
-						<h4>Matières</h4>
-						<div class="pills" id="fResponsable">
-							<button class="pill" data-responsable="oui">🌱 Bio / recyclé / certifié</button>
-						</div>
-					</div>
-
-					<div class="fgroup">
-						<h4>Marque</h4>
-						<div class="checks" id="fMarque">
-							{marques.map((m) => (
-								<label class="check">
-									<input type="checkbox" value={m} checked />
-									{m}
-								</label>
-							))}
-						</div>
-					</div>
-
-					<button class="presetreset" id="fReset">Réinitialiser les filtres</button>
-				</aside>
-
-				<div>
-					<div class="ptoolbar">
-						<div class="pcount"><b id="pCountVisible">{TSHIRTS.length}</b> résultats sur {TSHIRTS.length}</div>
-						<select class="psort" id="pSort">
-							<option value="prix-asc">Prix croissant</option>
-							<option value="prix-desc">Prix décroissant</option>
-							<option value="nom">Nom A-Z</option>
-						</select>
-					</div>
-
-					<div class="pgrid" id="pGrid">
-						{TSHIRTS.map((t) => {
-							const coupe = inferCoupe(t.model, t.col);
-							const prix = prixAPartirDe(t.baseCost);
-							const gamme = inferGammePrix(prix);
-							const responsable = inferResponsable(t.detail);
-							return (
-								<div
-									class="pcard"
-									data-search={`${t.brand} ${t.model}`.toLowerCase()}
-									data-type="t-shirts"
-									data-genre={t.genre}
-									data-manches={t.manches}
-									data-marque={t.brand}
-									data-grammage={grammageTier(t.grammageNum)}
-									data-grammage-text={t.grammage}
-									data-detail={t.detail}
-									data-coupe={coupe}
-									data-coupe-label={LABELS_COUPE[coupe]}
-									data-gamme={gamme}
-									data-responsable={responsable ? 'oui' : 'non'}
-									data-cout={t.baseCost}
-									data-nom={`${t.brand} ${t.model}`}
-									data-slug={t.slug}
-								>
-									<label class="pcard-compare">
-										<input type="checkbox" class="compareCheck" />
-										Comparer
-									</label>
-									<a class="pcard-link" href={`/produits/t-shirts/${t.slug}`}>
-										<div class="brand">{t.brand}</div>
-										<h3>{t.model}</h3>
-										<div class="tags">
-											<span class="tag">{t.grammage}</span>
-											<span class="tag">{LABELS_GENRE[t.genre]}</span>
-											{responsable && <span class="tag tag-eco">🌱 Responsable</span>}
-										</div>
-									</a>
-									<div class="pcard-price">
-										<label class="qtyrow">
-											Qté
-											<input type="number" class="qtyInput" value="25" min="1" max="500" step="1" />
-										</label>
-										<div class="priceOut" data-prix={prix}>
-											<b>{prix.toFixed(2).replace('.', ',')} €</b> <span>/ pièce</span>
-										</div>
-									</div>
-								</div>
-							);
-						})}
-					</div>
-
-					<div class="pempty" id="pEmpty" style="display:none">Aucun textile ne correspond à ces filtres.</div>
-
-					<div class="ppag" id="pPag"></div>
+					))}
 				</div>
 			</div>
-		</div>
-	</main>
+		</section>
 
-	<div class="comparetray" id="compareTray">
-		<span><b id="compareCount">0</b> modèle(s) sélectionné(s) <span class="compareMax">(4 max)</span></span>
-		<span class="comparetray-actions">
-			<button class="mini-btn" id="compareClear">Vider</button>
-			<button class="btn" id="compareOpen">Comparer</button>
-		</span>
-	</div>
-
-	<div class="comparemodal" id="compareModal">
-		<div class="comparemodal-inner">
-			<button class="comparemodal-close" id="compareClose" aria-label="Fermer">×</button>
-			<h3>Comparer les modèles</h3>
-			<div class="comparemodal-scroll">
-				<table id="compareTable"></table>
+		<section class="phome-section">
+			<div class="wrap">
+				<div class="phome-section-head">
+					<h2>Les prix les plus bas</h2>
+					<a class="phome-section-link" href="/produits/t-shirts">Tout le catalogue, avec filtres →</a>
+				</div>
+				<div class="bs-grid">
+					{bestSellers.map((t) => {
+						const prix = prixAPartirDe(t.baseCost);
+						return (
+							<a class="bs-card" href={`/produits/t-shirts/${t.slug}`}>
+								<div class="bs-brand">{t.brand}</div>
+								<h3>{t.model}</h3>
+								<div class="fam-tags">
+									<span class="fam-tag">{t.grammage}</span>
+									<span class="fam-tag">{LABELS_GENRE[t.genre]}</span>
+								</div>
+								<div class="bs-price">
+									<span>dès {PALIERS_TARIF[0].min} pièce{PALIERS_TARIF[0].min > 1 ? 's' : ''}</span>
+									<span class="bs-price-val"><b>{prix.toFixed(2).replace('.', ',')} €</b><em>/ pièce</em></span>
+								</div>
+							</a>
+						);
+					})}
+				</div>
+				<p class="phome-footnote">Prix unitaires hors marquage, au palier {PALIERS_TARIF[0].label} pièces. La grille complète est affichée sur chaque fiche produit.</p>
 			</div>
-		</div>
-	</div>
+		</section>
 
-	<script type="application/json" id="paliersData" set:html={JSON.stringify(PALIERS_TARIF)} />
+		<section class="phome-band phome-band-indigo">
+			<div class="wrap phome-band-grid">
+				<div>
+					<h2>Chaque base ne va pas avec chaque technique</h2>
+					<p>Le grammage et la matière décident du rendu. Le configurateur applique ces règles pour vous, mais voici la logique.</p>
+					<a class="btn btn-light" href="/techniques">Comparer les techniques</a>
+				</div>
+				<div class="phome-tech-list">
+					<a class="phome-tech-card" href="/techniques/serigraphie">
+						<h3>Sérigraphie</h3>
+						<p>Aplats francs sur coton, dès {seuils.quantitePiecesSerigraphie} pièces. Le coût par pièce chute vite avec la quantité.</p>
+					</a>
+					<a class="phome-tech-card" href="/techniques/transfert-quadrichromie">
+						<h3>Transfert</h3>
+						<p>Photos et dégradés, sans minimum de série. Idéal pour les petites quantités et les visuels détaillés.</p>
+					</a>
+					<a class="phome-tech-card" href="/techniques/broderie">
+						<h3>Broderie</h3>
+						<p>Fil sur polos, sweats et casquettes, dès {seuils.quantitePiecesBroderie} pièces. Rendu durable, sans limite de lavages.</p>
+					</a>
+				</div>
+			</div>
+		</section>
 
+		<section class="phome-section">
+			<div class="wrap">
+				<div class="phome-section-head">
+					<h2>Le prix baisse par palier</h2>
+					<span class="phome-section-note">Grille provisoire, en cours de validation fournisseur.</span>
+				</div>
+				<div class="palier-grid">
+					{PALIERS_TARIF.map((p) => (
+						<div class="palier-card">
+							<div class="palier-num">{p.label}</div>
+							<div class="palier-label">pièces</div>
+							<div class="palier-bar"><div style={`width:${barWidth(p.marge)}%`} /></div>
+						</div>
+					))}
+				</div>
+			</div>
+		</section>
+
+		<section class="phome-band phome-band-jaune">
+			<div class="wrap phome-band-flex">
+				<div>
+					<h2>Un doute sur la base à choisir ?</h2>
+					<p>Envoyez votre visuel et votre quantité : on vous répond avec une recommandation de textile, un devis et un bon à tirer avant lancement.</p>
+				</div>
+				<div class="phome-hero-cta">
+					<a class="btn" href="/#commander">Demander un devis</a>
+					<a class="btn btn-light" href="/simulateur">Estimer au simulateur</a>
+				</div>
+			</div>
+		</section>
+	</main>
 	<Footer />
-
-	<script>
-		const PAGE_SIZE = 24;
-		const grid = document.getElementById('pGrid')!;
-		const cards = [...grid.querySelectorAll<HTMLDivElement>('.pcard')];
-		const countEl = document.getElementById('pCountVisible')!;
-		const emptyEl = document.getElementById('pEmpty')!;
-		const pagEl = document.getElementById('pPag')!;
-		const searchInput = document.getElementById('fSearch') as HTMLInputElement;
-		const sortSelect = document.getElementById('pSort') as HTMLSelectElement;
-		const marqueChecks = [...document.querySelectorAll<HTMLInputElement>('#fMarque input')];
-
-		interface Palier {
-			min: number;
-			max: number | null;
-			label: string;
-			marge: number;
-		}
-		const paliers: Palier[] = JSON.parse(document.getElementById('paliersData')!.textContent!);
-
-		function prixPourQuantite(cout: number, qte: number): number {
-			const p = paliers.find((p) => qte >= p.min && (p.max === null || qte <= p.max)) ?? paliers[paliers.length - 1];
-			return Math.round((cout / (1 - p.marge)) * 100) / 100;
-		}
-
-		// --- Prix en direct selon la quantité saisie sur chaque carte ---
-		cards.forEach((card) => {
-			const qtyInput = card.querySelector<HTMLInputElement>('.qtyInput')!;
-			const priceOut = card.querySelector<HTMLElement>('.priceOut b')!;
-			const cout = +card.dataset.cout!;
-			qtyInput.addEventListener('input', (e) => {
-				e.stopPropagation();
-				let qte = Math.max(1, Math.min(500, +qtyInput.value || 1));
-				const prix = prixPourQuantite(cout, qte);
-				priceOut.textContent = prix.toFixed(2).replace('.', ',') + ' €';
-				card.querySelector('.priceOut')!.setAttribute('data-prix', String(prix));
-			});
-			// La saisie de quantité ne doit pas déclencher le lien de la carte.
-			qtyInput.addEventListener('click', (e) => e.stopPropagation());
-		});
-
-		// --- Comparateur ---
-		const compareSet = new Set<HTMLDivElement>();
-		const compareTray = document.getElementById('compareTray')!;
-		const compareCount = document.getElementById('compareCount')!;
-		const compareModal = document.getElementById('compareModal')!;
-		const compareTable = document.getElementById('compareTable')!;
-		const MAX_COMPARE = 4;
-
-		function updateTray() {
-			compareCount.textContent = String(compareSet.size);
-			compareTray.classList.toggle('show', compareSet.size > 0);
-		}
-
-		cards.forEach((card) => {
-			const check = card.querySelector<HTMLInputElement>('.compareCheck')!;
-			check.addEventListener('click', (e) => e.stopPropagation());
-			check.addEventListener('change', () => {
-				if (check.checked) {
-					if (compareSet.size >= MAX_COMPARE) {
-						check.checked = false;
-						compareTray.classList.add('shake');
-						setTimeout(() => compareTray.classList.remove('shake'), 400);
-						return;
-					}
-					compareSet.add(card);
-				} else {
-					compareSet.delete(card);
-				}
-				updateTray();
-			});
-		});
-
-		document.getElementById('compareClear')!.addEventListener('click', () => {
-			compareSet.forEach((card) => {
-				const check = card.querySelector<HTMLInputElement>('.compareCheck')!;
-				check.checked = false;
-			});
-			compareSet.clear();
-			updateTray();
-		});
-
-		document.getElementById('compareOpen')!.addEventListener('click', () => {
-			const rows: [string, (c: HTMLDivElement) => string][] = [
-				['Marque', (c) => c.dataset.marque!],
-				['Modèle', (c) => c.querySelector('h3')!.textContent!],
-				['Grammage', (c) => c.dataset.grammageText!],
-				['Composition', (c) => c.dataset.detail!],
-				['Coupe', (c) => c.dataset.coupeLabel!],
-				['Public', (c) => c.dataset.genre!],
-				['Responsable', (c) => (c.dataset.responsable === 'oui' ? '🌱 Oui' : '—')],
-				['Prix', (c) => c.querySelector('.priceOut')!.textContent!.trim()],
-			];
-			const items = [...compareSet];
-			let html = '<thead><tr><th></th>';
-			items.forEach((c) => (html += `<th>${c.dataset.nom}</th>`));
-			html += '</tr></thead><tbody>';
-			rows.forEach(([label, get]) => {
-				html += `<tr><td>${label}</td>`;
-				items.forEach((c) => (html += `<td>${get(c)}</td>`));
-				html += '</tr>';
-			});
-			html += '</tbody>';
-			compareTable.innerHTML = html;
-			compareModal.classList.add('open');
-		});
-
-		function closeCompare() {
-			compareModal.classList.remove('open');
-		}
-		document.getElementById('compareClose')!.addEventListener('click', closeCompare);
-		compareModal.addEventListener('click', (e) => {
-			if (e.target === compareModal) closeCompare();
-		});
-
-		// Chaque filtre (sauf "Type de textile", qui n'a qu'une seule valeur
-		// active pour l'instant) accepte plusieurs sélections à la fois :
-		// cliquer sur une pastille l'ajoute ou la retire de l'ensemble, sans
-		// désélectionner les autres. Aucune sélection dans un groupe = ce
-		// groupe ne filtre rien.
-		const state: {
-			genre: Set<string>;
-			manches: Set<string>;
-			grammage: Set<string>;
-			coupe: Set<string>;
-			gamme: Set<string>;
-			responsable: Set<string>;
-			page: number;
-		} = {
-			genre: new Set<string>(),
-			manches: new Set<string>(),
-			grammage: new Set<string>(),
-			coupe: new Set<string>(),
-			gamme: new Set<string>(),
-			responsable: new Set<string>(),
-			page: 1,
-		};
-
-		function bindMultiPillGroup(id: string, key: 'genre' | 'manches' | 'grammage' | 'coupe' | 'gamme' | 'responsable') {
-			const group = document.getElementById(id)!;
-			group.addEventListener('click', (e) => {
-				const b = (e.target as HTMLElement).closest<HTMLButtonElement>('.pill');
-				if (!b || b.disabled) return;
-				const value = b.dataset[key] as string;
-				const set = state[key] as Set<string>;
-				if (set.has(value)) {
-					set.delete(value);
-					b.classList.remove('on');
-				} else {
-					set.add(value);
-					b.classList.add('on');
-				}
-				state.page = 1;
-				apply();
-			});
-		}
-		bindMultiPillGroup('fGenre', 'genre');
-		bindMultiPillGroup('fManches', 'manches');
-		bindMultiPillGroup('fGrammage', 'grammage');
-		bindMultiPillGroup('fCoupe', 'coupe');
-		bindMultiPillGroup('fGamme', 'gamme');
-		bindMultiPillGroup('fResponsable', 'responsable');
-
-		searchInput.addEventListener('input', () => {
-			state.page = 1;
-			apply();
-		});
-		sortSelect.addEventListener('change', () => {
-			state.page = 1;
-			apply();
-		});
-		marqueChecks.forEach((c) => c.addEventListener('change', () => {
-			state.page = 1;
-			apply();
-		}));
-
-		document.getElementById('fReset')!.addEventListener('click', () => {
-			searchInput.value = '';
-			marqueChecks.forEach((c) => (c.checked = true));
-			document.querySelectorAll('.pill:not(.soon)').forEach((p) => p.classList.remove('on'));
-			(['genre', 'manches', 'grammage', 'coupe', 'gamme', 'responsable'] as const).forEach((k) => state[k].clear());
-			state.page = 1;
-			apply();
-		});
-
-		function apply() {
-			const q = searchInput.value.trim().toLowerCase();
-			const activeBrands = new Set(marqueChecks.filter((c) => c.checked).map((c) => c.value));
-
-			let visible = cards.filter((c) => {
-				if (q && !c.dataset.search!.includes(q)) return false;
-				if (state.genre.size > 0) {
-					const g = c.dataset.genre!;
-					const matches = state.genre.has(g) || (g === 'unisexe' && (state.genre.has('homme') || state.genre.has('femme')));
-					if (!matches) return false;
-				}
-				if (state.manches.size > 0 && !state.manches.has(c.dataset.manches!)) return false;
-				if (state.grammage.size > 0 && !state.grammage.has(c.dataset.grammage!)) return false;
-				if (state.coupe.size > 0 && !state.coupe.has(c.dataset.coupe!)) return false;
-				if (state.gamme.size > 0 && !state.gamme.has(c.dataset.gamme!)) return false;
-				if (state.responsable.size > 0 && c.dataset.responsable !== 'oui') return false;
-				if (!activeBrands.has(c.dataset.marque!)) return false;
-				return true;
-			});
-
-			const sort = sortSelect.value;
-			visible = visible.sort((a, b) => {
-				const pa = +a.querySelector('.priceOut')!.getAttribute('data-prix')!;
-				const pb = +b.querySelector('.priceOut')!.getAttribute('data-prix')!;
-				if (sort === 'prix-asc') return pa - pb;
-				if (sort === 'prix-desc') return pb - pa;
-				return a.dataset.nom!.localeCompare(b.dataset.nom!);
-			});
-
-			cards.forEach((c) => (c.style.display = 'none'));
-
-			const totalPages = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
-			state.page = Math.min(state.page, totalPages);
-			const start = (state.page - 1) * PAGE_SIZE;
-			const pageItems = visible.slice(start, start + PAGE_SIZE);
-
-			pageItems.forEach((c) => {
-				c.style.display = '';
-				grid.appendChild(c);
-			});
-
-			countEl.textContent = String(visible.length);
-			emptyEl.style.display = visible.length === 0 ? 'block' : 'none';
-			grid.style.display = visible.length === 0 ? 'none' : 'grid';
-
-			paintPagination(totalPages);
-		}
-
-		function paintPagination(totalPages: number) {
-			if (totalPages <= 1) {
-				pagEl.innerHTML = '';
-				return;
-			}
-			let html = `<button data-p="${state.page - 1}" ${state.page === 1 ? 'disabled' : ''}>‹</button>`;
-			for (let i = 1; i <= totalPages; i++) {
-				html += `<button data-p="${i}" class="${i === state.page ? 'on' : ''}">${i}</button>`;
-			}
-			html += `<button data-p="${state.page + 1}" ${state.page === totalPages ? 'disabled' : ''}>›</button>`;
-			pagEl.innerHTML = html;
-		}
-
-		pagEl.addEventListener('click', (e) => {
-			const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-p]');
-			if (!b || b.disabled) return;
-			state.page = +b.dataset.p!;
-			apply();
-			window.scrollTo({ top: grid.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' });
-		});
-
-		apply();
-	</script>
 </Layout>

@@ -136,3 +136,96 @@
 .pricetable .note{padding:12px 16px;font-size:12px;color:var(--gris);border-top:1px solid var(--ligne);background:var(--voile)}
 
 .pdetail .ctarow{display:flex;gap:12px;flex-wrap:wrap}
+
+/* ---------- accueil produits (landing du catalogue) ---------- */
+.phome-hero{padding:clamp(56px,9vw,96px) 0 clamp(48px,7vw,72px)}
+.phome-hero .crumb{font-size:13px;color:var(--gris);margin-bottom:16px}
+.phome-hero .crumb a{text-decoration:none;color:var(--gris)}
+.phome-hero .crumb a:hover{color:var(--indigo)}
+.phome-hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(32px,6vw,80px);align-items:end}
+.phome-hero h1{font-size:clamp(2.4rem,6vw,4.6rem);letter-spacing:-0.045em;line-height:.98}
+.phome-hero-grid > div:first-child p{color:var(--gris);margin-top:24px;max-width:46ch;font-size:1.05rem}
+.phome-hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
+.phome-stats{border-left:2px solid var(--jaune);padding-left:22px;display:grid;gap:20px}
+.phome-stat-num{font-family:'Sora',sans-serif;font-size:1.85rem;letter-spacing:-.04em}
+.phome-stat-label{font-size:13.5px;color:var(--gris);margin-top:2px}
+
+.phome-section{padding:clamp(48px,7vw,76px) 0;border-top:1px solid var(--ligne)}
+.phome-section-head{display:flex;align-items:baseline;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:30px}
+.phome-section-head h2{font-size:clamp(1.6rem,3.2vw,2.3rem)}
+.phome-section-note{font-size:13.5px;color:var(--gris)}
+.phome-section-link{font-size:14.5px;font-weight:600;border-bottom:1.5px solid var(--indigo);padding-bottom:2px;color:var(--encre)}
+.phome-footnote{color:var(--gris);font-size:13px;margin-top:18px}
+
+.fam-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.fam-grid-small{grid-template-columns:repeat(4,1fr);margin-top:16px}
+.fam-card{border:1.5px solid var(--ligne);border-radius:var(--r);padding:24px;background:#fff}
+.fam-card h3{margin-bottom:8px}
+.fam-card p{color:var(--gris);font-size:.94rem}
+.fam-card-big{grid-column:span 2;padding:26px;display:flex;flex-direction:column;justify-content:center;gap:8px}
+.fam-card-big h3{font-size:1.65rem;margin-top:2px}
+.fam-card-big p{max-width:34ch}
+.fam-card-soon{display:flex;flex-direction:column;justify-content:space-between;gap:16px;min-height:200px;text-decoration:none;color:inherit;transition:border-color .15s}
+.fam-card-soon:hover{border-color:var(--indigo)}
+.fam-card-soon h3{font-size:1.25rem}
+.fam-card-soon p{font-size:.92rem}
+.fam-card-mini{opacity:.62;display:flex;flex-direction:column;gap:6px;padding:22px}
+.fam-card-mini h3{font-size:1.15rem}
+.fam-card-mini p{font-size:.88rem}
+.fam-eyebrow{font-family:'Sora',sans-serif;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--gris);font-weight:600}
+.fam-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.fam-tag{font-size:11px;letter-spacing:.03em;font-weight:600;color:var(--gris);background:var(--gris-clair);padding:4px 10px;border-radius:100px}
+.fam-tag-indigo{color:var(--indigo);background:rgba(157,131,207,.1)}
+.fam-link{display:inline-block;margin-top:18px;font-size:14px;font-weight:600;border-bottom:1.5px solid var(--indigo);padding-bottom:2px;color:var(--encre)}
+
+.bs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.bs-card{display:block;border:1.5px solid var(--ligne);border-radius:var(--r);padding:20px;background:#fff;text-decoration:none;color:inherit;transition:border-color .15s,box-shadow .15s}
+.bs-card:hover{border-color:var(--indigo);box-shadow:0 4px 20px rgba(23,19,31,.06)}
+.bs-brand{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--gris);font-weight:600;margin-bottom:8px}
+.bs-card h3{font-family:'Sora',sans-serif;font-size:1.04rem;letter-spacing:-.01em;line-height:1.25;margin-bottom:10px}
+.bs-price{margin-top:14px;padding-top:12px;border-top:1px dashed var(--ligne);display:flex;align-items:flex-end;justify-content:space-between;gap:8px;font-size:11.5px;color:var(--gris)}
+.bs-price-val{font-family:'Sora',sans-serif;text-align:right}
+.bs-price-val b{font-size:1.1rem;color:var(--encre)}
+.bs-price-val em{display:block;font-style:normal;color:var(--gris);font-size:.78rem}
+
+.phome-band{padding:clamp(52px,7vw,88px) 0}
+.phome-band-indigo{background-color:var(--indigo);color:#fff}
+.phome-band-indigo h2{color:#fff}
+.phome-band-indigo p{color:rgba(255,255,255,.86)}
+.phome-band-jaune{background-color:var(--jaune)}
+.phome-band-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,6vw,68px);align-items:start}
+.phome-band-grid h2{font-size:clamp(1.6rem,3.2vw,2.4rem)}
+.phome-band-grid > div:first-child p{margin-top:20px;font-size:1.02rem;max-width:44ch}
+.phome-band-grid .btn{margin-top:26px}
+.phome-tech-list{display:grid;gap:12px}
+.phome-tech-card{display:block;background:#fff;color:var(--encre);border-radius:var(--r);padding:22px 24px;text-decoration:none;transition:box-shadow .15s}
+.phome-tech-card:hover{color:var(--encre);box-shadow:0 10px 30px rgba(23,19,31,.18)}
+.phome-tech-card h3{font-size:1.1rem;margin-bottom:6px}
+.phome-tech-card p{color:var(--gris);font-size:.93rem}
+.phome-band-flex{display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap}
+.phome-band-flex h2{font-size:clamp(1.6rem,3.2vw,2.4rem)}
+.phome-band-flex p{margin-top:14px;color:var(--encre);opacity:.75;max-width:48ch}
+
+.palier-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.palier-card{border:1.5px solid var(--ligne);border-radius:var(--r);padding:18px 16px;background:#fff}
+.palier-num{font-family:'Sora',sans-serif;font-size:1.08rem;letter-spacing:-.03em}
+.palier-label{font-size:12px;color:var(--gris);margin-top:3px}
+.palier-bar{height:5px;border-radius:100px;background:var(--gris-clair);margin-top:14px}
+.palier-bar div{height:5px;border-radius:100px;background:var(--indigo)}
+
+@media(max-width:900px){
+	.phome-hero-grid{grid-template-columns:1fr}
+	.phome-stats{border-left:0;border-top:2px solid var(--jaune);padding-left:0;padding-top:20px;grid-template-columns:repeat(3,1fr)}
+	.fam-grid{grid-template-columns:1fr}
+	.fam-card-big{grid-column:span 1}
+	.fam-grid-small{grid-template-columns:repeat(2,1fr)}
+	.bs-grid{grid-template-columns:repeat(2,1fr)}
+	.phome-band-grid{grid-template-columns:1fr}
+	.palier-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:560px){
+	.phome-stats{grid-template-columns:1fr}
+	.fam-grid-small{grid-template-columns:1fr}
+	.bs-grid{grid-template-columns:1fr}
+	.palier-grid{grid-template-columns:repeat(2,1fr)}
+}
