@@ -19,6 +19,9 @@ import '../styles/simulateur.css';
 		</section>
 
 		<div class="wrap">
+			<div class="sim-restore-note" id="simRestoreNote" style="display:none">
+				Simulation précédente reprise sur cet appareil. <button type="button" class="linkBtn" id="simReset">Recommencer à zéro</button>
+			</div>
 			<div class="sim-layout">
 				<div class="sim-main">
 					<div id="produitsList" class="produitsList"></div>
@@ -34,7 +37,12 @@ import '../styles/simulateur.css';
 							<div class="sim-totals-total"><span>Ordre de prix total</span><b id="simTotal">0 €</b></div>
 						</div>
 						<p class="sim-side-note">Cette estimation ne remplace pas un devis : le prix final dépend de votre visuel réel et peut être affiné avec nous.</p>
-						<button type="button" class="btn" id="simSend">Recevoir un devis par e-mail</button>
+						<div class="sim-actions">
+							<button type="button" class="btn" id="simCommander">Passer commande</button>
+							<button type="button" class="btn btn-outline" id="simSauvegarder">Sauvegarder le projet</button>
+							<button type="button" class="btn btn-outline" id="simAttente">Mettre en attente</button>
+						</div>
+						<p class="sim-side-note" id="simFeedback" style="display:none"></p>
 						<a class="go" href="/configurateur">Personnaliser avec mon propre visuel →</a>
 					</div>
 					<div class="side-card">

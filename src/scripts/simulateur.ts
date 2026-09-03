@@ -61,6 +61,42 @@ function nouveauProduit(): Produit {
 
 const state: { produits: Produit[] } = { produits: [nouveauProduit()] };
 
+// Sauvegarde locale explicite (bouton "Sauvegarder"/"Mettre en attente"),
+// jamais automatique : on ne veut pas figer un brouillon à chaque clic,
+// seulement quand le client le demande. Les Set ne se sérialisent pas en
+// JSON — on les convertit en tableau à l'écriture et on les reconstruit
+// à la lecture.
+const SIM_SAVE_KEY = 'presstee:simulateur:sauvegarde';
+
+function persistProduits(): void {
+  try {
+    const serialisable = state.produits.map((p) => ({ ...p, styles: [...p.styles] }));
+    localStorage.setItem(SIM_SAVE_KEY, JSON.stringify(serialisable));
+  } catch {
+    // Stockage indisponible (navigation privée, quota dépassé...) : on
+    // n'interrompt jamais l'expérience pour une persistance qui échoue.
+  }
+}
+
+function restoreProduits(): boolean {
+  try {
+    const raw = localStorage.getItem(SIM_SAVE_KEY);
+    if (!raw) return false;
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed) || parsed.length === 0) return false;
+    state.produits = parsed.map((p: any) => ({ ...p, styles: new Set<string>(p.styles ?? []) }));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// Petite silhouette générique (même tracé que la fiche produit
+// /produits/t-shirts/[slug]) — sert de case photo tant qu'aucune vraie
+// photo n'existe pour chaque référence du catalogue.
+const TEE_PATH = 'M148,54 L118,44 L52,92 L96,156 L122,136 L122,420 Q122,428 130,428 L270,428 Q278,428 278,420 L278,136 L304,156 L348,92 L282,44 L252,54 Q200,100 148,54 Z';
+const refThumb = `<span class="refRow-thumb"><svg viewBox="0 0 400 460" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="${TEE_PATH}" fill="currentColor"/></svg></span>`;
+
 const GARMENT_LABELS: Record<Garment, string> = { tshirt: 'T-shirt', sweat: 'Sweat', chemise: 'Chemise', casquette: 'Casquette' };
 const FORMAT_LABELS: Record<Format, string> = { petit: 'Petit · 10×10 cm max', moyen: 'Moyen · format A4', grand: 'Grand · format A3' };
 const STATUT_LABELS: Record<Statut, string> = { fourni: "J'ai mon visuel", en_cours: 'En cours de création', conseil: 'Conseillez-moi' };
@@ -228,6 +264,7 @@ function refListHtml(p: Produit): string {
   const rows = candidats.map((t) => {
     const prix = Math.round(prixVente(t.baseCost, palier.marge) * 100) / 100;
     return `<button type="button" class="refRow${p.refProduit === t.slug ? ' on' : ''}" data-action="set-ref" data-produit="${p.id}" data-value="${t.slug}">
+      ${refThumb}
       <span class="refRow-name"><b>${t.brand}</b> ${t.model}</span>
       <span class="refRow-meta">${t.grammage}</span>
       <span class="refRow-price">${fmtPrice(prix)} <span>/ pièce</span></span>
@@ -297,7 +334,7 @@ function produitCard(pc: ProduitCalcule, index: number, retirable: boolean): str
   </div>`;
 }
 
-function resumeMail(): string {
+function resumeMail(mode: 'commande' | 'attente'): string {
   const lignes: string[] = [];
   let totalQty = 0;
   let total = 0;
@@ -316,7 +353,14 @@ function resumeMail(): string {
     });
   });
   lignes.push(`\nTotal estimé : ${totalQty} pièce${totalQty > 1 ? 's' : ''} au total, ${fmtPrice(total)}.`);
-  return `Bonjour,\n\nSuite à ma simulation sur presstee.fr, voici mon projet :\n\n${lignes.join('\n\n')}\n\nMerci de me recontacter pour affiner ce devis.`;
+
+  const intro = mode === 'commande'
+    ? 'Suite à ma simulation sur presstee.fr, je souhaite passer commande pour le projet suivant :'
+    : "Suite à ma simulation sur presstee.fr, voici mon projet — je ne suis pas encore prêt(e) à commander, merci de le garder de côté et de me recontacter :";
+  const closing = mode === 'commande'
+    ? 'Merci de me recontacter pour finaliser cette commande.'
+    : 'Merci de me recontacter quand vous le pourrez pour en discuter.';
+  return `Bonjour,\n\n${intro}\n\n${lignes.join('\n\n')}\n\n${closing}`;
 }
 
 function render(): void {
@@ -396,10 +440,42 @@ export function bindSimulateur(): void {
     render();
   });
 
-  el('simSend').addEventListener('click', () => {
-    const url = `mailto:${siteConfig.email}?subject=${encodeURIComponent('Demande de devis — simulation presstee.fr')}&body=${encodeURIComponent(resumeMail())}`;
+  function feedback(msg: string): void {
+    const box = el('simFeedback');
+    box.textContent = msg;
+    box.style.display = 'block';
+  }
+
+  el('simCommander').addEventListener('click', () => {
+    const url = `mailto:${siteConfig.email}?subject=${encodeURIComponent('Commande — simulation presstee.fr')}&body=${encodeURIComponent(resumeMail('commande'))}`;
     window.location.href = url;
   });
 
+  el('simSauvegarder').addEventListener('click', () => {
+    persistProduits();
+    feedback('Simulation sauvegardée sur cet appareil — retrouvez-la en revenant sur cette page.');
+  });
+
+  el('simAttente').addEventListener('click', () => {
+    persistProduits();
+    feedback('Projet mis de côté et sauvegardé sur cet appareil.');
+    const url = `mailto:${siteConfig.email}?subject=${encodeURIComponent('Projet en attente — simulation presstee.fr')}&body=${encodeURIComponent(resumeMail('attente'))}`;
+    window.location.href = url;
+  });
+
+  el('simReset').addEventListener('click', () => {
+    try {
+      localStorage.removeItem(SIM_SAVE_KEY);
+    } catch {
+      // Stockage indisponible : rien à faire de plus, on repart quand même à zéro.
+    }
+    state.produits = [nouveauProduit()];
+    el('simRestoreNote').style.display = 'none';
+    render();
+  });
+
+  if (restoreProduits()) {
+    el('simRestoreNote').style.display = 'flex';
+  }
   render();
 }

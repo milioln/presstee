@@ -13,8 +13,15 @@
 .sim-side .side-card{border:1px solid var(--ligne);border-radius:18px;padding:24px}
 .sim-side .side-card h4{font-family:'Sora',sans-serif;font-size:.92rem;margin-bottom:14px}
 .sim-side .side-card p{font-size:.88rem;color:var(--gris);line-height:1.55}
-.sim-side .btn{width:100%;margin-top:16px}
+.sim-side .btn{width:100%}
 .sim-side .go{display:block;margin-top:14px;font-size:13.5px;font-weight:600;text-decoration:none;border-bottom:1.5px solid var(--indigo);color:var(--encre);padding-bottom:2px;width:fit-content}
+
+.sim-actions{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.btn.btn-outline{background:#fff;color:var(--encre);border:1.5px solid var(--ligne)}
+.btn.btn-outline:hover{border-color:var(--indigo);background:var(--lavande)}
+
+.sim-restore-note{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;background:var(--lavande);border-radius:12px;padding:14px 18px;margin-bottom:24px;font-size:.88rem;color:var(--encre)}
+.sim-restore-note .linkBtn{color:var(--indigo)}
 
 .sim-totals{display:grid;gap:9px}
 .sim-totals-row{font-size:.9rem;color:var(--gris)}
@@ -54,10 +61,13 @@
 
 .refNote{font-size:.85rem;color:var(--gris);margin:0}
 .refList{display:grid;gap:8px;max-height:264px;overflow-y:auto;padding-right:4px}
-.refRow{display:flex;align-items:baseline;gap:10px;text-align:left;border:1.5px solid var(--ligne);border-radius:12px;padding:10px 14px;background:#fff;cursor:pointer;font:inherit;width:100%}
+.refRow{display:flex;align-items:center;gap:10px;text-align:left;border:1.5px solid var(--ligne);border-radius:12px;padding:10px 14px;background:#fff;cursor:pointer;font:inherit;width:100%}
 .refRow:hover{border-color:var(--indigo)}
 .refRow.on{border-color:var(--indigo);background:var(--lavande)}
 .refRow-generic{color:var(--gris);font-style:italic}
+.refRow-thumb{width:36px;height:36px;border-radius:8px;background:var(--lavande);color:var(--indigo);display:grid;place-items:center;flex-shrink:0}
+.refRow.on .refRow-thumb{background:#fff}
+.refRow-thumb svg{width:20px;height:20px}
 .refRow-name{font-size:.86rem;flex:1;min-width:0}
 .refRow-name b{font-weight:700;font-style:normal;color:var(--encre)}
 .refRow-meta{font-size:.76rem;color:var(--gris);white-space:nowrap}
