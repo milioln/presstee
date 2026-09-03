@@ -15,7 +15,9 @@
 import { reco, TECHS, type TechKey } from './personnalisateur/recommendation';
 import { PALIERS_TARIF, prixVente } from '../config/tarification';
 import { coutBaseSupportUnique, catalogueColoris, type Garment } from '../config/parametres-metier';
-import { LABELS_COUPE, LABELS_MANCHES, LABELS_GENRE, LABELS_GAMME_PRIX, type Coupe, type Manches, type Genre, type GammePrix } from '../lib/produits-types';
+import { LABELS_COUPE, LABELS_MANCHES, LABELS_GENRE, LABELS_GAMME_PRIX, inferCoupe, inferGammePrix, inferResponsable, type Coupe, type Manches, type Genre, type GammePrix } from '../lib/produits-types';
+import { TSHIRTS, type TShirtCatalogue } from '../data/tshirts';
+import { getTechnique } from '../lib/techniques-data';
 import { siteConfig } from '../config/site';
 
 type Statut = 'fourni' | 'en_cours' | 'conseil';
@@ -34,6 +36,7 @@ interface Produit {
   styles: Set<string>;
   quantite: number;
   coloris: { nom: string; hex: string };
+  refProduit: string | null;
   visuels: Visuel[];
 }
 
@@ -51,6 +54,7 @@ function nouveauProduit(): Produit {
     styles: new Set(),
     quantite: 25,
     coloris: catalogueColoris[0],
+    refProduit: null,
     visuels: [nouveauVisuel()],
   };
 }
@@ -83,6 +87,37 @@ function palierPour(qty: number) {
   return PALIERS_TARIF.find((p) => qty >= p.min && (p.max == null || qty <= p.max)) ?? PALIERS_TARIF[PALIERS_TARIF.length - 1];
 }
 
+// Catégorisation identique à /produits (coupe déduite du modèle, gamme de
+// prix déduite du prix au plus petit palier, textile responsable détecté
+// dans la composition) — pour filtrer le catalogue avec les mêmes pastilles
+// de style que ce produit du simulateur.
+function coupeDe(t: TShirtCatalogue): Coupe {
+  return inferCoupe(t.model, t.col);
+}
+function gammeDe(t: TShirtCatalogue): GammePrix {
+  return inferGammePrix(Math.round(prixVente(t.baseCost, PALIERS_TARIF[0].marge) * 100) / 100);
+}
+
+// Seul le type "t-shirt" a un catalogue réel pour l'instant (comme sur
+// /produits, sweats/polos/chemises/casquettes sont "bientôt disponibles") :
+// pour les autres types de textile, on reste sur l'estimation générique.
+function candidatsRef(p: Produit): TShirtCatalogue[] {
+  if (p.garment !== 'tshirt') return [];
+  const coupesSel = COUPES.filter((c) => p.styles.has(c));
+  const manchesSel = MANCHES_OPTIONS.filter((m) => p.styles.has(m));
+  const genresSel = GENRES.filter((g) => p.styles.has(g));
+  const gammesSel = GAMMES.filter((g) => p.styles.has(g));
+  const responsableSel = p.styles.has('responsable');
+  return TSHIRTS.filter((t) => {
+    if (coupesSel.length && !coupesSel.includes(coupeDe(t))) return false;
+    if (manchesSel.length && !manchesSel.includes(t.manches)) return false;
+    if (genresSel.length && !genresSel.includes(t.genre)) return false;
+    if (gammesSel.length && !gammesSel.includes(gammeDe(t))) return false;
+    if (responsableSel && !inferResponsable(t.detail)) return false;
+    return true;
+  }).sort((a, b) => a.baseCost - b.baseCost);
+}
+
 const fmtPriceIntl = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
 function fmtPrice(n: number): string {
   return fmtPriceIntl.format(n);
@@ -97,6 +132,7 @@ interface VisuelCalcule extends Visuel {
 
 interface ProduitCalcule {
   produit: Produit;
+  ref: TShirtCatalogue | null;
   prixUnitaireSupport: number;
   prixTotalSupport: number;
   visuels: VisuelCalcule[];
@@ -104,8 +140,10 @@ interface ProduitCalcule {
 }
 
 function calculerProduit(p: Produit): ProduitCalcule {
+  const ref = p.refProduit ? TSHIRTS.find((t) => t.slug === p.refProduit) ?? null : null;
+  const coutBase = ref ? ref.baseCost : coutBaseSupportUnique;
   const palier = palierPour(p.quantite);
-  const prixPiece = prixVente(coutBaseSupportUnique, palier.marge);
+  const prixPiece = prixVente(coutBase, palier.marge);
   const nbLignes = 1 + p.visuels.length;
   const prixParLigne = Math.round((prixPiece / nbLignes) * 100) / 100;
 
@@ -116,6 +154,7 @@ function calculerProduit(p: Produit): ProduitCalcule {
 
   return {
     produit: p,
+    ref,
     prixUnitaireSupport: prixParLigne,
     prixTotalSupport: Math.round(prixParLigne * p.quantite * 100) / 100,
     visuels,
@@ -144,6 +183,7 @@ function pillsHtml(options: { value: string; label: string }[], selected: (v: st
 
 function visuelCard(p: Produit, vc: VisuelCalcule, index: number, retirable: boolean): string {
   const tech = TECHS[vc.techKey];
+  const techImg = getTechnique(vc.techKey)?.image ?? null;
   return `<div class="visuelCard">
     <div class="visuelCard-head">
       <span class="visuelCard-num">Visuel ${index + 1}</span>
@@ -162,11 +202,38 @@ function visuelCard(p: Produit, vc: VisuelCalcule, index: number, retirable: boo
       <div class="pills">${COULEURS_OPTIONS.map((o) => `<button type="button" class="pill${vc.couleurs === o.value ? ' on' : ''}" data-action="set-couleurs" data-produit="${p.id}" data-visuel="${vc.id}" data-value="${o.value ?? ''}">${o.label}</button>`).join('')}</div>
     </div>
     <div class="visuelReco">
-      <span class="visuelReco-tech">${tech.n}</span>
-      <span class="visuelReco-why">${vc.why}</span>
+      ${techImg ? `<img class="visuelReco-img" src="${techImg}" alt="" loading="lazy" />` : ''}
+      <div class="visuelReco-body">
+        <span class="visuelReco-tech">${tech.n}</span>
+        <span class="visuelReco-why">${vc.why}</span>
+      </div>
       <span class="visuelReco-prix">${fmtPrice(vc.prixTotal)} <span>pour ${p.quantite} pièce${p.quantite > 1 ? 's' : ''}</span></span>
     </div>
   </div>`;
+}
+
+function refListHtml(p: Produit): string {
+  if (p.garment !== 'tshirt') {
+    return `<p class="refNote">Références précises bientôt disponibles pour ce type de textile — estimation générique utilisée en attendant.</p>`;
+  }
+  const candidats = candidatsRef(p);
+  const palier = palierPour(p.quantite);
+  if (candidats.length === 0) {
+    return `<p class="refNote">Aucune référence ne correspond à ces filtres pour l'instant — estimation générique utilisée.</p>`;
+  }
+  const generique = `<button type="button" class="refRow refRow-generic${!p.refProduit ? ' on' : ''}" data-action="set-ref" data-produit="${p.id}" data-value="">
+    <span class="refRow-name">Estimation générique (sans référence précise)</span>
+    <span class="refRow-price">${fmtPrice(Math.round(prixVente(coutBaseSupportUnique, palier.marge) * 100) / 100)} <span>/ pièce</span></span>
+  </button>`;
+  const rows = candidats.map((t) => {
+    const prix = Math.round(prixVente(t.baseCost, palier.marge) * 100) / 100;
+    return `<button type="button" class="refRow${p.refProduit === t.slug ? ' on' : ''}" data-action="set-ref" data-produit="${p.id}" data-value="${t.slug}">
+      <span class="refRow-name"><b>${t.brand}</b> ${t.model}</span>
+      <span class="refRow-meta">${t.grammage}</span>
+      <span class="refRow-price">${fmtPrice(prix)} <span>/ pièce</span></span>
+    </button>`;
+  }).join('');
+  return `<div class="refList">${generique}${rows}</div>`;
 }
 
 function produitCard(pc: ProduitCalcule, index: number, retirable: boolean): string {
@@ -207,8 +274,13 @@ function produitCard(pc: ProduitCalcule, index: number, retirable: boolean): str
       <div class="swatches">${catalogueColoris.map((c) => `<button type="button" class="sw${c.hex === p.coloris.hex ? ' on' : ''}" data-action="set-couleris" data-produit="${p.id}" data-value="${c.hex}" style="background:${c.hex}" aria-label="${c.nom}"></button>`).join('')}</div>
     </div>
 
+    <div class="simField">
+      <span class="simField-label">Référence produit <span class="simField-hint">optionnel — prix réel du modèle si choisi</span></span>
+      ${refListHtml(p)}
+    </div>
+
     <div class="supportLine">
-      <span class="supportLine-nom">${GARMENT_LABELS[p.garment]} vierge · ${p.coloris.nom}</span>
+      <span class="supportLine-nom">${pc.ref ? `${pc.ref.brand} ${pc.ref.model}` : `${GARMENT_LABELS[p.garment]} vierge`} · ${p.coloris.nom}</span>
       <span class="supportLine-prix">${fmtPrice(pc.prixTotalSupport)} <span>pour ${p.quantite} pièce${p.quantite > 1 ? 's' : ''}</span></span>
     </div>
 
@@ -235,6 +307,7 @@ function resumeMail(): string {
     total += pc.prixTotalProduit;
     const stylesTxt = p.styles.size ? [...p.styles].map(styleLabel).join(', ') : 'non précisé';
     lignes.push(`Produit ${i + 1} — ${GARMENT_LABELS[p.garment]} (${stylesTxt})
+- Référence : ${pc.ref ? `${pc.ref.brand} ${pc.ref.model}` : 'à définir avec vous'}
 - Coloris : ${p.coloris.nom}
 - Quantité : ${p.quantite} pièce${p.quantite > 1 ? 's' : ''}
 - Sous-total estimé : ${fmtPrice(pc.prixTotalProduit)}`);
@@ -276,6 +349,10 @@ export function bindSimulateur(): void {
     switch (action) {
       case 'set-garment':
         produit.garment = b.dataset.value as Garment;
+        produit.refProduit = null;
+        break;
+      case 'set-ref':
+        produit.refProduit = b.dataset.value || null;
         break;
       case 'toggle-style': {
         const v = b.dataset.value!;

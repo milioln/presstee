@@ -52,6 +52,18 @@
 .supportLine-prix{font-family:'Sora',sans-serif;font-weight:700;font-size:.95rem;white-space:nowrap;font-variant-numeric:tabular-nums}
 .supportLine-prix span{display:block;font-family:'Manrope',sans-serif;font-weight:400;font-size:.72rem;color:var(--gris);text-align:right}
 
+.refNote{font-size:.85rem;color:var(--gris);margin:0}
+.refList{display:grid;gap:8px;max-height:264px;overflow-y:auto;padding-right:4px}
+.refRow{display:flex;align-items:baseline;gap:10px;text-align:left;border:1.5px solid var(--ligne);border-radius:12px;padding:10px 14px;background:#fff;cursor:pointer;font:inherit;width:100%}
+.refRow:hover{border-color:var(--indigo)}
+.refRow.on{border-color:var(--indigo);background:var(--lavande)}
+.refRow-generic{color:var(--gris);font-style:italic}
+.refRow-name{font-size:.86rem;flex:1;min-width:0}
+.refRow-name b{font-weight:700;font-style:normal;color:var(--encre)}
+.refRow-meta{font-size:.76rem;color:var(--gris);white-space:nowrap}
+.refRow-price{font-family:'Sora',sans-serif;font-weight:700;font-size:.86rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+.refRow-price span{display:block;font-family:'Manrope',sans-serif;font-weight:400;color:var(--gris);font-size:.72rem;text-align:right}
+
 /* ---------- visuels ---------- */
 .visuelList{display:grid;gap:14px}
 .visuelCard{background:var(--lavande);border-radius:16px;padding:20px}
@@ -62,9 +74,11 @@
 .linkBtn.danger:hover{color:#B23B2E}
 .visuelCard .simField{margin-bottom:16px}
 
-.visuelReco{margin-top:16px;padding-top:16px;border-top:1px solid rgba(23,19,31,.08);display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+.visuelReco{margin-top:16px;padding-top:16px;border-top:1px solid rgba(23,19,31,.08);display:flex;flex-wrap:wrap;align-items:center;gap:12px 14px}
+.visuelReco-img{width:52px;height:52px;border-radius:10px;object-fit:cover;flex-shrink:0}
+.visuelReco-body{flex:1 1 260px;min-width:0;display:flex;flex-direction:column;gap:3px}
 .visuelReco-tech{font-family:'Sora',sans-serif;font-size:.92rem;font-weight:700;color:var(--indigo)}
-.visuelReco-why{flex:1 1 260px;font-size:.82rem;color:var(--gris);line-height:1.5}
+.visuelReco-why{font-size:.82rem;color:var(--gris);line-height:1.5}
 .visuelReco-prix{margin-left:auto;font-family:'Sora',sans-serif;font-size:1.05rem;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
 .visuelReco-prix span{display:block;font-family:'Manrope',sans-serif;font-weight:400;font-size:.72rem;color:var(--gris)}
 
