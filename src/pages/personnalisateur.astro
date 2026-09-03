@@ -156,7 +156,7 @@ import '../styles/personnalisateur.css';
 					<div class="recap">
 						<div id="recap"></div>
 						<div class="recapLinks">
-							<button type="button" class="mini-btn" id="openCart">Panier (<span id="cartCount">0</span>)</button>
+							<a class="mini-btn" href="/panier">Panier (<span id="cartCount">0</span>)</a>
 							<button type="button" class="mini-btn" id="openSaved">Mes projets (<span id="savedCount">0</span>)</button>
 						</div>
 						<button class="btn btn-secondary btn-block" id="addToCart">Ajouter au panier</button>
@@ -202,15 +202,11 @@ import '../styles/personnalisateur.css';
 	<div class="listOverlay" id="listOverlay" style="display:none">
 		<div class="listBox">
 			<div class="listHead">
-				<h6 id="listTitle">Panier</h6>
+				<h6>Mes projets enregistrés</h6>
 				<button type="button" id="listClose" aria-label="Fermer">×</button>
 			</div>
 			<div class="listItems" id="listItems"></div>
-			<p class="listEmpty" id="listEmpty" style="display:none"></p>
-			<div class="listFoot" id="listFoot" style="display:none">
-				<div class="listTotal" id="listTotal"></div>
-				<button class="btn btn-primary btn-block" id="listAction">Demander un devis pour le panier</button>
-			</div>
+			<p class="listEmpty" id="listEmpty" style="display:none">Aucun projet enregistré pour l’instant.</p>
 		</div>
 	</div>
 

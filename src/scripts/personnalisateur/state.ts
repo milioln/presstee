@@ -87,9 +87,9 @@ export function createLayer(partial: { img: string; fileName: string; vector: bo
   };
 }
 
-const STORAGE_KEY = 'presstee:personnalisateur:v2';
+export const STORAGE_KEY = 'presstee:personnalisateur:v2';
 
-type Persisted = Pick<PersonnalisateurState, 'garment' | 'place' | 'coupe' | 'manche' | 'col' | 'layers' | 'activeLayerId' | 'sizeDist' | 'tech' | 'delai'> & {
+export type Persisted = Pick<PersonnalisateurState, 'garment' | 'place' | 'coupe' | 'manche' | 'col' | 'layers' | 'activeLayerId' | 'sizeDist' | 'tech' | 'delai'> & {
   colorIndex: number;
 };
 
@@ -146,6 +146,42 @@ export function loadState(): boolean {
 export function clearState(): void {
   try {
     localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // ignore
+  }
+}
+
+// Écrit directement le stockage du projet en cours à partir d'un
+// article externe (panier), sans passer par S — utilisé par la page
+// /panier pour "Modifier" un article : on sème le stockage puis on
+// navigue vers /personnalisateur, qui le charge normalement au
+// démarrage via loadState(). coupe/manche/col ne font pas partie d'un
+// article de panier (toujours VARIANT_DEFAUT tant qu'un seul produit
+// est modélisé) : on les régénère ici plutôt que de les stocker en double.
+export function seedFromItem(item: {
+  garment: Garment;
+  color: Coloris;
+  layers: Layer[];
+  sizeDist: Record<TailleCode, number>;
+  tech: TechKey | 'auto';
+  delai: 'standard' | 'express';
+}): void {
+  try {
+    const colorIndex = Math.max(0, catalogueColoris.findIndex((c) => c.hex === item.color.hex));
+    const payload: Persisted = {
+      garment: item.garment,
+      place: item.layers[0]?.place ?? 'face',
+      coupe: VARIANT_DEFAUT.coupe,
+      manche: VARIANT_DEFAUT.manche,
+      col: VARIANT_DEFAUT.col,
+      colorIndex,
+      layers: item.layers,
+      activeLayerId: item.layers[0]?.id ?? null,
+      sizeDist: item.sizeDist,
+      tech: item.tech,
+      delai: item.delai,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   } catch {
     // ignore
   }

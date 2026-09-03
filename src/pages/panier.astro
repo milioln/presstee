@@ -1,0 +1,141 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+import '../styles/techniques.css';
+import '../styles/panier.css';
+---
+
+<Layout title="Votre panier — Presstee" description="Retrouvez les projets ajoutés depuis le configurateur, ajustez-les et demandez un devis groupé.">
+	<Header />
+	<main>
+		<section class="tech-hero">
+			<div class="wrap">
+				<div class="crumb"><a href="/">Accueil</a> / Panier</div>
+				<h1>Votre panier.</h1>
+				<p>Les projets composés dans le configurateur, prêts pour un devis groupé. Rien n'est enregistré côté serveur : tout reste dans ce navigateur.</p>
+			</div>
+		</section>
+
+		<div class="wrap">
+			<div class="panierLayout" id="panierLayout">
+				<div class="panierEmpty" id="panierEmpty">
+					<h3>Votre panier est vide.</h3>
+					<p>Composez un projet dans le configurateur, puis ajoutez-le au panier pour le retrouver ici avant de demander un devis.</p>
+					<a class="btn" href="/personnalisateur">Créer un projet</a>
+				</div>
+
+				<div class="panierItems" id="panierItems" style="display:none"></div>
+
+				<aside class="side-card panierSummary" id="panierSummary" style="display:none">
+					<h4>Récapitulatif</h4>
+					<div class="panierSummaryLine"><span id="sumCount"></span><span id="sumQty"></span></div>
+					<div class="panierSummaryTotal" id="sumTotal"></div>
+					<button class="btn" id="sendCart">Demander un devis pour tout le panier</button>
+					<button type="button" class="clearBtn" id="clearCart">Vider le panier</button>
+					<p class="hint">Réponse sous 24 h ouvrées · estimation indicative, devis définitif à la confirmation.</p>
+				</aside>
+			</div>
+		</div>
+	</main>
+	<Footer />
+
+	<script>
+		import { getCart, removeFromCart, clearCart, sendQuoteForCart, type SavedItem } from '../scripts/personnalisateur/cart';
+		import { seedFromItem } from '../scripts/personnalisateur/state';
+		import type { TailleCode } from '../config/parametres-metier';
+
+		function el<T extends HTMLElement = HTMLElement>(id: string): T {
+			return document.getElementById(id) as T;
+		}
+
+		function fmtPrice(n: number): string {
+			return `${n.toFixed(2).replace('.', ',')} €`;
+		}
+
+		function fmtDate(ts: number): string {
+			return new Date(ts).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+		}
+
+		function delaiLabel(d: SavedItem['delai']): string {
+			return d === 'express' ? 'Express (5 jours ouvrés)' : 'Standard (10 jours ouvrés)';
+		}
+
+		function sizesLabel(sizeDist: Record<TailleCode, number>): string {
+			const parts = Object.entries(sizeDist)
+				.filter(([, n]) => (n as number) > 0)
+				.map(([t, n]) => `${t} ×${n}`);
+			return parts.length ? parts.join(', ') : 'tailles non renseignées';
+		}
+
+		function itemCard(it: SavedItem): string {
+			const thumb = it.layers[0] ? `<img src="${it.layers[0].img}" alt="" />` : '';
+			return `<div class="panierItem" data-id="${it.id}">
+				<div class="panierItem-thumb" style="background:${it.color.hex}">${thumb}</div>
+				<div class="panierItem-body">
+					<div class="panierItem-head">
+						<h3>${it.techNom}</h3>
+						<div class="panierItem-price">${fmtPrice(it.prixTotal)}</div>
+					</div>
+					<p class="panierItem-meta">${it.color.nom} · ${sizesLabel(it.sizeDist)} (${it.qty} pièce${it.qty > 1 ? 's' : ''})</p>
+					<p class="panierItem-meta muted">${delaiLabel(it.delai)} · ajouté le ${fmtDate(it.savedAt)}</p>
+					<div class="panierItem-actions">
+						<button type="button" class="linkBtn" data-edit="${it.id}">Modifier</button>
+						<button type="button" class="linkBtn danger" data-rm="${it.id}">Retirer</button>
+					</div>
+				</div>
+			</div>`;
+		}
+
+		function render(): void {
+			const items = getCart();
+			const empty = el('panierEmpty');
+			const itemsWrap = el('panierItems');
+			const summary = el('panierSummary');
+
+			if (!items.length) {
+				empty.style.display = 'block';
+				itemsWrap.style.display = 'none';
+				summary.style.display = 'none';
+				return;
+			}
+			empty.style.display = 'none';
+			itemsWrap.style.display = 'flex';
+			summary.style.display = 'flex';
+			itemsWrap.innerHTML = items.map(itemCard).join('');
+
+			const totalQty = items.reduce((s, it) => s + it.qty, 0);
+			const totalPrice = items.reduce((s, it) => s + it.prixTotal, 0);
+			el('sumCount').textContent = `${items.length} projet${items.length > 1 ? 's' : ''}`;
+			el('sumQty').textContent = `${totalQty} pièce${totalQty > 1 ? 's' : ''} au total`;
+			el('sumTotal').textContent = fmtPrice(totalPrice);
+		}
+
+		el('panierItems').addEventListener('click', (e) => {
+			const rm = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-rm]');
+			if (rm) {
+				removeFromCart(rm.dataset.rm!);
+				render();
+				return;
+			}
+			const edit = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-edit]');
+			if (edit) {
+				const item = getCart().find((i) => i.id === edit.dataset.edit);
+				if (item) {
+					seedFromItem(item);
+					window.location.href = '/personnalisateur';
+				}
+			}
+		});
+
+		el('sendCart').addEventListener('click', () => sendQuoteForCart());
+		el('clearCart').addEventListener('click', () => {
+			if (!window.confirm('Vider le panier ?')) return;
+			clearCart();
+			render();
+		});
+
+		render();
+	</script>
+</Layout>

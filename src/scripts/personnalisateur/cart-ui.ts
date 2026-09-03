@@ -1,22 +1,18 @@
-// Panneau partagé pour afficher le panier ou "mes projets enregistrés"
-// (même structure de liste, contenu et actions différents selon le
-// mode) — et câblage des 3 boutons de fin de parcours (panier, devis,
-// enregistrer).
-import { getCart, getSaved, removeFromCart, removeSaved, loadSaved, addToCart, saveProject, sendQuoteForCurrent, sendQuoteForCart, bindOnLoaded, type SavedItem } from './cart';
+// Panneau "Mes projets enregistrés" (le panier a sa propre page,
+// /panier, pour une vue plus confortable) — et câblage des 3 boutons de
+// fin de parcours (panier, devis, enregistrer).
+import { getCart, getSaved, removeSaved, loadSaved, addToCart, saveProject, sendQuoteForCurrent, bindOnLoaded, type SavedItem } from './cart';
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
   return document.getElementById(id) as T;
 }
-
-type Mode = 'cart' | 'saved';
-let mode: Mode = 'cart';
 
 function fmtDate(ts: number): string {
   return new Date(ts).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
 }
 
 function renderList(): void {
-  const items: SavedItem[] = mode === 'cart' ? getCart() : getSaved();
+  const items: SavedItem[] = getSaved();
   const wrap = el('listItems');
   el('listEmpty').style.display = items.length ? 'none' : 'block';
   wrap.innerHTML = items
@@ -25,25 +21,16 @@ function renderList(): void {
         <span class="listSwatch" style="background:${it.color.hex}"></span>
         <div class="listInfo">
           <strong>${it.techNom}</strong>
-          <span>${it.color.nom} · ${it.qty} pièce${it.qty > 1 ? 's' : ''} · ${mode === 'cart' ? `${it.prixTotal.toFixed(2).replace('.', ',')} €` : fmtDate(it.savedAt)}</span>
+          <span>${it.color.nom} · ${it.qty} pièce${it.qty > 1 ? 's' : ''} · ${fmtDate(it.savedAt)}</span>
         </div>
-        ${mode === 'saved' ? `<button type="button" class="mini-btn" data-load="${it.id}">Charger</button>` : ''}
+        <button type="button" class="mini-btn" data-load="${it.id}">Charger</button>
         <button type="button" class="listRm" data-rm="${it.id}" aria-label="Retirer">×</button>
       </div>`
     )
     .join('');
-  const showFoot = mode === 'cart' && items.length > 0;
-  el('listFoot').style.display = showFoot ? 'flex' : 'none';
-  if (mode === 'cart') {
-    const total = items.reduce((s, it) => s + it.prixTotal, 0);
-    el('listTotal').textContent = `Total estimé : ${total.toFixed(2).replace('.', ',')} €`;
-  }
 }
 
-function openList(m: Mode): void {
-  mode = m;
-  el('listTitle').textContent = m === 'cart' ? 'Panier' : 'Mes projets enregistrés';
-  el('listEmpty').textContent = m === 'cart' ? 'Le panier est vide pour l’instant.' : 'Aucun projet enregistré pour l’instant.';
+function openList(): void {
   renderList();
   el('listOverlay').style.display = 'flex';
 }
@@ -69,8 +56,7 @@ function flash(btnId: string, text: string): void {
 }
 
 export function bindCartUI(): void {
-  el('openCart').addEventListener('click', () => openList('cart'));
-  el('openSaved').addEventListener('click', () => openList('saved'));
+  el('openSaved').addEventListener('click', openList);
   el('listClose').addEventListener('click', closeList);
   el('listOverlay').addEventListener('click', (e) => {
     if (e.target === el('listOverlay')) closeList();
@@ -79,8 +65,7 @@ export function bindCartUI(): void {
   el('listItems').addEventListener('click', (e) => {
     const rm = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-rm]');
     if (rm) {
-      if (mode === 'cart') removeFromCart(rm.dataset.rm!);
-      else removeSaved(rm.dataset.rm!);
+      removeSaved(rm.dataset.rm!);
       renderList();
       paintBadges();
       return;
@@ -91,8 +76,6 @@ export function bindCartUI(): void {
       closeList();
     }
   });
-
-  el('listAction').addEventListener('click', () => sendQuoteForCart());
 
   el('addToCart').addEventListener('click', () => {
     addToCart();

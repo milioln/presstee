@@ -103,6 +103,10 @@ export function removeSaved(id: string): void {
   writeList(SAVED_KEY, getSaved().filter((i) => i.id !== id));
 }
 
+export function clearCart(): void {
+  writeList(CART_KEY, []);
+}
+
 // L'appelant (main.ts) enregistre ici comment repeindre tout l'écran
 // après un rechargement massif de S — ce module n'a pas à connaître le
 // détail des fonctions de peinture pour éviter un couplage circulaire.
