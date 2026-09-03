@@ -224,7 +224,13 @@ export function paintDiag(): void {
   rows += `<div class="line"><b>Taille imprimée</b><span>${w.toFixed(1)} cm${h ? ` × ${h.toFixed(1)} cm` : ''}</span></div>`;
   rows += `<div class="line"><b>Couleurs</b><span>${layer.colors == null ? 'à contrôler manuellement' : layer.colors >= 12 ? '12 et plus' : layer.colors}</span></div>`;
   if (layer.colorSwatches && layer.colorSwatches.length) {
-    rows += `<div class="line"><b>Détail</b><span class="colorswatches">${layer.colorSwatches.map((h) => `<i style="background:${h}" title="${h}"></i>`).join('')}</span></div>`;
+    const removable = layer.colorSwatches.length > 1;
+    rows += `<div class="line"><b>Détail</b><span class="colorswatches">${layer.colorSwatches
+      .map(
+        (h, i) =>
+          `<button type="button" class="swatch${removable ? ' removable' : ''}" data-swatch="${i}" style="background:${h}" title="${removable ? `Retirer cette couleur (${h})` : h}" aria-label="${removable ? `Retirer cette couleur (${h})` : h}"></button>`
+      )
+      .join('')}</span></div>`;
   }
   if (S.layers.length > 1) {
     const total = totalColors();
@@ -250,6 +256,23 @@ export function paintDiag(): void {
   }
   rows += flags.map(([kind, text]) => `<div class="flag ${kind}">${text}</div>`).join('');
   diag.innerHTML = rows;
+}
+
+// Retire une teinte détectée à tort (bruit d'anti-crénelage, fond
+// parasite...) de l'analyse : décrémente le compte de couleurs utilisé
+// pour la recommandation de technique et le calage sérigraphie/broderie,
+// sans toucher aux pixels du visuel. Le dernier swatch ne peut pas être
+// retiré (un visuel a toujours au moins une couleur).
+export function removeColorSwatch(index: number): void {
+  const layer = activeLayer();
+  if (!layer || !layer.colorSwatches || layer.colorSwatches.length <= 1) return;
+  layer.colorSwatches = layer.colorSwatches.filter((_, i) => i !== index);
+  layer.colors = layer.colorSwatches.length;
+  layer.colorsEdited = true;
+  paintDiag();
+  paintTechs();
+  paintRecap();
+  saveState();
 }
 
 export function paintRecap(): void {

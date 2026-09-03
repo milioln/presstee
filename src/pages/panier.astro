@@ -23,7 +23,7 @@ import '../styles/panier.css';
 				<div class="panierEmpty" id="panierEmpty">
 					<h3>Votre panier est vide.</h3>
 					<p>Composez un projet dans le configurateur, puis ajoutez-le au panier pour le retrouver ici avant de demander un devis.</p>
-					<a class="btn" href="/personnalisateur">Créer un projet</a>
+					<a class="btn" href="/configurateur">Créer un projet</a>
 				</div>
 
 				<div class="panierItems" id="panierItems" style="display:none"></div>
@@ -44,7 +44,9 @@ import '../styles/panier.css';
 	<script>
 		import { getCart, removeFromCart, clearCart, sendQuoteForCart, type SavedItem } from '../scripts/personnalisateur/cart';
 		import { seedFromItem } from '../scripts/personnalisateur/state';
-		import type { TailleCode } from '../config/parametres-metier';
+		import { GARMENTS } from '../scripts/personnalisateur/garments';
+		import type { TailleCode, Emplacement } from '../config/parametres-metier';
+		import type { Layer } from '../scripts/personnalisateur/state';
 
 		function el<T extends HTMLElement = HTMLElement>(id: string): T {
 			return document.getElementById(id) as T;
@@ -69,21 +71,42 @@ import '../styles/panier.css';
 			return parts.length ? parts.join(', ') : 'tailles non renseignées';
 		}
 
+		const PLACE_LABEL: Record<Emplacement, string> = { face: 'Face', coeur: 'Cœur', dos: 'Dos' };
+
+		// Le configurateur n'a aujourd'hui qu'une seule technique par
+		// projet (pas encore une par emplacement) : chaque calque déposé
+		// est affiché comme sa propre ligne de marquage sous la même
+		// technique, avec le prix total réparti à parts égales entre les
+		// marquages — une répartition d'affichage, pas un vrai calcul de
+		// coût individuel (le modèle de prix ne descend pas à ce niveau
+		// de détail pour l'instant).
+		function markLine(it: SavedItem, layer: Layer): string {
+			const thumb = layer.img ? `<img src="${layer.img}" alt="" />` : '';
+			const price = it.layers.length ? it.prixTotal / it.layers.length : it.prixTotal;
+			return `<div class="panierMark">
+				<div class="panierMark-thumb">${thumb}</div>
+				<span class="panierMark-label">${it.techNom} · ${PLACE_LABEL[layer.place]} · ${layer.colors ?? 1} couleur${(layer.colors ?? 1) > 1 ? 's' : ''}</span>
+				<span class="panierMark-price">${fmtPrice(price)}</span>
+			</div>`;
+		}
+
 		function itemCard(it: SavedItem): string {
-			const thumb = it.layers[0] ? `<img src="${it.layers[0].img}" alt="" />` : '';
+			const garmentName = GARMENTS[it.garment].name;
+			const marks = it.layers.length ? it.layers.map((l) => markLine(it, l)).join('') : `<p class="panierMark-empty">Aucun visuel déposé pour ce projet.</p>`;
 			return `<div class="panierItem" data-id="${it.id}">
-				<div class="panierItem-thumb" style="background:${it.color.hex}">${thumb}</div>
-				<div class="panierItem-body">
-					<div class="panierItem-head">
-						<h3>${it.techNom}</h3>
-						<div class="panierItem-price">${fmtPrice(it.prixTotal)}</div>
+				<div class="panierItem-head">
+					<div class="panierItem-thumb" style="background:${it.color.hex}"></div>
+					<div class="panierItem-headInfo">
+						<h3>${garmentName}</h3>
+						<p class="panierItem-meta">${it.color.nom} · ${sizesLabel(it.sizeDist)} (${it.qty} pièce${it.qty > 1 ? 's' : ''})</p>
+						<p class="panierItem-meta muted">${delaiLabel(it.delai)} · ajouté le ${fmtDate(it.savedAt)}</p>
 					</div>
-					<p class="panierItem-meta">${it.color.nom} · ${sizesLabel(it.sizeDist)} (${it.qty} pièce${it.qty > 1 ? 's' : ''})</p>
-					<p class="panierItem-meta muted">${delaiLabel(it.delai)} · ajouté le ${fmtDate(it.savedAt)}</p>
-					<div class="panierItem-actions">
-						<button type="button" class="linkBtn" data-edit="${it.id}">Modifier</button>
-						<button type="button" class="linkBtn danger" data-rm="${it.id}">Retirer</button>
-					</div>
+					<div class="panierItem-price">${fmtPrice(it.prixTotal)}</div>
+				</div>
+				<div class="panierItem-marks">${marks}</div>
+				<div class="panierItem-actions">
+					<button type="button" class="linkBtn" data-edit="${it.id}">Modifier</button>
+					<button type="button" class="linkBtn danger" data-rm="${it.id}">Retirer</button>
 				</div>
 			</div>`;
 		}
@@ -124,7 +147,7 @@ import '../styles/panier.css';
 				const item = getCart().find((i) => i.id === edit.dataset.edit);
 				if (item) {
 					seedFromItem(item);
-					window.location.href = '/personnalisateur';
+					window.location.href = '/configurateur';
 				}
 			}
 		});

@@ -99,18 +99,24 @@ export function analyse(): void {
   im.onload = () => {
     layer.natW = im.naturalWidth || 0;
     layer.natH = im.naturalHeight || 0;
-    try {
-      const sample = sampleColors(im);
-      layer.colors = sample.colors;
-      layer.colorSwatches = sample.swatches;
-      layer.dom = sample.dom;
-    } catch {
-      // SVG référençant une ressource externe (canvas "tainted"), ou
-      // autre échec de rasterisation : on retombe sur "à contrôler
-      // manuellement" plutôt que de casser l'affichage.
-      layer.colors = null;
-      layer.dom = null;
-      layer.colorSwatches = null;
+    // Un retrait manuel de couleur (render.ts, removeColorSwatch) ne
+    // doit pas être effacé par un nouveau passage ici — syncEditor()
+    // rappelle analyse() à chaque sélection de calque et au chargement
+    // de la page, sans que l'image elle-même ait changé.
+    if (!layer.colorsEdited) {
+      try {
+        const sample = sampleColors(im);
+        layer.colors = sample.colors;
+        layer.colorSwatches = sample.swatches;
+        layer.dom = sample.dom;
+      } catch {
+        // SVG référençant une ressource externe (canvas "tainted"), ou
+        // autre échec de rasterisation : on retombe sur "à contrôler
+        // manuellement" plutôt que de casser l'affichage.
+        layer.colors = null;
+        layer.dom = null;
+        layer.colorSwatches = null;
+      }
     }
     paintDiag();
     paintTechs();

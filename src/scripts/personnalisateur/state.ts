@@ -26,6 +26,11 @@ export interface Layer {
   colors: number | null;
   dom: [number, number, number] | null;
   colorSwatches: string[] | null;
+  // L'utilisateur a retiré une teinte détectée à tort (file-analysis.ts
+  // ne doit alors plus écraser la correction en ré-échantillonnant
+  // l'image à chaque passage par syncEditor(), y compris au rechargement
+  // de la page).
+  colorsEdited?: boolean;
   x: number;
   y: number;
   w: number;

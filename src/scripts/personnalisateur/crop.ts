@@ -122,6 +122,7 @@ function applyCrop(): void {
   layer.colors = null;
   layer.dom = null;
   layer.colorSwatches = null;
+  layer.colorsEdited = false;
   closeCrop();
   syncEditor();
 }

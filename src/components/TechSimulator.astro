@@ -54,7 +54,7 @@ const { class: className } = Astro.props;
 		<div class="label">Notre recommandation</div>
 		<h3 id="simTitle"></h3>
 		<p id="simWhy"></p>
-		<a class="btn" id="simCta" href="/personnalisateur">Personnaliser avec cette technique</a>
+		<a class="btn" id="simCta" href="/configurateur">Personnaliser avec cette technique</a>
 	</div>
 </div>
 
@@ -116,7 +116,7 @@ const { class: className } = Astro.props;
 		document.getElementById('simTitle')!.textContent = getTechnique(slug)?.nom ?? '';
 		document.getElementById('simWhy')!.textContent = why;
 		const cta = document.getElementById('simCta') as HTMLAnchorElement;
-		cta.href = `/personnalisateur?technique=${slug}`;
+		cta.href = `/configurateur?technique=${slug}`;
 		document.getElementById('simResult')!.classList.add('show');
 	}
 </script>

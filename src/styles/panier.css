@@ -11,22 +11,31 @@
 
 .panierItems{display:flex;flex-direction:column;gap:16px}
 
-.panierItem{display:flex;gap:18px;border:1.5px solid var(--ligne);border-radius:var(--r);padding:18px;background:#fff;transition:.15s}
+.panierItem{display:flex;flex-direction:column;gap:14px;border:1.5px solid var(--ligne);border-radius:var(--r);padding:18px;background:#fff;transition:.15s}
 .panierItem:hover{border-color:var(--indigo);box-shadow:0 4px 18px rgba(23,19,31,.06)}
-.panierItem-thumb{width:96px;height:96px;flex-shrink:0;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid var(--ligne)}
-.panierItem-thumb img{max-width:70%;max-height:70%;object-fit:contain}
-.panierItem-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
-.panierItem-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px}
-.panierItem-head h3{font-family:'Sora',sans-serif;font-size:1.05rem;letter-spacing:-0.01em;margin:0}
-.panierItem-price{font-family:'Sora',sans-serif;font-weight:600;font-size:1.05rem;white-space:nowrap;flex-shrink:0}
-.panierItem-meta{font-size:.92rem;color:var(--gris);margin:0}
-.panierItem-meta.muted{font-size:.82rem;opacity:.8}
-.panierItem-actions{display:flex;gap:18px;margin-top:6px}
+
+.panierItem-head{display:flex;align-items:center;gap:16px}
+.panierItem-thumb{width:64px;height:64px;flex-shrink:0;border-radius:12px;border:1px solid var(--ligne)}
+.panierItem-headInfo{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.panierItem-headInfo h3{font-family:'Sora',sans-serif;font-size:1.1rem;letter-spacing:-0.01em;margin:0}
+.panierItem-price{font-family:'Sora',sans-serif;font-weight:600;font-size:1.15rem;white-space:nowrap;flex-shrink:0}
+.panierItem-meta{font-size:.9rem;color:var(--gris);margin:0}
+.panierItem-meta.muted{font-size:.8rem;opacity:.8}
+
+.panierItem-marks{display:flex;flex-direction:column;gap:8px;border-top:1px dashed var(--ligne);padding-top:14px}
+.panierMark{display:flex;align-items:center;gap:12px}
+.panierMark-thumb{width:38px;height:38px;flex-shrink:0;border-radius:8px;background:var(--gris-clair);display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid var(--ligne)}
+.panierMark-thumb img{max-width:75%;max-height:75%;object-fit:contain}
+.panierMark-label{flex:1;min-width:0;font-size:.9rem;color:var(--encre)}
+.panierMark-price{font-family:'Sora',sans-serif;font-weight:600;font-size:.92rem;white-space:nowrap;color:var(--gris)}
+.panierMark-empty{font-size:.88rem;color:var(--gris);margin:0}
+
+.panierItem-actions{display:flex;gap:18px}
 .linkBtn{background:none;border:0;padding:0;cursor:pointer;font-family:'Sora',sans-serif;font-weight:600;font-size:13px;color:var(--indigo)}
 .linkBtn:hover{text-decoration:underline}
 .linkBtn.danger{color:#B23A3A}
 
-.panierSummary{position:sticky;top:24px;gap:14px}
+.panierSummary{position:sticky;top:24px;flex-direction:column;gap:14px}
 .panierSummary h4{margin-bottom:0}
 .panierSummaryLine{display:flex;justify-content:space-between;font-size:.92rem;color:var(--gris)}
 .panierSummaryTotal{font-family:'Sora',sans-serif;font-size:1.6rem;font-weight:600;letter-spacing:-0.02em;border-top:1px dashed var(--ligne);padding-top:14px}

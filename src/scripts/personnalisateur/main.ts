@@ -6,7 +6,7 @@
 // du catalogue aura son propre personnalisateur.
 import { S, activeLayer, loadState } from './state';
 import { catalogueColoris, TAILLES } from '../../config/parametres-metier';
-import { render, paintTechs, paintRecap, paintSizeDist, paintWidth, paintRotate, syncCamera } from './render';
+import { render, paintTechs, paintRecap, paintSizeDist, paintWidth, paintRotate, syncCamera, removeColorSwatch } from './render';
 import { syncPlace, bindPlacement } from './placement';
 import { bindFileInput } from './file-input';
 import { bindModeTabs, bindTextInput } from './text-input';
@@ -158,6 +158,14 @@ function bindRotate(): void {
   });
 }
 
+function bindColorSwatches(): void {
+  el('diag').addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-swatch]');
+    if (!b) return;
+    removeColorSwatch(+b.dataset.swatch!);
+  });
+}
+
 function bindResetView(): void {
   el('vReset').addEventListener('click', () => {
     const mv = el<any>('stage');
@@ -167,7 +175,7 @@ function bindResetView(): void {
 }
 
 // Pré-sélectionne une technique quand on arrive depuis une page du guide
-// (/personnalisateur?technique=serigraphie).
+// (/configurateur?technique=serigraphie).
 function applyTechFromUrl(): void {
   const param = new URLSearchParams(window.location.search).get('technique');
   if (param && Object.prototype.hasOwnProperty.call(TECHS, param)) {
@@ -199,6 +207,7 @@ export function init(): void {
   bindPosition();
   bindRotate();
   bindPlacement();
+  bindColorSwatches();
   bindResetView();
   bindFileInput();
   bindModeTabs();
