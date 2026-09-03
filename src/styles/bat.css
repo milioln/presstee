@@ -235,17 +235,29 @@
 	border-top: 0;
 }
 .bat-visu-zone {
+	position: absolute;
 	border: 1.5px dashed var(--bat-accent);
 	border-radius: 8px;
+	pointer-events: none;
+}
+.bat-visu-zone.vide {
+	position: static;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	overflow: hidden;
+	font-size: 11px;
+	color: var(--bat-accent);
+	text-align: center;
+	padding: 6px;
+	line-height: 1.3;
 }
-.bat-visu-zone img {
-	max-width: 100%;
-	max-height: 100%;
-	object-fit: contain;
+/* Le visuel réel, positionné et pivoté selon layer.x/y/rot — le
+   placement exact choisi par le client sur le modèle 3D, pas un
+   centrage générique dans la zone (cf. bat.ts, positionInZone). */
+.bat-visu-img {
+	position: absolute;
+	pointer-events: none;
+	filter: drop-shadow(0 1px 2px rgba(23, 19, 31, 0.25));
 }
 .bat-visu-photo {
 	height: auto;
@@ -260,9 +272,7 @@
 	object-fit: cover;
 	object-position: center top;
 }
-.bat-visu-photo-overlay {
-	position: absolute;
-	pointer-events: none;
+.bat-visu-photo .bat-visu-img {
 	filter: drop-shadow(0 1px 3px rgba(23, 19, 31, 0.35));
 }
 .bat-visu-pos-photo {
@@ -273,13 +283,6 @@
 	color: var(--bat-accent);
 	padding: 3px 9px;
 	border-radius: 999px;
-}
-.bat-visu-zone.vide {
-	font-size: 11px;
-	color: var(--bat-accent);
-	text-align: center;
-	padding: 6px;
-	line-height: 1.3;
 }
 .bat-visu-pos {
 	position: absolute;

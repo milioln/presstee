@@ -23,46 +23,64 @@ const PLACE_NOTE: Record<Emplacement, string> = {
   coeur: 'Emplacement cœur, côté porteur gauche',
   dos: 'Centré au dos',
 };
+// Zone d'impression en % de la boîte d'aperçu (x/y/w/h = position et
+// taille de la zone complète dans laquelle le visuel peut être déplacé)
+// et largeur du visuel en % de la boîte quand layer.w = 1 (100 % de la
+// zone d'impression réelle). layer.x/y (0-1, position dans la zone) et
+// layer.rot (degrés) — les réglages faits par le client sur le modèle
+// 3D — servent à calculer la position et la rotation réelles du visuel
+// affiché ici, pas seulement sa taille : cf. positionInZone ci-dessous.
+interface Zone {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  maxWidthPct: number;
+}
+
+function positionInZone(zone: Zone, layer: Layer): { cx: number; cy: number; w: number } {
+  return {
+    cx: zone.x + zone.w * layer.x,
+    cy: zone.y + zone.h * layer.y,
+    w: zone.maxWidthPct * layer.w,
+  };
+}
+
 // Boîte illustrative par emplacement (mêmes proportions que BAt/BAT.dc.html) :
-// une mise en page stylisée, pas une reproduction pixel du positionnement
-// réel choisi dans le configurateur — cf. commentaire de tête. Sert de
-// repli tant qu'aucune vraie photo n'existe pour la combinaison
-// garment/coloris (cf. PHOTO_MOCKUPS ci-dessous).
-const PLACE_BOX: Record<Emplacement, { width: string; height: string; margin: string }> = {
-  face: { width: '74%', height: '96px', margin: '14px auto 0' },
-  coeur: { width: '30%', height: '48px', margin: '18px auto 0 22%' },
-  dos: { width: '70%', height: '100px', margin: '16px auto 0' },
+// une approximation de la vraie zone d'impression du modèle 3D, pas une
+// reproduction pixel — cf. commentaire de tête. Sert de repli tant
+// qu'aucune vraie photo n'existe pour la combinaison garment/coloris
+// (cf. PHOTO_MOCKUPS ci-dessous).
+const PLACE_ZONE: Record<Emplacement, Zone> = {
+  face: { x: 13, y: 7, w: 74, h: 49, maxWidthPct: 74 },
+  coeur: { x: 22, y: 9, w: 30, h: 25, maxWidthPct: 30 },
+  dos: { x: 15, y: 8, w: 70, h: 51, maxWidthPct: 70 },
 };
 
 // Vraies photos du textile porté, fournies par Milio, sur lesquelles le
-// visuel choisi est composé automatiquement à l'emplacement choisi — un
-// aperçu bien plus parlant que la boîte colorée stylisée. Clé
-// "garment:hex" : une seule existe pour l'instant (t-shirt coloris
-// Sable), donc toute autre combinaison retombe sur PLACE_BOX plutôt que
-// d'afficher cette photo dans la mauvaise teinte. cx/cy/widthPctAt100
-// sont calibrés à l'œil sur cette photo précise (centre de la zone
-// d'impression en % de l'image, largeur en % à layer.w = 1) — à
-// recalibrer si la photo change.
-interface PhotoZone {
-  cx: number;
-  cy: number;
-  widthPctAt100: number;
-}
+// visuel choisi est composé automatiquement à l'emplacement ET à la
+// position (x/y/rotation) réels choisis par le client — un aperçu bien
+// plus parlant que la boîte colorée stylisée. Clé "garment:hex" : une
+// seule existe pour l'instant (t-shirt coloris Sable), donc toute autre
+// combinaison retombe sur PLACE_ZONE plutôt que d'afficher cette photo
+// dans la mauvaise teinte. x/y/w/h/maxWidthPct sont calibrés à l'œil sur
+// cette photo précise (zone où le visuel peut être déplacé, en % de
+// l'image) — à recalibrer si la photo change.
 interface PhotoMockup {
   src: string;
-  places: Partial<Record<Emplacement, PhotoZone>>;
+  places: Partial<Record<Emplacement, Zone>>;
 }
 const PHOTO_MOCKUPS: Record<string, PhotoMockup> = {
   'tshirt:#E4D6BD': {
     src: '/personnalisateur/mockups/tshirt-sable-face.jpg',
     places: {
-      face: { cx: 50, cy: 47, widthPctAt100: 24 },
-      coeur: { cx: 62, cy: 39, widthPctAt100: 9.5 },
+      face: { x: 33, y: 28, w: 34, h: 40, maxWidthPct: 24 },
+      coeur: { x: 55, y: 32, w: 18, h: 16, maxWidthPct: 9.5 },
     },
   },
 };
 
-function photoMockupFor(item: SavedItem, place: Emplacement): { mockup: PhotoMockup; zone: PhotoZone } | null {
+function photoMockupFor(item: SavedItem, place: Emplacement): { mockup: PhotoMockup; zone: Zone } | null {
   const mockup = PHOTO_MOCKUPS[`${item.garment}:${item.color.hex}`];
   const zone = mockup?.places[place];
   return mockup && zone ? { mockup, zone } : null;
@@ -94,23 +112,23 @@ function layerVisu(item: SavedItem, layer: Layer): string {
 
   const photo = photoMockupFor(item, layer.place);
   if (photo) {
-    const w = photo.zone.widthPctAt100 * layer.w;
+    const pos = positionInZone(photo.zone, layer);
     return `<div class="bat-visu bat-visu-photo">
     <img class="bat-visu-photo-bg" src="${photo.mockup.src}" alt="Textile porté" />
-    ${layer.img ? `<img class="bat-visu-photo-overlay" src="${layer.img}" alt="Visuel à valider" style="left:${photo.zone.cx}%;top:${photo.zone.cy}%;width:${w}%;transform:translate(-50%,-50%) rotate(${layer.rot}deg)" />` : ''}
+    ${layer.img ? `<img class="bat-visu-img" src="${layer.img}" alt="Visuel à valider" style="left:${pos.cx}%;top:${pos.cy}%;width:${pos.w}%;transform:translate(-50%,-50%) rotate(${layer.rot}deg)" />` : ''}
     <span class="bat-visu-pos bat-visu-pos-photo">${PLACE_NOTE[layer.place]}</span>
   </div>
   ${cotes}`;
   }
 
-  const box = PLACE_BOX[layer.place];
+  const zone = PLACE_ZONE[layer.place];
+  const pos = positionInZone(zone, layer);
   const bg = item.color.hex;
   const border = estClair(bg) ? 'var(--ligne)' : bg;
   return `<div class="bat-visu" style="background:${bg};border-color:${border}">
     <div class="bat-visu-collar"></div>
-    <div class="bat-visu-zone" style="width:${box.width};height:${box.height};margin:${box.margin}">
-      ${layer.img ? `<img src="${layer.img}" alt="Visuel à valider" />` : ''}
-    </div>
+    <div class="bat-visu-zone" style="left:${zone.x}%;top:${zone.y}%;width:${zone.w}%;height:${zone.h}%"></div>
+    ${layer.img ? `<img class="bat-visu-img" src="${layer.img}" alt="Visuel à valider" style="left:${pos.cx}%;top:${pos.cy}%;width:${pos.w}%;transform:translate(-50%,-50%) rotate(${layer.rot}deg)" />` : ''}
     <span class="bat-visu-pos" style="color:${estClair(bg) ? 'var(--bat-accent)' : '#fff'};left:10px;${layer.place === 'coeur' ? 'bottom:10px' : 'top:22px'}">${PLACE_NOTE[layer.place]}</span>
   </div>
   ${cotes}`;
