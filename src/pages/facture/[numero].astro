@@ -1,0 +1,29 @@
+---
+// Une page statique par facture existante en base au moment du build —
+// voir src/lib/commandes.ts pour le choix (régénération au déploiement
+// plutôt que rendu côté navigateur, cf. design_handoff_devis_facture/README.md).
+import Layout from '../../layouts/Layout.astro';
+import DocumentCommercial from '../../components/DocumentCommercial.astro';
+import { fetchCommandes } from '../../lib/commandes';
+import '../../styles/global.css';
+
+export async function getStaticPaths() {
+  const commandes = await fetchCommandes('facture');
+  return commandes.map((c) => ({ params: { numero: c.numero }, props: { commande: c } }));
+}
+
+const { commande } = Astro.props;
+---
+
+<Layout title={`Facture ${commande.numero} — Presstee`} description={`Facture ${commande.numero} — ${commande.objet}`}>
+	<DocumentCommercial
+		type="facture"
+		numero={commande.numero}
+		dateEmission={commande.dateEmission}
+		dateEcheance={commande.dateEcheance}
+		objet={commande.objet}
+		client={commande.client}
+		lignes={commande.lignes}
+		frais={commande.frais}
+	/>
+</Layout>

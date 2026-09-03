@@ -10,6 +10,9 @@
   --gris:#6C6580;
   --gris-clair:#EDEAF6;
   --ligne:#E7E3F2;
+  /* Lavande très clair — fond de la carte client sur les documents
+     commerciaux (devis/facture), cf. src/components/DocumentCommercial.astro. */
+  --lavande:#F7F5FC;
   /* Utilisée par produits.css/techniques.css (fonds de vignette, en-têtes
      de tableau...) mais jamais définie : var(--voile) y retombait donc
      silencieusement sur transparent. Fixée ici à sa valeur de fait pour
