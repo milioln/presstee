@@ -1,0 +1,28 @@
+/* Pages compte (connexion/inscription/tableau de bord) — même langage
+   visuel que le reste du site (tokens de global.css), formulaire
+   centré dans une carte comme les side-card de techniques.css. */
+
+.compteWrap{max-width:420px;margin:0 auto;padding:40px 0 90px}
+
+.compteCard{border:1.5px solid var(--ligne);border-radius:var(--r);padding:32px;background:#fff}
+.compteCard h2{font-family:'Sora',sans-serif;font-size:1.3rem;margin:0 0 6px;letter-spacing:-0.02em}
+.compteCard .lede{color:var(--gris);font-size:.94rem;margin:0 0 24px}
+
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+.field label{font-family:'Sora',sans-serif;font-size:.85rem;font-weight:600}
+.field input{border:1.5px solid var(--ligne);border-radius:12px;padding:12px 14px;font-family:'Manrope',system-ui,sans-serif;font-size:15px;color:var(--encre);background:#fff}
+.field input:focus{outline:2px solid var(--indigo);outline-offset:1px;border-color:var(--indigo)}
+.field .hint{font-size:.8rem;color:var(--gris);margin:0}
+
+.formError{background:#FBEAEA;color:#B23A3A;border-radius:12px;padding:11px 14px;font-size:.88rem;margin-bottom:16px;display:none}
+.formError.show{display:block}
+
+.compteCard .btn{width:100%;border:0;margin-top:4px}
+.compteSwitch{text-align:center;font-size:.9rem;color:var(--gris);margin-top:20px}
+.compteSwitch a{color:var(--indigo);font-weight:600;text-decoration:none}
+.compteSwitch a:hover{text-decoration:underline}
+
+.compteAccount{display:flex;flex-direction:column;gap:16px}
+.compteAccount .row{display:flex;justify-content:space-between;align-items:center;font-size:.94rem}
+.compteAccount .row b{font-family:'Sora',sans-serif;font-weight:600}
+.compteLoading{text-align:center;color:var(--gris);padding:40px 0}

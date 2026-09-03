@@ -1,0 +1,88 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import '../../styles/global.css';
+import '../../styles/techniques.css';
+import '../../styles/compte.css';
+---
+
+<Layout title="Créer un compte — Presstee" description="Créez votre compte Presstee pour retrouver vos projets d'un appareil à l'autre.">
+	<Header />
+	<main>
+		<section class="tech-hero">
+			<div class="wrap">
+				<div class="crumb"><a href="/">Accueil</a> / Compte</div>
+				<h1>Créer un compte.</h1>
+			</div>
+		</section>
+
+		<div class="wrap">
+			<div class="compteWrap">
+				<div class="compteCard">
+					<h2>Bienvenue chez Presstee</h2>
+					<p class="lede">Créez votre compte pour retrouver vos projets et vos devis.</p>
+
+					<div class="formError" id="formError"></div>
+
+					<form id="registerForm" novalidate>
+						<div class="field">
+							<label for="email">Adresse e-mail</label>
+							<input type="email" id="email" name="email" autocomplete="email" required />
+						</div>
+						<div class="field">
+							<label for="password">Mot de passe</label>
+							<input type="password" id="password" name="password" autocomplete="new-password" minlength="8" required />
+							<p class="hint">8 caractères minimum.</p>
+						</div>
+						<button type="submit" class="btn" id="submitBtn">Créer mon compte</button>
+					</form>
+
+					<p class="compteSwitch">Déjà un compte ? <a href="/compte/connexion">Se connecter</a></p>
+				</div>
+			</div>
+		</div>
+	</main>
+	<Footer />
+
+	<script>
+		const form = document.getElementById('registerForm') as HTMLFormElement;
+		const errorBox = document.getElementById('formError')!;
+		const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement;
+
+		function showError(msg: string): void {
+			errorBox.textContent = msg;
+			errorBox.classList.add('show');
+		}
+
+		form.addEventListener('submit', async (e) => {
+			e.preventDefault();
+			errorBox.classList.remove('show');
+			submitBtn.disabled = true;
+			submitBtn.textContent = 'Création…';
+
+			const email = (document.getElementById('email') as HTMLInputElement).value.trim();
+			const password = (document.getElementById('password') as HTMLInputElement).value;
+
+			try {
+				const res = await fetch('/api/register.php', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ email, password }),
+				});
+				const data = await res.json();
+				if (!res.ok || !data.ok) {
+					showError(data.error || "Une erreur est survenue, réessayez.");
+					submitBtn.disabled = false;
+					submitBtn.textContent = 'Créer mon compte';
+					return;
+				}
+				window.location.href = '/compte';
+			} catch {
+				showError('Impossible de contacter le serveur. Réessayez.');
+				submitBtn.disabled = false;
+				submitBtn.textContent = 'Créer mon compte';
+			}
+		});
+	</script>
+</Layout>

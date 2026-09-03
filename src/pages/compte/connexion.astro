@@ -1,0 +1,87 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import '../../styles/global.css';
+import '../../styles/techniques.css';
+import '../../styles/compte.css';
+---
+
+<Layout title="Connexion — Presstee" description="Connectez-vous à votre compte Presstee.">
+	<Header />
+	<main>
+		<section class="tech-hero">
+			<div class="wrap">
+				<div class="crumb"><a href="/">Accueil</a> / Compte</div>
+				<h1>Connexion.</h1>
+			</div>
+		</section>
+
+		<div class="wrap">
+			<div class="compteWrap">
+				<div class="compteCard">
+					<h2>Content de vous revoir</h2>
+					<p class="lede">Connectez-vous pour retrouver vos projets.</p>
+
+					<div class="formError" id="formError"></div>
+
+					<form id="loginForm" novalidate>
+						<div class="field">
+							<label for="email">Adresse e-mail</label>
+							<input type="email" id="email" name="email" autocomplete="email" required />
+						</div>
+						<div class="field">
+							<label for="password">Mot de passe</label>
+							<input type="password" id="password" name="password" autocomplete="current-password" required />
+						</div>
+						<button type="submit" class="btn" id="submitBtn">Se connecter</button>
+					</form>
+
+					<p class="compteSwitch">Pas encore de compte ? <a href="/compte/inscription">Créer un compte</a></p>
+				</div>
+			</div>
+		</div>
+	</main>
+	<Footer />
+
+	<script>
+		const form = document.getElementById('loginForm') as HTMLFormElement;
+		const errorBox = document.getElementById('formError')!;
+		const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement;
+
+		function showError(msg: string): void {
+			errorBox.textContent = msg;
+			errorBox.classList.add('show');
+		}
+
+		form.addEventListener('submit', async (e) => {
+			e.preventDefault();
+			errorBox.classList.remove('show');
+			submitBtn.disabled = true;
+			submitBtn.textContent = 'Connexion…';
+
+			const email = (document.getElementById('email') as HTMLInputElement).value.trim();
+			const password = (document.getElementById('password') as HTMLInputElement).value;
+
+			try {
+				const res = await fetch('/api/login.php', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ email, password }),
+				});
+				const data = await res.json();
+				if (!res.ok || !data.ok) {
+					showError(data.error || 'Une erreur est survenue, réessayez.');
+					submitBtn.disabled = false;
+					submitBtn.textContent = 'Se connecter';
+					return;
+				}
+				window.location.href = '/compte';
+			} catch {
+				showError('Impossible de contacter le serveur. Réessayez.');
+				submitBtn.disabled = false;
+				submitBtn.textContent = 'Se connecter';
+			}
+		});
+	</script>
+</Layout>

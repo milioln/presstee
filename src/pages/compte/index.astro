@@ -1,0 +1,63 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import '../../styles/global.css';
+import '../../styles/techniques.css';
+import '../../styles/compte.css';
+---
+
+<Layout title="Mon compte — Presstee" description="Votre compte Presstee.">
+	<Header />
+	<main>
+		<section class="tech-hero">
+			<div class="wrap">
+				<div class="crumb"><a href="/">Accueil</a> / Compte</div>
+				<h1>Mon compte.</h1>
+			</div>
+		</section>
+
+		<div class="wrap">
+			<div class="compteWrap">
+				<div class="compteCard" id="compteCard">
+					<p class="compteLoading" id="loading">Chargement…</p>
+				</div>
+			</div>
+		</div>
+	</main>
+	<Footer />
+
+	<script>
+		const card = document.getElementById('compteCard')!;
+
+		function renderLoggedIn(email: string): void {
+			card.innerHTML = `
+				<h2>Mon compte</h2>
+				<div class="compteAccount">
+					<div class="row"><span>Adresse e-mail</span><b>${email}</b></div>
+					<button type="button" class="btn btn-gris" id="logoutBtn">Se déconnecter</button>
+				</div>
+			`;
+			document.getElementById('logoutBtn')!.addEventListener('click', async () => {
+				await fetch('/api/logout.php', { method: 'POST' });
+				window.location.href = '/';
+			});
+		}
+
+		async function init(): Promise<void> {
+			try {
+				const res = await fetch('/api/me.php');
+				const data = await res.json();
+				if (data.authenticated) {
+					renderLoggedIn(data.email);
+				} else {
+					window.location.href = '/compte/connexion';
+				}
+			} catch {
+				card.innerHTML = `<p class="formError show">Impossible de contacter le serveur. Réessayez plus tard.</p>`;
+			}
+		}
+
+		init();
+	</script>
+</Layout>

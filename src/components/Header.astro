@@ -18,6 +18,7 @@ import Logo from './Logo.astro';
 			<a href="/#creations">Réalisations</a>
 			<a href="/#commander">Contact</a>
 			<a href="/panier" class="cart-link">Panier<span class="cart-badge" id="headerCartCount" style="display:none">0</span></a>
+			<a href="/compte/connexion" id="accountLink">Connexion</a>
 		</nav>
 	</div>
 </header>
@@ -43,4 +44,18 @@ import Logo from './Logo.astro';
 	} catch {
 		// Stockage indisponible (navigation privée...) : le badge reste masqué.
 	}
+
+	fetch('/api/me.php')
+		.then((r) => r.json())
+		.then((data) => {
+			if (data.authenticated) {
+				const link = document.getElementById('accountLink') as HTMLAnchorElement;
+				link.textContent = 'Mon compte';
+				link.href = '/compte';
+			}
+		})
+		.catch(() => {
+			// API indisponible (hors ligne, config serveur pas encore faite...) :
+			// le lien reste sur "Connexion" par défaut.
+		});
 </script>
