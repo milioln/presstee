@@ -37,9 +37,17 @@
 .contact-pill:hover{border-color:var(--indigo)}
 .contact-pill input{accent-color:var(--indigo);width:15px;height:15px}
 
-.contact-file{border:1.5px dashed var(--ligne);border-radius:14px;padding:20px}
+.contact-file{border:1.5px dashed var(--ligne);border-radius:14px;padding:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;cursor:pointer;transition:border-color .15s}
+.contact-file:hover{border-color:var(--indigo)}
+.contact-file.has-file{border-style:solid;border-color:var(--indigo)}
 .contact-file-title{font-family:'Sora',sans-serif;font-size:.98rem;margin-bottom:4px}
 .contact-file-note{color:var(--gris);font-size:13px;line-height:1.5}
+.contact-file-btn{border:1.5px solid var(--ligne);border-radius:100px;padding:10px 20px;font-size:13.5px;font-family:'Sora',sans-serif;flex-shrink:0}
+.contact-file:hover .contact-file-btn{border-color:var(--indigo)}
+.contact-file-status{font-size:13px;margin-top:-4px}
+.contact-file-status.ok{color:#1F5A4A}
+.contact-file-status.error{color:#B23B2E}
+.contact-file-status.busy{color:var(--gris)}
 
 .contact-submit{margin-top:4px;align-self:flex-start}
 

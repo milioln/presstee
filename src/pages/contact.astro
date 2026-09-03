@@ -5,16 +5,22 @@
 // (panier, simulateur, bon à tirer) plutôt que d'être désactivé en
 // attendant un vrai backend : mailto ne dépend d'aucun SIRET ni serveur,
 // c'est justement pour ça qu'il est déjà utilisé partout ici (cf.
-// cart.ts). Le champ "joindre un fichier" du gabarit ne peut pas
-// fonctionner par e-mail (un lien mailto: ne peut pas attacher de
-// pièce jointe) : remplacé par une consigne claire plutôt que par un
-// bouton qui ne ferait rien.
+// cart.ts). Un lien mailto: ne peut en revanche pas transporter de
+// pièce jointe à lui seul : le visuel est donc téléversé séparément
+// (public/api/upload-visuel-contact.php, endpoint public sans clé —
+// validation par extension + signature du fichier, jamais par le nom
+// ou le type déclaré par le client) puis son lien est inclus dans le
+// corps du mail, plutôt que de demander au client de le joindre
+// lui-même après coup.
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { siteConfig } from '../config/site';
+import { LABELS_TYPE_TEXTILE, type TypeTextile } from '../lib/produits-types';
 import '../styles/global.css';
 import '../styles/contact.css';
+
+const typesTextile = Object.keys(LABELS_TYPE_TEXTILE) as TypeTextile[];
 ---
 
 <Layout title="Contact — Presstee" description="Décrivez votre projet, recevez une recommandation de textile et un devis chiffré sous 24 heures ouvrées.">
@@ -57,6 +63,15 @@ import '../styles/contact.css';
 						<div class="contact-sep"></div>
 
 						<div class="contact-field">
+							<span class="contact-label">Type de textile souhaité</span>
+							<div class="contact-pills">
+								{typesTextile.map((t, i) => (
+									<label class="contact-pill"><input type="radio" name="typeTextile" value={LABELS_TYPE_TEXTILE[t]} checked={i === 0} />{LABELS_TYPE_TEXTILE[t]}</label>
+								))}
+							</div>
+						</div>
+
+						<div class="contact-field">
 							<span class="contact-label">Technique souhaitée</span>
 							<div class="contact-pills">
 								<label class="contact-pill"><input type="radio" name="technique" value="Sérigraphie" />Sérigraphie</label>
@@ -82,14 +97,16 @@ import '../styles/contact.css';
 							<textarea id="cProjet" rows="5" placeholder="Support, nombre de couleurs, emplacement du marquage, tailles…" required></textarea>
 						</label>
 
-						<div class="contact-file">
+						<label class="contact-file" for="cFichier">
 							<div>
 								<div class="contact-file-title">Visuel à imprimer</div>
-								<div class="contact-file-note">Une fois l'e-mail ouvert, joignez votre fichier (PDF, AI, EPS, SVG ou PNG en haute résolution) directement dedans — un lien de demande ne peut pas transporter de pièce jointe à votre place.</div>
+								<div class="contact-file-note" id="cFichierNote">PDF, AI, EPS, SVG, PNG, JPG ou WEBP — 20 Mo maximum. Facultatif, mais accélère le chiffrage.</div>
 							</div>
-						</div>
+							<span class="contact-file-btn">Choisir un fichier</span>
+							<input type="file" id="cFichier" accept=".pdf,.ai,.eps,.svg,.png,.jpg,.jpeg,.webp" hidden />
+						</label>
 
-						<button type="submit" class="btn contact-submit">Envoyer la demande</button>
+						<button type="submit" class="btn contact-submit" id="contactSubmit">Envoyer la demande</button>
 					</form>
 				</div>
 
@@ -167,31 +184,76 @@ import '../styles/contact.css';
 		return document.getElementById(id) as T;
 	}
 
-	document.getElementById('contactForm')!.addEventListener('submit', (e) => {
+	const NOTE_DEFAUT = el('cFichierNote').textContent!;
+	const fichierInput = el<HTMLInputElement>('cFichier');
+	const fichierLabel = fichierInput.closest<HTMLLabelElement>('.contact-file')!;
+
+	fichierInput.addEventListener('change', () => {
+		const f = fichierInput.files?.[0];
+		fichierLabel.classList.toggle('has-file', !!f);
+		el('cFichierNote').textContent = f ? `${f.name} (${(f.size / 1024 / 1024).toFixed(1)} Mo)` : NOTE_DEFAUT;
+	});
+
+	async function televerserFichier(f: File): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
+		const form = new FormData();
+		form.append('fichier', f);
+		try {
+			const res = await fetch('/api/upload-visuel-contact.php', { method: 'POST', body: form });
+			const data = await res.json();
+			if (!res.ok || !data.ok) return { ok: false, error: data.error || 'Échec du téléversement.' };
+			return { ok: true, url: data.url };
+		} catch {
+			return { ok: false, error: 'Échec du téléversement (connexion).' };
+		}
+	}
+
+	document.getElementById('contactForm')!.addEventListener('submit', async (e) => {
 		e.preventDefault();
+		const submitBtn = el<HTMLButtonElement>('contactSubmit');
 		const nom = el<HTMLInputElement>('cNom').value.trim();
 		const structure = el<HTMLInputElement>('cStructure').value.trim();
 		const emailClient = el<HTMLInputElement>('cEmail').value.trim();
 		const tel = el<HTMLInputElement>('cTel').value.trim();
+		const typeTextile = (document.querySelector('input[name="typeTextile"]:checked') as HTMLInputElement)?.value || '';
 		const technique = (document.querySelector('input[name="technique"]:checked') as HTMLInputElement)?.value || 'À conseiller';
 		const qte = el<HTMLInputElement>('cQte').value.trim();
 		const date = el<HTMLInputElement>('cDate').value.trim();
 		const projet = el<HTMLTextAreaElement>('cProjet').value.trim();
+		const fichier = fichierInput.files?.[0] ?? null;
+
+		let visuelUrl: string | null = null;
+		if (fichier) {
+			submitBtn.disabled = true;
+			submitBtn.textContent = 'Envoi du visuel…';
+			const resultat = await televerserFichier(fichier);
+			if (!resultat.ok) {
+				submitBtn.disabled = false;
+				submitBtn.textContent = 'Envoyer la demande';
+				el('cFichierNote').textContent = resultat.error;
+				fichierLabel.classList.remove('has-file');
+				return;
+			}
+			visuelUrl = new URL(resultat.url, window.location.origin).toString();
+			submitBtn.textContent = 'Envoyer la demande';
+			submitBtn.disabled = false;
+		}
 
 		const lignes = [
 			`Nom : ${nom}`,
 			structure ? `Structure : ${structure}` : null,
 			`E-mail : ${emailClient}`,
 			tel ? `Téléphone : ${tel}` : null,
+			`Type de textile souhaité : ${typeTextile}`,
 			`Technique souhaitée : ${technique}`,
 			`Quantité : ${qte}`,
 			date ? `Date souhaitée : ${date}` : null,
 			'',
 			'Le projet :',
 			projet,
+			visuelUrl ? `\nVisuel joint : ${visuelUrl}` : null,
 		].filter((l): l is string => l != null);
 
-		const body = `Bonjour,\n\n${lignes.join('\n')}\n\n(Pensez à joindre votre visuel à cet e-mail avant de l'envoyer.)`;
+		const body = `Bonjour,\n\n${lignes.join('\n')}`;
 		const url = `mailto:${siteConfig.email}?subject=${encodeURIComponent(`Demande de devis — ${nom || 'contact site'}`)}&body=${encodeURIComponent(body)}`;
 		window.location.href = url;
 	});
