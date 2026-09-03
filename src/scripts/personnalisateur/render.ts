@@ -25,11 +25,21 @@ export const TEXTURE_SIZE = 2048;
 // "face" — non calibré aussi précisément faute de vue arrière testée.
 // La plage verticale (h) va nettement au-delà d'un cadrage "poitrine"
 // classique pour laisser remonter un visuel jusque près du col.
+// "coeur" recalibré le 2026-09-03 (Milio a signalé que ça retombait au
+// niveau du bas du tee-shirt) : le panneau avant est inversé
+// verticalement dans l'atlas (cf. buildTextureDataUrl ci-dessous), donc
+// un y proche du haut du patron (petit y) retombe près de l'ourlet une
+// fois porté — l'ancien y:170 y était presque. Repéré en superposant le
+// rectangle sur l'atlas et en mesurant le contour de l'encolure par
+// échantillonnage de pixels (le panneau va de y≈112, l'ourlet, à
+// y≈1020-1040 selon x, l'encolure) : le nouveau y place le centre par
+// défaut vers 80 % de cette hauteur, sous l'encolure, au niveau du
+// cœur — à réajuster si un vrai rendu à plat le dément.
 // Exporté : réutilisé par drag3d.ts pour convertir les coordonnées UV
 // du raycast en repère du visuel (layer.x/layer.y).
 export const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: number }> = {
   face: { x: 370, y: 210, w: 360, h: 750 },
-  coeur: { x: 630, y: 170, w: 130, h: 320 },
+  coeur: { x: 630, y: 750, w: 130, h: 280 },
   dos: { x: 1270, y: 210, w: 360, h: 750 },
 };
 

@@ -229,6 +229,8 @@ input[type=file]{display:none}
 .pz-page .bat-cotes .val{font-family:'Archivo',sans-serif}
 .pz-page .bat-info span.label{color:var(--muted)}
 
+.batView-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:14px;flex-wrap:wrap}
+.batView-head .mini-btn{white-space:nowrap;flex-shrink:0}
 .batConfirm{padding-top:16px}
 .batConfirm .hint{margin-top:0;margin-bottom:12px}
 .batConfirmed{padding-top:16px;display:flex;flex-direction:column;gap:8px}

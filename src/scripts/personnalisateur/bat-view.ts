@@ -49,6 +49,18 @@ export function renderBATView(): void {
 }
 
 export function bindBATView(): void {
+  el('batRefresh').addEventListener('click', () => {
+    renderBATView();
+    const btn = el<HTMLButtonElement>('batRefresh');
+    const original = btn.textContent;
+    btn.textContent = 'Actualisé ✓';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.disabled = false;
+    }, 1200);
+  });
+
   el('batConfirmBtn').addEventListener('click', () => {
     const item = snapshotCurrent();
     S.batConfirme = { at: Date.now(), signature: signatureOf(item) };
