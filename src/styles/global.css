@@ -59,21 +59,6 @@ header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop
 .btn-gris{background:var(--gris);color:#fff}
 .btn-gris:hover{background:#57516A}
 
-/* ---------- écran 1 : hero ---------- */
-.hero{padding:clamp(96px,17vh,164px) 0 clamp(84px,12vh,130px);text-align:center;position:relative}
-.hero .regmark{top:38px;right:38px;color:var(--gris)}
-@media(max-width:700px){.hero .regmark{display:none}}
-.hero h1{font-size:clamp(3rem,12.2vw,10.2rem);letter-spacing:-0.055em;line-height:1}
-.hero-logo{display:inline-block;height:clamp(5rem,17vw,15rem);width:auto}
-.hero p{margin:36px auto 0;color:var(--gris);font-size:clamp(1.08rem,2.4vw,1.5rem);max-width:24ch;font-family:'Sora',sans-serif;letter-spacing:-0.02em;line-height:1.35}
-.hero .btn{margin-top:42px}
-.steps3{margin-top:44px;display:flex;justify-content:center;gap:34px;flex-wrap:wrap;color:var(--gris);font-size:14.5px}
-.steps3 span{display:flex;align-items:center;gap:9px}
-.steps3 b{width:23px;height:23px;border-radius:8px;background:var(--jaune);color:var(--encre);display:grid;place-items:center;font-family:'Sora',sans-serif;font-size:12px;font-weight:600}
-.steps3 span:nth-child(1) b{transform:rotate(-6deg)}
-.steps3 span:nth-child(2) b{transform:rotate(4deg)}
-.steps3 span:nth-child(3) b{transform:rotate(-3deg)}
-
 /* ---------- écran 2 : positionnement ---------- */
 .split{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(40px,7vw,92px);align-items:center}
 h2{font-size:clamp(2.05rem,5.2vw,3.5rem)}
