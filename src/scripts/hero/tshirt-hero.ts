@@ -23,9 +23,9 @@ const TEXTURE_URL = '/personnalisateur/model/textures/Material_baseColor.png';
 // affichée à l'écran qu'avant cet élargissement (échelle × ancienne
 // largeur / nouvelle largeur), pas la même fraction.
 const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: number }> = {
-	face: { x: 304, y: 210, w: 620, h: 750 },
+	face: { x: 324, y: 210, w: 580, h: 750 },
 	coeur: { x: 630, y: 750, w: 130, h: 280 },
-	dos: { x: 1218, y: 210, w: 620, h: 750 },
+	dos: { x: 1238, y: 210, w: 580, h: 750 },
 };
 
 interface LogoDef {

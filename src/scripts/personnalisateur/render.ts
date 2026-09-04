@@ -43,13 +43,15 @@ export const TEXTURE_SIZE = 2048;
 // et en comparant visuellement où elles tombent par rapport aux
 // coutures). "dos" n'est plus une simple symétrie de "face" : mesuré
 // indépendamment, son panneau s'est révélé très proche (comme "face",
-// à quelques px près) mais ce n'est plus une hypothèse.
+// à quelques px près) mais ce n'est plus une hypothèse. Resserré à
+// 580px le jour même (Milio : « réduit un tout petit peu »), toujours
+// centré sur le panneau mesuré.
 // Exporté : réutilisé par drag3d.ts pour convertir les coordonnées UV
 // du raycast en repère du visuel (layer.x/layer.y).
 export const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: number }> = {
-  face: { x: 304, y: 210, w: 620, h: 750 },
+  face: { x: 324, y: 210, w: 580, h: 750 },
   coeur: { x: 630, y: 750, w: 130, h: 280 },
-  dos: { x: 1218, y: 210, w: 620, h: 750 },
+  dos: { x: 1238, y: 210, w: 580, h: 750 },
 };
 
 let baseImgPromise: Promise<HTMLImageElement> | null = null;
