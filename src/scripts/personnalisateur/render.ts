@@ -190,6 +190,7 @@ export function paintWidth(): void {
   const zone = currentZoneCm();
   const wEl = el('wCm');
   const pEl = el('wPct');
+  const lpSize = document.getElementById('lpSize') as HTMLInputElement | null;
   if (!layer) {
     wEl.textContent = '';
     pEl.textContent = '';
@@ -197,11 +198,28 @@ export function paintWidth(): void {
   }
   wEl.textContent = (layer.w * zone).toFixed(1).replace('.', ',') + ' cm';
   pEl.textContent = `${Math.round(layer.w * 100)} % de la zone imprimable (${zone} cm)`;
+  // Curseur de la popup sur le mockup — même valeur que les boutons du
+  // panneau latéral, synchronisée dans les deux sens (cf. layer-popup.ts).
+  if (lpSize) lpSize.value = String(Math.round(layer.w * 100));
+}
+
+// Ramène un angle quelconque (les boutons ⟲/⟳ l'incrémentent sans
+// limite) dans [-180, 180] : au-delà, le curseur de rotation (borné à
+// cette plage) ne pourrait plus refléter l'angle réel du calque.
+function normalizeDeg(deg: number): number {
+  return (((deg % 360) + 540) % 360) - 180;
 }
 
 export function paintRotate(): void {
   const layer = activeLayer();
-  el('rDeg').textContent = `${Math.round(layer ? layer.rot : 0)}°`;
+  const deg = Math.round(normalizeDeg(layer ? layer.rot : 0));
+  el('rDeg').textContent = `${deg}°`;
+  const rSlider = document.getElementById('rSlider') as HTMLInputElement | null;
+  if (rSlider) rSlider.value = String(deg);
+  const lpRotate = document.getElementById('lpRotate') as HTMLInputElement | null;
+  const lpRotateVal = document.getElementById('lpRotateVal');
+  if (lpRotate) lpRotate.value = String(deg);
+  if (lpRotateVal) lpRotateVal.textContent = `${deg}°`;
 }
 
 export function paintSizeDist(): void {

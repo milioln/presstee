@@ -14,7 +14,7 @@ export function loadDataUrl(dataUrl: string, name: string, isVector: boolean, fo
   syncEditor();
 }
 
-function loadFile(f: File): void {
+export function loadFile(f: File): void {
   const r = new FileReader();
   r.onload = () => loadDataUrl(r.result as string, f.name, f.type.includes('svg'));
   r.readAsDataURL(f);
@@ -43,6 +43,40 @@ export function bindFileInput(): void {
     })
   );
   drop.addEventListener('drop', (e: DragEvent) => {
+    const f = e.dataTransfer?.files?.[0];
+    if (f && f.type.startsWith('image/')) loadFile(f);
+  });
+}
+
+// Bouton « + » posé directement sur le mockup 3D, et dépôt de fichier
+// (glisser-déposer depuis le bureau) directement sur la zone du modèle
+// — en plus de la zone de dépôt du panneau latéral, pas à sa place :
+// certains clients cherchent l'ajout de visuel au plus près de ce
+// qu'ils regardent (le t-shirt), pas dans la barre latérale.
+export function bindStageAdd(): void {
+  const frame = document.getElementById('frame');
+  const stageFile = document.getElementById('stageFile') as HTMLInputElement | null;
+  if (!frame || !stageFile) return;
+
+  stageFile.addEventListener('change', (e) => {
+    const f = (e.target as HTMLInputElement).files?.[0];
+    if (f) loadFile(f);
+    stageFile.value = '';
+  });
+
+  ['dragenter', 'dragover'].forEach((t) =>
+    frame.addEventListener(t, (e) => {
+      e.preventDefault();
+      frame.classList.add('over');
+    })
+  );
+  ['dragleave', 'drop'].forEach((t) =>
+    frame.addEventListener(t, (e) => {
+      e.preventDefault();
+      frame.classList.remove('over');
+    })
+  );
+  frame.addEventListener('drop', (e: DragEvent) => {
     const f = e.dataTransfer?.files?.[0];
     if (f && f.type.startsWith('image/')) loadFile(f);
   });

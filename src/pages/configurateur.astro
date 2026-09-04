@@ -63,10 +63,11 @@ import '../styles/personnalisateur.css';
 								<button class="btn btn-secondary btn-icon" id="pDown" aria-label="Déplacer vers le bas">↓</button>
 							</div>
 							<div class="widthctl" style="margin-top:14px">
-								<button class="btn btn-secondary btn-icon" id="rMinus" aria-label="Incliner vers la gauche">⟲</button>
+								<button class="btn btn-secondary btn-icon" id="rMinus" aria-label="Incliner vers la gauche, 1°">⟲</button>
 								<div class="widthval" id="rDeg">0°</div>
-								<button class="btn btn-secondary btn-icon" id="rPlus" aria-label="Incliner vers la droite">⟳</button>
+								<button class="btn btn-secondary btn-icon" id="rPlus" aria-label="Incliner vers la droite, 1°">⟳</button>
 							</div>
+							<input type="range" id="rSlider" class="rslider" min="-180" max="180" step="1" value="0" aria-label="Rotation précise, au degré près" />
 							<button class="btn btn-secondary btn-block" id="cropBtn" style="display:none">Recadrer l'image</button>
 						</div>
 						<p class="hint" id="adjustEmpty" style="display:none">Ajoutez un visuel pour cet emplacement pour le positionner.</p>
@@ -94,6 +95,11 @@ import '../styles/personnalisateur.css';
 							max-camera-orbit="auto 115deg auto"
 						></model-viewer>
 						<button class="btn btn-secondary" id="vReset">Réinitialiser la vue</button>
+						<label class="frame-add-btn" for="stageFile" title="Glissez-déposez un fichier ici, ou cliquez pour en choisir un">
+							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+							Ajouter un visuel
+							<input type="file" id="stageFile" accept="image/png,image/jpeg,image/svg+xml,image/webp" hidden />
+						</label>
 					</div>
 					<div class="filebar">
 						<div class="layerStrip" id="layerStrip" style="display:none"></div>
@@ -244,10 +250,25 @@ import '../styles/personnalisateur.css';
 	</div>
 
 	<div class="layerPopup" id="layerPopup" style="display:none">
-		<button type="button" id="lpCrop" aria-label="Recadrer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M2 6h14a2 2 0 0 1 2 2v14"/></svg></button>
-		<button type="button" id="lpMove" aria-label="Déplacer vers un autre emplacement"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></button>
-		<div class="layerPopup-colors" id="lpColors"></div>
-		<button type="button" id="lpDelete" aria-label="Supprimer">×</button>
+		<div class="lp-row">
+			<button type="button" id="lpCrop" aria-label="Recadrer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M2 6h14a2 2 0 0 1 2 2v14"/></svg></button>
+			<div class="lp-place" id="lpPlace">
+				<button type="button" data-lp-place="face">Face</button>
+				<button type="button" data-lp-place="coeur">Cœur</button>
+				<button type="button" data-lp-place="dos">Dos</button>
+			</div>
+			<div class="layerPopup-colors" id="lpColors"></div>
+			<button type="button" id="lpDelete" aria-label="Supprimer">×</button>
+		</div>
+		<div class="lp-row lp-slider-row">
+			<span>Taille</span>
+			<input type="range" id="lpSize" min="12" max="100" step="1" aria-label="Taille du visuel" />
+		</div>
+		<div class="lp-row lp-slider-row">
+			<span>Rotation</span>
+			<input type="range" id="lpRotate" min="-180" max="180" step="1" aria-label="Rotation du visuel, au degré près" />
+			<em id="lpRotateVal">0°</em>
+		</div>
 	</div>
 
 	<div class="listOverlay" id="listOverlay" style="display:none">

@@ -112,7 +112,7 @@ export function createLayer(partial: { img: string; fileName: string; vector: bo
     colorSwatches: null,
     x: 0.5,
     y: 0.5,
-    w: 0.62,
+    w: 0.78,
     rot: 0,
   };
 }

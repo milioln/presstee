@@ -1,11 +1,13 @@
 // Popup contextuelle sur un tap (clic sans glisser) directement sur le
-// visuel affiché sur le modèle 3D : recadrer, recolorer, supprimer —
-// sans repasser par la bande de vignettes. drag3d.ts distingue le tap
-// du glisser par le déplacement total du pointeur entre pointerdown et
-// pointerup : sous quelques pixels, c'est un tap.
+// visuel affiché sur le modèle 3D : changer d'emplacement, redimensionner,
+// pivoter, recadrer, recolorer, supprimer — directement depuis le
+// mockup, sans repasser par le panneau latéral. drag3d.ts distingue le
+// tap du glisser par le déplacement total du pointeur entre pointerdown
+// et pointerup : sous quelques pixels, c'est un tap.
 import { S, saveState, activeLayer, type Layer } from './state';
 import { syncEditor } from './layers';
 import { syncPlace } from './placement';
+import { render, paintWidth, paintRotate } from './render';
 import { GARMENTS } from './garments';
 import type { Emplacement } from '../../config/parametres-metier';
 
@@ -15,16 +17,7 @@ import type { Emplacement } from '../../config/parametres-metier';
 // seulement au texte fraîchement créé.
 const RECOLOR_SWATCHES = ['#17131F', '#ffffff', '#C81E1E', '#1E4FC8', '#F2C230', '#1F8A4C', '#F2790C', '#E0499B', '#6D28D9', '#7A4B2A', '#6B7280'];
 
-const PLACE_LABEL: Record<Emplacement, string> = { face: 'Face', coeur: 'Cœur', dos: 'Dos' };
 const PLACE_ORDER: Emplacement[] = ['face', 'coeur', 'dos'];
-
-// Emplacement suivant dans le cycle Face → Cœur → Dos → Face, en
-// sautant Cœur sur les vêtements qui ne l'ont pas (casquette).
-function nextPlace(current: Emplacement): Emplacement {
-  const available = PLACE_ORDER.filter((p) => p !== 'coeur' || !GARMENTS[S.garment].noCoeur);
-  const idx = available.indexOf(current);
-  return available[(idx + 1) % available.length];
-}
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
   return document.getElementById(id) as T;
@@ -76,15 +69,23 @@ export function openLayerPopup(layer: Layer, clientX: number, clientY: number): 
   const recolorable = !!layer.knownColor;
 
   el('lpCrop').style.display = croppable ? '' : 'none';
-  const moveBtn = el<HTMLButtonElement>('lpMove');
-  const dest = nextPlace(layer.place);
-  moveBtn.title = `Déplacer vers ${PLACE_LABEL[dest]}`;
-  moveBtn.setAttribute('aria-label', `Déplacer ce visuel vers ${PLACE_LABEL[dest]}`);
+
+  const placeGroup = el('lpPlace');
+  const available = PLACE_ORDER.filter((p) => p !== 'coeur' || !GARMENTS[S.garment].noCoeur);
+  placeGroup.querySelectorAll<HTMLButtonElement>('[data-lp-place]').forEach((b) => {
+    const p = b.dataset.lpPlace as Emplacement;
+    b.style.display = available.includes(p) ? '' : 'none';
+    b.classList.toggle('on', p === layer.place);
+  });
+
   const colors = el('lpColors');
   colors.style.display = recolorable ? 'flex' : 'none';
   if (recolorable && !colors.childElementCount) {
     colors.innerHTML = RECOLOR_SWATCHES.map((hex) => `<button type="button" data-lpc="${hex}" style="background:${hex}" aria-label="Recolorer en ${hex}"></button>`).join('');
   }
+
+  paintWidth();
+  paintRotate();
 
   popup.style.display = 'flex';
   const rect = popup.getBoundingClientRect();
@@ -107,21 +108,49 @@ export function bindLayerPopup(): void {
     document.getElementById('cropBtn')?.click();
   });
 
-  el('lpMove').addEventListener('click', () => {
+  // Un bouton par emplacement (Face/Cœur/Dos) plutôt qu'un seul bouton
+  // qui fait défiler les emplacements un par un : on choisit directement
+  // la destination en un tap, au lieu de devoir parfois cliquer deux
+  // fois pour l'atteindre.
+  el('lpPlace').addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-lp-place]');
     const layer = activeLayer();
-    if (!layer) return;
+    if (!b || !layer) return;
+    const dest = b.dataset.lpPlace as Emplacement;
+    if (dest === layer.place) return;
     // Change d'emplacement plutôt que de position dans le même repère :
     // la position n'a de sens que relative à la zone d'impression de son
     // emplacement, donc on la recentre plutôt que de reporter à tort des
     // coordonnées pensées pour une autre zone (cf. state.ts, Layer.place).
-    layer.place = nextPlace(layer.place);
+    layer.place = dest;
     layer.x = 0.5;
     layer.y = 0.5;
-    S.place = layer.place;
+    S.place = dest;
     saveState();
-    closeLayerPopup();
     syncPlace();
     syncEditor();
+    // Reste ouverte (contrairement aux autres actions de cette popup) :
+    // choisir l'emplacement précède souvent un ajustement de taille ou de
+    // rotation, autant enchaîner sans rouvrir la popup d'un second tap.
+    el('lpPlace')
+      .querySelectorAll<HTMLButtonElement>('[data-lp-place]')
+      .forEach((btn) => btn.classList.toggle('on', btn.dataset.lpPlace === dest));
+  });
+
+  el('lpSize').addEventListener('input', (e) => {
+    const layer = activeLayer();
+    if (!layer) return;
+    layer.w = Math.max(0.12, Math.min(1, Number((e.target as HTMLInputElement).value) / 100));
+    paintWidth();
+    render();
+  });
+
+  el('lpRotate').addEventListener('input', (e) => {
+    const layer = activeLayer();
+    if (!layer) return;
+    layer.rot = Number((e.target as HTMLInputElement).value);
+    paintRotate();
+    render();
   });
 
   el('lpDelete').addEventListener('click', () => {

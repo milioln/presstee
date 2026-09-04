@@ -54,6 +54,7 @@
 
 .widthctl{display:flex;align-items:center;gap:10px;margin-top:14px}
 .widthval{flex:1;text-align:center;font-family:'Archivo',sans-serif;font-weight:800;font-size:15px}
+.rslider{width:100%;margin-top:8px;accent-color:var(--accent)}
 
 .posctl{display:grid;justify-items:center;gap:6px;margin-top:14px}
 .posrow{display:flex;align-items:center;gap:6px}
@@ -64,6 +65,10 @@
   background-size:26px 26px;background-position:center center}
 #stage{position:absolute;inset:0;width:100%;height:100%;--poster-color:transparent}
 #vReset{position:absolute;left:20px;top:20px;background:var(--bg)}
+.frame-add-btn{position:absolute;right:20px;bottom:20px;display:flex;align-items:center;gap:7px;background:var(--accent);color:var(--bg);border-radius:100px;padding:11px 18px 11px 14px;font-family:'Archivo',sans-serif;font-weight:800;font-size:12.5px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.18);transition:background .15s}
+.frame-add-btn:hover{background:var(--accent-600)}
+.frame.over{outline:2px dashed var(--accent);outline-offset:-2px}
+.frame.over::after{content:"Déposez le fichier ici";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--accent-100) 88%,transparent);font-family:'Archivo',sans-serif;font-weight:800;font-size:14px;color:var(--accent-800);pointer-events:none}
 
 .filebar{border-top:2px solid var(--divider);padding:18px 22px}
 
@@ -186,12 +191,21 @@ input[type=file]{display:none}
 .cropHandle[data-h=se]{right:-9px;bottom:-9px;cursor:nwse-resize}
 .cropActions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
 
-.layerPopup{position:fixed;z-index:70;display:flex;align-items:center;gap:8px;background:var(--text);padding:6px;box-shadow:0 8px 24px rgba(0,0,0,.28)}
-.layerPopup button{border:0;background:transparent;color:#fff;width:28px;height:28px;font-size:15px;line-height:1;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.layerPopup{position:fixed;z-index:70;display:flex;flex-direction:column;gap:8px;background:var(--text);padding:8px;box-shadow:0 8px 24px rgba(0,0,0,.28);width:220px}
+.layerPopup .lp-row{display:flex;align-items:center;gap:6px}
+.layerPopup button{border:0;background:transparent;color:#fff;height:28px;font-size:15px;line-height:1;cursor:pointer;padding:0 4px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .layerPopup button:hover{background:var(--accent)}
+#lpCrop,#lpDelete{width:28px}
+.lp-place{display:flex;gap:2px;flex:1}
+.lp-place button{flex:1;font-size:11px;font-family:'Archivo',sans-serif;font-weight:700;border:1px solid rgba(255,255,255,.25)}
+.lp-place button.on{background:var(--accent);border-color:var(--accent)}
 .layerPopup-colors{display:flex;gap:4px;flex-wrap:wrap;max-width:154px}
 .layerPopup-colors button{width:18px;height:18px;border:1px solid rgba(255,255,255,.35)}
 .layerPopup-colors button:hover{outline:1px solid #fff;outline-offset:1px}
+.lp-slider-row{gap:8px}
+.lp-slider-row span{color:rgba(255,255,255,.7);font-size:11px;width:44px;flex-shrink:0}
+.lp-slider-row em{color:#fff;font-size:11px;font-style:normal;width:30px;text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums}
+.lp-slider-row input[type=range]{flex:1;accent-color:var(--accent)}
 
 .recapLinks{display:flex;gap:4px;justify-content:center;margin-bottom:2px}
 

@@ -8,7 +8,7 @@ import { S, activeLayer, loadState } from './state';
 import { catalogueColoris, TAILLES } from '../../config/parametres-metier';
 import { render, paintTechs, paintRecap, paintSizeDist, paintWidth, paintRotate, syncCamera, removeColorSwatch } from './render';
 import { syncPlace, bindPlacement } from './placement';
-import { bindFileInput } from './file-input';
+import { bindFileInput, bindStageAdd } from './file-input';
 import { bindModeTabs, bindTextInput } from './text-input';
 import { bindDesignHelp, syncDesignHelp } from './design-help';
 import { bindModelDrag } from './drag3d';
@@ -143,7 +143,11 @@ function bindPosition(): void {
 }
 
 function bindRotate(): void {
-  const step = 15;
+  // Un degré par clic (et non plus 15°) : les boutons servent aux petits
+  // ajustements fins, le curseur ci-dessous aux grands mouvements — cf.
+  // demande Milio du 2026-09-04, « rotation bien plus précise, au degré
+  // près ».
+  const step = 1;
   el('rMinus').addEventListener('click', () => {
     const layer = activeLayer();
     if (!layer) return;
@@ -155,6 +159,13 @@ function bindRotate(): void {
     const layer = activeLayer();
     if (!layer) return;
     layer.rot = Math.round(layer.rot + step);
+    paintRotate();
+    render();
+  });
+  el<HTMLInputElement>('rSlider').addEventListener('input', (e) => {
+    const layer = activeLayer();
+    if (!layer) return;
+    layer.rot = Number((e.target as HTMLInputElement).value);
     paintRotate();
     render();
   });
@@ -213,6 +224,7 @@ export function init(): void {
   bindColorSwatches();
   bindResetView();
   bindFileInput();
+  bindStageAdd();
   bindModeTabs();
   bindTextInput();
   bindDesignHelp();
