@@ -68,7 +68,7 @@ const steps = [
 <section id="process">
 	<div class="wrap">
 		<h2 style="max-width:15ch">Un processus clair, étape par étape.</h2>
-		<p style="color:var(--gris);margin-top:16px">Cinq étapes, dont trois où c'est vous qui décidez. Cliquez pour voir le détail.</p>
+		<p style="color:var(--gris);margin-top:16px">Cliquez pour voir le détail.</p>
 		<div class="acc" id="acc">
 			{steps.map((s, i) => (
 				<div class:list={['stp', { open: i === 0 }]} data-i={i}>
@@ -124,6 +124,7 @@ const steps = [
 		if (!open) {
 			s.classList.add('open');
 			b.setAttribute('aria-expanded', 'true');
+			s.scrollIntoView({ block: 'start' });
 		}
 		paint();
 	});
