@@ -14,10 +14,18 @@ import { catalogueColoris, type Emplacement } from '../../config/parametres-meti
 
 const TEXTURE_URL = '/personnalisateur/model/textures/Material_baseColor.png';
 
+// Synchronisé avec src/scripts/personnalisateur/render.ts : face/dos
+// élargis et recentrés le 2026-09-04 sur la vraie largeur du panneau
+// mesurée sur l'atlas (l'ancien rect était ~40 % trop étroit et décalé
+// d'une soixantaine de px par rapport au centre réel — cf. le
+// commentaire détaillé dans render.ts). Les échelles des logos
+// ci-dessous sont ajustées en conséquence pour garder la même taille
+// affichée à l'écran qu'avant cet élargissement (échelle × ancienne
+// largeur / nouvelle largeur), pas la même fraction.
 const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: number }> = {
-	face: { x: 370, y: 210, w: 360, h: 750 },
+	face: { x: 304, y: 210, w: 620, h: 750 },
 	coeur: { x: 630, y: 750, w: 130, h: 280 },
-	dos: { x: 1270, y: 210, w: 360, h: 750 },
+	dos: { x: 1218, y: 210, w: 620, h: 750 },
 };
 
 interface LogoDef {
@@ -36,9 +44,9 @@ interface LogoDef {
 // 4 (icône seule, en grand) vraiment centré sur le dos.
 const LOGOS: LogoDef[] = [
 	{ url: '/logo/presstee-vertical.svg', place: 'coeur', scale: 0.6, cyFrac: 0.5 },
-	{ url: '/logo/presstee-horizontal.svg', place: 'face', scale: 0.6, cyFrac: 0.85 },
+	{ url: '/logo/presstee-horizontal.svg', place: 'face', scale: 0.35, cyFrac: 0.85 },
 	{ url: '/logo/presstee-icone-jaune.svg', place: 'coeur', scale: 0.6, cyFrac: 0.5 },
-	{ url: '/logo/presstee-icone.svg', place: 'dos', scale: 0.8, cyFrac: 0.6 },
+	{ url: '/logo/presstee-icone.svg', place: 'dos', scale: 0.46, cyFrac: 0.6 },
 ];
 
 // Sous-ensemble du vrai catalogue (config/parametres-metier.ts), pas une

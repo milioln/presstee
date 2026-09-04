@@ -20,11 +20,7 @@ export const TEXTURE_SIZE = 2048;
 
 // Zones d'impression calibrées empiriquement sur l'atlas de texture
 // (patron à plat 2048×2048) en affichant une grille de repères sur le
-// modèle chargé et en relevant où ils tombent sur le tissu. Le
-// panneau "dos" est estimé par symétrie horizontale du panneau
-// "face" — non calibré aussi précisément faute de vue arrière testée.
-// La plage verticale (h) va nettement au-delà d'un cadrage "poitrine"
-// classique pour laisser remonter un visuel jusque près du col.
+// modèle chargé et en relevant où ils tombent sur le tissu.
 // "coeur" recalibré le 2026-09-03 (Milio a signalé que ça retombait au
 // niveau du bas du tee-shirt) : le panneau avant est inversé
 // verticalement dans l'atlas (cf. buildTextureDataUrl ci-dessous), donc
@@ -35,12 +31,25 @@ export const TEXTURE_SIZE = 2048;
 // y≈1020-1040 selon x, l'encolure) : le nouveau y place le centre par
 // défaut vers 80 % de cette hauteur, sous l'encolure, au niveau du
 // cœur — à réajuster si un vrai rendu à plat le dément.
+// "face" et "dos" élargis le 2026-09-04 (Milio a signalé qu'un visuel à
+// 100 % de largeur n'atteignait pas la zone attendue) : l'ancienne
+// largeur (360) ne couvrait qu'environ 40 % du panneau réellement
+// disponible (mesuré par échantillonnage de pixels sur l'atlas — le
+// tissu blanc s'étend sur ~880-900px de large à hauteur de poitrine,
+// contre 360px pour la zone déclarée). Repris à 620px, centré sur le
+// panneau mesuré : assez large pour occuper la majeure partie de la
+// poitrine/du dos sans empiéter sur les coutures latérales/emmanchures
+// (vérifié en rendant plusieurs largeurs candidates sur le vrai modèle
+// et en comparant visuellement où elles tombent par rapport aux
+// coutures). "dos" n'est plus une simple symétrie de "face" : mesuré
+// indépendamment, son panneau s'est révélé très proche (comme "face",
+// à quelques px près) mais ce n'est plus une hypothèse.
 // Exporté : réutilisé par drag3d.ts pour convertir les coordonnées UV
 // du raycast en repère du visuel (layer.x/layer.y).
 export const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: number }> = {
-  face: { x: 370, y: 210, w: 360, h: 750 },
+  face: { x: 304, y: 210, w: 620, h: 750 },
   coeur: { x: 630, y: 750, w: 130, h: 280 },
-  dos: { x: 1270, y: 210, w: 360, h: 750 },
+  dos: { x: 1218, y: 210, w: 620, h: 750 },
 };
 
 let baseImgPromise: Promise<HTMLImageElement> | null = null;
