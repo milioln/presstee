@@ -18,8 +18,6 @@
 				<span class="jeu jeu-jaune" data-jeu="spin">3 clics.</span>
 			</h1>
 
-			<p class="hero-lede">Choisissez la base, posez votre visuel, validez le bon à tirer.</p>
-
 			<div class="hero-actions">
 				<a class="btn btn-primary" href="/configurateur">Commencez votre projet</a>
 				<a class="btn btn-secondary" href="/produits/t-shirts">Voir le catalogue</a>
@@ -44,7 +42,8 @@
 				touch-action="pan-y"
 				interaction-prompt="none"
 				shadow-intensity="1"
-				camera-orbit="0deg 85deg 88%"
+				camera-orbit="0deg 85deg 58%"
+				camera-target="0m 0.78m 0m"
 				min-camera-orbit="auto 55deg auto"
 				max-camera-orbit="auto 115deg auto"
 			></model-viewer>
@@ -74,6 +73,8 @@
 			<input id="heroFile" type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" />
 		</label>
 		</div>
+
+		<p class="hero-atelier-mobile">Atelier à Angoulême, Charente</p>
 	</div>
 </section>
 
@@ -100,8 +101,8 @@
 		position: relative;
 		padding: clamp(48px, 5vw, 76px) 0 clamp(52px, 6vw, 84px);
 		background-color: #fff;
-		background-image: linear-gradient(#f2eff9 1px, transparent 1px), linear-gradient(90deg, #f2eff9 1px, transparent 1px);
-		background-size: 52px 52px;
+		background-image: linear-gradient(rgba(157, 131, 207, 0.22) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(157, 131, 207, 0.22) 1.5px, transparent 1.5px);
+		background-size: 44px 44px;
 		overflow: hidden;
 	}
 	.hero::before {
@@ -156,17 +157,11 @@
 		color: #17131f;
 	}
 
-	.hero-lede {
-		color: #6c6580;
-		margin-top: 22px;
-		max-width: 44ch;
-		font-size: 1.06rem;
-	}
 	.hero-actions {
 		display: flex;
 		gap: 12px;
 		flex-wrap: wrap;
-		margin-top: 32px;
+		margin-top: 26px;
 	}
 	.hero-actions .btn {
 		border-radius: 999px;
@@ -182,16 +177,21 @@
 		padding-top: 22px;
 		border-top: 1px solid #e7e3f2;
 	}
+	/* Doublon affiché uniquement sur mobile, directement sous le t-shirt
+	   (cf. media query plus bas) — évite un réagencement CSS Grid complexe
+	   pour un simple bloc de texte. */
+	.hero-atelier-mobile {
+		display: none;
+	}
 
 	.hero-zone-wrap {
 		position: relative;
 	}
 	.hero-zone {
+		/* Pas de fond plein : le t-shirt s'incruste directement sur la
+		   grille de la section plutôt que dans une carte séparée. */
 		position: relative;
 		aspect-ratio: 1 / 1.06;
-		border-radius: 48px;
-		background: #f7f5fc;
-		overflow: hidden;
 	}
 	.hero-zone model-viewer {
 		/* <model-viewer> se comporte comme un élément remplacé (cf. <img>,
@@ -274,6 +274,7 @@
 		border: 1.5px solid #e7e3f2;
 		cursor: pointer;
 		padding: 0;
+		box-shadow: 0 4px 14px rgba(23, 19, 31, 0.12);
 	}
 	.coloris button.on {
 		border-color: #17131f;
@@ -358,6 +359,18 @@
 		.hero-zone {
 			aspect-ratio: 1 / 1;
 		}
+		.hero-atelier {
+			display: none;
+		}
+		.hero-atelier-mobile {
+			display: block;
+			order: -1;
+			font-family: 'Sora', sans-serif;
+			font-size: 13px;
+			color: #6c6580;
+			text-align: center;
+			margin-top: -8px;
+		}
 		/* Les 8 coloris tiennent sur une seule ligne plutôt que de passer à
 		   la ligne sur les petits écrans. */
 		.coloris {
@@ -368,6 +381,26 @@
 			width: 26px;
 			height: 26px;
 			flex-shrink: 0;
+		}
+	}
+	@media (max-width: 560px) {
+		/* Rythme resserré pour que les deux boutons d'action restent
+		   visibles sans défiler sur téléphone. */
+		.hero {
+			padding-top: 24px;
+		}
+		.hero-inner {
+			gap: 18px;
+		}
+		.hero-zone {
+			aspect-ratio: 1 / 0.85;
+		}
+		.hero-atelier-mobile {
+			margin-top: -4px;
+			margin-bottom: -6px;
+		}
+		.hero-actions {
+			margin-top: 18px;
 		}
 	}
 	@media (prefers-reduced-motion: reduce) {

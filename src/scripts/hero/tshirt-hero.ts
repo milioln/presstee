@@ -36,7 +36,7 @@ interface LogoDef {
 // 4 (icône seule, en grand) vraiment centré sur le dos.
 const LOGOS: LogoDef[] = [
 	{ url: '/logo/presstee-vertical.svg', place: 'coeur', scale: 0.6, cyFrac: 0.5 },
-	{ url: '/logo/presstee-horizontal.svg', place: 'face', scale: 0.34, cyFrac: 0.85 },
+	{ url: '/logo/presstee-horizontal.svg', place: 'face', scale: 0.6, cyFrac: 0.85 },
 	{ url: '/logo/presstee-icone-jaune.svg', place: 'coeur', scale: 0.6, cyFrac: 0.5 },
 	{ url: '/logo/presstee-icone.svg', place: 'dos', scale: 0.8, cyFrac: 0.6 },
 ];
@@ -160,12 +160,14 @@ export function initHero3D(): void {
 	// une rotation complète y ressemblerait à un bug plutôt qu'à un effet
 	// de présentation. Le tour complet du mot « 3 clics. » (spin) reste
 	// une animation ponctuelle à part, pas un état permanent.
-	const SWAY_ARC_DEG = 15;
-	const SWAY_PERIOD_MS = 5200;
-	const ZOOM_PERIOD_MS = 3600;
-	const ZOOM_BASE = 88;
-	const ZOOM_AMPLITUDE = 7;
+	const SWAY_ARC_DEG = 20;
+	const SWAY_PERIOD_MS = 4200;
+	const ZOOM_PERIOD_MS = 3000;
+	const ZOOM_BASE = 58;
+	const ZOOM_AMPLITUDE = 9;
+	const CAMERA_TARGET = '0m 0.78m 0m'; // cadrage buste/col — cf. calibration empirique
 	const RESUME_DELAY_MS = 3200;
+	mv.cameraTarget = CAMERA_TARGET;
 
 	let dragging = false;
 	let pausedUntil = 0;
