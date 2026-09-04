@@ -24,18 +24,21 @@ interface LogoDef {
 	url: string;
 	place: Emplacement;
 	scale: number; // fraction de la largeur de la zone d'impression
+	cyFrac: number; // position verticale dans la zone (0 = ourlet, 1 = col — cf. buildTexture)
 }
 
 // 4 déclinaisons du logo Presstee, alternées avec le coloris (demande
 // Milio du 2026-09-04) : dès que la couleur change, le logo change
-// aussi. Chaque logo a son propre emplacement/taille, toujours centré
-// dans sa zone — le logo 2 (horizontal, avec « Presstee ») et le logo 4
-// (icône seule, en grand) sur le dos, comme demandé.
+// aussi. cyFrac calibré empiriquement en rendant plusieurs repères sur
+// le modèle réel (pas déduit de l'atlas, qui est très trompeur une fois
+// projeté sur la surface courbe) : le logo 2 (horizontal, avec
+// « Presstee ») à ~3 cm sous le col et centré horizontalement, le logo
+// 4 (icône seule, en grand) vraiment centré sur le dos.
 const LOGOS: LogoDef[] = [
-	{ url: '/logo/presstee-vertical.svg', place: 'coeur', scale: 0.6 },
-	{ url: '/logo/presstee-horizontal.svg', place: 'face', scale: 0.34 },
-	{ url: '/logo/presstee-icone-jaune.svg', place: 'coeur', scale: 0.6 },
-	{ url: '/logo/presstee-icone.svg', place: 'dos', scale: 0.8 },
+	{ url: '/logo/presstee-vertical.svg', place: 'coeur', scale: 0.6, cyFrac: 0.5 },
+	{ url: '/logo/presstee-horizontal.svg', place: 'face', scale: 0.34, cyFrac: 0.85 },
+	{ url: '/logo/presstee-icone-jaune.svg', place: 'coeur', scale: 0.6, cyFrac: 0.5 },
+	{ url: '/logo/presstee-icone.svg', place: 'dos', scale: 0.8, cyFrac: 0.6 },
 ];
 
 // Sous-ensemble du vrai catalogue (config/parametres-metier.ts), pas une
@@ -92,7 +95,7 @@ async function buildTexture(hex: string, printUrl: string, logo: LogoDef): Promi
 	const ratio = img.naturalWidth && img.naturalHeight ? img.naturalHeight / img.naturalWidth : 1;
 	const h = w * ratio;
 	const cx = rect.x + rect.w / 2;
-	const cy = rect.y + rect.h * 0.5;
+	const cy = rect.y + rect.h * logo.cyFrac;
 	ctx.save();
 	ctx.translate(cx, cy);
 	// Le panneau avant du modèle est retourné verticalement dans l'atlas
@@ -157,10 +160,11 @@ export function initHero3D(): void {
 	// une rotation complète y ressemblerait à un bug plutôt qu'à un effet
 	// de présentation. Le tour complet du mot « 3 clics. » (spin) reste
 	// une animation ponctuelle à part, pas un état permanent.
-	const SWAY_ARC_DEG = 26;
+	const SWAY_ARC_DEG = 15;
 	const SWAY_PERIOD_MS = 5200;
 	const ZOOM_PERIOD_MS = 3600;
-	const ZOOM_AMPLITUDE = 6;
+	const ZOOM_BASE = 88;
+	const ZOOM_AMPLITUDE = 7;
 	const RESUME_DELAY_MS = 3200;
 
 	let dragging = false;
@@ -187,7 +191,7 @@ export function initHero3D(): void {
 	function idleFrame(now: number): void {
 		if (!dragging && !spinning && now >= pausedUntil && mv.loaded) {
 			const theta = baseTheta() + Math.sin(now / SWAY_PERIOD_MS) * SWAY_ARC_DEG;
-			const zoom = 105 + Math.sin(now / ZOOM_PERIOD_MS + 1) * ZOOM_AMPLITUDE;
+			const zoom = ZOOM_BASE + Math.sin(now / ZOOM_PERIOD_MS + 1) * ZOOM_AMPLITUDE;
 			mv.cameraOrbit = `${theta}deg 85deg ${zoom.toFixed(1)}%`;
 		}
 		requestAnimationFrame(idleFrame);
@@ -203,7 +207,7 @@ export function initHero3D(): void {
 		function frame(now: number) {
 			const t = Math.min(1, (now - start) / duration);
 			const eased = 1 - Math.pow(1 - t, 3);
-			mv.cameraOrbit = `${startDeg + eased * 360}deg 85deg 105%`;
+			mv.cameraOrbit = `${startDeg + eased * 360}deg 85deg ${ZOOM_BASE}%`;
 			if (t < 1) requestAnimationFrame(frame);
 			else spinning = false;
 		}
