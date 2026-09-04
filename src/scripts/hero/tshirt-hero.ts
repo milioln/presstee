@@ -29,7 +29,6 @@ const PALETTE = ['Blanc', 'Sable', 'Indigo Presstee', 'Noir', 'Jaune Presstee', 
 	.filter((c): c is { nom: string; hex: string } => !!c);
 
 const PLACES: Emplacement[] = ['face', 'coeur', 'dos'];
-const PLACE_LABELS: Record<Emplacement, string> = { face: 'Face', coeur: 'Cœur', dos: 'Dos' };
 
 function loadImg(src: string): Promise<HTMLImageElement> {
 	return new Promise((resolve, reject) => {
@@ -139,17 +138,11 @@ export function initHero3D(): void {
 		requestAnimationFrame(frame);
 	}
 
-	const hint = document.getElementById('heroHint');
-	const dire = (t: string) => {
-		if (hint) hint.textContent = t;
-	};
-
 	let ic = 0;
 	const swatches = [...document.querySelectorAll<HTMLButtonElement>('#heroColoris button')];
-	function setColorIndex(i: number, muet = false): void {
+	function setColorIndex(i: number): void {
 		ic = ((i % PALETTE.length) + PALETTE.length) % PALETTE.length;
 		hex = PALETTE[ic].hex;
-		if (!muet) dire('Coloris — ' + PALETTE[ic].nom);
 		swatches.forEach((b, n) => b.classList.toggle('on', n === ic));
 		refresh();
 	}
@@ -158,7 +151,6 @@ export function initHero3D(): void {
 	function setPlaceIndex(i: number): void {
 		ip = ((i % PLACES.length) + PLACES.length) % PLACES.length;
 		place = PLACES[ip];
-		dire('Emplacement — ' + PLACE_LABELS[place]);
 		refresh();
 	}
 
@@ -167,10 +159,7 @@ export function initHero3D(): void {
 		const jouer = () => {
 			if (type === 'couleur') setColorIndex(ic + 1);
 			else if (type === 'placement') setPlaceIndex(ip + 1);
-			else {
-				spin();
-				dire('Un tour, et on lance la série');
-			}
+			else spin();
 		};
 		el.addEventListener('mouseenter', jouer);
 		el.addEventListener('click', jouer);
@@ -184,7 +173,6 @@ export function initHero3D(): void {
 		const r = new FileReader();
 		r.onload = () => {
 			printUrl = String(r.result);
-			dire('Votre visuel est en place');
 			refresh();
 		};
 		r.readAsDataURL(f);
@@ -194,11 +182,10 @@ export function initHero3D(): void {
 	refresh();
 
 	// Changement automatique de coloris toutes les 2 secondes (demande
-	// Milio) — silencieux (ne réécrit pas #heroHint) pour ne pas noyer les
-	// messages déclenchés par une vraie interaction. En pause si l'onglet
-	// est en arrière-plan, pour ne pas relancer une texture 2048² à vide.
+	// Milio). En pause si l'onglet est en arrière-plan, pour ne pas
+	// relancer une texture 2048² à vide.
 	setInterval(() => {
 		if (document.hidden) return;
-		setColorIndex(ic + 1, true);
+		setColorIndex(ic + 1);
 	}, 2000);
 }

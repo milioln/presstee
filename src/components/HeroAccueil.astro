@@ -25,11 +25,6 @@
 				<a class="btn btn-secondary" href="/produits/t-shirts">Voir le catalogue</a>
 			</div>
 
-			<div class="hero-steps">
-				<span><b>1</b>Choisissez votre textile</span>
-				<span><b>2</b>Ajoutez votre visuel</span>
-				<span><b>3</b>Validez votre projet</span>
-			</div>
 			<p class="hero-atelier">Atelier à Angoulême, Charente</p>
 		</div>
 
@@ -53,8 +48,6 @@
 				max-camera-orbit="auto 115deg auto"
 			></model-viewer>
 
-			<span class="zone-hint" id="heroHint">Faites tourner le modèle à la souris</span>
-
 			<div class="zone-bar">
 				<div class="coloris" id="heroColoris">
 					<button type="button" data-nom="Blanc" aria-label="Coloris blanc" style="background:#ffffff"></button>
@@ -65,11 +58,15 @@
 					<button type="button" data-nom="Bleu marine" aria-label="Coloris bleu marine" style="background:#20304F"></button>
 					<button type="button" data-nom="Rouge" aria-label="Coloris rouge" style="background:#BF3B32"></button>
 					<button type="button" data-nom="Vert bouteille" aria-label="Coloris vert bouteille" style="background:#1F5A4A"></button>
+					<label class="import" title="Importer votre visuel" aria-label="Importer votre visuel">
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+							<polyline points="17 8 12 3 7 8" />
+							<line x1="12" y1="3" x2="12" y2="15" />
+						</svg>
+						<input id="heroFile" type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" />
+					</label>
 				</div>
-				<label class="import">
-					Importez votre fichier
-					<input id="heroFile" type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" />
-				</label>
 			</div>
 		</div>
 	</div>
@@ -172,38 +169,13 @@
 		font-size: 15.5px;
 	}
 
-	.hero-steps {
-		display: flex;
-		gap: 22px;
-		flex-wrap: wrap;
-		margin-top: 34px;
-		padding-top: 24px;
-		border-top: 1px solid #e7e3f2;
-	}
-	.hero-steps span {
-		display: flex;
-		align-items: center;
-		gap: 9px;
-		font-size: 14px;
-		color: #6c6580;
-	}
-	.hero-steps b {
-		width: 22px;
-		height: 22px;
-		border-radius: 8px;
-		background: #ffd77a;
-		color: #17131f;
-		display: grid;
-		place-items: center;
-		font-family: 'Sora', sans-serif;
-		font-size: 11.5px;
-		font-weight: 600;
-	}
 	.hero-atelier {
 		font-family: 'Sora', sans-serif;
 		font-size: 13.5px;
 		color: #6c6580;
-		margin-top: 16px;
+		margin-top: 28px;
+		padding-top: 22px;
+		border-top: 1px solid #e7e3f2;
 	}
 
 	.hero-zone {
@@ -272,20 +244,6 @@
 		pointer-events: none;
 	}
 
-	.zone-hint {
-		position: absolute;
-		left: 50%;
-		top: 22px;
-		transform: translateX(-50%);
-		font-family: 'Sora', sans-serif;
-		font-size: 11.5px;
-		letter-spacing: 0.05em;
-		text-transform: uppercase;
-		color: #6c6580;
-		white-space: nowrap;
-		pointer-events: none;
-	}
-
 	.zone-bar {
 		position: absolute;
 		left: 22px;
@@ -293,13 +251,13 @@
 		bottom: 22px;
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
 		gap: 14px;
 		flex-wrap: wrap;
 	}
 	.coloris {
 		display: flex;
 		gap: 8px;
+		flex-wrap: wrap;
 	}
 	.coloris button {
 		width: 30px;
@@ -317,20 +275,31 @@
 		outline-offset: 2px;
 	}
 
+	/* Bouton d'import : même gabarit qu'un rond de coloris (30px, intégré
+	   à la même rangée) plutôt qu'un pavé texte séparé — le pointillé le
+	   distingue des vrais coloris comme une case "ajouter". */
 	.import {
-		display: inline-flex;
-		align-items: center;
-		gap: 9px;
-		background: #fff;
-		border: 1.5px solid #e7e3f2;
+		width: 30px;
+		height: 30px;
 		border-radius: 999px;
-		padding: 9px 17px;
-		font-family: 'Sora', sans-serif;
-		font-size: 12.5px;
+		border: 1.5px dashed #9d83cf;
+		background: #fff;
+		color: #9d83cf;
+		display: grid;
+		place-items: center;
 		cursor: pointer;
+		flex-shrink: 0;
+		transition:
+			background 0.15s,
+			color 0.15s;
 	}
 	.import:hover {
-		border-color: #9d83cf;
+		background: #9d83cf;
+		color: #fff;
+	}
+	.import:focus-within {
+		outline: 2px solid #9d83cf;
+		outline-offset: 2px;
 	}
 	.import input {
 		position: absolute;
