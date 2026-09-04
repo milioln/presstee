@@ -58,16 +58,17 @@
 					<button type="button" data-nom="Bleu marine" aria-label="Coloris bleu marine" style="background:#20304F"></button>
 					<button type="button" data-nom="Rouge" aria-label="Coloris rouge" style="background:#BF3B32"></button>
 					<button type="button" data-nom="Vert bouteille" aria-label="Coloris vert bouteille" style="background:#1F5A4A"></button>
-					<label class="import" title="Importer votre visuel" aria-label="Importer votre visuel">
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-							<polyline points="17 8 12 3 7 8" />
-							<line x1="12" y1="3" x2="12" y2="15" />
-						</svg>
-						<input id="heroFile" type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" />
-					</label>
 				</div>
 			</div>
+
+			<label class="logo-hint" title="Importer votre visuel">
+				<span>Changer le logo</span>
+				<svg class="logo-hint-arrow" width="56" height="46" viewBox="0 0 56 46" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<path d="M52 4C34 2 14 12 8 36" stroke-dasharray="1 6" />
+					<path d="M2 28L8 36L17 31" />
+				</svg>
+				<input id="heroFile" type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" />
+			</label>
 		</div>
 	</div>
 </section>
@@ -275,33 +276,36 @@
 		outline-offset: 2px;
 	}
 
-	/* Bouton d'import : même gabarit qu'un rond de coloris (30px, intégré
-	   à la même rangée) plutôt qu'un pavé texte séparé — le pointillé le
-	   distingue des vrais coloris comme une case "ajouter". */
-	.import {
-		width: 30px;
-		height: 30px;
-		border-radius: 999px;
-		border: 1.5px dashed #9d83cf;
-		background: #fff;
-		color: #9d83cf;
-		display: grid;
-		place-items: center;
+	/* Flèche pointillée + libellé plutôt qu'un simple bouton : rend
+	   explicite qu'on peut remplacer le logo affiché sur le t-shirt. Toute
+	   la ligne est cliquable (label enveloppant l'input masqué). */
+	.logo-hint {
+		position: absolute;
+		top: 22px;
+		right: 26px;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
 		cursor: pointer;
-		flex-shrink: 0;
-		transition:
-			background 0.15s,
-			color 0.15s;
+		color: #6c6580;
+		transition: color 0.15s;
 	}
-	.import:hover {
-		background: #9d83cf;
-		color: #fff;
+	.logo-hint:hover {
+		color: #9d83cf;
 	}
-	.import:focus-within {
+	.logo-hint span {
+		font-family: 'Sora', sans-serif;
+		font-size: 12px;
+		letter-spacing: 0.02em;
+	}
+	.logo-hint-arrow {
+		margin-top: 2px;
+	}
+	.logo-hint:focus-within {
 		outline: 2px solid #9d83cf;
 		outline-offset: 2px;
 	}
-	.import input {
+	.logo-hint input {
 		position: absolute;
 		width: 1px;
 		height: 1px;

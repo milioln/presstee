@@ -13,8 +13,6 @@
 import { catalogueColoris, type Emplacement } from '../../config/parametres-metier';
 
 const TEXTURE_URL = '/personnalisateur/model/textures/Material_baseColor.png';
-const DEFAULT_PRINT = '/logo/presstee-vertical.svg';
-const DEFAULT_PLACE: Emplacement = 'coeur';
 
 const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: number }> = {
 	face: { x: 370, y: 210, w: 360, h: 750 },
@@ -22,13 +20,34 @@ const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: numb
 	dos: { x: 1270, y: 210, w: 360, h: 750 },
 };
 
+interface LogoDef {
+	url: string;
+	place: Emplacement;
+	scale: number; // fraction de la largeur de la zone d'impression
+	haut: boolean; // true = ancré sous le col plutôt que centré dans la zone
+}
+
+// 4 déclinaisons du logo Presstee, alternées avec le coloris (demande
+// Milio du 2026-09-04) : dès que la couleur change, le logo change
+// aussi. Chaque logo a son propre emplacement/taille — le logo 2
+// (horizontal) centré sous le col, le logo 4 (icône seule) en grand sur
+// le dos, comme demandé.
+const LOGOS: LogoDef[] = [
+	{ url: '/logo/presstee-vertical.svg', place: 'coeur', scale: 0.6, haut: false },
+	{ url: '/logo/presstee-horizontal.svg', place: 'face', scale: 0.34, haut: true },
+	{ url: '/logo/presstee-icone-jaune.svg', place: 'coeur', scale: 0.6, haut: false },
+	{ url: '/logo/presstee-icone.svg', place: 'dos', scale: 0.8, haut: false },
+];
+
 // Sous-ensemble du vrai catalogue (config/parametres-metier.ts), pas une
 // palette inventée : chaque coloris montré ici est réellement commandable.
 const PALETTE = ['Blanc', 'Sable', 'Indigo Presstee', 'Noir', 'Jaune Presstee', 'Bleu marine', 'Rouge', 'Vert bouteille']
 	.map((nom) => catalogueColoris.find((c) => c.nom === nom))
 	.filter((c): c is { nom: string; hex: string } => !!c);
 
-const PLACES: Emplacement[] = ['face', 'coeur', 'dos'];
+function wrap(i: number, n: number): number {
+	return ((i % n) + n) % n;
+}
 
 function loadImg(src: string): Promise<HTMLImageElement> {
 	return new Promise((resolve, reject) => {
@@ -55,7 +74,7 @@ function loadPrintCached(src: string): Promise<HTMLImageElement> {
 	return p;
 }
 
-async function buildTexture(hex: string, place: Emplacement, printUrl: string): Promise<string> {
+async function buildTexture(hex: string, printUrl: string, logo: LogoDef): Promise<string> {
 	const base = await loadBaseImg();
 	const c = document.createElement('canvas');
 	c.width = base.naturalWidth;
@@ -68,17 +87,19 @@ async function buildTexture(hex: string, place: Emplacement, printUrl: string): 
 	ctx.fillRect(0, 0, c.width, c.height);
 	ctx.globalCompositeOperation = 'source-over';
 
-	const rect = PRINT_RECT[place];
-	const logo = await loadPrintCached(printUrl);
-	const w = rect.w * 0.55;
-	const ratio = logo.naturalWidth && logo.naturalHeight ? logo.naturalHeight / logo.naturalWidth : 1;
+	const rect = PRINT_RECT[logo.place];
+	const img = await loadPrintCached(printUrl);
+	const w = rect.w * logo.scale;
+	const ratio = img.naturalWidth && img.naturalHeight ? img.naturalHeight / img.naturalWidth : 1;
 	const h = w * ratio;
+	const cx = rect.x + rect.w / 2;
+	const cy = rect.y + rect.h * (logo.haut ? 0.78 : 0.5);
 	ctx.save();
-	ctx.translate(rect.x + rect.w / 2, rect.y + rect.h / 2);
+	ctx.translate(cx, cy);
 	// Le panneau avant du modèle est retourné verticalement dans l'atlas
 	// UV (cf. render.ts) : on recompense en dessinant le visuel inversé.
 	ctx.scale(1, -1);
-	ctx.drawImage(logo, -w / 2, -h / 2, w, h);
+	ctx.drawImage(img, -w / 2, -h / 2, w, h);
 	ctx.restore();
 
 	return c.toDataURL('image/png');
@@ -89,8 +110,16 @@ export function initHero3D(): void {
 	if (!mv) return;
 
 	let hex = PALETTE[0].hex;
-	let place: Emplacement = DEFAULT_PLACE;
-	let printUrl = DEFAULT_PRINT;
+	let ic = 0;
+	let il = 0;
+	let printOverride: string | null = null;
+
+	function currentLogo(): LogoDef {
+		return LOGOS[il];
+	}
+	function currentPrint(): string {
+		return printOverride ?? currentLogo().url;
+	}
 
 	let applying = false;
 	let queued = false;
@@ -102,7 +131,7 @@ export function initHero3D(): void {
 		}
 		applying = true;
 		try {
-			const dataUrl = await buildTexture(hex, place, printUrl);
+			const dataUrl = await buildTexture(hex, currentPrint(), currentLogo());
 			const material = mv.model.materials[0];
 			const texture = await mv.createTexture(dataUrl);
 			material.pbrMetallicRoughness.baseColorTexture.setTexture(texture);
@@ -114,18 +143,62 @@ export function initHero3D(): void {
 			}
 		}
 	}
-	function syncCamera(): void {
-		mv.cameraOrbit = place === 'dos' ? '180deg 85deg 105%' : '0deg 85deg 105%';
-	}
 	function refresh(): void {
 		if (mv.loaded) apply();
 		else mv.addEventListener('load', () => apply(), { once: true });
-		syncCamera();
 	}
 
+	// ---- Balancement + zoom automatiques au repos ------------------------
+	// Oscille doucement autour de la face (± SWAY_ARC_DEG) et respire en
+	// zoom tant que personne ne fait glisser le modèle à la main ; reprend
+	// 3,2 s après le dernier glisser (même délai que la maquette d'origine
+	// pour ce hero). L'amplitude reste volontairement modeste : passé un
+	// certain angle, le t-shirt vu presque de profil déborde du cadre
+	// carré de la vignette (peu de tissu visible d'un bord à l'autre) —
+	// une rotation complète y ressemblerait à un bug plutôt qu'à un effet
+	// de présentation. Le tour complet du mot « 3 clics. » (spin) reste
+	// une animation ponctuelle à part, pas un état permanent.
+	const SWAY_ARC_DEG = 26;
+	const SWAY_PERIOD_MS = 5200;
+	const ZOOM_PERIOD_MS = 3600;
+	const ZOOM_AMPLITUDE = 6;
+	const RESUME_DELAY_MS = 3200;
+
+	let dragging = false;
+	let pausedUntil = 0;
+	let spinning = false;
+
+	function baseTheta(): number {
+		return currentLogo().place === 'dos' ? 180 : 0;
+	}
+
+	mv.addEventListener('pointerdown', () => {
+		dragging = true;
+	});
+	window.addEventListener('pointerup', () => {
+		if (!dragging) return;
+		dragging = false;
+		pausedUntil = performance.now() + RESUME_DELAY_MS;
+	});
+	window.addEventListener('pointercancel', () => {
+		dragging = false;
+		pausedUntil = performance.now() + RESUME_DELAY_MS;
+	});
+
+	function idleFrame(now: number): void {
+		if (!dragging && !spinning && now >= pausedUntil && mv.loaded) {
+			const theta = baseTheta() + Math.sin(now / SWAY_PERIOD_MS) * SWAY_ARC_DEG;
+			const zoom = 105 + Math.sin(now / ZOOM_PERIOD_MS + 1) * ZOOM_AMPLITUDE;
+			mv.cameraOrbit = `${theta}deg 85deg ${zoom.toFixed(1)}%`;
+		}
+		requestAnimationFrame(idleFrame);
+	}
+	requestAnimationFrame(idleFrame);
+
 	function spin(): void {
+		spinning = true;
 		const current = mv.getCameraOrbit ? mv.getCameraOrbit() : null;
-		const startDeg = current ? (current.theta * 180) / Math.PI : 0;
+		const startDeg = current ? (current.theta * 180) / Math.PI : baseTheta();
 		const start = performance.now();
 		const duration = 900;
 		function frame(now: number) {
@@ -133,24 +206,22 @@ export function initHero3D(): void {
 			const eased = 1 - Math.pow(1 - t, 3);
 			mv.cameraOrbit = `${startDeg + eased * 360}deg 85deg 105%`;
 			if (t < 1) requestAnimationFrame(frame);
-			else syncCamera();
+			else spinning = false;
 		}
 		requestAnimationFrame(frame);
 	}
 
-	let ic = 0;
+	// ---- Coloris, logo, mots interactifs, import -----------------------
 	const swatches = [...document.querySelectorAll<HTMLButtonElement>('#heroColoris button')];
 	function setColorIndex(i: number): void {
-		ic = ((i % PALETTE.length) + PALETTE.length) % PALETTE.length;
+		ic = wrap(i, PALETTE.length);
+		il = wrap(i, LOGOS.length); // le logo change avec la couleur (demande Milio)
 		hex = PALETTE[ic].hex;
 		swatches.forEach((b, n) => b.classList.toggle('on', n === ic));
 		refresh();
 	}
-
-	let ip = PLACES.indexOf(DEFAULT_PLACE);
-	function setPlaceIndex(i: number): void {
-		ip = ((i % PLACES.length) + PLACES.length) % PLACES.length;
-		place = PLACES[ip];
+	function setLogoIndex(i: number): void {
+		il = wrap(i, LOGOS.length);
 		refresh();
 	}
 
@@ -158,7 +229,7 @@ export function initHero3D(): void {
 		const type = el.dataset.jeu;
 		const jouer = () => {
 			if (type === 'couleur') setColorIndex(ic + 1);
-			else if (type === 'placement') setPlaceIndex(ip + 1);
+			else if (type === 'placement') setLogoIndex(il + 1);
 			else spin();
 		};
 		el.addEventListener('mouseenter', jouer);
@@ -172,7 +243,7 @@ export function initHero3D(): void {
 		if (!f) return;
 		const r = new FileReader();
 		r.onload = () => {
-			printUrl = String(r.result);
+			printOverride = String(r.result);
 			refresh();
 		};
 		r.readAsDataURL(f);
@@ -181,8 +252,8 @@ export function initHero3D(): void {
 	swatches.forEach((b, n) => b.classList.toggle('on', n === 0));
 	refresh();
 
-	// Changement automatique de coloris toutes les 2 secondes (demande
-	// Milio). En pause si l'onglet est en arrière-plan, pour ne pas
+	// Changement automatique de coloris (et donc de logo) toutes les 2
+	// secondes. En pause si l'onglet est en arrière-plan, pour ne pas
 	// relancer une texture 2048² à vide.
 	setInterval(() => {
 		if (document.hidden) return;
