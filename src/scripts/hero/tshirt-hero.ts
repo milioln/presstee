@@ -24,19 +24,18 @@ interface LogoDef {
 	url: string;
 	place: Emplacement;
 	scale: number; // fraction de la largeur de la zone d'impression
-	haut: boolean; // true = ancré sous le col plutôt que centré dans la zone
 }
 
 // 4 déclinaisons du logo Presstee, alternées avec le coloris (demande
 // Milio du 2026-09-04) : dès que la couleur change, le logo change
-// aussi. Chaque logo a son propre emplacement/taille — le logo 2
-// (horizontal) centré sous le col, le logo 4 (icône seule) en grand sur
-// le dos, comme demandé.
+// aussi. Chaque logo a son propre emplacement/taille, toujours centré
+// dans sa zone — le logo 2 (horizontal, avec « Presstee ») et le logo 4
+// (icône seule, en grand) sur le dos, comme demandé.
 const LOGOS: LogoDef[] = [
-	{ url: '/logo/presstee-vertical.svg', place: 'coeur', scale: 0.6, haut: false },
-	{ url: '/logo/presstee-horizontal.svg', place: 'face', scale: 0.34, haut: true },
-	{ url: '/logo/presstee-icone-jaune.svg', place: 'coeur', scale: 0.6, haut: false },
-	{ url: '/logo/presstee-icone.svg', place: 'dos', scale: 0.8, haut: false },
+	{ url: '/logo/presstee-vertical.svg', place: 'coeur', scale: 0.6 },
+	{ url: '/logo/presstee-horizontal.svg', place: 'face', scale: 0.34 },
+	{ url: '/logo/presstee-icone-jaune.svg', place: 'coeur', scale: 0.6 },
+	{ url: '/logo/presstee-icone.svg', place: 'dos', scale: 0.8 },
 ];
 
 // Sous-ensemble du vrai catalogue (config/parametres-metier.ts), pas une
@@ -93,7 +92,7 @@ async function buildTexture(hex: string, printUrl: string, logo: LogoDef): Promi
 	const ratio = img.naturalWidth && img.naturalHeight ? img.naturalHeight / img.naturalWidth : 1;
 	const h = w * ratio;
 	const cx = rect.x + rect.w / 2;
-	const cy = rect.y + rect.h * (logo.haut ? 0.78 : 0.5);
+	const cy = rect.y + rect.h * 0.5;
 	ctx.save();
 	ctx.translate(cx, cy);
 	// Le panneau avant du modèle est retourné verticalement dans l'atlas

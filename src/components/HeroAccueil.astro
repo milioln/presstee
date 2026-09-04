@@ -281,8 +281,9 @@
 	   la ligne est cliquable (label enveloppant l'input masqué). */
 	.logo-hint {
 		position: absolute;
-		top: 22px;
+		top: 38px;
 		right: 26px;
+		z-index: 1;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-end;
@@ -321,6 +322,17 @@
 			aspect-ratio: 1 / 1;
 			/* Le t-shirt passe avant le texte sur mobile. */
 			order: -1;
+		}
+		/* Les 8 coloris tiennent sur une seule ligne plutôt que de passer à
+		   la ligne sur les petits écrans. */
+		.coloris {
+			flex-wrap: nowrap;
+			gap: 6px;
+		}
+		.coloris button {
+			width: 26px;
+			height: 26px;
+			flex-shrink: 0;
 		}
 	}
 	@media (prefers-reduced-motion: reduce) {
