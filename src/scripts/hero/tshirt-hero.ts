@@ -150,28 +150,25 @@ export function initHero3D(): void {
 		else mv.addEventListener('load', () => apply(), { once: true });
 	}
 
-	// ---- Balancement + zoom automatiques au repos ------------------------
-	// Oscille doucement autour de la face (± SWAY_ARC_DEG) et respire en
-	// zoom tant que personne ne fait glisser le modèle à la main ; reprend
-	// 3,2 s après le dernier glisser (même délai que la maquette d'origine
-	// pour ce hero). L'amplitude reste volontairement modeste : passé un
-	// certain angle, le t-shirt vu presque de profil déborde du cadre
-	// carré de la vignette (peu de tissu visible d'un bord à l'autre) —
-	// une rotation complète y ressemblerait à un bug plutôt qu'à un effet
-	// de présentation. Le tour complet du mot « 3 clics. » (spin) reste
-	// une animation ponctuelle à part, pas un état permanent.
-	const SWAY_ARC_DEG = 20;
-	const SWAY_PERIOD_MS = 4200;
-	const ZOOM_PERIOD_MS = 3000;
-	const ZOOM_BASE = 58;
-	const ZOOM_AMPLITUDE = 9;
-	const CAMERA_TARGET = '0m 0.78m 0m'; // cadrage buste/col — cf. calibration empirique
+	// ---- Rotation continue + zoom automatiques au repos -------------------
+	// Vrai tour de présentoir (rotation continue à 360°, pas juste un léger
+	// balancement) tant que personne ne fait glisser le modèle à la main ;
+	// reprend 3,2 s après le dernier glisser. Cadrage large (pas de
+	// camera-target resserré sur le buste) : le vêtement entier reste
+	// visible à tout angle de rotation, y compris de profil — un cadrage
+	// trop serré coupait le bas du t-shirt et le faisait paraître minuscule
+	// une fois la boîte forcée à un autre ratio sur mobile.
+	const ROTATE_DEG_PER_SEC = 14;
+	const ZOOM_PERIOD_MS = 3400;
+	const ZOOM_BASE = 92;
+	const ZOOM_AMPLITUDE = 6;
 	const RESUME_DELAY_MS = 3200;
-	mv.cameraTarget = CAMERA_TARGET;
 
 	let dragging = false;
 	let pausedUntil = 0;
 	let spinning = false;
+	let driftDeg = 0;
+	let lastFrame: number | null = null;
 
 	function baseTheta(): number {
 		return currentLogo().place === 'dos' ? 180 : 0;
@@ -191,10 +188,13 @@ export function initHero3D(): void {
 	});
 
 	function idleFrame(now: number): void {
+		if (lastFrame == null) lastFrame = now;
+		const dt = now - lastFrame;
+		lastFrame = now;
 		if (!dragging && !spinning && now >= pausedUntil && mv.loaded) {
-			const theta = baseTheta() + Math.sin(now / SWAY_PERIOD_MS) * SWAY_ARC_DEG;
+			driftDeg = (driftDeg + (dt / 1000) * ROTATE_DEG_PER_SEC) % 360;
 			const zoom = ZOOM_BASE + Math.sin(now / ZOOM_PERIOD_MS + 1) * ZOOM_AMPLITUDE;
-			mv.cameraOrbit = `${theta}deg 85deg ${zoom.toFixed(1)}%`;
+			mv.cameraOrbit = `${baseTheta() + driftDeg}deg 85deg ${zoom.toFixed(1)}%`;
 		}
 		requestAnimationFrame(idleFrame);
 	}
@@ -202,14 +202,14 @@ export function initHero3D(): void {
 
 	function spin(): void {
 		spinning = true;
-		const current = mv.getCameraOrbit ? mv.getCameraOrbit() : null;
-		const startDeg = current ? (current.theta * 180) / Math.PI : baseTheta();
+		const startDrift = driftDeg;
 		const start = performance.now();
 		const duration = 900;
 		function frame(now: number) {
 			const t = Math.min(1, (now - start) / duration);
 			const eased = 1 - Math.pow(1 - t, 3);
-			mv.cameraOrbit = `${startDeg + eased * 360}deg 85deg ${ZOOM_BASE}%`;
+			driftDeg = (startDrift + eased * 360) % 360;
+			mv.cameraOrbit = `${baseTheta() + driftDeg}deg 85deg ${ZOOM_BASE}%`;
 			if (t < 1) requestAnimationFrame(frame);
 			else spinning = false;
 		}

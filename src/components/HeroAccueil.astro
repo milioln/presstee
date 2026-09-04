@@ -42,8 +42,7 @@
 				touch-action="pan-y"
 				interaction-prompt="none"
 				shadow-intensity="1"
-				camera-orbit="0deg 85deg 58%"
-				camera-target="0m 0.78m 0m"
+				camera-orbit="0deg 85deg 92%"
 				min-camera-orbit="auto 55deg auto"
 				max-camera-orbit="auto 115deg auto"
 			></model-viewer>
@@ -385,15 +384,14 @@
 	}
 	@media (max-width: 560px) {
 		/* Rythme resserré pour que les deux boutons d'action restent
-		   visibles sans défiler sur téléphone. */
+		   visibles sans trop défiler sur téléphone — sans toucher au
+		   ratio de la vignette du t-shirt (un ratio plus large que haut
+		   coupait le bas du vêtement). */
 		.hero {
 			padding-top: 24px;
 		}
 		.hero-inner {
-			gap: 18px;
-		}
-		.hero-zone {
-			aspect-ratio: 1 / 0.85;
+			gap: 14px;
 		}
 		.hero-atelier-mobile {
 			margin-top: -4px;
