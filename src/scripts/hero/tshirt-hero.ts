@@ -10,10 +10,11 @@
 // pas de calques multiples, pas de sauvegarde) — les constantes de zone
 // d'impression et de texture sont dupliquées depuis render.ts, à garder
 // synchronisées si l'atlas de texture change.
-import { catalogueColoris, getZoneImpressionCm, type Emplacement } from '../../config/parametres-metier';
+import { catalogueColoris, type Emplacement } from '../../config/parametres-metier';
 
 const TEXTURE_URL = '/personnalisateur/model/textures/Material_baseColor.png';
-const DEFAULT_PRINT = '/logo/presstee-icone.svg';
+const DEFAULT_PRINT = '/logo/presstee-vertical.svg';
+const DEFAULT_PLACE: Emplacement = 'coeur';
 
 const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: number }> = {
 	face: { x: 370, y: 210, w: 360, h: 750 },
@@ -23,7 +24,7 @@ const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: numb
 
 // Sous-ensemble du vrai catalogue (config/parametres-metier.ts), pas une
 // palette inventée : chaque coloris montré ici est réellement commandable.
-const PALETTE = ['Blanc', 'Sable', 'Indigo Presstee', 'Noir']
+const PALETTE = ['Blanc', 'Sable', 'Indigo Presstee', 'Noir', 'Jaune Presstee', 'Bleu marine', 'Rouge', 'Vert bouteille']
 	.map((nom) => catalogueColoris.find((c) => c.nom === nom))
 	.filter((c): c is { nom: string; hex: string } => !!c);
 
@@ -89,7 +90,7 @@ export function initHero3D(): void {
 	if (!mv) return;
 
 	let hex = PALETTE[0].hex;
-	let place: Emplacement = 'face';
+	let place: Emplacement = DEFAULT_PLACE;
 	let printUrl = DEFAULT_PRINT;
 
 	let applying = false;
@@ -139,7 +140,6 @@ export function initHero3D(): void {
 	}
 
 	const hint = document.getElementById('heroHint');
-	const placeChip = document.getElementById('heroPlace');
 	const dire = (t: string) => {
 		if (hint) hint.textContent = t;
 	};
@@ -154,12 +154,10 @@ export function initHero3D(): void {
 		refresh();
 	}
 
-	let ip = 0;
+	let ip = PLACES.indexOf(DEFAULT_PLACE);
 	function setPlaceIndex(i: number): void {
 		ip = ((i % PLACES.length) + PLACES.length) % PLACES.length;
 		place = PLACES[ip];
-		const cm = getZoneImpressionCm('tshirt', place);
-		if (placeChip) placeChip.textContent = `${PLACE_LABELS[place]} · ${cm} cm`;
 		dire('Emplacement — ' + PLACE_LABELS[place]);
 		refresh();
 	}
@@ -193,7 +191,6 @@ export function initHero3D(): void {
 	});
 
 	swatches.forEach((b, n) => b.classList.toggle('on', n === 0));
-	if (placeChip) placeChip.textContent = `${PLACE_LABELS.face} · ${getZoneImpressionCm('tshirt', 'face')} cm`;
 	refresh();
 
 	// Changement automatique de coloris toutes les 2 secondes (demande

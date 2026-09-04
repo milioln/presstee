@@ -53,8 +53,6 @@
 				max-camera-orbit="auto 115deg auto"
 			></model-viewer>
 
-			<span class="chip chip-dark">Zone de marquage · 28 cm</span>
-			<span class="chip chip-jaune" id="heroPlace">Face</span>
 			<span class="zone-hint" id="heroHint">Faites tourner le modèle à la souris</span>
 
 			<div class="zone-bar">
@@ -63,6 +61,10 @@
 					<button type="button" data-nom="Sable" aria-label="Coloris sable" style="background:#E4D6BD"></button>
 					<button type="button" data-nom="Indigo" aria-label="Coloris indigo" style="background:#9d83cf"></button>
 					<button type="button" data-nom="Noir" aria-label="Coloris noir" style="background:#1B1B1F"></button>
+					<button type="button" data-nom="Jaune Presstee" aria-label="Coloris jaune Presstee" style="background:#ffd77a"></button>
+					<button type="button" data-nom="Bleu marine" aria-label="Coloris bleu marine" style="background:#20304F"></button>
+					<button type="button" data-nom="Rouge" aria-label="Coloris rouge" style="background:#BF3B32"></button>
+					<button type="button" data-nom="Vert bouteille" aria-label="Coloris vert bouteille" style="background:#1F5A4A"></button>
 				</div>
 				<label class="import">
 					Importez votre fichier
@@ -270,25 +272,6 @@
 		pointer-events: none;
 	}
 
-	.chip {
-		position: absolute;
-		top: 60px;
-		border-radius: 999px;
-		padding: 7px 15px;
-		font-family: 'Sora', sans-serif;
-		font-size: 12px;
-		pointer-events: none;
-	}
-	.chip-dark {
-		left: 22px;
-		background: #17131f;
-		color: #fff;
-	}
-	.chip-jaune {
-		right: 22px;
-		background: #ffd77a;
-		color: #17131f;
-	}
 	.zone-hint {
 		position: absolute;
 		left: 50%;
@@ -363,6 +346,8 @@
 		}
 		.hero-zone {
 			aspect-ratio: 1 / 1;
+			/* Le t-shirt passe avant le texte sur mobile. */
+			order: -1;
 		}
 	}
 	@media (prefers-reduced-motion: reduce) {
