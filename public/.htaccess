@@ -23,18 +23,20 @@
   ExpiresByType text/html "access plus 0 seconds"
 </IfModule>
 
-# Mode maintenance — répond 503 (« indisponible pour l'instant ») à toute
-# page plutôt qu'un 404, pour ne pas faire désindexer le site par Google
-# pendant la coupure. Les fichiers statiques (CSS/JS/images/polices)
-# restent accessibles pour que maintenance.html s'affiche correctement.
-# Pour remettre le site en ligne : supprimer ou commenter ce bloc, puis
-# redéployer.
+# Protection temporaire par mot de passe avant le lancement public.
+# Remplace le mode maintenance (503) : le site reste accessible (donc
+# testable avec de vrais clients/partenaires) mais protégé par une
+# authentification HTTP Basic — sans impact sur le référencement, Google
+# ne pouvant simplement pas indexer tant que la protection est active
+# (comme avec le 503 précédent). Identifiant : presstee.
+# Pas de fichier .htpasswd ni de chemin absolu (indisponible en .htaccess
+# sur l'hébergement mutualisé OVH) : le mot de passe est vérifié
+# directement via l'en-tête Authorization envoyé par le navigateur.
+# Pour lever la protection : supprimer ce bloc, puis redéployer.
 <IfModule mod_rewrite.c>
-  RewriteCond %{REQUEST_URI} !^/maintenance\.html$
-  RewriteCond %{REQUEST_URI} !\.(css|js|svg|png|jpe?g|gif|webp|woff2?|ico)$
-  RewriteRule .* /maintenance.html [R=503,L]
+  RewriteCond %{HTTP:Authorization} !^Basic\ cHJlc3N0ZWU6cHJlc3N0ZWUxNg==$
+  RewriteRule ^ - [R=401,L]
 </IfModule>
-ErrorDocument 503 /maintenance.html
 <IfModule mod_headers.c>
-  Header always set Retry-After "3600"
+  Header always set WWW-Authenticate "Basic realm=\"Presstee\""
 </IfModule>
