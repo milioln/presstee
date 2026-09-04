@@ -1,0 +1,100 @@
+---
+// Espace de création de visuel « style Canva » — pour le client qui n'a
+// pas encore de fichier prêt : composer son propre texte/formes/image
+// puis l'envoyer directement dans le configurateur (même stockage que
+// seedFromItem, cf. src/scripts/personnalisateur/state.ts), au lieu de
+// devoir déjà avoir un logo pour commencer sa commande.
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { seuils } from '../config/parametres-metier';
+import '../styles/global.css';
+import '../styles/creer-visuel.css';
+---
+
+<Layout title="Créer mon visuel — Presstee" description="Composez votre propre logo ou visuel — texte, formes, image — directement dans le navigateur, puis envoyez-le dans le configurateur.">
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" />
+	<Header />
+	<main class="creer-page">
+		<div class="wrap">
+			<div class="crumb"><a href="/">Accueil</a> / <a href="/configurateur">Configurateur</a> / Créer mon visuel</div>
+			<div class="creer-head">
+				<h1>Créez votre visuel.</h1>
+				<p>Pas encore de logo ? Composez-le ici avec du texte, des formes ou une image, puis envoyez-le directement dans le configurateur.</p>
+			</div>
+
+			<div class="creer-constraints">
+				<label class="creer-field">
+					<span>Emplacement visé</span>
+					<select id="creerPlace">
+						<option value="face">Face</option>
+						<option value="coeur">Cœur</option>
+						<option value="dos">Dos</option>
+					</select>
+				</label>
+				<label class="creer-field">
+					<span>Technique envisagée</span>
+					<select id="creerTech">
+						<option value="peu-importe">Peu importe</option>
+						<option value="serigraphie">Sérigraphie (max {seuils.couleursMaxSerigraphie} couleurs)</option>
+						<option value="transfert">Transfert</option>
+						<option value="broderie">Broderie (max {seuils.couleursMaxBroderie} couleurs)</option>
+					</select>
+				</label>
+				<div class="creer-info">
+					<span id="creerPlaceMax"></span>
+					<span id="creerColorCount" class="creer-color-badge"></span>
+				</div>
+			</div>
+			<p class="creer-warning" id="creerColorWarning" style="display:none"></p>
+
+			<div class="creer-board">
+				<div class="creer-toolbar">
+					<button type="button" class="creer-btn" id="creerAddText">+ Texte</button>
+					<div class="creer-shape-group">
+						<button type="button" class="creer-btn" data-shape="rect" title="Rectangle">▭</button>
+						<button type="button" class="creer-btn" data-shape="circle" title="Cercle">●</button>
+						<button type="button" class="creer-btn" data-shape="triangle" title="Triangle">▲</button>
+						<button type="button" class="creer-btn" data-shape="star" title="Étoile">★</button>
+					</div>
+					<label class="creer-btn creer-file-btn">
+						+ Image
+						<input type="file" id="creerAddImage" accept="image/png,image/jpeg,image/svg+xml,image/webp" hidden />
+					</label>
+					<button type="button" class="creer-btn" id="creerDuplicate">Dupliquer</button>
+				</div>
+
+				<div class="creer-canvas-wrap">
+					<canvas id="creerCanvas"></canvas>
+					<div class="creer-empty-hint" id="creerEmptyHint">
+						<p>Ajoutez du texte, une forme ou une image pour commencer.</p>
+					</div>
+				</div>
+
+				<aside class="creer-side">
+					<div class="creer-panel">
+						<h3>Propriétés</h3>
+						<div id="creerProps"></div>
+					</div>
+					<div class="creer-panel">
+						<h3>Calques</h3>
+						<div id="creerLayers" class="creer-layers"></div>
+					</div>
+				</aside>
+			</div>
+
+			<div class="creer-actions">
+				<button type="button" class="creer-btn" id="creerDownload">Télécharger en PNG</button>
+				<button type="button" class="btn" id="creerUse">Utiliser dans le configurateur →</button>
+			</div>
+			<p class="creer-hint">Astuce : peu de couleurs et des formes simples impriment mieux et coûtent souvent moins cher. Besoin d'aide ? <a href="/contact">Décrivez votre projet</a>, notre équipe peut le créer avec vous.</p>
+		</div>
+	</main>
+	<Footer />
+</Layout>
+
+<script>
+	import { initEditor } from '../scripts/creer-visuel/editor';
+	initEditor();
+</script>
