@@ -69,7 +69,6 @@ import '../styles/personnalisateur.css';
 							</div>
 							<input type="range" id="rSlider" class="rslider" min="-180" max="180" step="1" value="0" aria-label="Rotation précise, au degré près" />
 							<button class="btn btn-secondary btn-block" id="cropBtn" style="display:none">Recadrer l'image</button>
-							<button class="btn btn-secondary btn-block" id="downloadBtn">Télécharger le design</button>
 						</div>
 						<p class="hint" id="adjustEmpty" style="display:none">Ajoutez un visuel pour cet emplacement pour le positionner.</p>
 					</div>
@@ -96,11 +95,16 @@ import '../styles/personnalisateur.css';
 							max-camera-orbit="auto 115deg auto"
 						></model-viewer>
 						<button class="btn btn-secondary" id="vReset">Réinitialiser la vue</button>
-						<label class="frame-add-btn" for="stageFile" title="Glissez-déposez un fichier ici, ou cliquez pour en choisir un">
-							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-							Ajouter un visuel
-							<input type="file" id="stageFile" accept="image/png,image/jpeg,image/svg+xml,image/webp" hidden />
-						</label>
+						<div class="frame-actions">
+							<button type="button" class="btn btn-secondary btn-icon" id="downloadRenderBtn" title="Télécharger le rendu actuel" aria-label="Télécharger le rendu actuel">
+								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12" /><path d="m7 10 5 5 5-5" /><path d="M5 21h14" /></svg>
+							</button>
+							<label class="frame-add-btn" for="stageFile" title="Glissez-déposez un fichier ici, ou cliquez pour en choisir un">
+								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+								Ajouter un visuel
+								<input type="file" id="stageFile" accept="image/png,image/jpeg,image/svg+xml,image/webp" hidden />
+							</label>
+						</div>
 					</div>
 					<div class="filebar">
 						<div class="layerStrip" id="layerStrip" style="display:none"></div>
