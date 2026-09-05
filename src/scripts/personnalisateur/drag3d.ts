@@ -14,6 +14,15 @@
 //   (v augmente vers le haut, y vers le bas) — cohérent avec le
 //   retournement déjà observé sur le contenu du visuel dans render.ts.
 //
+// Interaction en deux temps (demande Milio du 2026-09-05) : un premier
+// appui sur la zone du calque actif l'« arme » (le rend modifiable et
+// déplaçable) sans rien déplacer ni faire tourner la caméra sur ce
+// même geste ; tant qu'il reste armé, les appuis suivants dans cette
+// même zone glissent réellement le visuel (ou ouvrent la popup
+// contextuelle sur un simple tap, cf. onUp ci-dessous). Un appui en
+// dehors de cette zone désarme et laisse le geste piloter librement la
+// caméra du modèle 3D, comme si le visuel n'existait pas.
+//
 // Le point de départ du glisser doit tomber sur la face du vêtement
 // qui correspond à l'emplacement choisi (avant pour face/cœur, dos
 // pour dos) : ailleurs sur le vêtement (manches, tranches), le
@@ -24,7 +33,9 @@
 // élément. Enregistré pareil, notre handler arriverait après le sien
 // et l'orbite aurait déjà démarré avant qu'on ait pu l'annuler. En
 // phase capture, le nôtre passe en premier et peut couper net la
-// propagation avec stopImmediatePropagation().
+// propagation avec stopImmediatePropagation() — y compris pour le
+// simple appui qui arme le calque, qui ne doit pas non plus déclencher
+// d'orbite.
 import { activeLayer } from './state';
 import { render, PRINT_RECT, TEXTURE_SIZE } from './render';
 import { openLayerPopup } from './layer-popup';
@@ -37,19 +48,35 @@ function uvFrac(u: number): number {
   return u - Math.floor(u);
 }
 
+// Calque actuellement armé (modifiable/déplaçable sur le modèle 3D) :
+// remis à null dès qu'un appui tombe hors de sa zone, ou qu'un autre
+// calque devient actif entretemps.
+let armedLayerId: string | null = null;
+
 function onPointerDown(e: PointerEvent): void {
   const mv = stage();
   const layer = activeLayer();
   if (!mv || !layer) return;
   const hit = mv.positionAndNormalFromPoint(e.clientX, e.clientY);
-  if (!hit) return;
   // Face avant pour face/cœur, face arrière pour dos — sinon (manche,
-  // tranche) on laisse la caméra tourner. On teste contre l'emplacement
-  // du calque actif : glisser ne doit engager que le calque qu'on est
-  // en train d'éditer, sur sa propre face.
-  const front = hit.normal.z > 0.25;
-  const back = hit.normal.z < -0.25;
-  if (layer.place === 'dos' ? !back : !front) return;
+  // tranche, ou hors du modèle) on est en dehors de la zone du calque
+  // actif : on désarme et on laisse la caméra réagir normalement.
+  const front = !!hit && hit.normal.z > 0.25;
+  const back = !!hit && hit.normal.z < -0.25;
+  const onZone = layer.place === 'dos' ? back : front;
+  if (!onZone) {
+    armedLayerId = null;
+    return;
+  }
+
+  if (armedLayerId !== layer.id) {
+    // Premier appui sur la zone : arme le calque sans le déplacer ni
+    // laisser l'orbite démarrer sur ce même geste.
+    armedLayerId = layer.id;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    return;
+  }
 
   const probe = 24;
   const px = mv.positionAndNormalFromPoint(e.clientX + probe, e.clientY);

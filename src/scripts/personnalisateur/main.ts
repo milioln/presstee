@@ -171,6 +171,31 @@ function bindRotate(): void {
   });
 }
 
+// Type MIME de la data URL (toujours ce format, cf. state.ts : lecture
+// de fichier ou canvas généré) → extension de fichier pour le téléchargement.
+function extFromDataUrl(dataUrl: string): string {
+  const m = /^data:image\/([a-z0-9.+-]+);/i.exec(dataUrl);
+  if (!m) return 'png';
+  const type = m[1].toLowerCase();
+  if (type === 'svg+xml') return 'svg';
+  if (type === 'jpeg') return 'jpg';
+  return type;
+}
+
+function bindDownload(): void {
+  el('downloadBtn').addEventListener('click', () => {
+    const layer = activeLayer();
+    if (!layer) return;
+    const base = layer.fileName.replace(/\.[a-z0-9]+$/i, '').replace(/[\\/:*?"<>|]+/g, ' ').trim() || 'design';
+    const a = document.createElement('a');
+    a.href = layer.img;
+    a.download = `${base}.${extFromDataUrl(layer.img)}`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  });
+}
+
 function bindColorSwatches(): void {
   el('diag').addEventListener('click', (e) => {
     const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-swatch]');
@@ -222,6 +247,7 @@ export function init(): void {
   bindRotate();
   bindPlacement();
   bindColorSwatches();
+  bindDownload();
   bindResetView();
   bindFileInput();
   bindStageAdd();
