@@ -14,7 +14,8 @@
 // sur un conteneur stable, plutôt qu'un correctif fin du DOM).
 import { reco, TECHS, type TechKey } from './personnalisateur/recommendation';
 import { PALIERS_TARIF, prixVente } from '../config/tarification';
-import { coutBaseSupportUnique, catalogueColoris, type Garment } from '../config/parametres-metier';
+import { coutBaseSupportUnique, catalogueColoris, repartitionTaillesParDefaut, type Garment } from '../config/parametres-metier';
+import { seedFromItem } from './personnalisateur/state';
 import { LABELS_COUPE, LABELS_MANCHES, LABELS_GENRE, LABELS_GAMME_PRIX, inferCoupe, inferGammePrix, inferResponsable, type Coupe, type Manches, type Genre, type GammePrix } from '../lib/produits-types';
 import { TSHIRTS, type TShirtCatalogue } from '../data/tshirts';
 import { getTechnique } from '../lib/techniques-data';
@@ -467,6 +468,30 @@ export function bindSimulateur(): void {
     feedback('Projet mis de côté et sauvegardé sur cet appareil.');
     const url = `mailto:${siteConfig.email}?subject=${encodeURIComponent('Projet en attente — simulation presstee.fr')}&body=${encodeURIComponent(resumeMail('attente'))}`;
     window.location.href = url;
+  });
+
+  // Passerelle vers le mode 3D : sème le configurateur avec le premier
+  // produit de la simulation (garment/coloris/quantité — pas de calque
+  // réel, la simulation ne connaît qu'une description du visuel voulu),
+  // puis délègue le changement de mode à personnaliser-mode.ts via un
+  // évènement plutôt qu'un import direct, pour ne pas coupler ce module
+  // à la page qui l'héberge.
+  el('simPersonnaliser').addEventListener('click', (e) => {
+    e.preventDefault();
+    const produit = state.produits[0];
+    if (produit) {
+      const visuel = produit.visuels[0];
+      seedFromItem({
+        garment: produit.garment,
+        color: produit.coloris,
+        layers: [],
+        sizeDist: { ...repartitionTaillesParDefaut },
+        tech: 'auto',
+        delai: 'standard',
+        designHelp: { colors: visuel?.couleurs ?? null, format: '', notes: '' },
+      });
+    }
+    document.dispatchEvent(new CustomEvent('presstee:seed-3d'));
   });
 
   el('simReset').addEventListener('click', () => {

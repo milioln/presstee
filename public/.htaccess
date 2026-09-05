@@ -5,6 +5,14 @@
   RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 </IfModule>
 
+# Fusion du configurateur et du simulateur en une seule page /personnaliser
+# (les paramètres de requête existants, ex. ?technique=serigraphie, sont
+# conservés grâce à QSA et fusionnés avec ?mode=...).
+<IfModule mod_rewrite.c>
+  RewriteRule ^configurateur/?$ /personnaliser?mode=3d [R=301,L,QSA]
+  RewriteRule ^simulateur/?$ /personnaliser?mode=estimation [R=301,L,QSA]
+</IfModule>
+
 # Compression
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml

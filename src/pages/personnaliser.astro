@@ -1,0 +1,412 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+import '../styles/produits.css';
+import '../styles/simulateur.css';
+import '../styles/bat.css';
+import '../styles/personnalisateur.css';
+import { siteConfig } from '../config/site';
+---
+
+<Layout title="Personnaliser — Presstee" description="Configurez vous-même votre textile en 3D, ou obtenez une estimation rapide accompagnée par notre équipe.">
+	<Header />
+
+	<section class="sim-hero">
+		<div class="wrap">
+			<div class="crumb"><a href="/">Accueil</a> / Personnaliser</div>
+			<h1>Personnalisez votre textile.</h1>
+			<p>Configurez votre projet vous-même en 3D, ou obtenez en quelques clics une estimation accompagnée par notre équipe. Vous pouvez changer d'avis à tout moment.</p>
+		</div>
+	</section>
+
+	<div class="wrap">
+		<div class="modeSwitch" id="modeSwitch">
+			<button type="button" class="modeCard" data-mode="estimation">
+				<strong>Estimation rapide</strong>
+				<span>Sans 3D, accompagné par notre équipe — le plus simple pour démarrer.</span>
+			</button>
+			<button type="button" class="modeCard" data-mode="3d">
+				<strong>Je configure moi-même</strong>
+				<span>Modèle 3D complet : déposez votre visuel, ajustez-le, choisissez la technique.</span>
+			</button>
+		</div>
+	</div>
+
+	<main>
+		<section id="modeEstimation">
+			<div class="wrap">
+				<p class="sim-reassurance">Un doute à tout moment ? <a href={`tel:${siteConfig.telephone.replace(/\s+/g, '')}`}>{siteConfig.telephone}</a> · <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a></p>
+				<div class="sim-restore-note" id="simRestoreNote" style="display:none">
+					Simulation précédente reprise sur cet appareil. <button type="button" class="linkBtn" id="simReset">Recommencer à zéro</button>
+				</div>
+				<div class="sim-layout">
+					<div class="sim-main">
+						<div id="produitsList" class="produitsList"></div>
+						<button type="button" class="mini-btn mini-btn-lg" id="addProduit">+ Ajouter un autre produit</button>
+					</div>
+
+					<aside class="sim-side">
+						<div class="side-card">
+							<h4>Votre simulation</h4>
+							<div class="sim-totals">
+								<div class="sim-totals-row"><span id="simCount">1 produit</span></div>
+								<div class="sim-totals-row"><span id="simQty">25 pièces au total</span></div>
+								<div class="sim-totals-total"><span>Ordre de prix total</span><b id="simTotal">0 €</b></div>
+							</div>
+							<p class="sim-side-note">Cette estimation ne remplace pas un devis : le prix final dépend de votre visuel réel et peut être affiné avec nous.</p>
+							<div class="sim-actions">
+								<button type="button" class="btn" id="simCommander">Passer commande</button>
+								<button type="button" class="btn btn-outline" id="simSauvegarder">Sauvegarder et recevoir un devis</button>
+								<button type="button" class="btn btn-outline" id="simAttente">Mettre en attente</button>
+							</div>
+							<p class="sim-side-note" id="simFeedback" style="display:none"></p>
+							<a class="go" id="simPersonnaliser" href="/personnaliser?mode=3d">Personnaliser avec mon propre visuel →</a>
+						</div>
+						<div class="side-card">
+							<h4>Besoin d'aide sur votre visuel ?</h4>
+							<p>Pas encore de fichier ? Choisissez « Conseillez-moi » ou « En cours de création » sur un visuel : ça ne bloque rien, notre équipe vous accompagne ensuite.</p>
+						</div>
+					</aside>
+				</div>
+			</div>
+		</section>
+
+		<section id="mode3d" style="display:none">
+			<div class="pz-page">
+			<div class="wrap">
+				<div class="intro">
+					<h1>Composez votre textile personnalisé.</h1>
+					<p>Choisissez un modèle, déposez votre visuel, placez-le. Nous analysons votre fichier au passage et vous disons quelle technique convient à votre projet et à votre quantité. Pas encore de visuel ? Décrivez-nous votre projet dans l'onglet « Aide design », ça n'empêche pas de continuer votre commande.</p>
+					<a class="linkBtn" href="/personnaliser?mode=estimation" data-go-mode="estimation">Juste un ordre de prix rapide ? →</a>
+				</div>
+
+				<div class="board">
+					<div class="layout3">
+
+						<div class="panel">
+
+							<div class="cell">
+								<h6>1 — Support</h6>
+								<div class="support-name">T-shirt col rond<br>unisexe, 180 g/m²</div>
+								<p class="support-spec">100 % coton · manches courtes · XS à XXL</p>
+								<a class="btn btn-secondary btn-block" href="/produits/t-shirts">Changer de support</a>
+							</div>
+
+							<div class="cell">
+								<div class="cellhead"><h6>2 — Coloris</h6><span class="text-muted" id="colorName"></span></div>
+								<div class="swatches" id="colors"></div>
+								<p class="hint" id="darkNote"></p>
+							</div>
+
+							<div class="cell" id="placeBlock" style="display:none">
+								<h6>3 — Emplacement</h6>
+								<div class="seg3" id="place">
+									<button data-p="face" class="on"><strong>Face</strong><em>28 cm max</em></button>
+									<button data-p="coeur"><strong>Cœur</strong><em>10 cm max</em></button>
+									<button data-p="dos"><strong>Dos</strong><em>30 cm max</em></button>
+								</div>
+								<p class="hint">Plusieurs visuels peuvent partager un même emplacement (un logo et un texte, par exemple). Le recto-verso se chiffre comme deux marquages.</p>
+							</div>
+
+							<div class="cell" id="adjust" style="display:none">
+								<h6>4 — Taille et position du visuel</h6>
+								<div id="adjustControls" style="display:none">
+									<div class="widthctl">
+										<button class="btn btn-secondary btn-icon" id="wMinus" aria-label="Réduire">−</button>
+										<div class="widthval" id="wCm"></div>
+										<button class="btn btn-secondary btn-icon" id="wPlus" aria-label="Agrandir">+</button>
+									</div>
+									<p class="hint" id="wPct"></p>
+									<p class="hint">Le visuel se déplace aussi directement à la souris ou au doigt, sur le vêtement.</p>
+									<div class="posctl">
+										<button class="btn btn-secondary btn-icon" id="pUp" aria-label="Déplacer vers le haut">↑</button>
+										<div class="posrow">
+											<button class="btn btn-secondary btn-icon" id="pLeft" aria-label="Déplacer vers la gauche">←</button>
+											<button class="btn btn-secondary" id="pCenter">Recentrer</button>
+											<button class="btn btn-secondary btn-icon" id="pRight" aria-label="Déplacer vers la droite">→</button>
+										</div>
+										<button class="btn btn-secondary btn-icon" id="pDown" aria-label="Déplacer vers le bas">↓</button>
+									</div>
+									<div class="widthctl" style="margin-top:14px">
+										<button class="btn btn-secondary btn-icon" id="rMinus" aria-label="Incliner vers la gauche, 1°">⟲</button>
+										<div class="widthval" id="rDeg">0°</div>
+										<button class="btn btn-secondary btn-icon" id="rPlus" aria-label="Incliner vers la droite, 1°">⟳</button>
+									</div>
+									<input type="range" id="rSlider" class="rslider" min="-180" max="180" step="1" value="0" aria-label="Rotation précise, au degré près" />
+									<button class="btn btn-secondary btn-block" id="cropBtn" style="display:none">Recadrer l'image</button>
+								</div>
+								<p class="hint" id="adjustEmpty" style="display:none">Ajoutez un visuel pour cet emplacement pour le positionner.</p>
+							</div>
+
+						</div>
+
+						<div class="viewer">
+							<div class="seg2 viewToggle" id="viewToggle">
+								<button type="button" data-view="3d" class="on"><strong><span class="stepnum">1</span> Modèle 3D</strong></button>
+								<button type="button" data-view="bat"><strong><span class="stepnum">2</span> Bon à tirer</strong></button>
+							</div>
+
+							<div id="editView">
+							<div class="frame" id="frame">
+								<model-viewer
+									id="stage"
+									src="/personnalisateur/model/scene.gltf"
+									camera-controls
+									touch-action="pan-y"
+									interaction-prompt="none"
+									shadow-intensity="1"
+									camera-orbit="0deg 85deg 105%"
+									min-camera-orbit="auto 55deg auto"
+									max-camera-orbit="auto 115deg auto"
+								></model-viewer>
+								<button class="btn btn-secondary" id="vReset">Réinitialiser la vue</button>
+								<label class="frame-add-btn" for="stageFile" title="Glissez-déposez un fichier ici, ou cliquez pour en choisir un">
+									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+									Ajouter un visuel
+									<input type="file" id="stageFile" accept="image/png,image/jpeg,image/svg+xml,image/webp" hidden />
+								</label>
+							</div>
+							<div class="filebar">
+								<div class="layerStrip" id="layerStrip" style="display:none"></div>
+								<div class="modetabs">
+									<button class="on" data-mode="image">Image</button>
+									<button data-mode="text">Texte</button>
+									<button data-mode="design">Aide design</button>
+								</div>
+								<div class="drop" id="drop">
+									<strong>Déposez votre fichier</strong>
+									<p>ou cliquez pour parcourir — PNG, JPG ou SVG</p>
+								</div>
+								<div class="designmode" id="designMode" style="display:none">
+									<p class="hint">Pas encore de visuel ? Décrivez votre projet, notre équipe peut le créer avec vous — ça n'empêche pas de continuer votre commande.</p>
+									<a class="btn btn-secondary btn-block" href="/creer-visuel">Ou créez-le vous-même →</a>
+									<div>
+										<label for="designColors">Nombre de couleurs souhaité</label>
+										<select id="designColors">
+											<option value="">Je ne sais pas encore</option>
+											<option value="1">1 couleur</option>
+											<option value="2">2 couleurs</option>
+											<option value="3">3 couleurs</option>
+											<option value="4">4 couleurs</option>
+											<option value="6">5 à 8 couleurs</option>
+											<option value="12">Dégradés / photo</option>
+										</select>
+									</div>
+									<div>
+										<label for="designFormat">Format ou emplacement souhaité</label>
+										<input type="text" id="designFormat" placeholder="ex. logo poitrine 10 cm, dos A4…" />
+									</div>
+									<div>
+										<label for="designNotes">Décrivez votre projet</label>
+										<textarea id="designNotes" placeholder="Style, texte à inclure, inspiration, logo existant à moderniser…"></textarea>
+									</div>
+								</div>
+								<div class="textmode" id="textMode" style="display:none">
+									<input type="text" id="textInput" placeholder="Votre texte" maxlength="24" />
+									<div class="fontpicker" id="textFonts">
+										<button class="on" data-tf="archivo" style="font-family:'Archivo',sans-serif;font-weight:800">Sans</button>
+										<button data-tf="oswald" style="font-family:'Oswald',sans-serif;font-weight:600">Condensé</button>
+										<button data-tf="playfair" style="font-family:'Playfair Display',serif;font-weight:700">Serif</button>
+										<button data-tf="anton" style="font-family:'Anton',sans-serif">Impact</button>
+										<button data-tf="bebas" style="font-family:'Bebas Neue',sans-serif">Affiche</button>
+										<button data-tf="caveat" style="font-family:'Caveat',cursive;font-weight:700">Script</button>
+										<button data-tf="pacifico" style="font-family:'Pacifico',cursive">Manuscrit</button>
+										<button data-tf="marker" style="font-family:'Permanent Marker',cursive">Feutre</button>
+										<button data-tf="spacemono" style="font-family:'Space Mono',monospace;font-weight:700">Mono</button>
+									</div>
+									<div class="textcolors" id="textColors">
+										<button class="on" data-tc="#17131F" aria-label="Texte noir" style="background:#17131F"></button>
+										<button data-tc="#ffffff" aria-label="Texte blanc" style="background:#ffffff"></button>
+										<button data-tc="#C81E1E" aria-label="Texte rouge" style="background:#C81E1E"></button>
+										<button data-tc="#1E4FC8" aria-label="Texte bleu" style="background:#1E4FC8"></button>
+										<button data-tc="#F2C230" aria-label="Texte jaune" style="background:#F2C230"></button>
+										<button data-tc="#F2790C" aria-label="Texte orange" style="background:#F2790C"></button>
+										<button data-tc="#E0499B" aria-label="Texte rose" style="background:#E0499B"></button>
+										<button data-tc="#6D28D9" aria-label="Texte violet" style="background:#6D28D9"></button>
+										<button data-tc="#7A4B2A" aria-label="Texte marron" style="background:#7A4B2A"></button>
+										<button data-tc="#6B7280" aria-label="Texte gris" style="background:#6B7280"></button>
+										<button data-tc="#1F8A4C" aria-label="Texte vert" style="background:#1F8A4C"></button>
+									</div>
+									<button class="btn btn-primary btn-block" id="textApply">Ajouter le texte</button>
+								</div>
+								<input type="file" id="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" />
+								<div class="diag" id="diag" style="display:none"></div>
+							</div>
+							</div>
+
+							<div id="batView" style="display:none">
+								<div class="batView-head">
+									<p class="hint" style="margin:0">Reflète automatiquement vos modifications du modèle 3D à chaque retour sur cet onglet.</p>
+									<button type="button" class="mini-btn" id="batRefresh">↻ Actualiser l'aperçu</button>
+								</div>
+								<div id="batViewRoot"></div>
+								<div class="batConfirm" id="batConfirm">
+									<p class="hint">Vérifiez le visuel, le coloris, la technique et l'emplacement avant de confirmer.</p>
+									<button type="button" class="btn btn-primary btn-block" id="batConfirmBtn">Je confirme les informations de ce bon à tirer</button>
+								</div>
+								<div class="batConfirmed" id="batConfirmed" style="display:none">
+									<p class="batConfirmed-msg">✓ Informations confirmées le <span id="batConfirmedDate"></span> — en attente de la validation de notre équipe avant lancement en production.</p>
+									<button type="button" class="mini-btn" id="batUnconfirm">Annuler la confirmation</button>
+								</div>
+							</div>
+						</div>
+
+						<div class="panel">
+
+							<div class="cell">
+								<div class="cellhead"><h6>5 — Répartition des tailles</h6><span class="text-muted" id="sizeTotal"></span></div>
+								<div id="sizeRows"></div>
+							</div>
+
+							<div class="cell">
+								<h6>6 — Technique</h6>
+								<div class="techs" id="techs"></div>
+								<div class="reco" id="recoBox"></div>
+								<button class="btn btn-ghost" id="resetTech" style="display:none">Revenir à la recommandation</button>
+							</div>
+
+							<div class="cell">
+								<h6>7 — Délai</h6>
+								<div class="seg2" id="delai">
+									<button data-d="standard" class="on"><strong>Standard</strong><em>10 jours ouvrés</em></button>
+									<button data-d="express"><strong>Express</strong><em>5 jours ouvrés</em></button>
+								</div>
+							</div>
+
+							<div class="recap">
+								<div id="recap"></div>
+								<div class="recapLinks">
+									<a class="mini-btn" href="/panier">Panier (<span id="cartCount">0</span>)</a>
+									<button type="button" class="mini-btn" id="openSaved">Mes projets (<span id="savedCount">0</span>)</button>
+								</div>
+								<button class="btn btn-secondary btn-block" id="addToCart">Ajouter au panier</button>
+								<button class="btn btn-primary btn-block" id="sendQuote">Envoyer le devis</button>
+								<button class="btn btn-secondary btn-block" id="saveProject">Enregistrer le projet</button>
+								<p class="hint">Réponse sous 24 h ouvrées · projet enregistré dans ce navigateur.</p>
+								<p class="hint" id="batLink" style="display:none"><a href="/bon-a-tirer">Voir l'aperçu automatique du bon à tirer →</a></p>
+							</div>
+
+						</div>
+
+					</div>
+				</div>
+
+				<p class="credit">Modèle 3D « T-Shirt Low Poly » par <a href="https://sketchfab.com/Chirag.Vijay" target="_blank" rel="noopener">Chirag.Vijay</a>, sous licence <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.</p>
+			</div>
+			</div>
+		</section>
+	</main>
+
+	<Footer />
+
+	<div class="cropOverlay" id="cropOverlay" style="display:none">
+		<div class="cropBox">
+			<h6>Recadrer le visuel</h6>
+			<div class="cropStage" id="cropStage">
+				<img id="cropImg" alt="" />
+				<div class="cropRect" id="cropRect">
+					<div class="cropHandle" data-h="nw"></div>
+					<div class="cropHandle" data-h="ne"></div>
+					<div class="cropHandle" data-h="sw"></div>
+					<div class="cropHandle" data-h="se"></div>
+				</div>
+			</div>
+			<div class="cropActions">
+				<button class="btn btn-secondary" id="cropCancel">Annuler</button>
+				<button class="btn btn-primary" id="cropApply">Valider le recadrage</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="layerPopup" id="layerPopup" style="display:none">
+		<div class="lp-row">
+			<button type="button" id="lpCrop" aria-label="Recadrer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M2 6h14a2 2 0 0 1 2 2v14"/></svg></button>
+			<div class="lp-place" id="lpPlace">
+				<button type="button" data-lp-place="face">Face</button>
+				<button type="button" data-lp-place="coeur">Cœur</button>
+				<button type="button" data-lp-place="dos">Dos</button>
+			</div>
+			<div class="layerPopup-colors" id="lpColors"></div>
+			<button type="button" id="lpDelete" aria-label="Supprimer">×</button>
+		</div>
+		<div class="lp-row lp-slider-row">
+			<span>Taille</span>
+			<input type="range" id="lpSize" min="12" max="100" step="1" aria-label="Taille du visuel" />
+		</div>
+		<div class="lp-row lp-slider-row">
+			<span>Rotation</span>
+			<input type="range" id="lpRotate" min="-180" max="180" step="1" aria-label="Rotation du visuel, au degré près" />
+			<em id="lpRotateVal">0°</em>
+		</div>
+	</div>
+
+	<div class="listOverlay" id="listOverlay" style="display:none">
+		<div class="listBox">
+			<div class="listHead">
+				<h6>Mes projets enregistrés</h6>
+				<button type="button" id="listClose" aria-label="Fermer">×</button>
+			</div>
+			<div class="listItems" id="listItems"></div>
+			<p class="listEmpty" id="listEmpty" style="display:none">Aucun projet enregistré pour l’instant.</p>
+		</div>
+	</div>
+
+	<script>
+		import { initPersonnaliserMode } from '../scripts/personnaliser-mode';
+		initPersonnaliserMode();
+	</script>
+</Layout>
+
+<style>
+	.modeSwitch {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 12px;
+		margin: 0 0 28px;
+	}
+	.modeCard {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		text-align: left;
+		padding: 16px 18px;
+		border: 1.5px solid var(--ligne);
+		border-radius: var(--r);
+		background: #fff;
+		cursor: pointer;
+		font: inherit;
+	}
+	.modeCard strong {
+		font-size: 1rem;
+		color: var(--encre);
+	}
+	.modeCard span {
+		font-size: 0.85rem;
+		color: var(--gris);
+	}
+	.modeCard.on {
+		border-color: var(--indigo);
+		box-shadow: 0 0 0 1px var(--indigo);
+	}
+	@media (max-width: 640px) {
+		.modeSwitch {
+			grid-template-columns: 1fr;
+		}
+	}
+	.sim-reassurance {
+		font-size: 0.85rem;
+		color: var(--gris);
+		margin: 0 0 18px;
+	}
+	.sim-reassurance a {
+		color: inherit;
+		text-decoration: underline;
+	}
+	.intro .linkBtn {
+		display: inline-block;
+		margin-top: 10px;
+		font-size: 0.9rem;
+	}
+</style>
