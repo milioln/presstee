@@ -171,25 +171,17 @@ function bindRotate(): void {
   });
 }
 
-// Type MIME de la data URL (toujours ce format, cf. state.ts : lecture
-// de fichier ou canvas généré) → extension de fichier pour le téléchargement.
-function extFromDataUrl(dataUrl: string): string {
-  const m = /^data:image\/([a-z0-9.+-]+);/i.exec(dataUrl);
-  if (!m) return 'png';
-  const type = m[1].toLowerCase();
-  if (type === 'svg+xml') return 'svg';
-  if (type === 'jpeg') return 'jpg';
-  return type;
-}
-
-function bindDownload(): void {
-  el('downloadBtn').addEventListener('click', () => {
-    const layer = activeLayer();
-    if (!layer) return;
-    const base = layer.fileName.replace(/\.[a-z0-9]+$/i, '').replace(/[\\/:*?"<>|]+/g, ' ').trim() || 'design';
+// Capture l'image actuellement affichée par model-viewer (le rendu 3D
+// tel qu'il apparaît à l'écran, sous l'angle de caméra courant), pas le
+// fichier du visuel d'origine : toDataURL() lit directement le canevas
+// WebGL du composant.
+function bindDownloadRender(): void {
+  el('downloadRenderBtn').addEventListener('click', () => {
+    const mv = el<any>('stage');
+    if (typeof mv.toDataURL !== 'function') return;
     const a = document.createElement('a');
-    a.href = layer.img;
-    a.download = `${base}.${extFromDataUrl(layer.img)}`;
+    a.href = mv.toDataURL('image/png');
+    a.download = 'presstee-rendu.png';
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -247,7 +239,7 @@ export function init(): void {
   bindRotate();
   bindPlacement();
   bindColorSwatches();
-  bindDownload();
+  bindDownloadRender();
   bindResetView();
   bindFileInput();
   bindStageAdd();

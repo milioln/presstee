@@ -65,7 +65,9 @@
   background-size:26px 26px;background-position:center center}
 #stage{position:absolute;inset:0;width:100%;height:100%;--poster-color:transparent}
 #vReset{position:absolute;left:20px;top:20px;background:var(--bg)}
-.frame-add-btn{position:absolute;right:20px;bottom:20px;display:flex;align-items:center;gap:7px;background:var(--accent);color:var(--bg);border-radius:100px;padding:11px 18px 11px 14px;font-family:'Archivo',sans-serif;font-weight:800;font-size:12.5px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.18);transition:background .15s}
+.frame-actions{position:absolute;right:20px;bottom:20px;display:flex;align-items:center;gap:10px}
+.frame-actions .btn-icon{border-radius:100px;background:var(--bg);box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.frame-add-btn{display:flex;align-items:center;gap:7px;background:var(--accent);color:var(--bg);border-radius:100px;padding:11px 18px 11px 14px;font-family:'Archivo',sans-serif;font-weight:800;font-size:12.5px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.18);transition:background .15s}
 .frame-add-btn:hover{background:var(--accent-600)}
 .frame.over{outline:2px dashed var(--accent);outline-offset:-2px}
 .frame.over::after{content:"Déposez le fichier ici";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--accent-100) 88%,transparent);font-family:'Archivo',sans-serif;font-weight:800;font-size:14px;color:var(--accent-800);pointer-events:none}
