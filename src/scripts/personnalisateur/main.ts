@@ -204,6 +204,23 @@ function bindResetView(): void {
   });
 }
 
+// Plein écran sur #frame (modèle 3D + barre d'actions), pas sur toute la
+// page : plus confortable pour examiner le visuel de près, notamment sur
+// mobile où le panneau latéral prend sinon toute la place.
+function bindFullscreen(): void {
+  const frame = el('frame');
+  const btn = el('fullscreenBtn');
+  btn.addEventListener('click', () => {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else frame.requestFullscreen();
+  });
+  document.addEventListener('fullscreenchange', () => {
+    const active = document.fullscreenElement === frame;
+    frame.classList.toggle('is-fullscreen', active);
+    btn.setAttribute('aria-label', active ? 'Quitter le plein écran' : 'Afficher le modèle 3D en plein écran');
+  });
+}
+
 // Pré-sélectionne une technique quand on arrive depuis une page du guide
 // (/configurateur?technique=serigraphie).
 function applyTechFromUrl(): void {
@@ -241,6 +258,7 @@ export function init(): void {
   bindColorSwatches();
   bindDownloadRender();
   bindResetView();
+  bindFullscreen();
   bindFileInput();
   bindStageAdd();
   bindModeTabs();

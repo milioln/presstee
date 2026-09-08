@@ -59,6 +59,12 @@
 					<button type="button" data-nom="Vert bouteille" aria-label="Coloris vert bouteille" style="background:#1F5A4A"></button>
 				</div>
 			</div>
+
+			<button type="button" class="fullscreen-btn" id="heroFullscreen" aria-label="Afficher le t-shirt 3D en plein écran" title="Plein écran">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<path d="M8 3H5a2 2 0 0 0-2 2v3" /><path d="M16 3h3a2 2 0 0 1 2 2v3" /><path d="M8 21H5a2 2 0 0 1-2-2v-3" /><path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+				</svg>
+			</button>
 		</div>
 
 		<label class="logo-hint" title="Importer votre visuel">
@@ -93,6 +99,20 @@
 	});
 
 	initHero3D();
+
+	// Plein écran sur la vignette (t-shirt + palette), pas sur toute la
+	// section : plus lisible sur mobile pour examiner le visuel de près.
+	const heroZone = document.getElementById('heroZone');
+	const fsBtn = document.getElementById('heroFullscreen');
+	fsBtn?.addEventListener('click', () => {
+		if (document.fullscreenElement) document.exitFullscreen();
+		else heroZone?.requestFullscreen();
+	});
+	document.addEventListener('fullscreenchange', () => {
+		const active = document.fullscreenElement === heroZone;
+		heroZone?.classList.toggle('is-fullscreen', active);
+		fsBtn?.setAttribute('aria-label', active ? 'Quitter le plein écran' : 'Afficher le t-shirt 3D en plein écran');
+	});
 </script>
 
 <style>
@@ -260,6 +280,49 @@
 		align-items: center;
 		gap: 14px;
 		flex-wrap: wrap;
+	}
+
+	.fullscreen-btn {
+		position: absolute;
+		top: 22px;
+		right: 22px;
+		z-index: 2;
+		width: 38px;
+		height: 38px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 999px;
+		border: 1.5px solid #e7e3f2;
+		background: #fff;
+		color: #17131f;
+		cursor: pointer;
+		box-shadow: 0 6px 18px rgba(23, 19, 31, 0.14);
+		transition:
+			border-color 0.18s,
+			transform 0.18s;
+	}
+	.fullscreen-btn:hover {
+		border-color: #9d83cf;
+		transform: scale(1.06);
+	}
+	.fullscreen-btn:focus-visible {
+		outline: 2px solid #9d83cf;
+		outline-offset: 2px;
+	}
+	/* Plein écran natif (Fullscreen API) : la vignette occupe tout l'écran,
+	   le t-shirt garde sa place (inset déjà en %) et la barre de coloris
+	   remonte un peu pour rester confortable au doigt sur mobile. */
+	.hero-zone:fullscreen {
+		aspect-ratio: auto;
+		width: 100vw;
+		height: 100vh;
+		background: #fff;
+		display: flex;
+		align-items: center;
+	}
+	.hero-zone.is-fullscreen .zone-bar {
+		bottom: 32px;
 	}
 	.coloris {
 		display: flex;

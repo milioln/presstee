@@ -30,9 +30,16 @@ const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: numb
 	'manche-gauche': { x: 1360, y: 1325, w: 540, h: 195 },
 };
 
-// Seuls face/coeur/dos sont inversés verticalement dans l'atlas (cf.
-// render.ts) : les manches se dessinent sans le scale(1,-1) ci-dessous.
-const FLIPPED_PANELS: Emplacement[] = ['face', 'coeur', 'dos'];
+// Tous les panneaux sont inversés verticalement dans l'atlas, y compris
+// les manches (cf. render.ts — vérifié avec un mot entier relu à
+// plusieurs angles, pas juste 2-3 lettres à un seul angle).
+const PANEL_SCALE: Record<Emplacement, { x: number; y: number }> = {
+	face: { x: 1, y: -1 },
+	coeur: { x: 1, y: -1 },
+	dos: { x: 1, y: -1 },
+	'manche-droite': { x: 1, y: -1 },
+	'manche-gauche': { x: 1, y: -1 },
+};
 
 // Un design peut être un simple logo (1 élément) ou une composition
 // fidèle à un vrai visuel client avec plusieurs éléments indépendants
@@ -64,7 +71,7 @@ const ASPEN_LOTUS: Design = {
 		{ url: '/hero-designs/aspen-lotus-1969/numero-29.png', place: 'face', xFrac: 0.492, yFrac: 0.949, wFrac: 0.106 },
 		{ url: '/hero-designs/aspen-lotus-1969/lotus-logo.png', place: 'face', xFrac: 0.268, yFrac: 0.815, wFrac: 0.118 },
 		{ url: '/hero-designs/aspen-lotus-1969/gsr-logo.png', place: 'face', xFrac: 0.717, yFrac: 0.819, wFrac: 0.097 },
-		{ url: '/hero-designs/aspen-lotus-1969/aspen-wordmark.png', place: 'face', xFrac: 0.5, yFrac: 0.603, wFrac: 0.6 },
+		{ url: '/hero-designs/aspen-lotus-1969/aspen-wordmark.png', place: 'face', xFrac: 0.5, yFrac: 0.63, wFrac: 0.56 },
 		{ url: '/hero-designs/aspen-lotus-1969/lotus-elan-text.png', place: 'dos', xFrac: 0.499, yFrac: 0.95, wFrac: 0.561 },
 		{ url: '/hero-designs/aspen-lotus-1969/annee-1969.png', place: 'dos', xFrac: 0.505, yFrac: 0.802, wFrac: 0.173 },
 		{ url: '/hero-designs/aspen-lotus-1969/voiture.png', place: 'dos', xFrac: 0.5, yFrac: 0.606, wFrac: 0.58 },
@@ -82,16 +89,20 @@ const ASPEN_LOTUS: Design = {
 // décliné en vert bouteille, fourni par Milio le 2026-09-08), même
 // principe que ASPEN_LOTUS : la bande centrale (face et dos) n'est pas
 // extraite de la photo (vert sur vert, très peu de contraste dans le
-// mockup) mais recréée directement comme un simple aplat crème — assez
-// fin et haut pour lire comme la bande du mockup une fois posé sur le
-// modèle.
+// mockup) mais recréée directement en 3 aplats verticaux (vert-crème-
+// vert, mêmes proportions que le mockup) — plus fiable que d'essayer de
+// détourer un vert à peine différent du t-shirt lui-même.
 const GREEN_ASPEN: Design = {
 	elements: [
-		{ url: '/hero-designs/aspen-lotus-green/bande.png', place: 'face', xFrac: 0.5, yFrac: 0.5, wFrac: 0.06 },
+		{ url: '/hero-designs/aspen-lotus-green/bande.png', place: 'face', xFrac: 0.5, yFrac: 0.5, wFrac: 0.24 },
 		{ url: '/hero-designs/aspen-lotus-green/numero-lasaires.png', place: 'face', xFrac: 0.203, yFrac: 0.88, wFrac: 0.256 },
 		{ url: '/hero-designs/aspen-lotus-green/brand-lockup.png', place: 'face', xFrac: 0.79, yFrac: 0.874, wFrac: 0.269 },
-		{ url: '/hero-designs/aspen-lotus-green/bande.png', place: 'dos', xFrac: 0.5, yFrac: 0.5, wFrac: 0.06 },
-		{ url: '/hero-designs/aspen-lotus-green/dos-29.png', place: 'dos', xFrac: 0.5, yFrac: 0.611, wFrac: 0.85 },
+		{ url: '/hero-designs/aspen-lotus-green/bande.png', place: 'dos', xFrac: 0.5, yFrac: 0.5, wFrac: 0.24 },
+		// "2" et "9" séparés (plutôt qu'une seule image "29" collée à la
+		// bande) pour pouvoir aligner chaque chiffre sur la bande centrale
+		// avec un vrai espace entre les deux, comme demandé par Milio.
+		{ url: '/hero-designs/aspen-lotus-green/dos-2.png', place: 'dos', xFrac: 0.21, yFrac: 0.611, wFrac: 0.3 },
+		{ url: '/hero-designs/aspen-lotus-green/dos-9.png', place: 'dos', xFrac: 0.79, yFrac: 0.611, wFrac: 0.3 },
 		{ url: '/hero-designs/aspen-lotus-green/manche-aspen.png', place: 'manche-droite', xFrac: 0.5, yFrac: 0.5, wFrac: 0.55 },
 		{ url: '/hero-designs/aspen-lotus-green/manche-presstee.png', place: 'manche-gauche', xFrac: 0.5, yFrac: 0.5, wFrac: 0.55 },
 	],
@@ -175,10 +186,11 @@ async function buildTexture(hex: string, design: Design): Promise<string> {
 		const cy = rect.y + rect.h * el.yFrac;
 		ctx.save();
 		ctx.translate(cx, cy);
-		// Le panneau avant/dos du modèle est retourné verticalement dans
-		// l'atlas UV (cf. render.ts) : on recompense en dessinant le visuel
-		// inversé, sauf sur les manches qui n'ont pas ce retournement.
-		ctx.scale(1, FLIPPED_PANELS.includes(el.place) ? -1 : 1);
+		// Chaque panneau a son propre retournement dans l'atlas UV (cf.
+		// PANEL_SCALE ci-dessus) : on recompense en dessinant le visuel
+		// inversé sur l'axe correspondant.
+		const panelScale = PANEL_SCALE[el.place];
+		ctx.scale(panelScale.x, panelScale.y);
 		ctx.drawImage(img, -w / 2, -h / 2, w, h);
 		ctx.restore();
 	});

@@ -54,10 +54,7 @@ export const TEXTURE_SIZE = 2048;
 // candidat et en lisant à l'écran, caméra de face (0deg) : le rectangle
 // le plus à gauche de l'atlas (x≈750, "manche-droite") tombe sur la
 // manche qui apparaît à l'écran à DROITE — convention "écran", comme sur
-// une photo produit, pas le bras anatomique du porteur. Contrairement à
-// face/coeur/dos, ce panneau n'est PAS inversé verticalement dans
-// l'atlas (vérifié avec un repère directionnel) : buildTextureDataUrl ne
-// doit pas y appliquer le scale(1,-1).
+// une photo produit, pas le bras anatomique du porteur.
 export const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: number }> = {
   face: { x: 324, y: 210, w: 580, h: 750 },
   coeur: { x: 630, y: 750, w: 130, h: 280 },
@@ -66,9 +63,21 @@ export const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; 
   'manche-gauche': { x: 1360, y: 1325, w: 540, h: 195 },
 };
 
-// Seuls face/coeur/dos sont inversés verticalement dans l'atlas (cf.
-// commentaire ci-dessus) : les manches se dessinent sans ce scale(1,-1).
-const FLIPPED_PANELS: Emplacement[] = ['face', 'coeur', 'dos'];
+// Tous les panneaux sont inversés verticalement dans l'atlas — vérifié
+// empiriquement pour les manches avec un repère directionnel (une lettre
+// asymétrique) le 2026-09-08 : un premier réglage à l'horizontale
+// semblait correct sur un texte de 2-3 lettres à un angle particulier,
+// mais un mot entier relu à plusieurs angles a confirmé que c'est bien
+// l'axe vertical qui est inversé, comme face/cœur/dos — jamais fier
+// d'une lecture rapide sur la surface courbe, toujours revérifier avec
+// un mot lisible sous plusieurs angles.
+const PANEL_SCALE: Record<Emplacement, { x: number; y: number }> = {
+  face: { x: 1, y: -1 },
+  coeur: { x: 1, y: -1 },
+  dos: { x: 1, y: -1 },
+  'manche-droite': { x: 1, y: -1 },
+  'manche-gauche': { x: 1, y: -1 },
+};
 
 let baseImgPromise: Promise<HTMLImageElement> | null = null;
 function loadBaseImg(): Promise<HTMLImageElement> {
@@ -124,12 +133,12 @@ async function buildTextureDataUrl(): Promise<string> {
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate((layer.rot * Math.PI) / 180);
-    // Le panneau avant/dos du modèle est retourné verticalement dans
-    // l'atlas UV (vérifié empiriquement avec un visuel directionnel) : on
-    // recompense en dessinant le visuel inversé sur l'axe Y, pour qu'il
-    // se lise normalement une fois plaqué sur le tissu. Les manches n'ont
-    // pas ce retournement (cf. PRINT_RECT ci-dessus).
-    ctx.scale(1, FLIPPED_PANELS.includes(layer.place) ? -1 : 1);
+    // Chaque panneau a son propre retournement dans l'atlas UV (cf.
+    // PANEL_SCALE ci-dessus) : on recompense en dessinant le visuel
+    // inversé sur l'axe correspondant, pour qu'il se lise normalement
+    // une fois plaqué sur le tissu.
+    const panelScale = PANEL_SCALE[layer.place];
+    ctx.scale(panelScale.x, panelScale.y);
     ctx.drawImage(logo, -w / 2, -h / 2, w, h);
     ctx.restore();
   }
