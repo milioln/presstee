@@ -15,10 +15,11 @@
   --lavande:#F7F5FC;
   /* Utilisée par produits.css/techniques.css (fonds de vignette, en-têtes
      de tableau...) mais jamais définie : var(--voile) y retombait donc
-     silencieusement sur transparent. Fixée ici à sa valeur de fait pour
-     ne rien changer visuellement — une vraie teinte (à valider) rendrait
-     probablement ces zones plus lisibles. */
-  --voile:transparent;
+     silencieusement sur transparent, rendant ces zones illisibles (aucun
+     fond visible). Fixée le 2026-09-09 à --gris-clair (déjà la teinte de
+     fond neutre validée ailleurs sur le site) plutôt qu'inventer une
+     nouvelle couleur. */
+  --voile:var(--gris-clair);
   --r:18px;
   --max:1180px;
 }

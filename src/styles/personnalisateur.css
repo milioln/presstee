@@ -1,21 +1,25 @@
 /*
   Port du design system "Modernist" de la maquette Claude Design
-  (Personnalisateur.dc.html) — copié tel quel : accent rouge, coins nets
-  (radius 0), Archivo, panneaux contigus à bordures plutôt que cartes
-  arrondies. Feuille de style dédiée à cette page — les variables
-  diffèrent volontairement de global.css. Ne pas fusionner sans validation.
+  (Personnalisateur.dc.html) — feuille de style dédiée à cette page, avec
+  ses propres noms de variables (ne pas fusionner la STRUCTURE des deux
+  systèmes sans validation). Les VALEURS, elles, ont été réalignées le
+  2026-09-08 (demande Milio) sur la vraie charte du site (global.css) :
+  accent indigo au lieu du rouge d'origine, coins arrondis (--r) comme
+  partout ailleurs, titres en Sora au lieu d'Archivo — Archivo reste
+  chargé et utilisé pour les polices du mode Texte (fontpicker), donc pas
+  retiré de l'import ci-dessous.
 */
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Oswald:wght@600&family=Playfair+Display:wght@700&family=Anton&family=Bebas+Neue&family=Caveat:wght@700&family=Pacifico&family=Permanent+Marker&family=Space+Mono:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=Sora:wght@600;700&family=Oswald:wght@600&family=Playfair+Display:wght@700&family=Anton&family=Bebas+Neue&family=Caveat:wght@700&family=Pacifico&family=Permanent+Marker&family=Space+Mono:wght@700&display=swap');
 
 :root{
-  --bg:#f3f2f2;--surface:#eae9e9;--text:#201e1d;
-  --accent:#ec3013;--accent-600:#dd2b0f;--accent-700:#ae1800;--accent-800:#7c1405;--accent-100:#fff2ef;
-  --divider:rgba(32,30,29,.4);--muted:rgba(32,30,29,.55);
+  --bg:#fff;--surface:var(--lavande);--text:var(--encre);
+  --accent:var(--indigo);--accent-600:#8a73b6;--accent-700:#715e95;--accent-800:#564871;--accent-100:var(--gris-clair);
+  --divider:var(--ligne);--muted:var(--gris);
   --ok:#1F5A4A;--ok-bg:rgba(31,90,74,.09);--warn:#8a4a0f;--warn-bg:rgba(178,106,18,.1);
-  --r:0px;
+  --r:18px;
 }
-.pz-page{font-family:'Archivo',system-ui,sans-serif;color:var(--text);background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased}
-.pz-page h1,.pz-page h6{font-family:'Archivo',system-ui,sans-serif;font-weight:800;letter-spacing:-0.015em;line-height:1.12}
+.pz-page{font-family:'Sora',system-ui,sans-serif;color:var(--text);background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased}
+.pz-page h1,.pz-page h6{font-family:'Sora',system-ui,sans-serif;font-weight:700;letter-spacing:-0.015em;line-height:1.12}
 .pz-page h6{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
 .pz-page .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
 .text-muted{color:var(--muted)}
@@ -32,10 +36,19 @@
 
 .cell{padding:20px 22px;border-bottom:2px solid var(--divider)}
 .cell:last-child{border-bottom:0}
+
+/* Regroupe les cellules numérotées (1-7) en phases visuellement
+   distinctes — Composition / Tailles & technique / Livraison & validation
+   — plutôt qu'une numérotation plate coupée en deux colonnes de part et
+   d'autre du modèle 3D (demande Milio, 2026-09). Purement visuel : aucune
+   cellule ni ID ne change de place, les 23 bind*() du configurateur ne
+   voient jamais ce conteneur. */
+.phaseGroup + .phaseGroup{border-top:2px solid var(--divider)}
+.phaseLabel{padding:16px 22px 4px;font-family:'Sora',sans-serif;font-weight:700;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--accent)}
 .cellhead{display:flex;justify-content:space-between;align-items:baseline}
 .cellhead h6{margin-bottom:0}
 
-.support-name{font-family:'Archivo',sans-serif;font-weight:800;font-size:19px;line-height:1.1}
+.support-name{font-family:'Sora',sans-serif;font-weight:800;font-size:19px;line-height:1.1}
 .support-spec{font-size:12px;color:var(--muted);margin-top:6px;font-family:'Manrope',system-ui,sans-serif}
 .support-name + .support-spec + .btn{margin-top:12px}
 
@@ -49,11 +62,11 @@
 .seg3 button:last-child,.seg2 button:last-child{border-right:0}
 .seg3 button:hover,.seg2 button:hover{background:color-mix(in srgb,var(--text) 6%,transparent)}
 .seg3 button.on,.seg2 button.on{background:var(--accent);color:var(--bg)}
-.seg3 strong,.seg2 strong{display:block;font-family:'Archivo',sans-serif;font-weight:800;font-size:13.5px}
+.seg3 strong,.seg2 strong{display:block;font-family:'Sora',sans-serif;font-weight:800;font-size:13.5px}
 .seg3 em,.seg2 em{font-style:normal;font-size:11px;opacity:.85}
 
 .widthctl{display:flex;align-items:center;gap:10px;margin-top:14px}
-.widthval{flex:1;text-align:center;font-family:'Archivo',sans-serif;font-weight:800;font-size:15px}
+.widthval{flex:1;text-align:center;font-family:'Sora',sans-serif;font-weight:800;font-size:15px}
 .rslider{width:100%;margin-top:8px;accent-color:var(--accent)}
 
 .posctl{display:grid;justify-items:center;gap:6px;margin-top:14px}
@@ -67,11 +80,11 @@
 #vReset{position:absolute;left:20px;top:20px;background:var(--bg)}
 .frame-actions{position:absolute;right:20px;bottom:20px;display:flex;align-items:center;gap:10px}
 .frame-actions .btn-icon{border-radius:100px;background:var(--bg);box-shadow:0 6px 18px rgba(0,0,0,.18)}
-.frame-add-btn{display:flex;align-items:center;gap:7px;background:var(--accent);color:var(--bg);border-radius:100px;padding:11px 18px 11px 14px;font-family:'Archivo',sans-serif;font-weight:800;font-size:12.5px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.18);transition:background .15s}
+.frame-add-btn{display:flex;align-items:center;gap:7px;background:var(--accent);color:var(--bg);border-radius:100px;padding:11px 18px 11px 14px;font-family:'Sora',sans-serif;font-weight:800;font-size:12.5px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.18);transition:background .15s}
 .frame-add-btn:hover{background:var(--accent-600)}
 .frame:fullscreen{background:var(--bg)}
 .frame.over{outline:2px dashed var(--accent);outline-offset:-2px}
-.frame.over::after{content:"Déposez le fichier ici";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--accent-100) 88%,transparent);font-family:'Archivo',sans-serif;font-weight:800;font-size:14px;color:var(--accent-800);pointer-events:none}
+.frame.over::after{content:"Déposez le fichier ici";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--accent-100) 88%,transparent);font-family:'Sora',sans-serif;font-weight:800;font-size:14px;color:var(--accent-800);pointer-events:none}
 
 .filebar{border-top:2px solid var(--divider);padding:18px 22px}
 
@@ -80,14 +93,14 @@
 .tech:last-child{border-bottom:0}
 .tech:hover{background:color-mix(in srgb,var(--text) 5%,transparent)}
 .tech.on{background:var(--accent-100)}
-.tech .th{display:flex;align-items:center;gap:8px;font-family:'Archivo',sans-serif;font-weight:800;font-size:14px}
+.tech .th{display:flex;align-items:center;gap:8px;font-family:'Sora',sans-serif;font-weight:800;font-size:14px}
 .tech .tag{font-size:10px;letter-spacing:.04em;padding:3px 9px;background:var(--accent-100);color:var(--accent-800);margin-left:auto}
 .tech p{font-size:12px;color:var(--muted);margin-top:5px;font-family:'Manrope',system-ui,sans-serif}
 .reco{background:var(--surface);padding:12px 14px;font-size:12.5px;color:var(--muted);margin-top:12px;font-family:'Manrope',system-ui,sans-serif}
 .reco strong{color:var(--text);font-weight:600}
 
 .szrow{display:flex;align-items:center;gap:10px;padding:6px 0}
-.szcode{width:32px;font-family:'Archivo',sans-serif;font-weight:800;font-size:14px}
+.szcode{width:32px;font-family:'Sora',sans-serif;font-weight:800;font-size:14px}
 .szbar{flex:1;height:6px;background:var(--surface);overflow:hidden}
 .szbar div{height:100%;background:var(--accent)}
 .szn{width:22px;text-align:right;font-size:13px;font-variant-numeric:tabular-nums}
@@ -96,14 +109,14 @@
 #sizeRows{margin-top:6px}
 
 .modetabs{display:flex;border:1px solid var(--divider);margin-bottom:14px}
-.modetabs button{flex:1;border:0;background:transparent;padding:9px;font-family:'Archivo',sans-serif;font-weight:800;font-size:12.5px;cursor:pointer;color:var(--muted)}
+.modetabs button{flex:1;border:0;background:transparent;padding:9px;font-family:'Sora',sans-serif;font-weight:800;font-size:12.5px;cursor:pointer;color:var(--muted)}
 .modetabs button+button{border-left:1px solid var(--divider)}
 .modetabs button.on{background:var(--accent);color:var(--bg)}
 
 .drop{border:1.5px dashed var(--divider);padding:22px 16px;text-align:center;cursor:pointer;transition:.15s}
 .drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-100)}
 .drop p{font-size:13px;color:var(--muted);margin-top:6px;font-family:'Manrope',system-ui,sans-serif}
-.drop strong{font-family:'Archivo',sans-serif;font-size:14px;font-weight:800}
+.drop strong{font-family:'Sora',sans-serif;font-size:14px;font-weight:800}
 
 .textmode{display:grid;gap:10px}
 .textmode input[type=text]{width:100%;padding:11px 12px;border:1px solid var(--divider);background:var(--bg);font:inherit;font-size:14px;color:var(--text)}
@@ -118,7 +131,7 @@
 
 .designmode{display:grid;gap:10px}
 .designmode .hint{margin-top:0}
-.designmode label{display:block;font-family:'Archivo',sans-serif;font-weight:800;font-size:12px;margin-bottom:6px}
+.designmode label{display:block;font-family:'Sora',sans-serif;font-weight:800;font-size:12px;margin-bottom:6px}
 .designmode select,.designmode input[type=text],.designmode textarea{width:100%;padding:11px 12px;border:1px solid var(--divider);background:var(--bg);font:inherit;font-size:14px;color:var(--text)}
 .designmode textarea{resize:vertical;min-height:76px}
 .designmode select:focus-visible,.designmode input[type=text]:focus-visible,.designmode textarea:focus-visible{outline:2px solid var(--accent);outline-offset:-1px}
@@ -141,7 +154,7 @@
 .diag .dt{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600}
 .line{display:flex;align-items:baseline;gap:8px;font-size:13px}
 .line b{font-weight:500;color:var(--muted);min-width:104px}
-.line span{font-family:'Archivo',sans-serif;font-size:13px}
+.line span{font-family:'Sora',sans-serif;font-size:13px}
 .colorswatches{display:flex;gap:5px;flex-wrap:wrap}
 .colorswatches .swatch{width:16px;height:16px;border:1px solid var(--divider);display:inline-block;flex-shrink:0;padding:0;position:relative;cursor:default}
 .colorswatches .swatch.removable{cursor:pointer}
@@ -155,13 +168,15 @@
 
 .recap{padding:20px 22px;background:var(--surface);margin-top:auto}
 .recap .line b{min-width:150px}
+.recapPreview{display:flex;align-items:center;gap:9px;font-family:'Sora',sans-serif;font-weight:600;font-size:13px;margin-bottom:14px}
+.recapPreview-sw{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--divider);flex-shrink:0}
 
-.mini-btn{background:none;border:0;font-family:'Archivo',sans-serif;font-weight:600;font-size:12px;color:var(--accent);cursor:pointer;padding:4px}
+.mini-btn{background:none;border:0;font-family:'Sora',sans-serif;font-weight:600;font-size:12px;color:var(--accent);cursor:pointer;padding:4px}
 .mini-btn:hover{text-decoration:underline}
 
 /* — boutons (Modernist .btn) — */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;text-decoration:none;
-  font-family:'Archivo',sans-serif;font-weight:800;font-size:14px;line-height:1.2;color:var(--text);
+  font-family:'Sora',sans-serif;font-weight:800;font-size:14px;line-height:1.2;color:var(--text);
   background:transparent;border:1px solid transparent;padding:10px 16px}
 .btn-primary{background:var(--accent);color:var(--bg)}
 .btn-primary:hover{background:var(--accent-600)}
@@ -200,7 +215,7 @@ input[type=file]{display:none}
 .layerPopup button:hover{background:var(--accent)}
 #lpCrop,#lpDelete{width:28px}
 .lp-place{display:flex;gap:2px;flex:1}
-.lp-place button{flex:1;font-size:11px;font-family:'Archivo',sans-serif;font-weight:700;border:1px solid rgba(255,255,255,.25)}
+.lp-place button{flex:1;font-size:11px;font-family:'Sora',sans-serif;font-weight:700;border:1px solid rgba(255,255,255,.25)}
 .lp-place button.on{background:var(--accent);border-color:var(--accent)}
 .layerPopup-colors{display:flex;gap:4px;flex-wrap:wrap;max-width:154px}
 .layerPopup-colors button{width:18px;height:18px;border:1px solid rgba(255,255,255,.35)}
@@ -222,7 +237,7 @@ input[type=file]{display:none}
 .listRow{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--divider)}
 .listSwatch{width:28px;height:28px;flex-shrink:0;border:1px solid var(--divider)}
 .listInfo{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
-.listInfo strong{font-family:'Archivo',sans-serif;font-size:13.5px}
+.listInfo strong{font-family:'Sora',sans-serif;font-size:13.5px}
 .listInfo span{font-size:12px;color:var(--muted);font-family:'Manrope',system-ui,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .listRm{border:0;background:transparent;color:var(--muted);font-size:16px;line-height:1;cursor:pointer;padding:4px;flex-shrink:0}
 .listRm:hover{color:var(--accent)}
@@ -238,12 +253,12 @@ input[type=file]{display:none}
 .pz-page{--bat-accent:var(--accent)}
 .pz-page .bat-pieces{grid-template-columns:1fr;gap:0}
 .pz-page .bat-piece{border:1px solid var(--divider);border-radius:0;padding:20px}
-.pz-page .bat-piece-head span.titre{font-family:'Archivo',sans-serif;font-weight:800;font-size:15px}
-.pz-page .bat-piece-badge{background:var(--surface);color:var(--text);font-family:'Archivo',sans-serif;border-radius:0}
+.pz-page .bat-piece-head span.titre{font-family:'Sora',sans-serif;font-weight:800;font-size:15px}
+.pz-page .bat-piece-badge{background:var(--surface);color:var(--text);font-family:'Sora',sans-serif;border-radius:0}
 .pz-page .bat-visu{border-color:var(--divider);border-radius:0}
 .pz-page .bat-visu-collar{background:var(--surface);border-color:var(--divider)}
 .pz-page .bat-visu-zone{border-radius:0}
-.pz-page .bat-cotes .val{font-family:'Archivo',sans-serif}
+.pz-page .bat-cotes .val{font-family:'Sora',sans-serif}
 .pz-page .bat-info span.label{color:var(--muted)}
 
 .batView-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:14px;flex-wrap:wrap}

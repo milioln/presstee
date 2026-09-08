@@ -274,6 +274,25 @@ function refListHtml(p: Produit): string {
   return `<div class="refList">${generique}${rows}</div>`;
 }
 
+// Aperçu vivant : la silhouette (même tracé que refThumb) se recolore et
+// affiche un badge par visuel en cours, recréée à chaque render() comme
+// le reste de la carte (même chemin de rafraîchissement que tout le
+// simulateur, cf. commentaire de tête de fichier — pas un deuxième
+// mécanisme de mise à jour ciblée, qui aurait pu se désynchroniser d'une
+// des 11 actions). Le petit rebond (voir .productPreview-shirt dans
+// simulateur.css) rejoue à chaque recréation du nœud, ce qui suffit à
+// donner le retour visuel « ça réagit » sans ce risque.
+function productPreview(pc: ProduitCalcule): string {
+  const p = pc.produit;
+  const badges = [GARMENT_LABELS[p.garment], ...(p.styles.size ? [...p.styles].slice(0, 2).map(styleLabel) : [])];
+  return `<div class="productPreview">
+    <svg class="productPreview-shirt" viewBox="0 0 400 460" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="${TEE_PATH}" fill="${p.coloris.hex}" stroke="var(--ligne)" stroke-width="6" />
+    </svg>
+    <div class="productPreview-badges">${badges.map((b) => `<span class="productPreview-badge">${b}</span>`).join('')}</div>
+  </div>`;
+}
+
 function produitCard(pc: ProduitCalcule, index: number, retirable: boolean): string {
   const p = pc.produit;
   return `<div class="produitCard">
@@ -281,6 +300,8 @@ function produitCard(pc: ProduitCalcule, index: number, retirable: boolean): str
       <h3>Produit ${index + 1}</h3>
       ${retirable ? `<button type="button" class="linkBtn danger" data-action="remove-produit" data-produit="${p.id}">Retirer ce produit</button>` : ''}
     </div>
+
+    ${productPreview(pc)}
 
     <div class="simField">
       <span class="simField-label">Type de textile</span>

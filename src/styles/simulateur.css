@@ -38,6 +38,23 @@
 .produitCard-total span{font-size:.9rem;color:var(--gris)}
 .produitCard-total b{font-family:'Sora',sans-serif;font-size:1.3rem;letter-spacing:-0.02em;font-variant-numeric:tabular-nums}
 
+/* ---------- aperçu vivant ---------- */
+/* Rejoue un petit rebond à chaque fois que render() recrée ce nœud (donc
+   à chaque clic sur une pastille de ce produit) : une @keyframes joue
+   automatiquement sur tout nouvel élément qui la porte, pas besoin de
+   l'ancien nœud pour "transitionner depuis" — c'est ce qui permet de
+   garder un seul chemin de rafraîchissement (voir commentaire de
+   productPreview() dans simulateur.ts) tout en donnant un vrai retour
+   visuel à chaque choix. */
+@keyframes simPreviewPulse{0%{transform:scale(.92) rotate(-1deg)}55%{transform:scale(1.035) rotate(.5deg)}100%{transform:scale(1) rotate(0)}}
+@media(prefers-reduced-motion:reduce){
+  .productPreview-shirt{animation:none !important}
+}
+.productPreview{display:flex;align-items:center;gap:16px;background:var(--lavande);border-radius:16px;padding:14px 18px;margin-bottom:22px}
+.productPreview-shirt{width:60px;height:69px;flex-shrink:0;filter:drop-shadow(0 3px 6px rgba(23,19,31,.12));animation:simPreviewPulse .38s cubic-bezier(.34,1.56,.64,1)}
+.productPreview-badges{display:flex;flex-wrap:wrap;gap:6px}
+.productPreview-badge{font-family:'Sora',sans-serif;font-size:11.5px;font-weight:600;letter-spacing:.02em;color:var(--encre);background:#fff;border:1px solid var(--ligne);border-radius:100px;padding:5px 12px}
+
 .simField{margin-bottom:20px}
 .simField:last-child{margin-bottom:0}
 .simField-label{display:block;font-family:'Sora',sans-serif;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--gris);margin-bottom:10px;font-weight:600;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}

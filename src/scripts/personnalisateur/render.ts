@@ -340,11 +340,17 @@ export function removeColorSwatch(index: number): void {
   saveState();
 }
 
+const PLACE_LABEL_RECAP: Record<Emplacement, string> = { face: 'Face', coeur: 'Cœur', dos: 'Dos', 'manche-droite': 'Manche droite', 'manche-gauche': 'Manche gauche' };
+
 export function paintRecap(): void {
   const t = activeTech();
   const qty = qtyTotal();
   const palier = palierActuel();
+  // Petit résumé visuel (coloris + emplacement) en tête du récap, à côté
+  // des lignes de prix déjà là — pendant de l'aperçu vivant du simulateur,
+  // sans dupliquer le modèle 3D déjà visible juste au-dessus.
   el('recap').innerHTML =
+    `<div class="recapPreview"><span class="recapPreview-sw" style="background:${S.color.hex}"></span><span>${S.color.nom} · ${PLACE_LABEL_RECAP[place()]}</span></div>` +
     `<div class="line"><b>Textile · palier ${palier.label}</b><span>${prixUnitaire().toFixed(2).replace('.', ',')} € / pièce</span></div>` +
     `<div class="line"><b>${qty} pièce${qty > 1 ? 's' : ''}</b><span>${prixTotal().toFixed(2).replace('.', ',')} €</span></div>` +
     `<div class="line"><b>Marquage ${TECHS[t].n}</b><span>chiffré à l'atelier</span></div>`;
