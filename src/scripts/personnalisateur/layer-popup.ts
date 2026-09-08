@@ -17,7 +17,7 @@ import type { Emplacement } from '../../config/parametres-metier';
 // seulement au texte fraîchement créé.
 const RECOLOR_SWATCHES = ['#17131F', '#ffffff', '#C81E1E', '#1E4FC8', '#F2C230', '#1F8A4C', '#F2790C', '#E0499B', '#6D28D9', '#7A4B2A', '#6B7280'];
 
-const PLACE_ORDER: Emplacement[] = ['face', 'coeur', 'dos'];
+const PLACE_ORDER: Emplacement[] = ['face', 'coeur', 'dos', 'manche-droite', 'manche-gauche'];
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
   return document.getElementById(id) as T;
@@ -71,7 +71,9 @@ export function openLayerPopup(layer: Layer, clientX: number, clientY: number): 
   el('lpCrop').style.display = croppable ? '' : 'none';
 
   const placeGroup = el('lpPlace');
-  const available = PLACE_ORDER.filter((p) => p !== 'coeur' || !GARMENTS[S.garment].noCoeur);
+  const g = GARMENTS[S.garment];
+  const isManche = (p: Emplacement) => p === 'manche-droite' || p === 'manche-gauche';
+  const available = PLACE_ORDER.filter((p) => (p !== 'coeur' || !g.noCoeur) && (!isManche(p) || !g.noManche));
   placeGroup.querySelectorAll<HTMLButtonElement>('[data-lp-place]').forEach((b) => {
     const p = b.dataset.lpPlace as Emplacement;
     b.style.display = available.includes(p) ? '' : 'none';

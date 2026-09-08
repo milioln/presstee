@@ -14,14 +14,16 @@ import { syncPlace } from './placement';
 import { GARMENTS } from './garments';
 import type { Emplacement } from '../../config/parametres-metier';
 
-const PLACE_LABEL: Record<Emplacement, string> = { face: 'Face', coeur: 'Cœur', dos: 'Dos' };
-const PLACE_ORDER: Emplacement[] = ['face', 'coeur', 'dos'];
+const PLACE_LABEL: Record<Emplacement, string> = { face: 'Face', coeur: 'Cœur', dos: 'Dos', 'manche-droite': 'Manche droite', 'manche-gauche': 'Manche gauche' };
+const PLACE_ORDER: Emplacement[] = ['face', 'coeur', 'dos', 'manche-droite', 'manche-gauche'];
 
 // Même cycle que layer-popup.ts (dupliqué plutôt que partagé : les deux
 // modules n'ont sinon aucune dépendance commune, et ce calcul tient en
-// trois lignes).
+// quelques lignes).
 function nextPlace(current: Emplacement): Emplacement {
-  const available = PLACE_ORDER.filter((p) => p !== 'coeur' || !GARMENTS[S.garment].noCoeur);
+  const g = GARMENTS[S.garment];
+  const isManche = (p: Emplacement) => p === 'manche-droite' || p === 'manche-gauche';
+  const available = PLACE_ORDER.filter((p) => (p !== 'coeur' || !g.noCoeur) && (!isManche(p) || !g.noManche));
   const idx = available.indexOf(current);
   return available[(idx + 1) % available.length];
 }

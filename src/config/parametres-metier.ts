@@ -12,7 +12,7 @@
 // sont correctes et fournisse les vraies données fournisseur.
 
 export type Garment = 'tshirt' | 'sweat' | 'chemise' | 'casquette';
-export type Emplacement = 'face' | 'coeur' | 'dos';
+export type Emplacement = 'face' | 'coeur' | 'dos' | 'manche-droite' | 'manche-gauche';
 
 // Les zones d'impression varient aussi selon la taille du vêtement
 // (section 7) : la clé "unique" est un placeholder tant qu'une seule
@@ -25,21 +25,29 @@ export const zonesImpressionCm: Record<Garment, Record<Emplacement, Record<Taill
     face: { unique: 28 },
     coeur: { unique: 10 },
     dos: { unique: 30 },
+    'manche-droite': { unique: 8 },
+    'manche-gauche': { unique: 8 },
   },
   sweat: {
     face: { unique: 26 },
     coeur: { unique: 10 },
     dos: { unique: 30 },
+    'manche-droite': { unique: 8 },
+    'manche-gauche': { unique: 8 },
   },
   chemise: {
     face: { unique: 9 },
     coeur: { unique: 9 },
     dos: { unique: 26 },
+    'manche-droite': { unique: 7 },
+    'manche-gauche': { unique: 7 },
   },
   casquette: {
     face: { unique: 12 },
     coeur: { unique: 12 }, // sans effet : le cœur est désactivé sur casquette
     dos: { unique: 9 },
+    'manche-droite': { unique: 12 }, // sans effet : pas de manches sur casquette
+    'manche-gauche': { unique: 12 }, // sans effet : pas de manches sur casquette
   },
 };
 

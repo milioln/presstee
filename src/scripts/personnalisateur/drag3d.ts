@@ -39,6 +39,7 @@
 import { activeLayer } from './state';
 import { render, PRINT_RECT, TEXTURE_SIZE } from './render';
 import { openLayerPopup } from './layer-popup';
+import type { Emplacement } from '../../config/parametres-metier';
 
 function stage(): any {
   return document.getElementById('stage');
@@ -46,6 +47,24 @@ function stage(): any {
 
 function uvFrac(u: number): number {
   return u - Math.floor(u);
+}
+
+// Contrairement à face/cœur/dos, les manches n'ont pas une normale de
+// surface qui les distingue nettement (vérifié empiriquement : la
+// manche courte, vue de face, garde une normale à dominante Z comme le
+// torse). On les repère plutôt par zone UV : le point touché tombe-t-il
+// dans le rectangle d'impression de la manche visée sur l'atlas ?
+function hitOnPlace(hit: any, place: Emplacement): boolean {
+  if (place === 'manche-droite' || place === 'manche-gauche') {
+    if (!hit) return false;
+    const px = uvFrac(hit.uv.u) * TEXTURE_SIZE;
+    const py = uvFrac(hit.uv.v) * TEXTURE_SIZE;
+    const rect = PRINT_RECT[place];
+    return px >= rect.x && px <= rect.x + rect.w && py >= rect.y && py <= rect.y + rect.h;
+  }
+  const front = !!hit && hit.normal.z > 0.25;
+  const back = !!hit && hit.normal.z < -0.25;
+  return place === 'dos' ? back : front;
 }
 
 // Calque actuellement armé (modifiable/déplaçable sur le modèle 3D) :
@@ -58,12 +77,11 @@ function onPointerDown(e: PointerEvent): void {
   const layer = activeLayer();
   if (!mv || !layer) return;
   const hit = mv.positionAndNormalFromPoint(e.clientX, e.clientY);
-  // Face avant pour face/cœur, face arrière pour dos — sinon (manche,
-  // tranche, ou hors du modèle) on est en dehors de la zone du calque
-  // actif : on désarme et on laisse la caméra réagir normalement.
-  const front = !!hit && hit.normal.z > 0.25;
-  const back = !!hit && hit.normal.z < -0.25;
-  const onZone = layer.place === 'dos' ? back : front;
+  // Face avant pour face/cœur, face arrière pour dos, zone UV de la
+  // manche pour manche-droite/gauche — sinon (tranche, ou hors du
+  // modèle) on est en dehors de la zone du calque actif : on désarme et
+  // on laisse la caméra réagir normalement.
+  const onZone = hitOnPlace(hit, layer.place);
   if (!onZone) {
     armedLayerId = null;
     return;

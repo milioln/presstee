@@ -26,7 +26,13 @@ const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: numb
 	face: { x: 324, y: 210, w: 580, h: 750 },
 	coeur: { x: 630, y: 750, w: 130, h: 280 },
 	dos: { x: 1238, y: 210, w: 580, h: 750 },
+	'manche-droite': { x: 750, y: 1325, w: 480, h: 195 },
+	'manche-gauche': { x: 1360, y: 1325, w: 540, h: 195 },
 };
+
+// Seuls face/coeur/dos sont inversés verticalement dans l'atlas (cf.
+// render.ts) : les manches se dessinent sans le scale(1,-1) ci-dessous.
+const FLIPPED_PANELS: Emplacement[] = ['face', 'coeur', 'dos'];
 
 // Un design peut être un simple logo (1 élément) ou une composition
 // fidèle à un vrai visuel client avec plusieurs éléments indépendants
@@ -55,13 +61,13 @@ function single(url: string, place: Emplacement, wFrac: number, yFrac: number, x
 // viendront remplacer les 3 logos Presstee restants au fil des envois.
 const ASPEN_LOTUS: Design = {
 	elements: [
-		{ url: '/hero-designs/aspen-lotus-1969/numero-29.png', place: 'face', xFrac: 0.488, yFrac: 0.896, wFrac: 0.159 },
-		{ url: '/hero-designs/aspen-lotus-1969/lotus-logo.png', place: 'face', xFrac: 0.152, yFrac: 0.695, wFrac: 0.176 },
-		{ url: '/hero-designs/aspen-lotus-1969/gsr-logo.png', place: 'face', xFrac: 0.826, yFrac: 0.701, wFrac: 0.146 },
-		{ url: '/hero-designs/aspen-lotus-1969/aspen-wordmark.png', place: 'face', xFrac: 0.5, yFrac: 0.377, wFrac: 0.9 },
-		{ url: '/hero-designs/aspen-lotus-1969/lotus-elan-text.png', place: 'dos', xFrac: 0.499, yFrac: 0.886, wFrac: 0.851 },
-		{ url: '/hero-designs/aspen-lotus-1969/annee-1969.png', place: 'dos', xFrac: 0.507, yFrac: 0.662, wFrac: 0.262 },
-		{ url: '/hero-designs/aspen-lotus-1969/voiture.png', place: 'dos', xFrac: 0.5, yFrac: 0.365, wFrac: 0.88 },
+		{ url: '/hero-designs/aspen-lotus-1969/numero-29.png', place: 'face', xFrac: 0.49, yFrac: 0.916, wFrac: 0.127 },
+		{ url: '/hero-designs/aspen-lotus-1969/lotus-logo.png', place: 'face', xFrac: 0.222, yFrac: 0.756, wFrac: 0.141 },
+		{ url: '/hero-designs/aspen-lotus-1969/gsr-logo.png', place: 'face', xFrac: 0.761, yFrac: 0.761, wFrac: 0.117 },
+		{ url: '/hero-designs/aspen-lotus-1969/aspen-wordmark.png', place: 'face', xFrac: 0.5, yFrac: 0.501, wFrac: 0.72 },
+		{ url: '/hero-designs/aspen-lotus-1969/lotus-elan-text.png', place: 'dos', xFrac: 0.499, yFrac: 0.917, wFrac: 0.677 },
+		{ url: '/hero-designs/aspen-lotus-1969/annee-1969.png', place: 'dos', xFrac: 0.505, yFrac: 0.739, wFrac: 0.209 },
+		{ url: '/hero-designs/aspen-lotus-1969/voiture.png', place: 'dos', xFrac: 0.5, yFrac: 0.503, wFrac: 0.7 },
 	],
 };
 
@@ -139,9 +145,10 @@ async function buildTexture(hex: string, design: Design): Promise<string> {
 		const cy = rect.y + rect.h * el.yFrac;
 		ctx.save();
 		ctx.translate(cx, cy);
-		// Le panneau avant du modèle est retourné verticalement dans l'atlas
-		// UV (cf. render.ts) : on recompense en dessinant le visuel inversé.
-		ctx.scale(1, -1);
+		// Le panneau avant/dos du modèle est retourné verticalement dans
+		// l'atlas UV (cf. render.ts) : on recompense en dessinant le visuel
+		// inversé, sauf sur les manches qui n'ont pas ce retournement.
+		ctx.scale(1, FLIPPED_PANELS.includes(el.place) ? -1 : 1);
 		ctx.drawImage(img, -w / 2, -h / 2, w, h);
 		ctx.restore();
 	});
@@ -213,6 +220,17 @@ export function initHero3D(): void {
 	let driftDeg = 0;
 	let lastFrame: number | null = null;
 
+	// Dès que le visiteur a vraiment touché au modèle (glissé pour le
+	// faire tourner, changé de coloris, importé son propre visuel), on
+	// arrête pour de bon la démo automatique (rotation + zoom au repos,
+	// et le cycle de coloris/design toutes les 2 s) : elle reprendrait
+	// sinon la main sur un choix que le visiteur vient de faire lui-même
+	// (demande Milio du 2026-09-08).
+	let userInteracted = false;
+	function markInteracted(): void {
+		userInteracted = true;
+	}
+
 	// Angle de départ de la rotation au repos : si le design a du contenu
 	// sur la face (le cas le plus courant, y compris les designs
 	// multi-éléments qui couvrent face ET dos), on démarre face visible ;
@@ -229,6 +247,7 @@ export function initHero3D(): void {
 		if (!dragging) return;
 		dragging = false;
 		pausedUntil = performance.now() + RESUME_DELAY_MS;
+		markInteracted();
 	});
 	window.addEventListener('pointercancel', () => {
 		dragging = false;
@@ -239,7 +258,7 @@ export function initHero3D(): void {
 		if (lastFrame == null) lastFrame = now;
 		const dt = now - lastFrame;
 		lastFrame = now;
-		if (!dragging && !spinning && now >= pausedUntil && mv.loaded) {
+		if (!dragging && !spinning && !userInteracted && now >= pausedUntil && mv.loaded) {
 			driftDeg = (driftDeg + (dt / 1000) * ROTATE_DEG_PER_SEC) % 360;
 			const zoom = ZOOM_BASE + Math.sin(now / ZOOM_PERIOD_MS + 1) * ZOOM_AMPLITUDE;
 			mv.cameraOrbit = `${baseTheta() + driftDeg}deg 85deg ${zoom.toFixed(1)}%`;
@@ -278,6 +297,10 @@ export function initHero3D(): void {
 		refresh();
 	}
 
+	// Le survol déclenche le même aperçu ludique que le clic (sans arrêter
+	// la démo automatique : un simple passage de souris en lisant le texte
+	// ne doit pas geler la vitrine) — seul un clic explicite compte comme
+	// une vraie interaction.
 	document.querySelectorAll<HTMLElement>('[data-jeu]').forEach((el) => {
 		const type = el.dataset.jeu;
 		const jouer = () => {
@@ -286,10 +309,18 @@ export function initHero3D(): void {
 			else spin();
 		};
 		el.addEventListener('mouseenter', jouer);
-		el.addEventListener('click', jouer);
+		el.addEventListener('click', () => {
+			jouer();
+			markInteracted();
+		});
 	});
 
-	swatches.forEach((b, n) => b.addEventListener('click', () => setColorIndex(n)));
+	swatches.forEach((b, n) =>
+		b.addEventListener('click', () => {
+			setColorIndex(n);
+			markInteracted();
+		})
+	);
 
 	document.getElementById('heroFile')?.addEventListener('change', (e) => {
 		const f = (e.target as HTMLInputElement).files?.[0];
@@ -297,6 +328,7 @@ export function initHero3D(): void {
 		const r = new FileReader();
 		r.onload = () => {
 			designOverride = single(String(r.result), 'face', 0.55, 0.5);
+			markInteracted();
 			refresh();
 		};
 		r.readAsDataURL(f);
@@ -306,10 +338,10 @@ export function initHero3D(): void {
 	refresh();
 
 	// Changement automatique de coloris (et donc de design) toutes les 2
-	// secondes. En pause si l'onglet est en arrière-plan, pour ne pas
-	// relancer une texture 2048² à vide.
+	// secondes. En pause si l'onglet est en arrière-plan (pour ne pas
+	// relancer une texture 2048² à vide) ou si le visiteur a pris la main.
 	setInterval(() => {
-		if (document.hidden) return;
+		if (document.hidden || userInteracted) return;
 		setColorIndex(ic + 1);
 	}, 2000);
 }

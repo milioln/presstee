@@ -17,11 +17,13 @@ import { GARMENTS } from './garments';
 import { getZoneImpressionCm, type Emplacement } from '../../config/parametres-metier';
 import { lum } from './color-utils';
 
-const PLACE_LABEL: Record<Emplacement, string> = { face: 'Face', coeur: 'Cœur', dos: 'Dos' };
+const PLACE_LABEL: Record<Emplacement, string> = { face: 'Face', coeur: 'Cœur', dos: 'Dos', 'manche-droite': 'Manche droite', 'manche-gauche': 'Manche gauche' };
 const PLACE_NOTE: Record<Emplacement, string> = {
   face: 'Centré, sous l’encolure',
   coeur: 'Emplacement cœur, côté porteur gauche',
   dos: 'Centré au dos',
+  'manche-droite': 'Manche droite',
+  'manche-gauche': 'Manche gauche',
 };
 // Zone d'impression en % de la boîte d'aperçu (x/y/w/h = position et
 // taille de la zone complète dans laquelle le visuel peut être déplacé)
@@ -55,6 +57,12 @@ const PLACE_ZONE: Record<Emplacement, Zone> = {
   face: { x: 13, y: 7, w: 74, h: 49, maxWidthPct: 74 },
   coeur: { x: 22, y: 9, w: 30, h: 25, maxWidthPct: 30 },
   dos: { x: 15, y: 8, w: 70, h: 51, maxWidthPct: 70 },
+  // Convention "écran" comme sur une photo produit, pas le bras
+  // anatomique du porteur (vérifié empiriquement sur le modèle 3D — cf.
+  // PRINT_RECT, render.ts) : manche droite affichée à droite de la
+  // boîte, manche gauche à gauche.
+  'manche-droite': { x: 77, y: 9, w: 20, h: 16, maxWidthPct: 20 },
+  'manche-gauche': { x: 3, y: 9, w: 20, h: 16, maxWidthPct: 20 },
 };
 
 // Vraies photos du textile porté, fournies par Milio, sur lesquelles le

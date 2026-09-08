@@ -46,13 +46,29 @@ export const TEXTURE_SIZE = 2048;
 // à quelques px près) mais ce n'est plus une hypothèse. Resserré à
 // 580px le jour même (Milio : « réduit un tout petit peu »), toujours
 // centré sur le panneau mesuré.
-// Exporté : réutilisé par drag3d.ts pour convertir les coordonnées UV
-// du raycast en repère du visuel (layer.x/layer.y).
+// "manche-droite"/"manche-gauche" ajoutées le 2026-09-08 (demande Milio :
+// permettre l'impression sur les manches) : repérées sous les deux
+// grands panneaux face/dos dans l'atlas (deux formes trapézoïdales à
+// bord inférieur incurvé — l'emmanchure). Identité droite/gauche
+// vérifiée en rendant un texte directionnel sur chaque rectangle
+// candidat et en lisant à l'écran, caméra de face (0deg) : le rectangle
+// le plus à gauche de l'atlas (x≈750, "manche-droite") tombe sur la
+// manche qui apparaît à l'écran à DROITE — convention "écran", comme sur
+// une photo produit, pas le bras anatomique du porteur. Contrairement à
+// face/coeur/dos, ce panneau n'est PAS inversé verticalement dans
+// l'atlas (vérifié avec un repère directionnel) : buildTextureDataUrl ne
+// doit pas y appliquer le scale(1,-1).
 export const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: number }> = {
   face: { x: 324, y: 210, w: 580, h: 750 },
   coeur: { x: 630, y: 750, w: 130, h: 280 },
   dos: { x: 1238, y: 210, w: 580, h: 750 },
+  'manche-droite': { x: 750, y: 1325, w: 480, h: 195 },
+  'manche-gauche': { x: 1360, y: 1325, w: 540, h: 195 },
 };
+
+// Seuls face/coeur/dos sont inversés verticalement dans l'atlas (cf.
+// commentaire ci-dessus) : les manches se dessinent sans ce scale(1,-1).
+const FLIPPED_PANELS: Emplacement[] = ['face', 'coeur', 'dos'];
 
 let baseImgPromise: Promise<HTMLImageElement> | null = null;
 function loadBaseImg(): Promise<HTMLImageElement> {
@@ -108,11 +124,12 @@ async function buildTextureDataUrl(): Promise<string> {
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate((layer.rot * Math.PI) / 180);
-    // Le panneau avant du modèle est retourné verticalement dans l'atlas
-    // UV (vérifié empiriquement avec un visuel directionnel) : on
+    // Le panneau avant/dos du modèle est retourné verticalement dans
+    // l'atlas UV (vérifié empiriquement avec un visuel directionnel) : on
     // recompense en dessinant le visuel inversé sur l'axe Y, pour qu'il
-    // se lise normalement une fois plaqué sur le tissu.
-    ctx.scale(1, -1);
+    // se lise normalement une fois plaqué sur le tissu. Les manches n'ont
+    // pas ce retournement (cf. PRINT_RECT ci-dessus).
+    ctx.scale(1, FLIPPED_PANELS.includes(layer.place) ? -1 : 1);
     ctx.drawImage(logo, -w / 2, -h / 2, w, h);
     ctx.restore();
   }

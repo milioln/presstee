@@ -5,7 +5,10 @@ import { PALIERS_TARIF, prixVente, type PalierTarif } from '../../config/tarific
 import { coutBaseSupportUnique, TAILLES, type Emplacement } from '../../config/parametres-metier';
 
 export function place(): Emplacement {
-  return GARMENTS[S.garment].noCoeur && S.place === 'coeur' ? 'face' : S.place;
+  const g = GARMENTS[S.garment];
+  if (g.noCoeur && S.place === 'coeur') return 'face';
+  if (g.noManche && (S.place === 'manche-droite' || S.place === 'manche-gauche')) return 'face';
+  return S.place;
 }
 
 export function currentZoneCm(): number {

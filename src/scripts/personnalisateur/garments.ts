@@ -124,8 +124,13 @@ interface GarmentDef {
   name: string;
   icon: string;
   noCoeur?: boolean;
+  noManche?: boolean;
   flat: [FlatView, FlatView];
-  print: Record<Emplacement, PrintZone>;
+  // Partiel plutôt que complet : ces zones flat/worn ne sont utilisées
+  // par aucun code (vestiges de l'ancienne illustration à plat, avant le
+  // vrai modèle 3D — cf. render.ts) ; pas besoin de les renseigner pour
+  // les manches.
+  print: Partial<Record<Emplacement, PrintZone>>;
 }
 
 export const GARMENTS: Record<Garment, GarmentDef> = {
@@ -179,6 +184,7 @@ export const GARMENTS: Record<Garment, GarmentDef> = {
     name: 'Casquette',
     icon: CAP,
     noCoeur: true,
+    noManche: true,
     flat: [
       { body: CAP, brim: CAP_BRIM, lines: ['M200,62 L200,206', 'M142,72 C122,118 118,164 120,206', 'M258,72 C278,118 282,164 280,206'], dot: [200, 68] },
       { body: CAP, lines: ['M200,62 L200,150', 'M142,72 C122,118 118,164 120,206', 'M258,72 C278,118 282,164 280,206'], gap: 'M166,150 L234,150 L234,206 L166,206 Z', dot: [200, 68] },
