@@ -61,29 +61,59 @@ function single(url: string, place: Emplacement, wFrac: number, yFrac: number, x
 // viendront remplacer les 3 logos Presstee restants au fil des envois.
 const ASPEN_LOTUS: Design = {
 	elements: [
-		{ url: '/hero-designs/aspen-lotus-1969/numero-29.png', place: 'face', xFrac: 0.49, yFrac: 0.916, wFrac: 0.127 },
-		{ url: '/hero-designs/aspen-lotus-1969/lotus-logo.png', place: 'face', xFrac: 0.222, yFrac: 0.756, wFrac: 0.141 },
-		{ url: '/hero-designs/aspen-lotus-1969/gsr-logo.png', place: 'face', xFrac: 0.761, yFrac: 0.761, wFrac: 0.117 },
-		{ url: '/hero-designs/aspen-lotus-1969/aspen-wordmark.png', place: 'face', xFrac: 0.5, yFrac: 0.501, wFrac: 0.72 },
-		{ url: '/hero-designs/aspen-lotus-1969/lotus-elan-text.png', place: 'dos', xFrac: 0.499, yFrac: 0.917, wFrac: 0.677 },
-		{ url: '/hero-designs/aspen-lotus-1969/annee-1969.png', place: 'dos', xFrac: 0.505, yFrac: 0.739, wFrac: 0.209 },
-		{ url: '/hero-designs/aspen-lotus-1969/voiture.png', place: 'dos', xFrac: 0.5, yFrac: 0.503, wFrac: 0.7 },
+		{ url: '/hero-designs/aspen-lotus-1969/numero-29.png', place: 'face', xFrac: 0.492, yFrac: 0.949, wFrac: 0.106 },
+		{ url: '/hero-designs/aspen-lotus-1969/lotus-logo.png', place: 'face', xFrac: 0.268, yFrac: 0.815, wFrac: 0.118 },
+		{ url: '/hero-designs/aspen-lotus-1969/gsr-logo.png', place: 'face', xFrac: 0.717, yFrac: 0.819, wFrac: 0.097 },
+		{ url: '/hero-designs/aspen-lotus-1969/aspen-wordmark.png', place: 'face', xFrac: 0.5, yFrac: 0.603, wFrac: 0.6 },
+		{ url: '/hero-designs/aspen-lotus-1969/lotus-elan-text.png', place: 'dos', xFrac: 0.499, yFrac: 0.95, wFrac: 0.561 },
+		{ url: '/hero-designs/aspen-lotus-1969/annee-1969.png', place: 'dos', xFrac: 0.505, yFrac: 0.802, wFrac: 0.173 },
+		{ url: '/hero-designs/aspen-lotus-1969/voiture.png', place: 'dos', xFrac: 0.5, yFrac: 0.606, wFrac: 0.58 },
+		// Textes de manche (mockup d'origine) : ajoutés le 2026-09-08, une
+		// fois l'emplacement manche disponible dans l'atlas (cf. PRINT_RECT
+		// ci-dessus) — simplifiés à un seul mot par manche (les détails
+		// "F.LASAIRES"/petit "29" du mockup, spécifiques à la vue de face,
+		// sont redondants avec le "29" déjà bien visible sur la face/dos).
+		{ url: '/hero-designs/aspen-lotus-1969/manche-aspen.png', place: 'manche-droite', xFrac: 0.5, yFrac: 0.5, wFrac: 0.7 },
+		{ url: '/hero-designs/aspen-lotus-1969/manche-presstee.png', place: 'manche-gauche', xFrac: 0.5, yFrac: 0.5, wFrac: 0.75 },
 	],
 };
 
-// 4 déclinaisons alternées avec le coloris (demande Milio du
-// 2026-09-04) : dès que la couleur change, le design change aussi.
-// yFrac calibré empiriquement en rendant plusieurs repères sur le
-// modèle réel (pas déduit de l'atlas, qui est très trompeur une fois
-// projeté sur la surface courbe) : le logo 2 (horizontal, avec
-// « Presstee ») à ~3 cm sous le col et centré horizontalement, le logo
-// 4 (icône seule, en grand) vraiment centré sur le dos. Index 0 apparié
-// à « Blanc » (PALETTE[0]) : c'est le coloris du mockup ASPEN d'origine.
+// Deuxième visuel client reproduit fidèlement (mockup « ASPEN / Lotus »
+// décliné en vert bouteille, fourni par Milio le 2026-09-08), même
+// principe que ASPEN_LOTUS : la bande centrale (face et dos) n'est pas
+// extraite de la photo (vert sur vert, très peu de contraste dans le
+// mockup) mais recréée directement comme un simple aplat crème — assez
+// fin et haut pour lire comme la bande du mockup une fois posé sur le
+// modèle.
+const GREEN_ASPEN: Design = {
+	elements: [
+		{ url: '/hero-designs/aspen-lotus-green/bande.png', place: 'face', xFrac: 0.5, yFrac: 0.5, wFrac: 0.06 },
+		{ url: '/hero-designs/aspen-lotus-green/numero-lasaires.png', place: 'face', xFrac: 0.203, yFrac: 0.88, wFrac: 0.256 },
+		{ url: '/hero-designs/aspen-lotus-green/brand-lockup.png', place: 'face', xFrac: 0.79, yFrac: 0.874, wFrac: 0.269 },
+		{ url: '/hero-designs/aspen-lotus-green/bande.png', place: 'dos', xFrac: 0.5, yFrac: 0.5, wFrac: 0.06 },
+		{ url: '/hero-designs/aspen-lotus-green/dos-29.png', place: 'dos', xFrac: 0.5, yFrac: 0.611, wFrac: 0.85 },
+		{ url: '/hero-designs/aspen-lotus-green/manche-aspen.png', place: 'manche-droite', xFrac: 0.5, yFrac: 0.5, wFrac: 0.55 },
+		{ url: '/hero-designs/aspen-lotus-green/manche-presstee.png', place: 'manche-gauche', xFrac: 0.5, yFrac: 0.5, wFrac: 0.55 },
+	],
+};
+
+// Un design par coloris (PALETTE ci-dessous), pas 4 alternés en boucle :
+// dès que la couleur change, le design change aussi (demande Milio du
+// 2026-09-04), et chaque vrai visuel reçu reste apparié à SON coloris
+// d'origine plutôt que de retomber au hasard sur un autre. yFrac des
+// logos Presstee restants calibré empiriquement en rendant plusieurs
+// repères sur le modèle réel (pas déduit de l'atlas, très trompeur une
+// fois projeté sur la surface courbe) : le logo horizontal à ~3 cm sous
+// l'encolure, l'icône seule vraiment centrée sur son emplacement.
 const LOGOS: Design[] = [
-	ASPEN_LOTUS,
-	single('/logo/presstee-horizontal.svg', 'face', 0.35, 0.85),
-	single('/logo/presstee-icone-jaune.svg', 'coeur', 0.6, 0.5),
-	single('/logo/presstee-icone.svg', 'dos', 0.46, 0.6),
+	ASPEN_LOTUS, // Blanc
+	single('/hero-designs/presstee-villa-sable/presstee-villa.png', 'face', 0.55, 0.68), // Sable
+	single('/logo/presstee-icone-jaune.svg', 'coeur', 0.6, 0.5), // Indigo Presstee
+	single('/logo/presstee-icone.svg', 'dos', 0.46, 0.6), // Noir
+	single('/logo/presstee-horizontal.svg', 'face', 0.35, 0.85), // Jaune Presstee
+	single('/logo/presstee-icone-jaune.svg', 'coeur', 0.6, 0.5), // Bleu marine
+	single('/logo/presstee-icone.svg', 'dos', 0.46, 0.6), // Rouge
+	GREEN_ASPEN, // Vert bouteille
 ];
 
 // Sous-ensemble du vrai catalogue (config/parametres-metier.ts), pas une
