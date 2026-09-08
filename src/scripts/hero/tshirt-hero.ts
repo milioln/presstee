@@ -6,10 +6,10 @@
 //
 // On ne réutilise pas le module personnalisateur tel quel : il suppose
 // tout le DOM et l'état global (S) du configurateur, absents ici. Cette
-// version est un sous-ensemble volontairement minimal (un seul visuel,
-// pas de calques multiples, pas de sauvegarde) — les constantes de zone
-// d'impression et de texture sont dupliquées depuis render.ts, à garder
-// synchronisées si l'atlas de texture change.
+// version est un sous-ensemble volontairement minimal (pas de calques
+// éditables, pas de sauvegarde) — les constantes de zone d'impression et
+// de texture sont dupliquées depuis render.ts, à garder synchronisées si
+// l'atlas de texture change.
 import { catalogueColoris, type Emplacement } from '../../config/parametres-metier';
 
 const TEXTURE_URL = '/personnalisateur/model/textures/Material_baseColor.png';
@@ -18,7 +18,7 @@ const TEXTURE_URL = '/personnalisateur/model/textures/Material_baseColor.png';
 // élargis et recentrés le 2026-09-04 sur la vraie largeur du panneau
 // mesurée sur l'atlas (l'ancien rect était ~40 % trop étroit et décalé
 // d'une soixantaine de px par rapport au centre réel — cf. le
-// commentaire détaillé dans render.ts). Les échelles des logos
+// commentaire détaillé dans render.ts). Les échelles des éléments
 // ci-dessous sont ajustées en conséquence pour garder la même taille
 // affichée à l'écran qu'avant cet élargissement (échelle × ancienne
 // largeur / nouvelle largeur), pas la même fraction.
@@ -28,25 +28,56 @@ const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: numb
 	dos: { x: 1238, y: 210, w: 580, h: 750 },
 };
 
-interface LogoDef {
+// Un design peut être un simple logo (1 élément) ou une composition
+// fidèle à un vrai visuel client avec plusieurs éléments indépendants
+// répartis sur la face et le dos (demande Milio du 2026-09-08 : ne plus
+// se limiter aux logos Presstee, reproduire les vrais visuels envoyés).
+interface DesignElement {
 	url: string;
 	place: Emplacement;
-	scale: number; // fraction de la largeur de la zone d'impression
-	cyFrac: number; // position verticale dans la zone (0 = ourlet, 1 = col — cf. buildTexture)
+	xFrac: number; // position horizontale dans la zone d'impression, 0.5 = centré
+	yFrac: number; // position verticale dans la zone (0 = ourlet, 1 = col — cf. buildTexture)
+	wFrac: number; // largeur de l'élément, fraction de la largeur de la zone d'impression
+}
+interface Design {
+	elements: DesignElement[];
 }
 
-// 4 déclinaisons du logo Presstee, alternées avec le coloris (demande
-// Milio du 2026-09-04) : dès que la couleur change, le logo change
-// aussi. cyFrac calibré empiriquement en rendant plusieurs repères sur
-// le modèle réel (pas déduit de l'atlas, qui est très trompeur une fois
+function single(url: string, place: Emplacement, wFrac: number, yFrac: number, xFrac = 0.5): Design {
+	return { elements: [{ url, place, xFrac, yFrac, wFrac }] };
+}
+
+// Premier vrai visuel client reproduit fidèlement (mockup « ASPEN /
+// Lotus Elan 2+2 1969 » fourni par Milio le 2026-09-08) : chaque élément
+// du mockup (numéro, logos, texte, illustration) est extrait en PNG
+// détouré et repositionné ici selon les proportions mesurées sur le
+// mockup d'origine — pas un simple logo unique. D'autres visuels
+// viendront remplacer les 3 logos Presstee restants au fil des envois.
+const ASPEN_LOTUS: Design = {
+	elements: [
+		{ url: '/hero-designs/aspen-lotus-1969/numero-29.png', place: 'face', xFrac: 0.488, yFrac: 0.896, wFrac: 0.159 },
+		{ url: '/hero-designs/aspen-lotus-1969/lotus-logo.png', place: 'face', xFrac: 0.152, yFrac: 0.695, wFrac: 0.176 },
+		{ url: '/hero-designs/aspen-lotus-1969/gsr-logo.png', place: 'face', xFrac: 0.826, yFrac: 0.701, wFrac: 0.146 },
+		{ url: '/hero-designs/aspen-lotus-1969/aspen-wordmark.png', place: 'face', xFrac: 0.5, yFrac: 0.377, wFrac: 0.9 },
+		{ url: '/hero-designs/aspen-lotus-1969/lotus-elan-text.png', place: 'dos', xFrac: 0.499, yFrac: 0.886, wFrac: 0.851 },
+		{ url: '/hero-designs/aspen-lotus-1969/annee-1969.png', place: 'dos', xFrac: 0.507, yFrac: 0.662, wFrac: 0.262 },
+		{ url: '/hero-designs/aspen-lotus-1969/voiture.png', place: 'dos', xFrac: 0.5, yFrac: 0.365, wFrac: 0.88 },
+	],
+};
+
+// 4 déclinaisons alternées avec le coloris (demande Milio du
+// 2026-09-04) : dès que la couleur change, le design change aussi.
+// yFrac calibré empiriquement en rendant plusieurs repères sur le
+// modèle réel (pas déduit de l'atlas, qui est très trompeur une fois
 // projeté sur la surface courbe) : le logo 2 (horizontal, avec
 // « Presstee ») à ~3 cm sous le col et centré horizontalement, le logo
-// 4 (icône seule, en grand) vraiment centré sur le dos.
-const LOGOS: LogoDef[] = [
-	{ url: '/logo/presstee-vertical.svg', place: 'coeur', scale: 0.6, cyFrac: 0.5 },
-	{ url: '/logo/presstee-horizontal.svg', place: 'face', scale: 0.35, cyFrac: 0.85 },
-	{ url: '/logo/presstee-icone-jaune.svg', place: 'coeur', scale: 0.6, cyFrac: 0.5 },
-	{ url: '/logo/presstee-icone.svg', place: 'dos', scale: 0.46, cyFrac: 0.6 },
+// 4 (icône seule, en grand) vraiment centré sur le dos. Index 0 apparié
+// à « Blanc » (PALETTE[0]) : c'est le coloris du mockup ASPEN d'origine.
+const LOGOS: Design[] = [
+	ASPEN_LOTUS,
+	single('/logo/presstee-horizontal.svg', 'face', 0.35, 0.85),
+	single('/logo/presstee-icone-jaune.svg', 'coeur', 0.6, 0.5),
+	single('/logo/presstee-icone.svg', 'dos', 0.46, 0.6),
 ];
 
 // Sous-ensemble du vrai catalogue (config/parametres-metier.ts), pas une
@@ -84,7 +115,7 @@ function loadPrintCached(src: string): Promise<HTMLImageElement> {
 	return p;
 }
 
-async function buildTexture(hex: string, printUrl: string, logo: LogoDef): Promise<string> {
+async function buildTexture(hex: string, design: Design): Promise<string> {
 	const base = await loadBaseImg();
 	const c = document.createElement('canvas');
 	c.width = base.naturalWidth;
@@ -97,20 +128,23 @@ async function buildTexture(hex: string, printUrl: string, logo: LogoDef): Promi
 	ctx.fillRect(0, 0, c.width, c.height);
 	ctx.globalCompositeOperation = 'source-over';
 
-	const rect = PRINT_RECT[logo.place];
-	const img = await loadPrintCached(printUrl);
-	const w = rect.w * logo.scale;
-	const ratio = img.naturalWidth && img.naturalHeight ? img.naturalHeight / img.naturalWidth : 1;
-	const h = w * ratio;
-	const cx = rect.x + rect.w / 2;
-	const cy = rect.y + rect.h * logo.cyFrac;
-	ctx.save();
-	ctx.translate(cx, cy);
-	// Le panneau avant du modèle est retourné verticalement dans l'atlas
-	// UV (cf. render.ts) : on recompense en dessinant le visuel inversé.
-	ctx.scale(1, -1);
-	ctx.drawImage(img, -w / 2, -h / 2, w, h);
-	ctx.restore();
+	const imgs = await Promise.all(design.elements.map((el) => loadPrintCached(el.url)));
+	design.elements.forEach((el, i) => {
+		const rect = PRINT_RECT[el.place];
+		const img = imgs[i];
+		const w = rect.w * el.wFrac;
+		const ratio = img.naturalWidth && img.naturalHeight ? img.naturalHeight / img.naturalWidth : 1;
+		const h = w * ratio;
+		const cx = rect.x + rect.w * el.xFrac;
+		const cy = rect.y + rect.h * el.yFrac;
+		ctx.save();
+		ctx.translate(cx, cy);
+		// Le panneau avant du modèle est retourné verticalement dans l'atlas
+		// UV (cf. render.ts) : on recompense en dessinant le visuel inversé.
+		ctx.scale(1, -1);
+		ctx.drawImage(img, -w / 2, -h / 2, w, h);
+		ctx.restore();
+	});
 
 	return c.toDataURL('image/png');
 }
@@ -122,13 +156,14 @@ export function initHero3D(): void {
 	let hex = PALETTE[0].hex;
 	let ic = 0;
 	let il = 0;
-	let printOverride: string | null = null;
+	// L'essai d'un visuel perso (input file) remplace tout le design
+	// courant par un seul élément centré sur la face — comportement
+	// simple et prévisible plutôt que de choisir arbitrairement lequel
+	// des éléments du design en cours il faudrait remplacer.
+	let designOverride: Design | null = null;
 
-	function currentLogo(): LogoDef {
-		return LOGOS[il];
-	}
-	function currentPrint(): string {
-		return printOverride ?? currentLogo().url;
+	function currentDesign(): Design {
+		return designOverride ?? LOGOS[il];
 	}
 
 	let applying = false;
@@ -141,7 +176,7 @@ export function initHero3D(): void {
 		}
 		applying = true;
 		try {
-			const dataUrl = await buildTexture(hex, currentPrint(), currentLogo());
+			const dataUrl = await buildTexture(hex, currentDesign());
 			const material = mv.model.materials[0];
 			const texture = await mv.createTexture(dataUrl);
 			material.pbrMetallicRoughness.baseColorTexture.setTexture(texture);
@@ -178,8 +213,13 @@ export function initHero3D(): void {
 	let driftDeg = 0;
 	let lastFrame: number | null = null;
 
+	// Angle de départ de la rotation au repos : si le design a du contenu
+	// sur la face (le cas le plus courant, y compris les designs
+	// multi-éléments qui couvrent face ET dos), on démarre face visible ;
+	// sinon (design uniquement au dos) on démarre dos visible.
 	function baseTheta(): number {
-		return currentLogo().place === 'dos' ? 180 : 0;
+		const hasFront = currentDesign().elements.some((el) => el.place !== 'dos');
+		return hasFront ? 0 : 180;
 	}
 
 	mv.addEventListener('pointerdown', () => {
@@ -224,11 +264,11 @@ export function initHero3D(): void {
 		requestAnimationFrame(frame);
 	}
 
-	// ---- Coloris, logo, mots interactifs, import -----------------------
+	// ---- Coloris, design, mots interactifs, import -----------------------
 	const swatches = [...document.querySelectorAll<HTMLButtonElement>('#heroColoris button')];
 	function setColorIndex(i: number): void {
 		ic = wrap(i, PALETTE.length);
-		il = wrap(i, LOGOS.length); // le logo change avec la couleur (demande Milio)
+		il = wrap(i, LOGOS.length); // le design change avec la couleur (demande Milio)
 		hex = PALETTE[ic].hex;
 		swatches.forEach((b, n) => b.classList.toggle('on', n === ic));
 		refresh();
@@ -256,7 +296,7 @@ export function initHero3D(): void {
 		if (!f) return;
 		const r = new FileReader();
 		r.onload = () => {
-			printOverride = String(r.result);
+			designOverride = single(String(r.result), 'face', 0.55, 0.5);
 			refresh();
 		};
 		r.readAsDataURL(f);
@@ -265,7 +305,7 @@ export function initHero3D(): void {
 	swatches.forEach((b, n) => b.classList.toggle('on', n === 0));
 	refresh();
 
-	// Changement automatique de coloris (et donc de logo) toutes les 2
+	// Changement automatique de coloris (et donc de design) toutes les 2
 	// secondes. En pause si l'onglet est en arrière-plan, pour ne pas
 	// relancer une texture 2048² à vide.
 	setInterval(() => {
