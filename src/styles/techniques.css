@@ -79,7 +79,7 @@
 .proscons .col{border-radius:16px;padding:20px 22px}
 .proscons .col.avantages{background:rgba(46,125,91,.07)}
 .proscons .col.limites{background:rgba(178,106,18,.08)}
-.proscons h4{font-family:'Sora',sans-serif;font-size:.92rem;margin-bottom:12px}
+.proscons h3{font-family:'Sora',sans-serif;font-size:.92rem;margin-bottom:12px}
 .proscons ul{list-style:none;display:grid;gap:9px}
 .proscons li{font-size:.92rem;color:var(--encre);padding-left:18px;position:relative}
 .proscons li::before{content:"";position:absolute;left:0;top:.55em;width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.5}
@@ -87,7 +87,7 @@
 .tdetail aside{position:sticky;top:96px}
 
 .side-card{border:1px solid var(--ligne);border-radius:18px;padding:24px;margin-bottom:18px}
-.side-card h4{font-family:'Sora',sans-serif;font-size:.92rem;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.side-card h3{font-family:'Sora',sans-serif;font-size:.92rem;margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .side-card p{font-size:.92rem;color:var(--gris);margin:0}
 .side-card .big{font-family:'Sora',sans-serif;font-size:1.3rem;color:var(--encre);margin-bottom:4px}
 

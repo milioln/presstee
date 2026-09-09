@@ -44,7 +44,7 @@ const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 						<h2>Avantages et limites</h2>
 						<div class="proscons">
 							<div class="col avantages">
-								<h4>✓ Avantages</h4>
+								<h3>✓ Avantages</h3>
 								<ul>
 									<li>Un rendu très proche de la sérigraphie directe, y compris la tenue au lavage</li>
 									<li>Pas de calage individuel sur chaque pièce : utile sur des emplacements difficiles d'accès (manches, capuches) ou des textiles techniques</li>
@@ -52,7 +52,7 @@ const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 								</ul>
 							</div>
 							<div class="col limites">
-								<h4>⚠ Points de vigilance</h4>
+								<h3>⚠ Points de vigilance</h3>
 								<ul>
 									<li>Une seule couleur : ne convient pas aux visuels multicolores ou aux dégradés</li>
 									<li>Une étape supplémentaire (impression puis pose) par rapport à la sérigraphie directe</li>
@@ -70,15 +70,15 @@ const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 
 				<aside>
 					<div class="side-card">
-						<h4>Pour quel projet</h4>
+						<h3>Pour quel projet</h3>
 						<p>{t.quantiteMin.toLowerCase()}. {t.couleurs}. Utile sur les textiles techniques ou les emplacements difficiles à sérigraphier directement.</p>
 					</div>
 					<div class="side-card">
-						<h4>Le prix dépend de</h4>
+						<h3>Le prix dépend de</h3>
 						<div class="big">{t.facteurPrix}</div>
 					</div>
 					<div class="side-card">
-						<h4>Durabilité</h4>
+						<h3>Durabilité</h3>
 						<p>{t.durabilite}.</p>
 					</div>
 					<TechMiniReco tech={t.slug} />

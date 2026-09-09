@@ -4,9 +4,12 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://presstee.fr',
   compressHTML: true,
-  redirects: {
-    '/personnalisateur': '/personnaliser',
-  },
+  // L'ancienne adresse /personnalisateur redirige désormais au niveau du
+  // serveur (public/.htaccess, RewriteRule), comme /configurateur et
+  // /simulateur : un vrai 301 plutôt que la page intermédiaire que
+  // générait cette redirection Astro (un <meta http-equiv="refresh">
+  // sur de l'hébergement statique, plus faible pour transmettre le
+  // référencement acquis par l'ancienne adresse).
   integrations: [
     sitemap({
       // Exclut les pages sans intérêt pour un moteur de recherche (données

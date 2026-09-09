@@ -45,7 +45,7 @@ const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 						<h2>Avantages et limites</h2>
 						<div class="proscons">
 							<div class="col avantages">
-								<h4>✓ Avantages</h4>
+								<h3>✓ Avantages</h3>
 								<ul>
 									<li>Le fil est tissé dans la matière : c'est la technique la plus résistante au lavage et au temps</li>
 									<li>Un rendu texturé et haut de gamme, particulièrement adapté aux polos, chemises et casquettes</li>
@@ -53,7 +53,7 @@ const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 								</ul>
 							</div>
 							<div class="col limites">
-								<h4>⚠ Points de vigilance</h4>
+								<h3>⚠ Points de vigilance</h3>
 								<ul>
 									<li>Rentable à partir de 10 pièces : pas adaptée à la pièce unique</li>
 									<li>Les très petits détails ou le texte fin ne se brodent pas bien : mieux vaut un logo simple, sans trop de détails</li>
@@ -72,15 +72,15 @@ const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 
 				<aside>
 					<div class="side-card">
-						<h4>Pour quel projet</h4>
+						<h3>Pour quel projet</h3>
 						<p>{t.quantiteMin.toLowerCase()}. {t.couleurs}. Idéale sur un petit visuel (logo, initiales) destiné à durer, sur un textile à partir de 180 g/m².</p>
 					</div>
 					<div class="side-card">
-						<h4>Le prix dépend de</h4>
+						<h3>Le prix dépend de</h3>
 						<div class="big">{t.facteurPrix}</div>
 					</div>
 					<div class="side-card">
-						<h4>Durabilité</h4>
+						<h3>Durabilité</h3>
 						<p>{t.durabilite}.</p>
 					</div>
 					<TechMiniReco tech={t.slug} />

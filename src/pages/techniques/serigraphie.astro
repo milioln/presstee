@@ -45,7 +45,7 @@ const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 						<h2>Avantages et limites</h2>
 						<div class="proscons">
 							<div class="col avantages">
-								<h4>✓ Avantages</h4>
+								<h3>✓ Avantages</h3>
 								<ul>
 									<li>Le rendu le plus dense, avec des couleurs vives et opaques même sur textile foncé</li>
 									<li>L'encre est absorbée dans la fibre : très bonne tenue au lavage</li>
@@ -53,7 +53,7 @@ const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 								</ul>
 							</div>
 							<div class="col limites">
-								<h4>⚠ Points de vigilance</h4>
+								<h3>⚠ Points de vigilance</h3>
 								<ul>
 									<li>Un écran par couleur : les visuels très riches en nuances ou en dégradés ne sont pas adaptés</li>
 									<li>Les frais de calage rendent la technique moins intéressante en très petite série</li>
@@ -72,15 +72,15 @@ const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 
 				<aside>
 					<div class="side-card">
-						<h4>Pour quel projet</h4>
+						<h3>Pour quel projet</h3>
 						<p>{t.quantiteMin.toLowerCase()}. Visuels en aplats, {t.couleurs.toLowerCase()}. Idéal pour une série identique portée régulièrement.</p>
 					</div>
 					<div class="side-card">
-						<h4>Le prix dépend de</h4>
+						<h3>Le prix dépend de</h3>
 						<div class="big">{t.facteurPrix}</div>
 					</div>
 					<div class="side-card">
-						<h4>Durabilité</h4>
+						<h3>Durabilité</h3>
 						<p>{t.durabilite}.</p>
 					</div>
 					<TechMiniReco tech={t.slug} />
