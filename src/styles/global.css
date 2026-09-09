@@ -90,19 +90,6 @@ h2{font-size:clamp(2.05rem,5.2vw,3.5rem)}
 .sub strong{font-family:'Sora',sans-serif;font-size:.96rem;font-weight:600;display:block}
 .sub span{font-size:.93rem;color:var(--gris)}
 
-/* ---------- choix de profil (accueil) ---------- */
-.profilPick{padding:34px 0}
-.profilPick-lede{text-align:center;color:var(--gris);font-size:.9rem;margin-bottom:14px;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
-.profilPick-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:760px;margin:0 auto}
-.profilPick-card{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;border:1.5px solid var(--ligne);background:#fff;border-radius:var(--r);padding:18px 20px;font:inherit;cursor:pointer;transition:.15s}
-.profilPick-card:hover{border-color:var(--indigo);transform:translateY(-2px)}
-.profilPick-ico{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:var(--gris-clair);color:var(--indigo);margin-bottom:6px}
-.profilPick-title{font-family:'Sora',sans-serif;font-weight:700;font-size:1rem;color:var(--encre)}
-.profilPick-sub{font-size:.85rem;color:var(--gris)}
-@media(max-width:640px){
-  .profilPick-cards{grid-template-columns:1fr}
-}
-
 /* ---------- secteurs ---------- */
 .profilToggle{display:flex;justify-content:center;gap:8px;margin-bottom:22px}
 .profilToggle button{border:1.5px solid var(--ligne);background:var(--lavande);border-radius:100px;padding:9px 18px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;color:var(--gris);transition:.15s}

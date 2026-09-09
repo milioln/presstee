@@ -56,7 +56,7 @@ function pill(action: string, value: string, label: string, on: boolean): string
 function screenProfil(): string {
   return `<div class="qzStep">
     <h2>Vous êtes…</h2>
-    <p class="qzHint">Pour vous montrer ce qui compte vraiment.</p>
+    <p class="qzHint">Pour mieux vous accompagner — ce choix ne vous prive de rien : vous gardez accès à tous les outils du site, quelle que soit votre réponse.</p>
     <div class="qzChoices qzChoices-big">
       <button type="button" class="qzBig" data-action="set-profil" data-value="particulier"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"></path></svg></span>Un particulier</button>
       <button type="button" class="qzBig" data-action="set-profil" data-value="entreprise"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"></rect><path d="M9 21v-4h6v4"></path><path d="M8 7h1M8 11h1M15 7h1M15 11h1"></path></svg></span>Une structure</button>
