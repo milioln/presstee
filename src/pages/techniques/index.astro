@@ -27,7 +27,7 @@ import '../../styles/techniques.css';
 					<a class="tcard" href={`/techniques/${t.slug}`}>
 						<div class="thumb">
 							{t.image ? (
-								<img src={t.image} alt="" loading="lazy" />
+								<img src={t.image} alt={`Atelier Presstee — ${t.nom}`} loading="lazy" />
 							) : (
 								<div style="width:100%;height:100%;display:grid;place-items:center;color:var(--gris);font-size:12px">Presstee</div>
 							)}

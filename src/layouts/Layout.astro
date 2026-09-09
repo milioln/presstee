@@ -27,6 +27,17 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 	<title>{title}</title>
 	<link rel="canonical" href={canonicalURL} />
 	{noindex && <meta name="robots" content="noindex, nofollow" />}
+	<meta property="og:type" content="website" />
+	<meta property="og:site_name" content={siteConfig.nom} />
+	<meta property="og:locale" content="fr_FR" />
+	<meta property="og:title" content={title} />
+	<meta property="og:description" content={description} />
+	<meta property="og:url" content={canonicalURL} />
+	<meta property="og:image" content={new URL('/og-image.png', Astro.site)} />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={title} />
+	<meta name="twitter:description" content={description} />
+	<meta name="twitter:image" content={new URL('/og-image.png', Astro.site)} />
 	<link rel="icon" type="image/svg+xml" href="/logo/presstee-icone.svg" />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
