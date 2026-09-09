@@ -204,20 +204,24 @@ function bindResetView(): void {
   });
 }
 
-// Plein écran sur #frame (modèle 3D + barre d'actions), pas sur toute la
-// page : plus confortable pour examiner le visuel de près, notamment sur
-// mobile où le panneau latéral prend sinon toute la place.
+// Plein écran sur #configBoard (les 3 colonnes : composition, modèle 3D,
+// technique/livraison) plutôt que sur #frame seul — un plein écran limité
+// au modèle 3D n'affichait que le visualiseur, sans aucun des contrôles
+// (emplacement, coloris, ajustement du visuel...) : inutilisable pour
+// vraiment travailler le projet. Le plein écran couvre maintenant l'outil
+// complet, header/footer/texte d'intro masqués, plus confortable pour se
+// concentrer sur la composition — notamment sur mobile.
 function bindFullscreen(): void {
-  const frame = el('frame');
+  const board = el('configBoard');
   const btn = el('fullscreenBtn');
   btn.addEventListener('click', () => {
     if (document.fullscreenElement) document.exitFullscreen();
-    else frame.requestFullscreen();
+    else board.requestFullscreen();
   });
   document.addEventListener('fullscreenchange', () => {
-    const active = document.fullscreenElement === frame;
-    frame.classList.toggle('is-fullscreen', active);
-    btn.setAttribute('aria-label', active ? 'Quitter le plein écran' : 'Afficher le modèle 3D en plein écran');
+    const active = document.fullscreenElement === board;
+    board.classList.toggle('is-fullscreen', active);
+    btn.setAttribute('aria-label', active ? 'Quitter le plein écran' : 'Afficher l’outil en plein écran');
   });
 }
 

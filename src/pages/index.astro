@@ -21,17 +21,17 @@ import '../styles/techniques.css';
 
 		<section class="profilPick">
 			<div class="wrap">
-				<p class="profilPick-lede">Pour vous montrer ce qui compte vraiment :</p>
+				<p class="profilPick-lede">Pour vous emmener directement au bon endroit :</p>
 				<div class="profilPick-cards">
-					<button type="button" class="profilPick-card" data-profil="particulier">
+					<button type="button" class="profilPick-card" data-profil="particulier" data-go="/commencer">
 						<span class="profilPick-ico" aria-hidden="true">🧍</span>
 						<span class="profilPick-title">Je suis un particulier</span>
-						<span class="profilPick-sub">Association, événement, cadeau, projet perso…</span>
+						<span class="profilPick-sub">Association, événement, cadeau, projet perso — faites le test en 3 questions →</span>
 					</button>
-					<button type="button" class="profilPick-card" data-profil="entreprise">
+					<button type="button" class="profilPick-card" data-profil="entreprise" data-go="/contact">
 						<span class="profilPick-ico" aria-hidden="true">🏢</span>
 						<span class="profilPick-title">Je représente une structure</span>
-						<span class="profilPick-sub">Entreprise, commerce, collectivité…</span>
+						<span class="profilPick-sub">Entreprise, commerce, collectivité — décrivez votre projet, on chiffre →</span>
 					</button>
 				</div>
 			</div>
@@ -153,10 +153,14 @@ import '../styles/techniques.css';
 <script>
 	import { setProfil } from '../lib/profil-client';
 
+	// Emmène directement vers l'outil adapté au profil (quiz pour un
+	// particulier, contact pour une structure) plutôt que de se contenter
+	// de retrier une section plus bas sur la même page — un simple tri de
+	// contenu ne fait pas avancer le visiteur dans son projet.
 	document.querySelectorAll<HTMLButtonElement>('.profilPick-card').forEach((btn) => {
 		btn.addEventListener('click', () => {
 			setProfil(btn.dataset.profil as 'particulier' | 'entreprise');
-			document.getElementById('secteurs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			window.location.href = btn.dataset.go!;
 		});
 	});
 </script>
