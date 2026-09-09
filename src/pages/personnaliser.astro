@@ -13,11 +13,10 @@ import '../styles/personnalisateur.css';
 	<Header />
 	<ParcoursBar step={2} />
 
-	<section class="sim-hero">
+	<section class="cmd-hero">
 		<div class="wrap">
 			<div class="crumb"><a href="/">Accueil</a> / Commander</div>
 			<h1>Composez et commandez votre textile.</h1>
-			<p>Configurez votre projet vous-même en 3D et passez commande directement, ou obtenez en quelques clics une estimation accompagnée par notre équipe. Vous pouvez changer d'avis à tout moment.</p>
 		</div>
 	</section>
 
@@ -25,11 +24,6 @@ import '../styles/personnalisateur.css';
 		<section id="mode3d">
 			<div class="pz-page">
 			<div class="wrap">
-				<div class="intro">
-					<h1>Composez votre textile personnalisé.</h1>
-					<p>Choisissez un modèle, déposez votre visuel, placez-le. Nous analysons votre fichier au passage et vous disons quelle technique convient à votre projet et à votre quantité. Pas encore de visuel ? Décrivez-nous votre projet dans l'onglet « Aide design », ça n'empêche pas de continuer votre commande.</p>
-					<a class="linkBtn" href="/commencer">Juste un ordre de prix rapide, sans le 3D ? →</a>
-				</div>
 
 				<div class="board" id="configBoard">
 					<div class="layout3">
@@ -96,7 +90,10 @@ import '../styles/personnalisateur.css';
 						</div>
 
 						<div class="viewer">
-							<div class="seg2 viewToggle" id="viewToggle">
+							<!-- Bon à tirer retiré pour l'instant (Milio, 2026-09) — le
+							     binding JS (bat-view.ts) reste en place, prêt à être
+							     réactivé, seul l'onglet est masqué. -->
+							<div class="seg2 viewToggle" id="viewToggle" style="display:none">
 								<button type="button" data-view="3d" class="on"><strong><span class="stepnum">1</span> Modèle 3D</strong></button>
 								<button type="button" data-view="bat"><strong><span class="stepnum">2</span> Bon à tirer</strong></button>
 							</div>
@@ -337,17 +334,29 @@ import '../styles/personnalisateur.css';
 </Layout>
 
 <style>
-	.intro .linkBtn {
-		display: inline-block;
-		margin-top: 10px;
-		font-size: 0.9rem;
-		background: none;
-		border: 0;
-		color: var(--muted);
-		text-decoration: underline;
-		cursor: pointer;
+	/* En-tête volontairement compact — le fil du parcours (ParcoursBar)
+	   et l'outil lui-même font le travail ; ce bandeau ne sert plus qu'à
+	   situer la page (fil d'ariane + titre), pas à la présenter en détail
+	   comme avant (Milio, 2026-09 : "vue de base plus spacieuse", moins
+	   d'habillage autour de l'outil). */
+	.cmd-hero {
+		padding: 28px 0 20px;
+		border-bottom: 1px solid var(--ligne);
 	}
-	.intro .linkBtn:hover {
-		color: var(--text);
+	.cmd-hero .crumb {
+		font-size: 13px;
+		color: var(--gris);
+		margin-bottom: 10px;
+	}
+	.cmd-hero .crumb a {
+		text-decoration: none;
+		color: var(--gris);
+	}
+	.cmd-hero .crumb a:hover {
+		color: var(--indigo);
+	}
+	.cmd-hero h1 {
+		font-size: clamp(1.5rem, 3vw, 1.9rem);
+		letter-spacing: -0.02em;
 	}
 </style>

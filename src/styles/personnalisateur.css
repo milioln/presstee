@@ -90,7 +90,7 @@
 .posrow{display:flex;align-items:center;gap:6px}
 
 .viewer{display:flex;flex-direction:column}
-.frame{position:relative;flex:1;min-height:480px;overflow:hidden;
+.frame{position:relative;flex:1;min-height:620px;overflow:hidden;
   background-image:linear-gradient(color-mix(in srgb,var(--text) 6%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--text) 6%,transparent) 1px,transparent 1px);
   background-size:26px 26px;background-position:center center}
 /* Plein écran du modèle seul (bouton dédié, distinct du plein écran de
