@@ -28,13 +28,13 @@
 .intro h1{font-size:clamp(1.9rem,4.4vw,2.6rem)}
 .intro p{color:var(--muted);margin-top:12px;max-width:62ch;font-family:'Manrope',system-ui,sans-serif}
 
-.board{border:1px solid var(--divider);background:var(--bg);margin-bottom:80px}
+.board{border:1px solid var(--divider);background:var(--bg);margin-bottom:80px;border-radius:var(--r);overflow:hidden;box-shadow:0 20px 50px rgba(23,19,31,.08)}
 
 /* Plein écran sur l'outil complet (les 3 colonnes), pas seulement le
    modèle 3D : le visualiseur garde sa hauteur flexible, les deux panneaux
    de contrôle (emplacement/coloris à gauche, technique/livraison à
    droite) défilent indépendamment plutôt que de déborder de l'écran. */
-.board:fullscreen{height:100vh;display:flex;flex-direction:column;overflow:hidden;border:0}
+.board:fullscreen{height:100vh;display:flex;flex-direction:column;overflow:hidden;border:0;border-radius:0;box-shadow:none}
 .board:fullscreen .layout3{flex:1;min-height:0;overflow-y:auto}
 .board:fullscreen .panel{overflow-y:auto}
 /* Desktop (3 colonnes sur une seule ligne de grille) : la ligne doit
@@ -69,16 +69,16 @@
 .support-spec{font-size:12px;color:var(--muted);margin-top:6px;font-family:'Manrope',system-ui,sans-serif}
 .support-name + .support-spec + .btn{margin-top:12px}
 
-.swatches{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:14px}
-.sw{width:100%;aspect-ratio:1;border:1px solid var(--divider);cursor:pointer;padding:0;transition:.15s}
+.swatches{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:14px}
+.sw{width:100%;aspect-ratio:1;border-radius:50%;border:1px solid var(--divider);cursor:pointer;padding:0;transition:.15s}
+.sw:hover{transform:scale(1.08)}
 .sw.on{outline:2px solid var(--accent);outline-offset:2px}
 
-.seg3{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--divider);margin-top:14px}
-.seg2{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border:1px solid var(--divider);margin-top:14px}
-.seg3 button,.seg2 button{border:0;border-right:1px solid var(--divider);background:transparent;padding:11px 12px;font:inherit;cursor:pointer;color:var(--text);text-align:left;font-size:13px;transition:.15s}
-.seg3 button:last-child,.seg2 button:last-child{border-right:0}
-.seg3 button:hover,.seg2 button:hover{background:color-mix(in srgb,var(--text) 6%,transparent)}
-.seg3 button.on,.seg2 button.on{background:var(--accent);color:var(--bg)}
+.seg3{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.seg2{display:flex;gap:8px;margin-top:14px}
+.seg3 button,.seg2 button{flex:1 1 auto;min-width:0;border:1.5px solid var(--divider);border-radius:14px;background:var(--bg);padding:11px 12px;font:inherit;cursor:pointer;color:var(--text);text-align:left;font-size:13px;transition:.15s}
+.seg3 button:hover,.seg2 button:hover{border-color:var(--accent);transform:translateY(-1px)}
+.seg3 button.on,.seg2 button.on{background:var(--accent);border-color:var(--accent);color:var(--bg)}
 .seg3 strong,.seg2 strong{display:block;font-family:'Sora',sans-serif;font-weight:800;font-size:13.5px}
 .seg3 em,.seg2 em{font-style:normal;font-size:11px;opacity:.85}
 
@@ -104,56 +104,55 @@
 
 .filebar{border-top:2px solid var(--divider);padding:18px 22px}
 
-.techs{display:grid;gap:0;border:1px solid var(--divider);margin-top:14px}
-.tech{border:0;border-bottom:1px solid var(--divider);background:transparent;padding:12px 14px;cursor:pointer;text-align:left;font:inherit;color:var(--text);transition:.15s}
-.tech:last-child{border-bottom:0}
-.tech:hover{background:color-mix(in srgb,var(--text) 5%,transparent)}
-.tech.on{background:var(--accent-100)}
+.techs{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.tech{border:1.5px solid var(--divider);border-radius:14px;background:var(--bg);padding:12px 14px;cursor:pointer;text-align:left;font:inherit;color:var(--text);transition:.15s}
+.tech:hover{border-color:var(--accent);transform:translateY(-1px)}
+.tech.on{background:var(--accent-100);border-color:var(--accent)}
 .tech .th{display:flex;align-items:center;gap:8px;font-family:'Sora',sans-serif;font-weight:800;font-size:14px}
 .tech .tag{font-size:10px;letter-spacing:.04em;padding:3px 9px;background:var(--accent-100);color:var(--accent-800);margin-left:auto}
 .tech p{font-size:12px;color:var(--muted);margin-top:5px;font-family:'Manrope',system-ui,sans-serif}
-.reco{background:var(--surface);padding:12px 14px;font-size:12.5px;color:var(--muted);margin-top:12px;font-family:'Manrope',system-ui,sans-serif}
+.reco{background:var(--surface);border-radius:12px;padding:12px 14px;font-size:12.5px;color:var(--muted);margin-top:12px;font-family:'Manrope',system-ui,sans-serif}
 .reco strong{color:var(--text);font-weight:600}
 
 .szrow{display:flex;align-items:center;gap:10px;padding:6px 0}
 .szcode{width:32px;font-family:'Sora',sans-serif;font-weight:800;font-size:14px}
-.szbar{flex:1;height:6px;background:var(--surface);overflow:hidden}
-.szbar div{height:100%;background:var(--accent)}
+.szbar{flex:1;height:6px;background:var(--surface);border-radius:100px;overflow:hidden}
+.szbar div{height:100%;background:var(--accent);border-radius:100px}
 .szn{width:22px;text-align:right;font-size:13px;font-variant-numeric:tabular-nums}
-.mini-step{width:26px;height:26px;border:1px solid var(--divider);background:var(--bg);font-size:15px;cursor:pointer;color:var(--text);padding:0}
-.mini-step:hover{border-color:var(--accent)}
+.mini-step{width:26px;height:26px;border-radius:50%;border:1px solid var(--divider);background:var(--bg);font-size:15px;cursor:pointer;color:var(--text);padding:0;transition:.15s}
+.mini-step:hover{border-color:var(--accent);background:var(--accent-100)}
 #sizeRows{margin-top:6px}
 
-.modetabs{display:flex;border:1px solid var(--divider);margin-bottom:14px}
-.modetabs button{flex:1;border:0;background:transparent;padding:9px;font-family:'Sora',sans-serif;font-weight:800;font-size:12.5px;cursor:pointer;color:var(--muted)}
-.modetabs button+button{border-left:1px solid var(--divider)}
-.modetabs button.on{background:var(--accent);color:var(--bg)}
+.modetabs{display:flex;gap:4px;background:var(--surface);border-radius:100px;padding:4px;margin-bottom:14px}
+.modetabs button{flex:1;border:0;background:transparent;border-radius:100px;padding:9px;font-family:'Sora',sans-serif;font-weight:800;font-size:12.5px;cursor:pointer;color:var(--muted);transition:.15s}
+.modetabs button.on{background:var(--bg);color:var(--text);box-shadow:0 2px 8px rgba(23,19,31,.1)}
 
-.drop{border:1.5px dashed var(--divider);padding:22px 16px;text-align:center;cursor:pointer;transition:.15s}
+.drop{border:1.5px dashed var(--divider);border-radius:16px;padding:22px 16px;text-align:center;cursor:pointer;transition:.15s}
 .drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-100)}
 .drop p{font-size:13px;color:var(--muted);margin-top:6px;font-family:'Manrope',system-ui,sans-serif}
 .drop strong{font-family:'Sora',sans-serif;font-size:14px;font-weight:800}
 
 .textmode{display:grid;gap:10px}
-.textmode input[type=text]{width:100%;padding:11px 12px;border:1px solid var(--divider);background:var(--bg);font:inherit;font-size:14px;color:var(--text)}
+.textmode input[type=text]{width:100%;padding:11px 12px;border:1px solid var(--divider);border-radius:10px;background:var(--bg);font:inherit;font-size:14px;color:var(--text)}
 .textmode input[type=text]:focus-visible{outline:2px solid var(--accent);outline-offset:-1px}
-.fontpicker{display:flex;flex-wrap:wrap;gap:6px;border:1px solid var(--divider);padding:6px}
-.fontpicker button{flex:1;min-width:56px;border:0;background:transparent;padding:8px 6px;cursor:pointer;color:var(--text);font-size:15px;transition:.15s}
+.fontpicker{display:flex;flex-wrap:wrap;gap:6px;border:1px solid var(--divider);border-radius:12px;padding:6px}
+.fontpicker button{flex:1;min-width:56px;border:0;border-radius:8px;background:transparent;padding:8px 6px;cursor:pointer;color:var(--text);font-size:15px;transition:.15s}
 .fontpicker button:hover{background:color-mix(in srgb,var(--text) 6%,transparent)}
 .fontpicker button.on{background:var(--accent);color:var(--bg)}
 .textcolors{display:flex;gap:8px;flex-wrap:wrap}
-.textcolors button{width:28px;height:28px;border:1px solid var(--divider);cursor:pointer;padding:0}
+.textcolors button{width:28px;height:28px;border-radius:50%;border:1px solid var(--divider);cursor:pointer;padding:0;transition:.15s}
+.textcolors button:hover{transform:scale(1.1)}
 .textcolors button.on{outline:2px solid var(--accent);outline-offset:2px}
 
 .designmode{display:grid;gap:10px}
 .designmode .hint{margin-top:0}
 .designmode label{display:block;font-family:'Sora',sans-serif;font-weight:800;font-size:12px;margin-bottom:6px}
-.designmode select,.designmode input[type=text],.designmode textarea{width:100%;padding:11px 12px;border:1px solid var(--divider);background:var(--bg);font:inherit;font-size:14px;color:var(--text)}
+.designmode select,.designmode input[type=text],.designmode textarea{width:100%;padding:11px 12px;border:1px solid var(--divider);border-radius:10px;background:var(--bg);font:inherit;font-size:14px;color:var(--text)}
 .designmode textarea{resize:vertical;min-height:76px}
 .designmode select:focus-visible,.designmode input[type=text]:focus-visible,.designmode textarea:focus-visible{outline:2px solid var(--accent);outline-offset:-1px}
 
 .layerStrip{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
-.layerchip{position:relative;width:60px;height:60px;border:1.5px solid var(--divider);cursor:pointer;background:var(--surface);padding:0;overflow:hidden}
+.layerchip{position:relative;width:60px;height:60px;border-radius:12px;border:1.5px solid var(--divider);cursor:pointer;background:var(--surface);padding:0;overflow:hidden}
 .layerchip img{width:100%;height:100%;object-fit:contain;display:block}
 .layerchip.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
 /* Barre d'actions à l'intérieur du cadre de la vignette plutôt que des
@@ -172,11 +171,11 @@
 .line b{font-weight:500;color:var(--muted);min-width:104px}
 .line span{font-family:'Sora',sans-serif;font-size:13px}
 .colorswatches{display:flex;gap:5px;flex-wrap:wrap}
-.colorswatches .swatch{width:16px;height:16px;border:1px solid var(--divider);display:inline-block;flex-shrink:0;padding:0;position:relative;cursor:default}
+.colorswatches .swatch{width:16px;height:16px;border-radius:50%;overflow:hidden;border:1px solid var(--divider);display:inline-block;flex-shrink:0;padding:0;position:relative;cursor:default}
 .colorswatches .swatch.removable{cursor:pointer}
 .colorswatches .swatch.removable::after{content:'×';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1;color:#fff;background:rgba(20,18,17,.4);opacity:.6;transition:opacity .1s,background .1s}
 .colorswatches .swatch.removable:hover::after{opacity:1;background:var(--accent)}
-.flag{display:flex;gap:8px;font-size:12px;padding:9px 11px;line-height:1.45;font-family:'Manrope',system-ui,sans-serif}
+.flag{display:flex;gap:8px;font-size:12px;padding:9px 11px;border-radius:10px;line-height:1.45;font-family:'Manrope',system-ui,sans-serif}
 .flag.ok{background:var(--ok-bg);color:var(--ok)}
 .flag.warn{background:var(--warn-bg);color:var(--warn)}
 
@@ -190,14 +189,16 @@
 .mini-btn{background:none;border:0;font-family:'Sora',sans-serif;font-weight:600;font-size:12px;color:var(--accent);cursor:pointer;padding:4px}
 .mini-btn:hover{text-decoration:underline}
 
-/* — boutons (Modernist .btn) — */
+/* — boutons — coins arrondis comme partout ailleurs sur le site
+   (cette page n'en avait aucun : un des signes les plus visibles de son
+   look "feuille A4" isolé du reste de la charte — Milio, 2026-09) — */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;text-decoration:none;
   font-family:'Sora',sans-serif;font-weight:800;font-size:14px;line-height:1.2;color:var(--text);
-  background:transparent;border:1px solid transparent;padding:10px 16px}
+  background:transparent;border:1px solid transparent;border-radius:100px;padding:10px 16px;transition:.15s}
 .btn-primary{background:var(--accent);color:var(--bg)}
-.btn-primary:hover{background:var(--accent-600)}
+.btn-primary:hover{background:var(--accent-600);transform:translateY(-1px)}
 .btn-secondary{border-color:var(--divider)}
-.btn-secondary:hover{background:color-mix(in srgb,var(--text) 7%,transparent)}
+.btn-secondary:hover{border-color:var(--accent);transform:translateY(-1px)}
 .btn-ghost{color:var(--accent);padding-inline:4px;background:none;border:0}
 .btn-ghost:hover{background:var(--accent-100)}
 .btn-icon{width:34px;height:34px;padding:0;flex-shrink:0}
@@ -209,7 +210,7 @@ input[type=file]{display:none}
 .credit a{color:inherit}
 
 .cropOverlay{position:fixed;inset:0;background:rgba(20,18,17,.72);z-index:80;display:flex;align-items:center;justify-content:center;padding:24px}
-.cropBox{background:var(--bg);padding:22px;width:100%;max-width:560px;border:1px solid var(--divider)}
+.cropBox{background:var(--bg);border-radius:var(--r);padding:22px;width:100%;max-width:560px;border:1px solid var(--divider)}
 .cropStage{position:relative;width:fit-content;max-width:100%;max-height:56vh;margin:0 auto;overflow:hidden;background:
   linear-gradient(45deg,var(--surface) 25%,transparent 25%) -8px 0/16px 16px,
   linear-gradient(-45deg,var(--surface) 25%,transparent 25%) -8px 0/16px 16px,
@@ -225,7 +226,7 @@ input[type=file]{display:none}
 .cropHandle[data-h=se]{right:-9px;bottom:-9px;cursor:nwse-resize}
 .cropActions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
 
-.layerPopup{position:fixed;z-index:70;display:flex;flex-direction:column;gap:8px;background:var(--text);padding:8px;box-shadow:0 8px 24px rgba(0,0,0,.28);width:220px}
+.layerPopup{position:fixed;z-index:70;display:flex;flex-direction:column;gap:8px;background:var(--text);border-radius:14px;padding:8px;box-shadow:0 8px 24px rgba(0,0,0,.28);width:220px}
 .layerPopup .lp-row{display:flex;align-items:center;gap:6px}
 .layerPopup button{border:0;background:transparent;color:#fff;height:28px;font-size:15px;line-height:1;cursor:pointer;padding:0 4px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .layerPopup button:hover{background:var(--accent)}
@@ -244,14 +245,15 @@ input[type=file]{display:none}
 .recapLinks{display:flex;gap:4px;justify-content:center;margin-bottom:2px}
 
 .listOverlay{position:fixed;inset:0;background:rgba(20,18,17,.72);z-index:80;display:flex;align-items:center;justify-content:center;padding:24px}
-.listBox{background:var(--bg);padding:22px;width:100%;max-width:420px;max-height:80vh;border:1px solid var(--divider);display:flex;flex-direction:column}
+.listBox{background:var(--bg);border-radius:var(--r);padding:22px;width:100%;max-width:420px;max-height:80vh;border:1px solid var(--divider);display:flex;flex-direction:column}
 .listHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .listHead h6{margin-bottom:0}
 .listHead button{border:0;background:transparent;font-size:20px;line-height:1;cursor:pointer;color:var(--muted);padding:0 4px}
 .listHead button:hover{color:var(--accent)}
 .listItems{overflow-y:auto;display:flex;flex-direction:column;gap:10px}
-.listRow{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--divider)}
-.listSwatch{width:28px;height:28px;flex-shrink:0;border:1px solid var(--divider)}
+.listRow{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--divider);border-radius:12px;transition:.15s}
+.listRow:hover{border-color:var(--accent)}
+.listSwatch{width:28px;height:28px;border-radius:50%;flex-shrink:0;border:1px solid var(--divider)}
 .listInfo{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
 .listInfo strong{font-family:'Sora',sans-serif;font-size:13.5px}
 .listInfo span{font-size:12px;color:var(--muted);font-family:'Manrope',system-ui,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
