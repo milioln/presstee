@@ -37,7 +37,8 @@
 // simple appui qui arme le calque, qui ne doit pas non plus déclencher
 // d'orbite.
 import { activeLayer } from './state';
-import { render, PRINT_RECT, TEXTURE_SIZE } from './render';
+import { render } from './render';
+import { PRINT_RECT, TEXTURE_SIZE } from './print-zones';
 import { openLayerPopup } from './layer-popup';
 import type { Emplacement } from '../../config/parametres-metier';
 

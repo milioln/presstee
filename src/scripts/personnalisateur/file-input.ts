@@ -14,8 +14,17 @@ export function loadDataUrl(dataUrl: string, name: string, isVector: boolean, fo
   syncEditor();
 }
 
+// Un échec de lecture (fichier corrompu, permission refusée par l'OS...)
+// laissait auparavant l'utilisateur sans aucun retour — le clic sur
+// "Ajouter un visuel" semblait n'avoir rien fait. Un message clair vaut
+// mieux qu'un import silencieusement perdu.
+function notifyReadError(name: string): void {
+  window.alert(`Impossible de lire « ${name} ». Réessayez, ou choisissez un autre fichier (PNG, JPG ou SVG).`);
+}
+
 export function loadFile(f: File): void {
   const r = new FileReader();
+  r.onerror = () => notifyReadError(f.name);
   r.onload = () => loadDataUrl(r.result as string, f.name, f.type.includes('svg'));
   r.readAsDataURL(f);
 }

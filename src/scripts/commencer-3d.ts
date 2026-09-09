@@ -2,10 +2,9 @@
 // coloris, emplacement) — une troisième instance indépendante du modèle,
 // sur le même principe que hero/tshirt-hero.ts : pas de calques ni
 // d'état partagé avec le vrai configurateur (personnalisateur/state.ts),
-// juste une teinte et les zones choisies en surbrillance. PRINT_RECT/
-// PANEL_SCALE sont dupliqués depuis personnalisateur/render.ts (même
-// remarque que dans tshirt-hero.ts : à garder synchronisés si l'atlas
-// change).
+// juste une teinte et les zones choisies en surbrillance. Les zones
+// d'impression viennent de personnalisateur/print-zones.ts (source
+// unique, partagée avec le configurateur et la vignette d'accueil).
 //
 // Plusieurs emplacements peuvent être choisis à la fois (Milio,
 // 2026-09 : "pouvoir sélectionner plusieurs zones, face, dos et
@@ -17,19 +16,23 @@
 // sur le modèle détermine quel emplacement a été visé (placeFromHit),
 // l'inverse de hitOnPlace() dans drag3d.ts qui vérifie un emplacement
 // déjà connu.
-import type { Emplacement } from '../config/parametres-metier';
+import type { Emplacement, Garment } from '../config/parametres-metier';
+import { PRINT_RECT, TEXTURE_SIZE } from './personnalisateur/print-zones';
 
-const MODEL_URL = '/personnalisateur/model/scene.gltf';
-const TEXTURE_URL = '/personnalisateur/model/textures/Material_baseColor.png';
-const TEXTURE_SIZE = 2048;
-
-const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: number }> = {
-  face: { x: 324, y: 210, w: 580, h: 750 },
-  coeur: { x: 630, y: 750, w: 130, h: 280 },
-  dos: { x: 1238, y: 210, w: 580, h: 750 },
-  'manche-droite': { x: 750, y: 1325, w: 480, h: 195 },
-  'manche-gauche': { x: 1360, y: 1325, w: 540, h: 195 },
+// Un seul modèle 3D existe aujourd'hui (le t-shirt low poly, licence
+// CC-BY-4.0) : pas de quoi représenter fidèlement un sweat, une chemise
+// ou une casquette. Demande de Milio (2026-09-09) notée pour la suite :
+// un vrai modèle par vêtement demande une modélisation 3D dédiée, hors de
+// portée de ce qui peut être fait ici en code — cette table est prête à
+// recevoir ces fichiers dès qu'ils existent (un par vêtement), en
+// attendant elle retombe partout sur le même modèle.
+const MODEL_PAR_GARMENT: Record<Garment, string> = {
+  tshirt: '/personnalisateur/model/scene.gltf',
+  sweat: '/personnalisateur/model/scene.gltf',
+  chemise: '/personnalisateur/model/scene.gltf',
+  casquette: '/personnalisateur/model/scene.gltf',
 };
+const TEXTURE_URL = '/personnalisateur/model/textures/Material_baseColor.png';
 
 // Angle de caméra qui montre bien chaque zone (thêta autour du modèle, à
 // 85° de hauteur et 105% de la distance "idéale" — mêmes valeurs que le
@@ -118,6 +121,7 @@ let applying = false;
 let queued: { hex: string; places: Set<Emplacement> } | null = null;
 let lastHex = '#FFFFFF';
 let lastPlaces: Set<Emplacement> = new Set(['face']);
+let lastGarment: Garment = 'tshirt';
 
 async function apply(hex: string, places: Set<Emplacement>): Promise<void> {
   if (!mv || !mv.model) return;
@@ -149,7 +153,7 @@ export async function initQuiz3d(onPickPlace: (place: Emplacement) => void): Pro
   await import('@google/model-viewer');
   mv = document.getElementById('qzStage');
   if (!mv) return;
-  mv.src = MODEL_URL;
+  mv.src = MODEL_PAR_GARMENT[lastGarment];
   mv.cameraOrbit = CAMERA_FOR_PLACE.face;
   const refresh = () => void apply(lastHex, lastPlaces);
   if (mv.loaded) refresh();
@@ -164,10 +168,17 @@ export async function initQuiz3d(onPickPlace: (place: Emplacement) => void): Pro
 
 // `focus`, si fourni, fait pivoter la caméra vers cette zone précise (la
 // dernière ajoutée à la sélection) — sans ça, choisir "Dos" surlignerait
-// une zone qu'on ne voit pas depuis la vue de face.
-export function updateQuiz3d(hex: string, places: Set<Emplacement>, focus?: Emplacement): void {
+// une zone qu'on ne voit pas depuis la vue de face. Un changement de
+// vêtement recharge le modèle correspondant (cf. MODEL_PAR_GARMENT) —
+// sans effet visible tant qu'un seul fichier existe, mais prêt dès qu'un
+// vrai modèle par vêtement sera disponible.
+export function updateQuiz3d(hex: string, places: Set<Emplacement>, garment: Garment, focus?: Emplacement): void {
   lastHex = hex;
   lastPlaces = places;
+  if (garment !== lastGarment) {
+    lastGarment = garment;
+    if (mv) mv.src = MODEL_PAR_GARMENT[garment];
+  }
   void apply(hex, places);
   if (focus && mv) mv.cameraOrbit = CAMERA_FOR_PLACE[focus];
 }

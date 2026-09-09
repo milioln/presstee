@@ -25,6 +25,11 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
+/* Titre de section utile à la structure (lecteur d'écran, plan de page)
+   mais redondant visuellement avec un intitulé déjà clair à l'écran
+   (ex. "Filtres" au-dessus d'un panneau déjà visuellement évident) —
+   comble un saut de niveau de titre sans rien changer à l'affichage. */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 body{font-family:'Manrope',system-ui,sans-serif;color:var(--encre);background-color:#fff;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.09 0 0 0 0 0.075 0 0 0 0 0.12 0 0 0 0.012 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");-webkit-font-smoothing:antialiased;line-height:1.6}
 h1,h2,h3{font-family:'Sora',system-ui,sans-serif;line-height:1.05;letter-spacing:-0.035em;font-weight:600}
 h2:hover,h3:hover{text-shadow:-2px 0 var(--jaune),2px 0 var(--indigo);transition:text-shadow .15s ease-out}
@@ -60,8 +65,15 @@ header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop
 .parcoursBar-step.on{color:var(--encre)}
 .parcoursBar-step.on .parcoursBar-dot{border-color:var(--indigo);background:var(--indigo);color:#fff}
 .parcoursBar-step.done .parcoursBar-dot{border-color:var(--indigo);color:var(--indigo)}
-.parcoursBar-line{width:32px;height:1.5px;background:var(--ligne);margin:0 6px;flex-shrink:0}
-.parcoursBar-line.done{background:var(--indigo)}
+.parcoursBar-line{width:32px;height:1.5px;background:var(--ligne);margin:0 6px;flex-shrink:0;position:relative;overflow:hidden}
+/* L'étape franchie se "remplit" comme une encre poussée à travers l'écran
+   plutôt que de simplement changer de couleur d'un bloc — clin d'œil au
+   métier (calage, impression) sur le fil du parcours de commande. */
+.parcoursBar-line.done::after{content:'';position:absolute;inset:0;background:var(--indigo);transform:scaleX(0);transform-origin:left;animation:parcoursFill .5s ease-out forwards}
+@keyframes parcoursFill{to{transform:scaleX(1)}}
+@media(prefers-reduced-motion:reduce){
+  .parcoursBar-line.done::after{animation:none;transform:scaleX(1)}
+}
 @media(max-width:640px){
   .parcoursBar-label{display:none}
   .parcoursBar-line{width:16px}

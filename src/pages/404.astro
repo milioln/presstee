@@ -1,0 +1,71 @@
+---
+// Page 404 statique — Astro sert automatiquement src/pages/404.astro pour
+// toute route inconnue, aussi bien en local qu'une fois déployée sur
+// l'hébergement OVH. Absente jusqu'ici : une route mal orthographiée ou
+// un vieux lien retombait sur la page d'erreur générique du serveur, sans
+// rien de la charte ni un moyen de repartir vers le site.
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+---
+
+<Layout title="Page introuvable — Presstee" description="Cette page n'existe pas ou plus. Retrouvez le configurateur, le catalogue ou le guide des techniques.">
+	<Header />
+	<main>
+		<section class="err404">
+			<div class="wrap">
+				<span class="err404-code">404</span>
+				<h1>Cette page a été mal calée.</h1>
+				<p>Le lien suivi ne mène à rien — la page a peut-être changé d'adresse, ou n'a jamais existé. Voici où repartir :</p>
+				<div class="err404-links">
+					<a class="btn" href="/commencer">Commencer un projet</a>
+					<a class="btn btn-outline" href="/produits">Voir le catalogue</a>
+					<a class="btn btn-outline" href="/">Retour à l'accueil</a>
+				</div>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	.err404 {
+		padding: 100px 0 130px;
+		text-align: center;
+	}
+	.err404-code {
+		display: block;
+		font-family: 'Sora', sans-serif;
+		font-weight: 700;
+		font-size: clamp(4rem, 12vw, 7rem);
+		letter-spacing: -0.04em;
+		color: var(--indigo);
+		line-height: 1;
+	}
+	.err404 h1 {
+		font-size: clamp(1.6rem, 3.4vw, 2.2rem);
+		letter-spacing: -0.02em;
+		margin: 10px 0 14px;
+	}
+	.err404 p {
+		color: var(--gris);
+		max-width: 46ch;
+		margin: 0 auto 30px;
+	}
+	.err404-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+		justify-content: center;
+	}
+	.btn-outline {
+		background: #fff;
+		color: var(--encre);
+		border: 1.5px solid var(--ligne);
+	}
+	.btn-outline:hover {
+		border-color: var(--indigo);
+		background: var(--lavande);
+	}
+</style>

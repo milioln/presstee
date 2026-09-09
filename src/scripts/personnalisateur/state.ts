@@ -5,7 +5,7 @@
 // Le visuel n'est plus unique : plusieurs calques (logo + texte, texte
 // recto + texte dos...) peuvent coexister, chacun avec sa propre
 // position/taille/rotation et son propre emplacement (face/cœur/dos).
-import { catalogueColoris, repartitionTaillesParDefaut, type Garment, type Emplacement, type TailleCode } from '../../config/parametres-metier';
+import { catalogueColoris, repartitionTaillesParDefaut, coutBaseSupportUnique, type Garment, type Emplacement, type TailleCode } from '../../config/parametres-metier';
 import type { TechKey } from './recommendation';
 import { VARIANT_DEFAUT } from './garments';
 import type { Coupe, Manche, Col } from './silhouettes';
@@ -72,6 +72,13 @@ export interface PersonnalisateurState {
   delai: 'standard' | 'express';
   designHelp: DesignHelp;
   batConfirme: BATConfirmation | null;
+  // Coût fournisseur de base utilisé pour le prix affiché (cf. derived.ts,
+  // prixUnitaire()) — par défaut le coût générique du personnalisateur,
+  // mais seedFromItem() le remplace par le coût réel de la référence
+  // choisie en amont (quiz) quand il y en a une, pour que le prix ne
+  // change jamais entre le quiz et le configurateur (Milio, 2026-09-09 :
+  // « le prix, il faut qu'il soit le même partout »).
+  coutBase: number;
 }
 
 export const S: PersonnalisateurState = {
@@ -88,6 +95,7 @@ export const S: PersonnalisateurState = {
   delai: 'standard',
   designHelp: { colors: null, format: '', notes: '' },
   batConfirme: null,
+  coutBase: coutBaseSupportUnique,
 };
 
 let layerSeq = 0;
@@ -119,7 +127,7 @@ export function createLayer(partial: { img: string; fileName: string; vector: bo
 
 export const STORAGE_KEY = 'presstee:personnalisateur:v2';
 
-export type Persisted = Pick<PersonnalisateurState, 'garment' | 'place' | 'coupe' | 'manche' | 'col' | 'layers' | 'activeLayerId' | 'sizeDist' | 'tech' | 'delai' | 'designHelp' | 'batConfirme'> & {
+export type Persisted = Pick<PersonnalisateurState, 'garment' | 'place' | 'coupe' | 'manche' | 'col' | 'layers' | 'activeLayerId' | 'sizeDist' | 'tech' | 'delai' | 'designHelp' | 'batConfirme' | 'coutBase'> & {
   colorIndex: number;
 };
 
@@ -140,6 +148,7 @@ export function saveState(): void {
       delai: S.delai,
       designHelp: S.designHelp,
       batConfirme: S.batConfirme,
+      coutBase: S.coutBase,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   } catch {
@@ -171,6 +180,7 @@ export function loadState(): boolean {
     if (p.delai) S.delai = p.delai;
     if (p.designHelp && typeof p.designHelp === 'object') Object.assign(S.designHelp, p.designHelp);
     if (p.batConfirme && typeof p.batConfirme === 'object') S.batConfirme = p.batConfirme;
+    if (typeof p.coutBase === 'number') S.coutBase = p.coutBase;
     return true;
   } catch {
     return false;
@@ -204,6 +214,13 @@ export function seedFromItem(item: {
   // réel n'existe encore — sert de repère par défaut jusqu'à ce que le
   // client dépose un visuel.
   place?: Emplacement;
+  // Coût réel de la référence choisie en amont (ex. dans le quiz), pour
+  // que le prix affiché dans le configurateur soit exactement celui déjà
+  // vu — sans ça, S.coutBase retombait sur le coût générique du
+  // personnalisateur (coutBaseSupportUnique) quelle que soit la
+  // référence réellement choisie, et le prix pouvait changer entre le
+  // quiz et le configurateur.
+  coutBase?: number;
 }): void {
   try {
     const colorIndex = Math.max(0, catalogueColoris.findIndex((c) => c.hex === item.color.hex));
@@ -225,6 +242,7 @@ export function seedFromItem(item: {
       // (si elle avait eu lieu) — mieux vaut la redemander que la
       // reporter à tort sur un projet qui a pu changer entretemps.
       batConfirme: null,
+      coutBase: item.coutBase ?? coutBaseSupportUnique,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   } catch {

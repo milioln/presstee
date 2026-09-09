@@ -8,8 +8,9 @@
 // géré ici même, en accumulant des instantanés du produit courant.
 import { reco, TECHS, type TechKey } from './personnalisateur/recommendation';
 import { seedFromItem } from './personnalisateur/state';
+import { emplacementsValides } from './personnalisateur/garments';
 import { getProfil, setProfil, type ProfilClient } from '../lib/profil-client';
-import { catalogueColoris, coutBaseSupportUnique, getZoneImpressionCm, repartitionTaillesParDefaut, TAILLES, type Garment, type Emplacement, type TailleCode } from '../config/parametres-metier';
+import { catalogueColoris, coutBaseSupportUnique, getZoneImpressionCm, repartitionTaillesParDefaut, TAILLES, PLACE_LABEL, type Garment, type Emplacement, type TailleCode } from '../config/parametres-metier';
 import { LABELS_COUPE, LABELS_GENRE } from '../lib/produits-types';
 import { grilleTarifaire, prixVente } from '../config/tarification';
 import { COULEURS_OPTIONS, COUPES, GENRES, candidatsRef, qtyStep, palierPour } from './personnalisateur/catalogue-match';
@@ -18,8 +19,6 @@ import { initQuiz3d, updateQuiz3d } from './commencer-3d';
 import type { TShirtCatalogue } from '../data/tshirts';
 
 const GARMENT_LABELS: Record<Garment, string> = { tshirt: 'T-shirt', sweat: 'Sweat', chemise: 'Chemise', casquette: 'Casquette' };
-const PLACES: Emplacement[] = ['face', 'coeur', 'dos', 'manche-droite', 'manche-gauche'];
-const PLACE_LABEL: Record<Emplacement, string> = { face: 'Face', coeur: 'Cœur', dos: 'Dos', 'manche-droite': 'Manche droite', 'manche-gauche': 'Manche gauche' };
 
 interface VisuelImporte {
   dataUrl: string;
@@ -29,18 +28,28 @@ interface VisuelImporte {
   natH: number;
 }
 
+// Un coloris de textile et la quantité commandée dans ce coloris — un
+// produit peut cumuler plusieurs lots (Milio, 2026-09-09 : « il faut que
+// tu acceptes plusieurs coloris de textile, configurables par coloris »).
+// La technique et le prix à la pièce restent uniques pour le produit (même
+// marquage, seul le tissu change de teinte) ; seul le nombre de pièces
+// varie d'un lot à l'autre.
+interface ColorLot {
+  color: { nom: string; hex: string };
+  qty: number;
+}
+
 interface QuizState {
   profil: ProfilClient | null;
   garment: Garment;
   coupe: string | null;
   genre: string | null;
-  color: { nom: string; hex: string };
+  colorLots: ColorLot[];
   // Plusieurs emplacements à la fois (face + dos + manche...) — chacun se
   // chiffre comme un marquage à part, exactement comme dans le vrai
   // configurateur ("le recto-verso se chiffre comme deux marquages").
   places: Set<Emplacement>;
   couleurs: number | null;
-  qty: number;
   selectedRef: string | null;
   // Un visuel importé par emplacement choisi (facultatif — sans fichier,
   // le nombre de couleurs saisi juste au-dessus nourrit quand même la
@@ -69,15 +78,25 @@ function sizeDistForQty(qty: number): Record<TailleCode, number> {
   return dist;
 }
 
+function qtyTotal(p: QuizState): number {
+  return p.colorLots.reduce((s, l) => s + l.qty, 0);
+}
+
+// Coloris "principal" d'un produit — utilisé partout où un seul aperçu
+// suffit (silhouette du résultat, pastille du récap) : le premier lot
+// choisi, dans l'ordre où il a été ajouté.
+function primaryColor(p: QuizState): { nom: string; hex: string } {
+  return p.colorLots[0].color;
+}
+
 function nouveauProduit(): Omit<QuizState, 'profil'> {
   return {
     garment: 'tshirt',
     coupe: null,
     genre: null,
-    color: catalogueColoris[0],
+    colorLots: [{ color: catalogueColoris[0], qty: 25 }],
     places: new Set(['face']),
     couleurs: null,
-    qty: 25,
     selectedRef: null,
     visuels: {},
   };
@@ -98,6 +117,20 @@ function togglePlace(place: Emplacement): void {
     return;
   }
   state.places.add(place);
+  maybeShowCombo();
+}
+
+// Ajoute/retire un coloris de la sélection (jamais en dessous d'un seul
+// choisi) — nouveau lot à 25 pièces par défaut, aligné sur la quantité de
+// départ d'un produit.
+function toggleColor(hex: string): void {
+  const idx = state.colorLots.findIndex((l) => l.color.hex === hex);
+  if (idx >= 0) {
+    if (state.colorLots.length > 1) state.colorLots.splice(idx, 1);
+    return;
+  }
+  const color = catalogueColoris.find((c) => c.hex === hex);
+  if (color) state.colorLots.push({ color, qty: 25 });
 }
 
 const state: QuizState = { profil: null, ...nouveauProduit() };
@@ -116,6 +149,34 @@ let current = 0;
 // qu'on ne regarde plus.
 let pendingFocus: Emplacement | undefined;
 
+// Petit clin d'œil ponctuel (pas de système à points) quand tous les
+// emplacements disponibles pour le vêtement courant sont sélectionnés à
+// la fois — se réarme si on redescend en dessous, pour rejouer si on
+// atteint la combinaison complète une seconde fois plus tard.
+let comboShown = false;
+function maybeShowCombo(): void {
+  const max = emplacementsValides(state.garment).length;
+  if (max <= 1) return;
+  if (state.places.size >= max) {
+    if (!comboShown) {
+      comboShown = true;
+      showToast('✦ Combo complet — tous les emplacements sélectionnés');
+    }
+  } else {
+    comboShown = false;
+  }
+}
+
+function showToast(text: string): void {
+  const toast = document.createElement('div');
+  toast.className = 'eggToast';
+  toast.textContent = text;
+  document.body.append(toast);
+  requestAnimationFrame(() => toast.classList.add('show'));
+  window.setTimeout(() => toast.classList.remove('show'), 2200);
+  window.setTimeout(() => toast.remove(), 2700);
+}
+
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
   return document.getElementById(id) as T;
 }
@@ -125,7 +186,7 @@ function fmtPrice(n: number): string {
 }
 
 function pill(action: string, value: string, label: string, on: boolean, extra = ''): string {
-  return `<button type="button" class="pill${on ? ' on' : ''}" data-action="${action}" data-value="${value}" ${extra}>${label}</button>`;
+  return `<button type="button" class="pill${on ? ' on' : ''}" data-action="${action}" data-value="${value}" aria-pressed="${on}" ${extra}>${label}</button>`;
 }
 
 interface ProduitCalcule {
@@ -135,24 +196,29 @@ interface ProduitCalcule {
   ref: TShirtCatalogue | null;
   prixUnitaire: number;
   prixTotal: number;
+  qty: number;
 }
 
 // Calcul partagé entre l'écran résultat (produit courant) et le
 // récapitulatif des produits déjà ajoutés — une seule logique de
-// recommandation/tarification, jamais deux qui pourraient diverger.
+// recommandation/tarification, jamais deux qui pourraient diverger. Le
+// palier de prix se calcule sur le total toutes couleurs confondues (même
+// technique, même référence, un seul calage quel que soit le nombre de
+// teintes de tissu commandées).
 function calcProduit(p: QuizState): ProduitCalcule {
-  const r = reco(p.couleurs, p.qty);
+  const qty = qtyTotal(p);
+  const r = reco(p.couleurs, qty);
   const styles = new Set<string>();
   if (p.coupe) styles.add(p.coupe);
   if (p.genre) styles.add(p.genre);
   const candidatsTous = p.garment === 'tshirt' ? candidatsRef(styles) : [];
   const candidats = candidatsTous.slice(0, 3);
   const ref = candidats.find((c) => c.slug === p.selectedRef) ?? candidats[0] ?? null;
-  const palier = palierPour(p.qty);
+  const palier = palierPour(qty);
   const coutBase = ref ? ref.baseCost : coutBaseSupportUnique;
   const prixUnitaire = Math.round(prixVente(coutBase, palier.marge) * 100) / 100;
-  const prixTotal = Math.round(prixUnitaire * p.qty * 100) / 100;
-  return { techKey: r.k, why: r.why, candidats, ref, prixUnitaire, prixTotal };
+  const prixTotal = Math.round(prixUnitaire * qty * 100) / 100;
+  return { techKey: r.k, why: r.why, candidats, ref, prixUnitaire, prixTotal, qty };
 }
 
 function screenProfil(): string {
@@ -167,6 +233,7 @@ function screenProfil(): string {
 }
 
 function screenProjet(): string {
+  const placesDispo = emplacementsValides(state.garment);
   return `<div class="qzStep">
     <h2>Votre projet</h2>
     <p class="qzHint">Question 1 sur 3 — le modèle 3D à droite reflète vos choix ; cliquez directement dessus pour choisir l'emplacement.</p>
@@ -183,12 +250,15 @@ function screenProjet(): string {
       <div class="pills">${GENRES.map((g) => pill('set-genre', g, LABELS_GENRE[g], state.genre === g)).join('')}</div>
     </div>
     <div class="qzField">
-      <span class="qzLabel">Couleur du textile</span>
-      <div class="swatches">${catalogueColoris.map((c) => `<button type="button" class="sw${c.hex === state.color.hex ? ' on' : ''}" data-action="set-color" data-value="${c.hex}" style="background:${c.hex}" aria-label="${c.nom}"></button>`).join('')}</div>
+      <span class="qzLabel">Coloris du textile <span class="qzOptional">plusieurs choix possibles</span></span>
+      <div class="swatches">${catalogueColoris.map((c) => {
+        const on = state.colorLots.some((l) => l.color.hex === c.hex);
+        return `<button type="button" class="sw${on ? ' on' : ''}" data-action="toggle-color" data-value="${c.hex}" style="background:${c.hex}" aria-label="${c.nom}" aria-pressed="${on}"></button>`;
+      }).join('')}</div>
     </div>
     <div class="qzField">
       <span class="qzLabel">Emplacement du visuel <span class="qzOptional">plusieurs choix possibles</span></span>
-      <div class="pills">${PLACES.map((p) => pill('toggle-place', p, `${PLACE_LABEL[p]} · ${getZoneImpressionCm(state.garment, p)} cm max`, state.places.has(p))).join('')}</div>
+      <div class="pills">${placesDispo.map((p) => pill('toggle-place', p, `${PLACE_LABEL[p]} · ${getZoneImpressionCm(state.garment, p)} cm max`, state.places.has(p))).join('')}</div>
     </div>
   </div>`;
 }
@@ -210,17 +280,27 @@ function visuelRowHtml(place: Emplacement): string {
   </label>`;
 }
 
+function colorQtyRowHtml(lot: ColorLot): string {
+  return `<div class="qzColorQtyRow">
+    <span class="qzColorQtyRow-sw" style="background:${lot.color.hex}" aria-hidden="true"></span>
+    <span class="qzColorQtyRow-name">${lot.color.nom}</span>
+    <div class="qtyStepper qtyStepper-sm">
+      <button type="button" class="btn-icon" data-action="qty-step-color" data-value="${lot.color.hex}" data-delta="-1" aria-label="Diminuer la quantité en ${lot.color.nom}">−</button>
+      <span class="qtyStepper-val">${lot.qty} pièce${lot.qty > 1 ? 's' : ''}</span>
+      <button type="button" class="btn-icon" data-action="qty-step-color" data-value="${lot.color.hex}" data-delta="1" aria-label="Augmenter la quantité en ${lot.color.nom}">+</button>
+    </div>
+  </div>`;
+}
+
 function screenQuantite(): string {
+  const total = qtyTotal(state);
   return `<div class="qzStep">
     <h2>Quantité et visuel</h2>
-    <p class="qzHint">Question 2 sur 3 — deux petites choses, sur un seul écran</p>
+    <p class="qzHint">Question 2 sur 3 — combien de pièces dans chaque coloris choisi, et votre visuel par emplacement</p>
     <div class="qzField">
-      <span class="qzLabel">Quantité</span>
-      <div class="qtyStepper">
-        <button type="button" class="btn-icon" data-action="qty-step" data-delta="-1" aria-label="Diminuer">−</button>
-        <span class="qtyStepper-val">${state.qty} pièce${state.qty > 1 ? 's' : ''}</span>
-        <button type="button" class="btn-icon" data-action="qty-step" data-delta="1" aria-label="Augmenter">+</button>
-      </div>
+      <span class="qzLabel">Quantité par coloris</span>
+      <div class="qzColorQtyList">${state.colorLots.map(colorQtyRowHtml).join('')}</div>
+      ${state.colorLots.length > 1 ? `<p class="qzHint" style="margin:8px 0 0">Total : ${total} pièce${total > 1 ? 's' : ''}</p>` : ''}
     </div>
     <div class="qzField">
       <span class="qzLabel">Nombre de couleurs du visuel</span>
@@ -237,14 +317,15 @@ function screenQuantite(): string {
 function produitMiniRow(p: QuizState, index: number): string {
   const c = calcProduit(p);
   const nbVisuels = Object.keys(p.visuels).length;
+  const colorsLabel = p.colorLots.length > 1 ? `${p.colorLots.length} coloris` : p.colorLots[0].color.nom;
   return `<div class="qzMiniRow">
     <div class="qzMiniRow-head">
-      <span class="qzMiniRow-sw" style="background:${p.color.hex}" aria-hidden="true"></span>
+      <span class="qzMiniRow-sw" style="background:${primaryColor(p).hex}" aria-hidden="true"></span>
       <span class="qzMiniRow-name">${c.ref ? `${c.ref.brand} ${c.ref.model}` : GARMENT_LABELS[p.garment]}</span>
       <span class="qzMiniRow-prix">${fmtPrice(c.prixTotal)}</span>
       <button type="button" class="qzMiniRow-remove" data-action="remove-produit" data-value="${index}" aria-label="Retirer ce produit">×</button>
     </div>
-    <div class="qzMiniRow-details">${p.color.nom} · ${p.qty} pièce${p.qty > 1 ? 's' : ''} · ${[...p.places].map((pl) => PLACE_LABEL[pl]).join(', ')} · ${nbVisuels ? `${nbVisuels} visuel${nbVisuels > 1 ? 's' : ''} importé${nbVisuels > 1 ? 's' : ''}` : 'visuel à définir'}</div>
+    <div class="qzMiniRow-details">${colorsLabel} · ${c.qty} pièce${c.qty > 1 ? 's' : ''} · ${[...p.places].map((pl) => PLACE_LABEL[pl]).join(', ')} · ${nbVisuels ? `${nbVisuels} visuel${nbVisuels > 1 ? 's' : ''} importé${nbVisuels > 1 ? 's' : ''}` : 'visuel à définir'}</div>
   </div>`;
 }
 
@@ -263,8 +344,9 @@ function dejaAjoutesHtml(): string {
 function screenResultat(): string {
   const c = calcProduit(state);
   const tech = TECHS[c.techKey];
-  const palier = palierPour(state.qty);
+  const palier = palierPour(c.qty);
   const grille = grilleTarifaire(c.ref ? c.ref.baseCost : coutBaseSupportUnique);
+  const primaire = primaryColor(state);
 
   if (!state.selectedRef || !c.candidats.some((x) => x.slug === state.selectedRef)) {
     state.selectedRef = c.candidats[0]?.slug ?? null;
@@ -279,15 +361,17 @@ function screenResultat(): string {
 
     <div class="qzResultCard">
       <svg class="qzResultShirt" viewBox="0 0 400 460" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M148,54 L118,44 L52,92 L96,156 L122,136 L122,420 Q122,428 130,428 L270,428 Q278,428 278,420 L278,136 L304,156 L348,92 L282,44 L252,54 Q200,100 148,54 Z" fill="${state.color.hex}" stroke="var(--ligne)" stroke-width="6" />
+        <path d="M148,54 L118,44 L52,92 L96,156 L122,136 L122,420 Q122,428 130,428 L270,428 Q278,428 278,420 L278,136 L304,156 L348,92 L282,44 L252,54 Q200,100 148,54 Z" fill="${primaire.hex}" stroke="var(--ligne)" stroke-width="6" />
       </svg>
       <div class="qzResultBody">
-        <span class="qzResultRef">${c.ref ? `${c.ref.brand} ${c.ref.model}` : `${GARMENT_LABELS[state.garment]} · ${state.color.nom}`}</span>
+        <span class="qzResultRef">${c.ref ? `${c.ref.brand} ${c.ref.model}` : `${GARMENT_LABELS[state.garment]} · ${primaire.nom}`}</span>
         ${c.ref ? `<span class="qzResultMatiere">${c.ref.detail}</span>` : ''}
         <span class="qzResultPrix">${fmtPrice(c.prixUnitaire)} <span>/ pièce</span></span>
-        <span class="qzResultTotal">Soit environ ${fmtPrice(c.prixTotal)} pour ${state.qty} pièce${state.qty > 1 ? 's' : ''}</span>
+        <span class="qzResultTotal">Soit environ ${fmtPrice(c.prixTotal)} pour ${c.qty} pièce${c.qty > 1 ? 's' : ''}</span>
       </div>
     </div>
+
+    ${state.colorLots.length > 1 ? `<div class="qzColorBreakdown">${state.colorLots.map((l) => `<span><span class="qzColorBreakdown-sw" style="background:${l.color.hex}"></span>${l.color.nom} × ${l.qty}</span>`).join('')}</div>` : ''}
 
     ${c.candidats.length > 1 ? `<div class="qzField">
       <span class="qzLabel">Autres références possibles <span class="qzOptional">— composition, prix</span></span>
@@ -325,10 +409,10 @@ function resumeMail(): string {
     const c = calcProduit(p);
     const nbVisuels = Object.keys(p.visuels).length;
     return `Produit ${i + 1} — ${c.ref ? `${c.ref.brand} ${c.ref.model}` : GARMENT_LABELS[p.garment]} (${TECHS[c.techKey].n})
-- Coloris : ${p.color.nom}
+- Coloris : ${p.colorLots.map((l) => `${l.color.nom} (${l.qty} pièce${l.qty > 1 ? 's' : ''})`).join(', ')}
 - Emplacement${p.places.size > 1 ? 's' : ''} : ${[...p.places].map((pl) => PLACE_LABEL[pl]).join(', ')}
 - Visuel : ${nbVisuels ? `${nbVisuels} fichier${nbVisuels > 1 ? 's' : ''} joint${nbVisuels > 1 ? 's' : ''} (envoyé séparément si besoin)` : 'pas encore fourni — accompagnement souhaité'}
-- Quantité : ${p.qty} pièce${p.qty > 1 ? 's' : ''}
+- Quantité totale : ${c.qty} pièce${c.qty > 1 ? 's' : ''}
 - Sous-total estimé : ${fmtPrice(c.prixTotal)}`;
   });
   const total = tous.reduce((s, p) => s + calcProduit(p).prixTotal, 0);
@@ -358,7 +442,7 @@ function render(): void {
   // Le modèle 3D n'accompagne que la question "projet" (support, coloris,
   // emplacement) — pas les autres écrans, qui n'ont rien à y montrer.
   el('qzLayout').classList.toggle('has3d', screen === 'projet');
-  if (screen === 'projet') updateQuiz3d(state.color.hex, state.places, pendingFocus);
+  if (screen === 'projet') updateQuiz3d(primaryColor(state).hex, state.places, state.garment, pendingFocus);
   pendingFocus = undefined;
 
   if (screen === 'resultat') {
@@ -383,21 +467,27 @@ function render(): void {
         w: 0.78,
         rot: 0,
       }));
+      const c = calcProduit(state);
       seedFromItem({
         garment: state.garment,
-        color: state.color,
+        color: primaryColor(state),
         layers,
-        sizeDist: sizeDistForQty(state.qty),
+        sizeDist: sizeDistForQty(c.qty),
         tech: 'auto',
         delai: 'standard',
         designHelp: { colors: state.couleurs, format: '', notes: '' },
         place: [...state.places][0],
+        // Coût réel de la référence retenue plutôt que le coût générique du
+        // configurateur, pour que le prix ne change pas en changeant de page
+        // (Milio, 2026-09-09 : « le prix, il faut qu'il soit le même partout »).
+        coutBase: c.ref ? c.ref.baseCost : coutBaseSupportUnique,
       });
-      window.location.href = '/personnaliser?mode=3d';
+      window.location.href = '/personnaliser';
     });
     el('qzAddProduit').addEventListener('click', () => {
-      produits.push({ ...state, color: { ...state.color }, places: new Set(state.places), visuels: { ...state.visuels } });
+      produits.push({ ...state, colorLots: state.colorLots.map((l) => ({ ...l })), places: new Set(state.places), visuels: { ...state.visuels } });
       Object.assign(state, nouveauProduit());
+      comboShown = false;
       current = order.indexOf('projet');
       render();
       window.scrollTo({ top: el('qzLayout').getBoundingClientRect().top + window.scrollY - 96, behavior: 'smooth' });
@@ -440,17 +530,32 @@ export function initCommencer(): void {
         setProfil(state.profil);
         goTo(1);
         return;
-      case 'set-garment':
+      case 'set-garment': {
         state.garment = value as Garment;
+        // Un changement de vêtement peut rendre certains emplacements déjà
+        // choisis impossibles (ex. "Cœur" sur une casquette) — on les
+        // retire, avec leur visuel importé, plutôt que de les garder
+        // sélectionnés sans effet (Milio, 2026-09-09 : « si c'est une
+        // casquette, il ne faut pas mettre cœur »).
+        const valides = new Set(emplacementsValides(state.garment));
+        for (const p of [...state.places]) {
+          if (!valides.has(p)) {
+            state.places.delete(p);
+            delete state.visuels[p];
+          }
+        }
+        if (state.places.size === 0) state.places.add(valides.values().next().value as Emplacement);
+        comboShown = false;
         break;
+      }
       case 'set-coupe':
         state.coupe = state.coupe === value ? null : value;
         break;
       case 'set-genre':
         state.genre = state.genre === value ? null : value;
         break;
-      case 'set-color':
-        state.color = catalogueColoris.find((c) => c.hex === value) ?? state.color;
+      case 'toggle-color':
+        toggleColor(value);
         break;
       case 'toggle-place':
         togglePlace(value as Emplacement);
@@ -459,9 +564,12 @@ export function initCommencer(): void {
       case 'set-couleurs':
         state.couleurs = value === '' ? null : +value;
         break;
-      case 'qty-step': {
-        const delta = +b.dataset.delta! * qtyStep(state.qty);
-        state.qty = Math.max(1, Math.min(2000, state.qty + delta));
+      case 'qty-step-color': {
+        const lot = state.colorLots.find((l) => l.color.hex === value);
+        if (lot) {
+          const delta = +b.dataset.delta! * qtyStep(lot.qty);
+          lot.qty = Math.max(1, Math.min(2000, lot.qty + delta));
+        }
         break;
       }
       case 'select-ref':
@@ -489,6 +597,9 @@ export function initCommencer(): void {
     const place = input.dataset.place as Emplacement;
     if (!file) return;
     const reader = new FileReader();
+    reader.onerror = () => {
+      showToast(`Impossible de lire « ${file.name} » — réessayez ou choisissez un autre fichier.`);
+    };
     reader.onload = () => {
       const dataUrl = reader.result as string;
       const vector = file.type === 'image/svg+xml';
@@ -498,6 +609,9 @@ export function initCommencer(): void {
         return;
       }
       const img = new Image();
+      img.onerror = () => {
+        showToast(`« ${file.name} » ne semble pas être une image valide.`);
+      };
       img.onload = () => {
         state.visuels[place] = { dataUrl, fileName: file.name, vector, natW: img.naturalWidth, natH: img.naturalHeight };
         render();

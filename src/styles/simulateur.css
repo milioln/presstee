@@ -1,82 +1,11 @@
-/* ---------- en-tête ---------- */
-.sim-hero{padding:56px 0 40px;border-bottom:1px solid var(--ligne)}
-.sim-hero .crumb{font-size:13px;color:var(--gris);margin-bottom:14px}
-.sim-hero .crumb a{text-decoration:none;color:var(--gris)}
-.sim-hero .crumb a:hover{color:var(--indigo)}
-.sim-hero h1{font-size:clamp(2rem,4.4vw,3rem);letter-spacing:-0.03em}
-.sim-hero p{color:var(--gris);margin-top:14px;max-width:62ch;font-size:1.02rem}
-
-/* ---------- disposition générale ---------- */
-.sim-layout{display:grid;grid-template-columns:1fr 320px;gap:40px;padding:44px 0 90px;align-items:start}
-.sim-main{display:flex;flex-direction:column;gap:22px}
-.sim-side{position:sticky;top:96px;display:flex;flex-direction:column;gap:18px}
-.sim-side .side-card{border:1px solid var(--ligne);border-radius:18px;padding:24px}
-.sim-side .side-card h4{font-family:'Sora',sans-serif;font-size:.92rem;margin-bottom:14px}
-.sim-side .side-card p{font-size:.88rem;color:var(--gris);line-height:1.55}
-.sim-side .btn{width:100%}
-.sim-side .go{display:block;margin-top:14px;font-size:13.5px;font-weight:600;text-decoration:none;border-bottom:1.5px solid var(--indigo);color:var(--encre);padding-bottom:2px;width:fit-content}
-
-.sim-actions{display:flex;flex-direction:column;gap:10px;margin-top:16px}
-.btn.btn-outline{background:#fff;color:var(--encre);border:1.5px solid var(--ligne)}
-.btn.btn-outline:hover{border-color:var(--indigo);background:var(--lavande)}
-
-.sim-restore-note{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;background:var(--lavande);border-radius:12px;padding:14px 18px;margin-bottom:24px;font-size:.88rem;color:var(--encre)}
-.sim-restore-note .linkBtn{color:var(--indigo)}
-
-.sim-totals{display:grid;gap:9px}
-.sim-totals-row{font-size:.9rem;color:var(--gris)}
-.sim-totals-total{display:flex;align-items:baseline;justify-content:space-between;margin-top:6px;padding-top:14px;border-top:1px solid var(--ligne)}
-.sim-totals-total span{font-size:.85rem;color:var(--gris)}
-.sim-totals-total b{font-family:'Sora',sans-serif;font-size:1.5rem;letter-spacing:-0.02em;font-variant-numeric:tabular-nums}
-.sim-side-note{font-size:.82rem !important;color:var(--gris);margin:14px 0 0;line-height:1.5}
-
-/* ---------- carte produit ---------- */
-.produitCard{border:1px solid var(--ligne);border-radius:20px;padding:28px}
-.produitCard-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:20px}
-.produitCard-head h3{font-size:1.15rem;letter-spacing:-0.01em}
-.produitCard-total{display:flex;align-items:baseline;justify-content:space-between;margin-top:22px;padding-top:18px;border-top:1px solid var(--ligne)}
-.produitCard-total span{font-size:.9rem;color:var(--gris)}
-.produitCard-total b{font-family:'Sora',sans-serif;font-size:1.3rem;letter-spacing:-0.02em;font-variant-numeric:tabular-nums}
-
-/* ---------- aperçu vivant ---------- */
-/* Rejoue un petit rebond à chaque fois que render() recrée ce nœud (donc
-   à chaque clic sur une pastille de ce produit) : une @keyframes joue
-   automatiquement sur tout nouvel élément qui la porte, pas besoin de
-   l'ancien nœud pour "transitionner depuis" — c'est ce qui permet de
-   garder un seul chemin de rafraîchissement (voir commentaire de
-   productPreview() dans simulateur.ts) tout en donnant un vrai retour
-   visuel à chaque choix. */
-@keyframes simPreviewPulse{0%{transform:scale(.92) rotate(-1deg)}55%{transform:scale(1.035) rotate(.5deg)}100%{transform:scale(1) rotate(0)}}
-@media(prefers-reduced-motion:reduce){
-  .productPreview-shirt{animation:none !important}
-}
-.productPreview{display:flex;align-items:center;gap:16px;background:var(--lavande);border-radius:16px;padding:14px 18px;margin-bottom:22px}
-.productPreview-shirt{width:60px;height:69px;flex-shrink:0;filter:drop-shadow(0 3px 6px rgba(23,19,31,.12));animation:simPreviewPulse .38s cubic-bezier(.34,1.56,.64,1)}
-.productPreview-badges{display:flex;flex-wrap:wrap;gap:6px}
-.productPreview-badge{font-family:'Sora',sans-serif;font-size:11.5px;font-weight:600;letter-spacing:.02em;color:var(--encre);background:#fff;border:1px solid var(--ligne);border-radius:100px;padding:5px 12px}
-
-.simField{margin-bottom:20px}
-.simField:last-child{margin-bottom:0}
-.simField-label{display:block;font-family:'Sora',sans-serif;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--gris);margin-bottom:10px;font-weight:600;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
-.simField-hint{font-family:'Manrope',sans-serif;font-size:11px;letter-spacing:0;text-transform:none;color:var(--gris);opacity:.75;font-weight:400}
-.styleGroups{display:flex;flex-direction:column;gap:8px}
-
-/* Quantité + coloris côte à côte plutôt qu'empilés : moins de défilement,
-   plus proche d'un vrai panneau de configuration que d'un formulaire. */
-.simRow2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
-@media(max-width:560px){.simRow2{grid-template-columns:1fr}}
-
-/* Groupes secondaires (style, référence produit) repliés par défaut :
-   la carte reste courte au premier coup d'œil, sans retirer aucun réglage
-   à qui veut tout affiner lui-même. */
-.simDetails{margin-bottom:20px;border:1.5px solid var(--ligne);border-radius:14px;padding:14px 16px}
-.simDetails[open]{padding-bottom:16px}
-.simDetails summary{cursor:pointer;font-family:'Sora',sans-serif;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--gris);font-weight:600;display:flex;align-items:center;gap:8px;list-style:none}
-.simDetails summary::-webkit-details-marker{display:none}
-.simDetails summary::before{content:'';width:7px;height:7px;border-right:1.5px solid var(--gris);border-bottom:1.5px solid var(--gris);transform:rotate(-45deg);transition:transform .15s;flex-shrink:0}
-.simDetails[open] summary::before{transform:rotate(45deg)}
-.simDetails summary:hover{color:var(--encre)}
-.simDetails > .styleGroups,.simDetails > .refList,.simDetails > .refNote{margin-top:14px}
+/* Vestige du simulateur multi-produits retiré lors de la fusion des deux
+   parcours de vente en un seul (Milio, 2026-09 : « il n'y a qu'un seul
+   parcours de vente »). Le quiz /commencer réutilise encore une poignée
+   de classes d'origine (stepper de quantité, pastilles de coloris, liste
+   de références) — tout le reste (mise en page, carte produit, aperçu
+   vivant, visuels multiples...) a été retiré le 2026-09-09 (nettoyage
+   demandé par Milio : « code mort, nettoie-moi »), ~40 classes qui
+   n'étaient plus référencées nulle part. */
 
 .qtyStepper{display:inline-flex;align-items:center;gap:16px;border:1.5px solid var(--ligne);border-radius:100px;padding:6px 8px}
 .qtyStepper-val{font-family:'Sora',sans-serif;font-size:14px;font-weight:600;min-width:110px;text-align:center;font-variant-numeric:tabular-nums}
@@ -88,48 +17,15 @@
 .sw.on{outline:2px solid var(--indigo);outline-offset:2px}
 .sw:hover{border-color:var(--indigo)}
 
-.supportLine{display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:14px 16px;background:var(--lavande);border-radius:12px;margin-bottom:20px}
-.supportLine-nom{font-size:.88rem;font-weight:600}
-.supportLine-prix{font-family:'Sora',sans-serif;font-weight:700;font-size:.95rem;white-space:nowrap;font-variant-numeric:tabular-nums}
-.supportLine-prix span{display:block;font-family:'Manrope',sans-serif;font-weight:400;font-size:.72rem;color:var(--gris);text-align:right}
-
-.refNote{font-size:.85rem;color:var(--gris);margin:0}
 .refList{display:grid;gap:8px;max-height:264px;overflow-y:auto;padding-right:4px}
 .refRow{display:flex;align-items:center;gap:10px;text-align:left;border:1.5px solid var(--ligne);border-radius:12px;padding:10px 14px;background:#fff;cursor:pointer;font:inherit;width:100%}
 .refRow:hover{border-color:var(--indigo)}
 .refRow.on{border-color:var(--indigo);background:var(--lavande)}
-.refRow-generic{color:var(--gris);font-style:italic}
-.refRow-thumb{width:36px;height:36px;border-radius:8px;background:var(--lavande);color:var(--indigo);display:grid;place-items:center;flex-shrink:0}
-.refRow.on .refRow-thumb{background:#fff}
-.refRow-thumb svg{width:20px;height:20px}
 .refRow-name{font-size:.86rem;flex:1;min-width:0}
 .refRow-name b{font-weight:700;font-style:normal;color:var(--encre)}
 .refRow-meta{font-size:.76rem;color:var(--gris);white-space:nowrap}
 .refRow-price{font-family:'Sora',sans-serif;font-weight:700;font-size:.86rem;white-space:nowrap;font-variant-numeric:tabular-nums}
 .refRow-price span{display:block;font-family:'Manrope',sans-serif;font-weight:400;color:var(--gris);font-size:.72rem;text-align:right}
 
-/* ---------- visuels ---------- */
-.visuelList{display:grid;gap:14px}
-.visuelCard{background:var(--lavande);border-radius:16px;padding:20px}
-.visuelCard-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px}
-.visuelCard-num{font-family:'Sora',sans-serif;font-size:.85rem;font-weight:600}
-.linkBtn{background:none;border:0;font:inherit;font-size:12.5px;cursor:pointer;text-decoration:underline;padding:0;color:var(--gris)}
-.linkBtn:hover{color:var(--encre)}
-.linkBtn.danger:hover{color:#B23B2E}
-.visuelCard .simField{margin-bottom:16px}
-
-.visuelReco{margin-top:16px;padding-top:16px;border-top:1px solid rgba(23,19,31,.08);display:flex;flex-wrap:wrap;align-items:center;gap:12px 14px}
-.visuelReco-img{width:52px;height:52px;border-radius:10px;object-fit:cover;flex-shrink:0}
-.visuelReco-body{flex:1 1 260px;min-width:0;display:flex;flex-direction:column;gap:3px}
-.visuelReco-tech{font-family:'Sora',sans-serif;font-size:.92rem;font-weight:700;color:var(--indigo)}
-.visuelReco-why{font-size:.82rem;color:var(--gris);line-height:1.5}
-.visuelReco-prix{margin-left:auto;font-family:'Sora',sans-serif;font-size:1.05rem;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
-.visuelReco-prix span{display:block;font-family:'Manrope',sans-serif;font-weight:400;font-size:.72rem;color:var(--gris)}
-
-.mini-btn-lg{align-self:flex-start;border:1.5px dashed var(--ligne);border-radius:14px;padding:14px 22px;text-decoration:none;font-size:14px}
-.mini-btn-lg:hover{border-color:var(--indigo);color:var(--indigo)}
-
-@media(max-width:900px){
-  .sim-layout{grid-template-columns:1fr}
-  .sim-side{position:static}
-}
+.btn.btn-outline{background:#fff;color:var(--encre);border:1.5px solid var(--ligne)}
+.btn.btn-outline:hover{border-color:var(--indigo);background:var(--lavande)}

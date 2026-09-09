@@ -58,13 +58,14 @@ function grammageTier(g: number | null): string {
 
 			<div class="plist">
 				<aside class="pfilters">
+					<h2 class="sr-only">Filtres</h2>
 					<div class="fgroup">
-						<h4>Recherche</h4>
+						<h3>Recherche</h3>
 						<input class="psearch" id="fSearch" type="text" placeholder="Marque, modèle..." />
 					</div>
 
 					<div class="fgroup">
-						<h4>Type de textile</h4>
+						<h3>Type de textile</h3>
 						<div class="pills" id="fType">
 							{typesActifs.map((t) => <button class="pill on" data-type={t}>{LABELS_TYPE_TEXTILE[t]}</button>)}
 							{typesBientot.map((t) => <button class="pill soon" disabled title="Bientôt disponible">{LABELS_TYPE_TEXTILE[t]}</button>)}
@@ -72,35 +73,35 @@ function grammageTier(g: number | null): string {
 					</div>
 
 					<div class="fgroup">
-						<h4>Coupe <span class="fhint">plusieurs choix possibles</span></h4>
+						<h3>Coupe <span class="fhint">plusieurs choix possibles</span></h3>
 						<div class="pills" id="fCoupe">
 							{coupes.map((c) => <button class="pill" data-coupe={c}>{LABELS_COUPE[c]}</button>)}
 						</div>
 					</div>
 
 					<div class="fgroup">
-						<h4>Gamme de prix <span class="fhint">plusieurs choix possibles</span></h4>
+						<h3>Gamme de prix <span class="fhint">plusieurs choix possibles</span></h3>
 						<div class="pills" id="fGamme">
 							{gammes.map((g) => <button class="pill" data-gamme={g}>{LABELS_GAMME_PRIX[g]}</button>)}
 						</div>
 					</div>
 
 					<div class="fgroup">
-						<h4>Public <span class="fhint">l'unisexe s'affiche avec homme/femme</span></h4>
+						<h3>Public <span class="fhint">l'unisexe s'affiche avec homme/femme</span></h3>
 						<div class="pills" id="fGenre">
 							{genres.map((g) => <button class="pill" data-genre={g}>{LABELS_GENRE[g]}</button>)}
 						</div>
 					</div>
 
 					<div class="fgroup">
-						<h4>Manches <span class="fhint">plusieurs choix possibles</span></h4>
+						<h3>Manches <span class="fhint">plusieurs choix possibles</span></h3>
 						<div class="pills" id="fManches">
 							{manchesOptions.map((m) => <button class="pill" data-manches={m}>{LABELS_MANCHES[m]}</button>)}
 						</div>
 					</div>
 
 					<div class="fgroup">
-						<h4>Grammage <span class="fhint">plusieurs choix possibles</span></h4>
+						<h3>Grammage <span class="fhint">plusieurs choix possibles</span></h3>
 						<div class="pills" id="fGrammage">
 							<button class="pill" data-grammage="leger">Léger (&lt;150 g/m²)</button>
 							<button class="pill" data-grammage="moyen">Moyen (150–185)</button>
@@ -110,14 +111,14 @@ function grammageTier(g: number | null): string {
 					</div>
 
 					<div class="fgroup">
-						<h4>Matières</h4>
+						<h3>Matières</h3>
 						<div class="pills" id="fResponsable">
 							<button class="pill" data-responsable="oui">🌱 Bio / recyclé / certifié</button>
 						</div>
 					</div>
 
 					<div class="fgroup">
-						<h4>Marque</h4>
+						<h3>Marque</h3>
 						<div class="checks" id="fMarque">
 							{marques.map((m) => (
 								<label class="check">
@@ -132,6 +133,7 @@ function grammageTier(g: number | null): string {
 				</aside>
 
 				<div>
+					<h2 class="sr-only">Résultats</h2>
 					<div class="ptoolbar">
 						<div class="pcount"><b id="pCountVisible">{TSHIRTS.length}</b> résultats sur {TSHIRTS.length}</div>
 						<select class="psort" id="pSort">

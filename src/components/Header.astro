@@ -58,41 +58,34 @@ import Logo from './Logo.astro';
 			// le lien reste sur "Connexion" par défaut.
 		});
 
-	// Petite surprise cachée : 5 clics rapides sur le logo. Seulement actif
-	// sur l'accueil (le logo y pointe vers lui-même, "/#top" — ailleurs, un
-	// clic navigue avant qu'on puisse en accumuler 5, ce qui est très bien :
-	// ça ne gêne jamais la navigation normale).
+	// Petite surprise cachée : un clic sur le logo. Seulement actif sur
+	// l'accueil (le logo y pointe vers lui-même, "/#top" — ailleurs, un
+	// clic navigue vers l'accueil avant de pouvoir jouer l'animation, ce
+	// qui est très bien : ça ne gêne jamais la navigation normale). Un seul
+	// clic suffit (Milio, 2026-09-09 — auparavant 5 clics rapides).
 	if (location.pathname === '/') {
 		const brand = document.querySelector<HTMLAnchorElement>('.brand')!;
-		let clicks = 0;
-		let resetTimer: number | undefined;
 		brand.addEventListener('click', (e) => {
-			clicks += 1;
-			window.clearTimeout(resetTimer);
-			resetTimer = window.setTimeout(() => { clicks = 0; }, 1200);
-			if (clicks >= 5) {
-				e.preventDefault();
-				clicks = 0;
-				const colors = ['#9d83cf', '#ffd77a', '#BF3B32', '#1F5A4A', '#20304F', '#E4D6BD'];
-				const layer = document.createElement('div');
-				layer.className = 'eggLayer';
-				for (let i = 0; i < 18; i++) {
-					const bit = document.createElement('span');
-					bit.className = 'eggBit';
-					bit.style.left = `${Math.random() * 100}%`;
-					bit.style.background = colors[i % colors.length];
-					bit.style.animationDelay = `${(Math.random() * 0.4).toFixed(2)}s`;
-					bit.style.animationDuration = `${(1.6 + Math.random() * 0.8).toFixed(2)}s`;
-					layer.appendChild(bit);
-				}
-				const toast = document.createElement('div');
-				toast.className = 'eggToast';
-				toast.textContent = 'Fil retrouvé — merci de fouiner par ici.';
-				document.body.append(layer, toast);
-				requestAnimationFrame(() => toast.classList.add('show'));
-				window.setTimeout(() => toast.classList.remove('show'), 2200);
-				window.setTimeout(() => { layer.remove(); toast.remove(); }, 2700);
+			e.preventDefault();
+			const colors = ['#9d83cf', '#ffd77a', '#BF3B32', '#1F5A4A', '#20304F', '#E4D6BD'];
+			const layer = document.createElement('div');
+			layer.className = 'eggLayer';
+			for (let i = 0; i < 18; i++) {
+				const bit = document.createElement('span');
+				bit.className = 'eggBit';
+				bit.style.left = `${Math.random() * 100}%`;
+				bit.style.background = colors[i % colors.length];
+				bit.style.animationDelay = `${(Math.random() * 0.4).toFixed(2)}s`;
+				bit.style.animationDuration = `${(1.6 + Math.random() * 0.8).toFixed(2)}s`;
+				layer.appendChild(bit);
 			}
+			const toast = document.createElement('div');
+			toast.className = 'eggToast';
+			toast.textContent = 'Fil retrouvé — merci de fouiner par ici.';
+			document.body.append(layer, toast);
+			requestAnimationFrame(() => toast.classList.add('show'));
+			window.setTimeout(() => toast.classList.remove('show'), 2200);
+			window.setTimeout(() => { layer.remove(); toast.remove(); }, 2700);
 		});
 	}
 </script>

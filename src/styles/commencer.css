@@ -109,6 +109,18 @@
 .qzVisuelRow-remove{background:none;border:0;color:var(--gris);font-size:16px;line-height:1;cursor:pointer;padding:0 2px;flex-shrink:0}
 .qzVisuelRow-remove:hover{color:#B23B2E}
 
+/* ---------- quantité par coloris (plusieurs coloris possibles) ---------- */
+.qzColorQtyList{display:flex;flex-direction:column;gap:8px}
+.qzColorQtyRow{display:flex;align-items:center;gap:10px;padding:8px 12px;border:1.5px solid var(--ligne);border-radius:12px}
+.qzColorQtyRow-sw{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--ligne);flex-shrink:0}
+.qzColorQtyRow-name{font-size:.85rem;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qtyStepper-sm{gap:10px;padding:4px 6px}
+.qtyStepper-sm .qtyStepper-val{min-width:76px;font-size:12.5px}
+.qtyStepper-sm .btn-icon{width:26px;height:26px;font-size:15px}
+
+.qzColorBreakdown{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:center;margin:-8px 0 18px;font-size:.82rem;color:var(--gris)}
+.qzColorBreakdown-sw{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
+
 @media(max-width:640px){
   .qzCard{padding:24px}
   .qzChoices-big{grid-template-columns:1fr}

@@ -14,10 +14,9 @@
 import type { SavedItem } from './cart';
 import type { Layer } from './state';
 import { GARMENTS } from './garments';
-import { getZoneImpressionCm, type Emplacement } from '../../config/parametres-metier';
+import { getZoneImpressionCm, PLACE_LABEL, type Emplacement } from '../../config/parametres-metier';
 import { lum } from './color-utils';
 
-const PLACE_LABEL: Record<Emplacement, string> = { face: 'Face', coeur: 'Cœur', dos: 'Dos', 'manche-droite': 'Manche droite', 'manche-gauche': 'Manche gauche' };
 const PLACE_NOTE: Record<Emplacement, string> = {
   face: 'Centré, sous l’encolure',
   coeur: 'Emplacement cœur, côté porteur gauche',

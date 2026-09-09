@@ -12,9 +12,8 @@ import { analyse } from './file-analysis';
 import { CROP_ICON_SVG, MOVE_ICON_SVG } from './icons';
 import { syncPlace } from './placement';
 import { GARMENTS } from './garments';
-import type { Emplacement } from '../../config/parametres-metier';
+import { PLACE_LABEL, type Emplacement } from '../../config/parametres-metier';
 
-const PLACE_LABEL: Record<Emplacement, string> = { face: 'Face', coeur: 'Cœur', dos: 'Dos', 'manche-droite': 'Manche droite', 'manche-gauche': 'Manche gauche' };
 const PLACE_ORDER: Emplacement[] = ['face', 'coeur', 'dos', 'manche-droite', 'manche-gauche'];
 
 // Même cycle que layer-popup.ts (dupliqué plutôt que partagé : les deux

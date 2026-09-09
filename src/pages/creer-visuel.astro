@@ -18,7 +18,7 @@ import '../styles/creer-visuel.css';
 	<Header />
 	<main class="creer-page">
 		<div class="wrap">
-			<div class="crumb"><a href="/">Accueil</a> / <a href="/personnaliser?mode=3d">Commander</a> / Créer mon visuel</div>
+			<div class="crumb"><a href="/">Accueil</a> / <a href="/personnaliser">Commander</a> / Créer mon visuel</div>
 			<div class="creer-head">
 				<h1>Créez votre visuel.</h1>
 				<p>Pas encore de logo ? Composez-le ici avec du texte, des formes ou une image, puis envoyez-le directement dans le configurateur.</p>
@@ -49,15 +49,16 @@ import '../styles/creer-visuel.css';
 			</div>
 			<p class="creer-warning" id="creerColorWarning" style="display:none"></p>
 
+			<h2 class="sr-only">Éditeur de visuel</h2>
 			<div class="creer-board">
 				<div class="phaseLabel" style="grid-area:label1">1 — Ajouter un élément</div>
 				<div class="creer-toolbar">
 					<button type="button" class="creer-btn" id="creerAddText">+ Texte</button>
 					<div class="creer-shape-group">
-						<button type="button" class="creer-btn" data-shape="rect" title="Rectangle">▭</button>
-						<button type="button" class="creer-btn" data-shape="circle" title="Cercle">●</button>
-						<button type="button" class="creer-btn" data-shape="triangle" title="Triangle">▲</button>
-						<button type="button" class="creer-btn" data-shape="star" title="Étoile">★</button>
+						<button type="button" class="creer-btn" data-shape="rect" title="Rectangle" aria-label="Ajouter un rectangle">▭</button>
+						<button type="button" class="creer-btn" data-shape="circle" title="Cercle" aria-label="Ajouter un cercle">●</button>
+						<button type="button" class="creer-btn" data-shape="triangle" title="Triangle" aria-label="Ajouter un triangle">▲</button>
+						<button type="button" class="creer-btn" data-shape="star" title="Étoile" aria-label="Ajouter une étoile">★</button>
 					</div>
 					<label class="creer-btn creer-file-btn">
 						+ Image

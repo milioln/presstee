@@ -142,6 +142,48 @@
 		align-items: center;
 	}
 
+	/* Entrée orchestrée au chargement — le titre, les actions puis le
+	   t-shirt se posent l'un après l'autre plutôt que d'apparaître d'un
+	   bloc, dans l'esprit de la révélation déjà en place sur le résultat
+	   du quiz (commencer.css, qzFadeUp). Toujours visible sans JS : une
+	   animation CSS pure va à son terme même si le script échoue. */
+	@keyframes heroRise {
+		0% {
+			opacity: 0;
+			transform: translateY(14px);
+		}
+		100% {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+	.hero-title,
+	.hero-actions,
+	.hero-atelier,
+	.hero-zone-wrap {
+		animation: heroRise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+	}
+	.hero-title {
+		animation-delay: 0.02s;
+	}
+	.hero-actions {
+		animation-delay: 0.14s;
+	}
+	.hero-atelier {
+		animation-delay: 0.22s;
+	}
+	.hero-zone-wrap {
+		animation-delay: 0.1s;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.hero-title,
+		.hero-actions,
+		.hero-atelier,
+		.hero-zone-wrap {
+			animation: none;
+		}
+	}
+
 	.hero-title {
 		font-family: 'Sora', system-ui, sans-serif;
 		font-weight: 600;

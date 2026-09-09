@@ -21,17 +21,18 @@ import '../styles/panier.css';
 		</section>
 
 		<div class="wrap">
+			<h2 class="sr-only">Votre panier</h2>
 			<div class="panierLayout" id="panierLayout">
 				<div class="panierEmpty" id="panierEmpty">
 					<h3>Votre panier est vide.</h3>
 					<p>Composez un projet dans le configurateur, puis ajoutez-le au panier pour le retrouver ici avant de demander un devis.</p>
-					<a class="btn" href="/personnaliser?mode=3d">Créer un projet</a>
+					<a class="btn" href="/personnaliser">Créer un projet</a>
 				</div>
 
 				<div class="panierItems" id="panierItems" style="display:none"></div>
 
 				<aside class="side-card panierSummary" id="panierSummary" style="display:none">
-					<h4>Récapitulatif</h4>
+					<h3>Récapitulatif</h3>
 					<div class="panierSummaryLine"><span id="sumCount"></span><span id="sumQty"></span></div>
 					<div class="panierSummaryTotal" id="sumTotal"></div>
 					<button class="btn" id="sendCart">Demander un devis pour tout le panier</button>
@@ -48,7 +49,7 @@ import '../styles/panier.css';
 		import { getCart, removeFromCart, clearCart, sendQuoteForCart, type SavedItem } from '../scripts/personnalisateur/cart';
 		import { seedFromItem } from '../scripts/personnalisateur/state';
 		import { GARMENTS } from '../scripts/personnalisateur/garments';
-		import type { TailleCode, Emplacement } from '../config/parametres-metier';
+		import { PLACE_LABEL, type TailleCode } from '../config/parametres-metier';
 		import type { Layer } from '../scripts/personnalisateur/state';
 
 		function el<T extends HTMLElement = HTMLElement>(id: string): T {
@@ -73,8 +74,6 @@ import '../styles/panier.css';
 				.map(([t, n]) => `${t} ×${n}`);
 			return parts.length ? parts.join(', ') : 'tailles non renseignées';
 		}
-
-		const PLACE_LABEL: Record<Emplacement, string> = { face: 'Face', coeur: 'Cœur', dos: 'Dos', 'manche-droite': 'Manche droite', 'manche-gauche': 'Manche gauche' };
 
 		// Le configurateur n'a aujourd'hui qu'une seule technique par
 		// projet (pas encore une par emplacement) : chaque calque déposé
@@ -158,7 +157,7 @@ import '../styles/panier.css';
 				const item = getCart().find((i) => i.id === edit.dataset.edit);
 				if (item) {
 					seedFromItem(item);
-					window.location.href = '/personnaliser?mode=3d';
+					window.location.href = '/personnaliser';
 				}
 			}
 		});

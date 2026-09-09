@@ -58,6 +58,18 @@ export function getZoneImpressionCm(garment: Garment, emplacement: Emplacement, 
   return zonesImpressionCm[garment][emplacement][taille];
 }
 
+// Libellé d'affichage par emplacement — SOURCE UNIQUE (auparavant
+// dupliqué dans cinq fichiers indépendants, dont un qui avait dérivé :
+// panier.astro n'avait pas les deux clés manches et affichait
+// "undefined". Déduplique-moi les constantes, Milio, 2026-09-09).
+export const PLACE_LABEL: Record<Emplacement, string> = {
+  face: 'Face',
+  coeur: 'Cœur',
+  dos: 'Dos',
+  'manche-droite': 'Manche droite',
+  'manche-gauche': 'Manche gauche',
+};
+
 // Seuils de recommandation de technique — à recaler sur le coût réel
 // de calage (section 7). Confirmés par Milio (2026-09-02) :
 // sérigraphie à partir de 25 pièces (jusqu'à 4 couleurs), broderie à

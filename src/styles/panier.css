@@ -36,7 +36,7 @@
 .linkBtn.danger{color:#B23A3A}
 
 .panierSummary{position:sticky;top:24px;flex-direction:column;gap:14px}
-.panierSummary h4{margin-bottom:0}
+.panierSummary h3{margin-bottom:0}
 .panierSummaryLine{display:flex;justify-content:space-between;font-size:.92rem;color:var(--gris)}
 .panierSummaryTotal{font-family:'Sora',sans-serif;font-size:1.6rem;font-weight:600;letter-spacing:-0.02em;border-top:1px dashed var(--ligne);padding-top:14px}
 .panierSummary .btn{width:100%}

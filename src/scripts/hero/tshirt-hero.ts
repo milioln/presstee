@@ -7,39 +7,13 @@
 // On ne réutilise pas le module personnalisateur tel quel : il suppose
 // tout le DOM et l'état global (S) du configurateur, absents ici. Cette
 // version est un sous-ensemble volontairement minimal (pas de calques
-// éditables, pas de sauvegarde) — les constantes de zone d'impression et
-// de texture sont dupliquées depuis render.ts, à garder synchronisées si
-// l'atlas de texture change.
+// éditables, pas de sauvegarde) — les zones d'impression et l'échelle de
+// texture viennent de personnalisateur/print-zones.ts (source unique,
+// partagée avec le configurateur et le modèle du quiz).
 import { catalogueColoris, type Emplacement } from '../../config/parametres-metier';
+import { PRINT_RECT, PANEL_SCALE } from '../personnalisateur/print-zones';
 
 const TEXTURE_URL = '/personnalisateur/model/textures/Material_baseColor.png';
-
-// Synchronisé avec src/scripts/personnalisateur/render.ts : face/dos
-// élargis et recentrés le 2026-09-04 sur la vraie largeur du panneau
-// mesurée sur l'atlas (l'ancien rect était ~40 % trop étroit et décalé
-// d'une soixantaine de px par rapport au centre réel — cf. le
-// commentaire détaillé dans render.ts). Les échelles des éléments
-// ci-dessous sont ajustées en conséquence pour garder la même taille
-// affichée à l'écran qu'avant cet élargissement (échelle × ancienne
-// largeur / nouvelle largeur), pas la même fraction.
-const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: number }> = {
-	face: { x: 324, y: 210, w: 580, h: 750 },
-	coeur: { x: 630, y: 750, w: 130, h: 280 },
-	dos: { x: 1238, y: 210, w: 580, h: 750 },
-	'manche-droite': { x: 750, y: 1325, w: 480, h: 195 },
-	'manche-gauche': { x: 1360, y: 1325, w: 540, h: 195 },
-};
-
-// Tous les panneaux sont inversés verticalement dans l'atlas, y compris
-// les manches (cf. render.ts — vérifié avec un mot entier relu à
-// plusieurs angles, pas juste 2-3 lettres à un seul angle).
-const PANEL_SCALE: Record<Emplacement, { x: number; y: number }> = {
-	face: { x: 1, y: -1 },
-	coeur: { x: 1, y: -1 },
-	dos: { x: 1, y: -1 },
-	'manche-droite': { x: 1, y: -1 },
-	'manche-gauche': { x: 1, y: -1 },
-};
 
 // Un design peut être un simple logo (1 élément) ou une composition
 // fidèle à un vrai visuel client avec plusieurs éléments indépendants

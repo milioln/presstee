@@ -11,73 +11,12 @@ import { place, widthCm, heightCm, dpi, qtyTotal, palierActuel, prixUnitaire, pr
 import { lum, lumRGB } from './color-utils';
 import { TECHS, reco } from './recommendation';
 import { saveState } from './state';
-import { TAILLES, seuils, type Emplacement } from '../../config/parametres-metier';
+import { TAILLES, seuils, PLACE_LABEL } from '../../config/parametres-metier';
+import { PRINT_RECT, PANEL_SCALE, TEXTURE_SIZE } from './print-zones';
 
 export const activeTech = () => (S.tech === 'auto' ? reco(totalColors(), qtyTotal()).k : S.tech);
 
 const TEXTURE_URL = '/personnalisateur/model/textures/Material_baseColor.png';
-export const TEXTURE_SIZE = 2048;
-
-// Zones d'impression calibrées empiriquement sur l'atlas de texture
-// (patron à plat 2048×2048) en affichant une grille de repères sur le
-// modèle chargé et en relevant où ils tombent sur le tissu.
-// "coeur" recalibré le 2026-09-03 (Milio a signalé que ça retombait au
-// niveau du bas du tee-shirt) : le panneau avant est inversé
-// verticalement dans l'atlas (cf. buildTextureDataUrl ci-dessous), donc
-// un y proche du haut du patron (petit y) retombe près de l'ourlet une
-// fois porté — l'ancien y:170 y était presque. Repéré en superposant le
-// rectangle sur l'atlas et en mesurant le contour de l'encolure par
-// échantillonnage de pixels (le panneau va de y≈112, l'ourlet, à
-// y≈1020-1040 selon x, l'encolure) : le nouveau y place le centre par
-// défaut vers 80 % de cette hauteur, sous l'encolure, au niveau du
-// cœur — à réajuster si un vrai rendu à plat le dément.
-// "face" et "dos" élargis le 2026-09-04 (Milio a signalé qu'un visuel à
-// 100 % de largeur n'atteignait pas la zone attendue) : l'ancienne
-// largeur (360) ne couvrait qu'environ 40 % du panneau réellement
-// disponible (mesuré par échantillonnage de pixels sur l'atlas — le
-// tissu blanc s'étend sur ~880-900px de large à hauteur de poitrine,
-// contre 360px pour la zone déclarée). Repris à 620px, centré sur le
-// panneau mesuré : assez large pour occuper la majeure partie de la
-// poitrine/du dos sans empiéter sur les coutures latérales/emmanchures
-// (vérifié en rendant plusieurs largeurs candidates sur le vrai modèle
-// et en comparant visuellement où elles tombent par rapport aux
-// coutures). "dos" n'est plus une simple symétrie de "face" : mesuré
-// indépendamment, son panneau s'est révélé très proche (comme "face",
-// à quelques px près) mais ce n'est plus une hypothèse. Resserré à
-// 580px le jour même (Milio : « réduit un tout petit peu »), toujours
-// centré sur le panneau mesuré.
-// "manche-droite"/"manche-gauche" ajoutées le 2026-09-08 (demande Milio :
-// permettre l'impression sur les manches) : repérées sous les deux
-// grands panneaux face/dos dans l'atlas (deux formes trapézoïdales à
-// bord inférieur incurvé — l'emmanchure). Identité droite/gauche
-// vérifiée en rendant un texte directionnel sur chaque rectangle
-// candidat et en lisant à l'écran, caméra de face (0deg) : le rectangle
-// le plus à gauche de l'atlas (x≈750, "manche-droite") tombe sur la
-// manche qui apparaît à l'écran à DROITE — convention "écran", comme sur
-// une photo produit, pas le bras anatomique du porteur.
-export const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: number }> = {
-  face: { x: 324, y: 210, w: 580, h: 750 },
-  coeur: { x: 630, y: 750, w: 130, h: 280 },
-  dos: { x: 1238, y: 210, w: 580, h: 750 },
-  'manche-droite': { x: 750, y: 1325, w: 480, h: 195 },
-  'manche-gauche': { x: 1360, y: 1325, w: 540, h: 195 },
-};
-
-// Tous les panneaux sont inversés verticalement dans l'atlas — vérifié
-// empiriquement pour les manches avec un repère directionnel (une lettre
-// asymétrique) le 2026-09-08 : un premier réglage à l'horizontale
-// semblait correct sur un texte de 2-3 lettres à un angle particulier,
-// mais un mot entier relu à plusieurs angles a confirmé que c'est bien
-// l'axe vertical qui est inversé, comme face/cœur/dos — jamais fier
-// d'une lecture rapide sur la surface courbe, toujours revérifier avec
-// un mot lisible sous plusieurs angles.
-const PANEL_SCALE: Record<Emplacement, { x: number; y: number }> = {
-  face: { x: 1, y: -1 },
-  coeur: { x: 1, y: -1 },
-  dos: { x: 1, y: -1 },
-  'manche-droite': { x: 1, y: -1 },
-  'manche-gauche': { x: 1, y: -1 },
-};
 
 let baseImgPromise: Promise<HTMLImageElement> | null = null;
 function loadBaseImg(): Promise<HTMLImageElement> {
@@ -340,8 +279,6 @@ export function removeColorSwatch(index: number): void {
   saveState();
 }
 
-const PLACE_LABEL_RECAP: Record<Emplacement, string> = { face: 'Face', coeur: 'Cœur', dos: 'Dos', 'manche-droite': 'Manche droite', 'manche-gauche': 'Manche gauche' };
-
 export function paintRecap(): void {
   const t = activeTech();
   const qty = qtyTotal();
@@ -350,7 +287,7 @@ export function paintRecap(): void {
   // des lignes de prix déjà là — pendant de l'aperçu vivant du simulateur,
   // sans dupliquer le modèle 3D déjà visible juste au-dessus.
   el('recap').innerHTML =
-    `<div class="recapPreview"><span class="recapPreview-sw" style="background:${S.color.hex}"></span><span>${S.color.nom} · ${PLACE_LABEL_RECAP[place()]}</span></div>` +
+    `<div class="recapPreview"><span class="recapPreview-sw" style="background:${S.color.hex}"></span><span>${S.color.nom} · ${PLACE_LABEL[place()]}</span></div>` +
     `<div class="line"><b>Textile · palier ${palier.label}</b><span>${prixUnitaire().toFixed(2).replace('.', ',')} € / pièce</span></div>` +
     `<div class="line"><b>${qty} pièce${qty > 1 ? 's' : ''}</b><span>${prixTotal().toFixed(2).replace('.', ',')} €</span></div>` +
     `<div class="line"><b>Marquage ${TECHS[t].n}</b><span>chiffré à l'atelier</span></div>`;

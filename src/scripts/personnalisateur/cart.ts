@@ -14,7 +14,7 @@ import { qtyTotal, prixUnitaire, prixTotal } from './derived';
 import { activeTech } from './render';
 import { TECHS, type TechKey } from './recommendation';
 import { siteConfig } from '../../config/site';
-import type { Garment, TailleCode } from '../../config/parametres-metier';
+import { coutBaseSupportUnique, type Garment, type TailleCode } from '../../config/parametres-metier';
 
 export interface SavedItem {
   id: string;
@@ -30,6 +30,7 @@ export interface SavedItem {
   prixUnitaire: number;
   prixTotal: number;
   designHelp: DesignHelp;
+  coutBase: number;
 }
 
 const CART_KEY = 'presstee:personnalisateur:panier';
@@ -78,6 +79,7 @@ export function snapshotCurrent(): SavedItem {
     prixUnitaire: prixUnitaire(),
     prixTotal: prixTotal(),
     designHelp: { ...S.designHelp },
+    coutBase: S.coutBase,
   };
 }
 
@@ -132,6 +134,10 @@ export function loadSaved(id: string): void {
   S.tech = item.tech;
   S.delai = item.delai;
   S.designHelp = { ...item.designHelp };
+  // ?? plutôt qu'une affectation directe : un projet enregistré avant
+  // l'ajout du champ coutBase (navigateur pas encore rechargé) n'en a
+  // pas — retombe sur le coût générique plutôt que de casser le calcul.
+  S.coutBase = item.coutBase ?? coutBaseSupportUnique;
   onLoaded();
 }
 

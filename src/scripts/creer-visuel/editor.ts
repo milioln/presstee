@@ -673,7 +673,7 @@ export function initEditor(): void {
 			// planter — l'utilisateur peut toujours télécharger le PNG.
 			return;
 		}
-		window.location.href = '/personnaliser?mode=3d';
+		window.location.href = '/personnaliser';
 	});
 
 	refreshPlaceLabel();

@@ -2,7 +2,7 @@
 import { S, activeLayer } from './state';
 import { GARMENTS, zoneCm } from './garments';
 import { PALIERS_TARIF, prixVente, type PalierTarif } from '../../config/tarification';
-import { coutBaseSupportUnique, TAILLES, type Emplacement } from '../../config/parametres-metier';
+import { TAILLES, type Emplacement } from '../../config/parametres-metier';
 
 export function place(): Emplacement {
   const g = GARMENTS[S.garment];
@@ -55,7 +55,7 @@ export function palierActuel(): PalierTarif {
 }
 
 export function prixUnitaire(): number {
-  return Math.round(prixVente(coutBaseSupportUnique, palierActuel().marge) * 100) / 100;
+  return Math.round(prixVente(S.coutBase, palierActuel().marge) * 100) / 100;
 }
 
 export function prixTotal(): number {
