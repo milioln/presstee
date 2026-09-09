@@ -34,14 +34,21 @@ const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: numb
 // Angle de caméra qui montre bien chaque zone (thêta autour du modèle, à
 // 85° de hauteur et 105% de la distance "idéale" — mêmes valeurs que le
 // vrai configurateur). Face/cœur restent sur la vue par défaut ; dos à
-// l'opposé ; les manches à un angle 3/4 qui garde le vêtement
-// reconnaissable plutôt qu'un profil à 90° trop serré.
+// l'opposé ; les manches à un angle 3/4 (45°, pas plus) qui garde le
+// vêtement entier reconnaissable — vérifié à l'écran : au-delà de ~60°
+// la zone imprimable de la manche sort du champ et on ne voit plus
+// qu'un gros plan flou, exactement le "zones pas bien délimitées"
+// signalé par Milio. Signe vérifié à l'écran aussi (pas supposé) :
+// deviner le sens a fait tourner la caméra du mauvais côté une première
+// fois — "manche-droite" (repère écran : à droite en vue de face,
+// cf. render.ts) s'obtient avec un thêta positif, "manche-gauche" avec
+// un thêta négatif.
 const CAMERA_FOR_PLACE: Record<Emplacement, string> = {
   face: '0deg 85deg 105%',
   coeur: '0deg 85deg 105%',
   dos: '180deg 85deg 105%',
-  'manche-droite': '-75deg 85deg 105%',
-  'manche-gauche': '75deg 85deg 105%',
+  'manche-droite': '45deg 85deg 105%',
+  'manche-gauche': '-45deg 85deg 105%',
 };
 
 function uvFrac(u: number): number {

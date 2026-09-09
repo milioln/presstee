@@ -83,15 +83,31 @@
 .qzResultActions{display:flex;flex-direction:column;gap:10px}
 
 /* ---------- multiproduit ---------- */
-.qzMiniList{text-align:left;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--ligne)}
-.qzMiniRow{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:.86rem}
-.qzMiniRow-sw{width:16px;height:16px;border-radius:50%;border:1px solid var(--ligne);flex-shrink:0}
-.qzMiniRow-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qzMiniList{text-align:left;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--ligne);display:flex;flex-direction:column;gap:10px}
+.qzMiniList > .qzLabel{margin-bottom:0}
+.qzMiniRow{padding:10px 12px;background:var(--lavande);border-radius:12px}
+.qzMiniRow-head{display:flex;align-items:center;gap:8px;font-size:.86rem}
+.qzMiniRow-sw{width:14px;height:14px;border-radius:50%;border:1px solid var(--ligne);flex-shrink:0}
+.qzMiniRow-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
 .qzMiniRow-prix{font-family:'Sora',sans-serif;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
 .qzMiniRow-remove{background:none;border:0;color:var(--gris);font-size:18px;line-height:1;cursor:pointer;padding:0 2px}
 .qzMiniRow-remove:hover{color:#B23B2E}
+.qzMiniRow-details{margin-top:4px;font-size:.78rem;color:var(--gris)}
 .qzGrandTotal{display:flex;justify-content:space-between;align-items:baseline;margin:-8px 0 22px;padding:14px 18px;background:var(--lavande);border-radius:12px;font-size:.9rem}
 .qzGrandTotal b{font-family:'Sora',sans-serif;font-size:1.2rem;font-variant-numeric:tabular-nums}
+
+/* ---------- visuel importé (question 2) ---------- */
+.qzVisuelList{display:flex;flex-direction:column;gap:8px}
+.qzVisuelRow{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--ligne);border-radius:12px;font-size:.85rem}
+.qzVisuelRow-empty{cursor:pointer;transition:.15s}
+.qzVisuelRow-empty:hover{border-color:var(--indigo)}
+.qzVisuelRow-place{font-weight:600;flex-shrink:0}
+.qzVisuelRow-upload{margin-left:auto;color:var(--indigo);font-weight:600}
+.qzVisuelRow-filled{border-color:var(--indigo);background:var(--lavande)}
+.qzVisuelRow-thumb{width:28px;height:28px;border-radius:6px;object-fit:cover;flex-shrink:0;background:#fff}
+.qzVisuelRow-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--gris)}
+.qzVisuelRow-remove{background:none;border:0;color:var(--gris);font-size:16px;line-height:1;cursor:pointer;padding:0 2px;flex-shrink:0}
+.qzVisuelRow-remove:hover{color:#B23B2E}
 
 @media(max-width:640px){
   .qzCard{padding:24px}

@@ -21,6 +21,14 @@ const GARMENT_LABELS: Record<Garment, string> = { tshirt: 'T-shirt', sweat: 'Swe
 const PLACES: Emplacement[] = ['face', 'coeur', 'dos', 'manche-droite', 'manche-gauche'];
 const PLACE_LABEL: Record<Emplacement, string> = { face: 'Face', coeur: 'Cœur', dos: 'Dos', 'manche-droite': 'Manche droite', 'manche-gauche': 'Manche gauche' };
 
+interface VisuelImporte {
+  dataUrl: string;
+  fileName: string;
+  vector: boolean;
+  natW: number;
+  natH: number;
+}
+
 interface QuizState {
   profil: ProfilClient | null;
   garment: Garment;
@@ -34,6 +42,10 @@ interface QuizState {
   couleurs: number | null;
   qty: number;
   selectedRef: string | null;
+  // Un visuel importé par emplacement choisi (facultatif — sans fichier,
+  // le nombre de couleurs saisi juste au-dessus nourrit quand même la
+  // recommandation, notre équipe accompagne la création).
+  visuels: Partial<Record<Emplacement, VisuelImporte>>;
 }
 
 function nouveauProduit(): Omit<QuizState, 'profil'> {
@@ -46,6 +58,7 @@ function nouveauProduit(): Omit<QuizState, 'profil'> {
     couleurs: null,
     qty: 25,
     selectedRef: null,
+    visuels: {},
   };
 }
 
@@ -150,6 +163,23 @@ function screenProjet(): string {
   </div>`;
 }
 
+function visuelRowHtml(place: Emplacement): string {
+  const v = state.visuels[place];
+  if (v) {
+    return `<div class="qzVisuelRow qzVisuelRow-filled">
+      <img class="qzVisuelRow-thumb" src="${v.dataUrl}" alt="" />
+      <span class="qzVisuelRow-place">${PLACE_LABEL[place]}</span>
+      <span class="qzVisuelRow-name">${v.fileName}</span>
+      <button type="button" class="qzVisuelRow-remove" data-action="remove-visuel" data-value="${place}" aria-label="Retirer ce visuel">×</button>
+    </div>`;
+  }
+  return `<label class="qzVisuelRow qzVisuelRow-empty">
+    <span class="qzVisuelRow-place">${PLACE_LABEL[place]}</span>
+    <span class="qzVisuelRow-upload">+ Importer un fichier</span>
+    <input type="file" class="qzVisuelFile" data-place="${place}" accept="image/png,image/jpeg,image/svg+xml,image/webp" hidden />
+  </label>`;
+}
+
 function screenQuantite(): string {
   return `<div class="qzStep">
     <h2>Quantité et visuel</h2>
@@ -166,16 +196,37 @@ function screenQuantite(): string {
       <span class="qzLabel">Nombre de couleurs du visuel</span>
       <div class="pills">${COULEURS_OPTIONS.map((o) => pill('set-couleurs', o.value == null ? '' : String(o.value), o.label, state.couleurs === o.value)).join('')}</div>
     </div>
+    <div class="qzField">
+      <span class="qzLabel">Votre visuel <span class="qzOptional">par emplacement choisi, facultatif</span></span>
+      <div class="qzVisuelList">${[...state.places].map((p) => visuelRowHtml(p)).join('')}</div>
+      <p class="qzHint" style="margin:8px 0 0">Pas encore de fichier ? Pas de souci, notre équipe vous accompagne pour le créer — ça ne bloque pas votre commande.</p>
+    </div>
   </div>`;
 }
 
 function produitMiniRow(p: QuizState, index: number): string {
   const c = calcProduit(p);
+  const nbVisuels = Object.keys(p.visuels).length;
   return `<div class="qzMiniRow">
-    <span class="qzMiniRow-sw" style="background:${p.color.hex}" aria-hidden="true"></span>
-    <span class="qzMiniRow-name">${c.ref ? `${c.ref.brand} ${c.ref.model}` : GARMENT_LABELS[p.garment]} · ${p.qty} pièce${p.qty > 1 ? 's' : ''}</span>
-    <span class="qzMiniRow-prix">${fmtPrice(c.prixTotal)}</span>
-    <button type="button" class="qzMiniRow-remove" data-action="remove-produit" data-value="${index}" aria-label="Retirer ce produit">×</button>
+    <div class="qzMiniRow-head">
+      <span class="qzMiniRow-sw" style="background:${p.color.hex}" aria-hidden="true"></span>
+      <span class="qzMiniRow-name">${c.ref ? `${c.ref.brand} ${c.ref.model}` : GARMENT_LABELS[p.garment]}</span>
+      <span class="qzMiniRow-prix">${fmtPrice(c.prixTotal)}</span>
+      <button type="button" class="qzMiniRow-remove" data-action="remove-produit" data-value="${index}" aria-label="Retirer ce produit">×</button>
+    </div>
+    <div class="qzMiniRow-details">${p.color.nom} · ${p.qty} pièce${p.qty > 1 ? 's' : ''} · ${[...p.places].map((pl) => PLACE_LABEL[pl]).join(', ')} · ${nbVisuels ? `${nbVisuels} visuel${nbVisuels > 1 ? 's' : ''} importé${nbVisuels > 1 ? 's' : ''}` : 'visuel à définir'}</div>
+  </div>`;
+}
+
+// Rappel persistant des produits déjà ajoutés — affiché en haut de
+// chaque écran dès qu'on a commencé un 2e produit (pas seulement sur le
+// résultat final), pour ne jamais perdre de vue le détail (quantité,
+// couleur, emplacements, visuel) de ce qui est déjà pris en compte.
+function dejaAjoutesHtml(): string {
+  if (produits.length === 0) return '';
+  return `<div class="qzMiniList">
+    <span class="qzLabel">Déjà ajouté${produits.length > 1 ? 's' : ''} (${produits.length})</span>
+    ${produits.map((p, i) => produitMiniRow(p, i)).join('')}
   </div>`;
 }
 
@@ -192,11 +243,6 @@ function screenResultat(): string {
   const totalGeneral = produits.reduce((s, p) => s + calcProduit(p).prixTotal, 0) + c.prixTotal;
 
   return `<div class="qzStep qzStep-resultat">
-    ${produits.length > 0 ? `<div class="qzMiniList">
-      <span class="qzLabel">Déjà ajoutés (${produits.length})</span>
-      ${produits.map((p, i) => produitMiniRow(p, i)).join('')}
-    </div>` : ''}
-
     <span class="qzResultBadge">Votre recommandation</span>
     <h2>${tech.n}</h2>
     <p class="qzWhy">${c.why}</p>
@@ -247,9 +293,11 @@ function resumeMail(): string {
   const tous = [...produits, state];
   const lignes = tous.map((p, i) => {
     const c = calcProduit(p);
+    const nbVisuels = Object.keys(p.visuels).length;
     return `Produit ${i + 1} — ${c.ref ? `${c.ref.brand} ${c.ref.model}` : GARMENT_LABELS[p.garment]} (${TECHS[c.techKey].n})
 - Coloris : ${p.color.nom}
 - Emplacement${p.places.size > 1 ? 's' : ''} : ${[...p.places].map((pl) => PLACE_LABEL[pl]).join(', ')}
+- Visuel : ${nbVisuels ? `${nbVisuels} fichier${nbVisuels > 1 ? 's' : ''} joint${nbVisuels > 1 ? 's' : ''} (envoyé séparément si besoin)` : 'pas encore fourni — accompagnement souhaité'}
 - Quantité : ${p.qty} pièce${p.qty > 1 ? 's' : ''}
 - Sous-total estimé : ${fmtPrice(c.prixTotal)}`;
   });
@@ -259,11 +307,14 @@ function resumeMail(): string {
 
 function render(): void {
   const screen = order[current];
-  el('qzScreen').innerHTML =
+  const screenHtml =
     screen === 'profil' ? screenProfil() :
     screen === 'projet' ? screenProjet() :
     screen === 'quantite' ? screenQuantite() :
     screenResultat();
+  // Le rappel des produits déjà ajoutés n'a pas sa place sur l'écran
+  // profil (avant même d'avoir commencé un produit).
+  el('qzScreen').innerHTML = (screen === 'profil' ? '' : dejaAjoutesHtml()) + screenHtml;
 
   const dots = el('qzProgress');
   const visibleSteps: Screen[] = ['projet', 'quantite', 'resultat'];
@@ -282,10 +333,30 @@ function render(): void {
 
   if (screen === 'resultat') {
     el('qzGo3d').addEventListener('click', () => {
+      // Un calque réel par visuel importé (un par emplacement), sinon le
+      // configurateur démarre à vide sur l'emplacement choisi — dans les
+      // deux cas, ne jamais perdre ce qui a été renseigné dans le quiz.
+      const layers = Object.entries(state.visuels).map(([place, v], i) => ({
+        id: `q${Date.now().toString(36)}${i}`,
+        place: place as Emplacement,
+        img: v.dataUrl,
+        fileName: v.fileName,
+        vector: v.vector,
+        knownColor: null,
+        natW: v.natW,
+        natH: v.natH,
+        colors: null,
+        dom: null,
+        colorSwatches: null,
+        x: 0.5,
+        y: 0.5,
+        w: 0.78,
+        rot: 0,
+      }));
       seedFromItem({
         garment: state.garment,
         color: state.color,
-        layers: [],
+        layers,
         sizeDist: { ...repartitionTaillesParDefaut },
         tech: 'auto',
         delai: 'standard',
@@ -295,7 +366,7 @@ function render(): void {
       window.location.href = '/personnaliser?mode=3d';
     });
     el('qzAddProduit').addEventListener('click', () => {
-      produits.push({ ...state, color: { ...state.color }, places: new Set(state.places) });
+      produits.push({ ...state, color: { ...state.color }, places: new Set(state.places), visuels: { ...state.visuels } });
       Object.assign(state, nouveauProduit());
       current = order.indexOf('projet');
       render();
@@ -369,8 +440,41 @@ export function initCommencer(): void {
       case 'remove-produit':
         produits.splice(+value, 1);
         break;
+      case 'remove-visuel':
+        delete state.visuels[value as Emplacement];
+        break;
     }
     render();
+  });
+
+  // Import de fichier — délégation sur "change" (pas "click", géré
+  // nativement par le <label> qui enveloppe chaque <input type=file>) :
+  // lit l'image pour connaître ses dimensions réelles avant de l'enrôler
+  // comme calque, comme le fait le vrai configurateur au dépôt d'un
+  // fichier (file-input.ts).
+  el('qzScreen').addEventListener('change', (e) => {
+    const input = e.target as HTMLInputElement;
+    if (!input.matches('.qzVisuelFile')) return;
+    const file = input.files?.[0];
+    const place = input.dataset.place as Emplacement;
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      const vector = file.type === 'image/svg+xml';
+      if (vector) {
+        state.visuels[place] = { dataUrl, fileName: file.name, vector, natW: 0, natH: 0 };
+        render();
+        return;
+      }
+      const img = new Image();
+      img.onload = () => {
+        state.visuels[place] = { dataUrl, fileName: file.name, vector, natW: img.naturalWidth, natH: img.naturalHeight };
+        render();
+      };
+      img.src = dataUrl;
+    };
+    reader.readAsDataURL(file);
   });
 
   el('qzPrev').addEventListener('click', () => goTo(-1));
