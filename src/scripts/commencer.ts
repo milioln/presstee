@@ -27,7 +27,10 @@ interface QuizState {
   coupe: string | null;
   genre: string | null;
   color: { nom: string; hex: string };
-  place: Emplacement;
+  // Plusieurs emplacements à la fois (face + dos + manche...) — chacun se
+  // chiffre comme un marquage à part, exactement comme dans le vrai
+  // configurateur ("le recto-verso se chiffre comme deux marquages").
+  places: Set<Emplacement>;
   couleurs: number | null;
   qty: number;
   selectedRef: string | null;
@@ -39,11 +42,21 @@ function nouveauProduit(): Omit<QuizState, 'profil'> {
     coupe: null,
     genre: null,
     color: catalogueColoris[0],
-    place: 'face',
+    places: new Set(['face']),
     couleurs: null,
     qty: 25,
     selectedRef: null,
   };
+}
+
+// Ajoute/retire un emplacement de la sélection (jamais en dessous d'un
+// seul choisi).
+function togglePlace(place: Emplacement): void {
+  if (state.places.has(place)) {
+    if (state.places.size > 1) state.places.delete(place);
+    return;
+  }
+  state.places.add(place);
 }
 
 const state: QuizState = { profil: null, ...nouveauProduit() };
@@ -55,6 +68,10 @@ const produits: QuizState[] = [];
 type Screen = 'profil' | 'projet' | 'quantite' | 'resultat';
 let order: Screen[] = ['profil', 'projet', 'quantite', 'resultat'];
 let current = 0;
+// Zone vers laquelle faire pivoter le modèle 3D au prochain render() —
+// seulement quand un emplacement vient d'être ajouté (pas retiré), pour
+// que le modèle montre bien la zone qu'on vient de choisir.
+let pendingFocus: Emplacement | undefined;
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
   return document.getElementById(id) as T;
@@ -127,8 +144,8 @@ function screenProjet(): string {
       <div class="swatches">${catalogueColoris.map((c) => `<button type="button" class="sw${c.hex === state.color.hex ? ' on' : ''}" data-action="set-color" data-value="${c.hex}" style="background:${c.hex}" aria-label="${c.nom}"></button>`).join('')}</div>
     </div>
     <div class="qzField">
-      <span class="qzLabel">Emplacement du visuel</span>
-      <div class="pills">${PLACES.map((p) => pill('set-place', p, `${PLACE_LABEL[p]} · ${getZoneImpressionCm(state.garment, p)} cm max`, state.place === p)).join('')}</div>
+      <span class="qzLabel">Emplacement du visuel <span class="qzOptional">plusieurs choix possibles</span></span>
+      <div class="pills">${PLACES.map((p) => pill('toggle-place', p, `${PLACE_LABEL[p]} · ${getZoneImpressionCm(state.garment, p)} cm max`, state.places.has(p))).join('')}</div>
     </div>
   </div>`;
 }
@@ -232,7 +249,7 @@ function resumeMail(): string {
     const c = calcProduit(p);
     return `Produit ${i + 1} — ${c.ref ? `${c.ref.brand} ${c.ref.model}` : GARMENT_LABELS[p.garment]} (${TECHS[c.techKey].n})
 - Coloris : ${p.color.nom}
-- Emplacement : ${PLACE_LABEL[p.place]}
+- Emplacement${p.places.size > 1 ? 's' : ''} : ${[...p.places].map((pl) => PLACE_LABEL[pl]).join(', ')}
 - Quantité : ${p.qty} pièce${p.qty > 1 ? 's' : ''}
 - Sous-total estimé : ${fmtPrice(c.prixTotal)}`;
   });
@@ -260,7 +277,8 @@ function render(): void {
   // Le modèle 3D n'accompagne que la question "projet" (support, coloris,
   // emplacement) — pas les autres écrans, qui n'ont rien à y montrer.
   el('qzLayout').classList.toggle('has3d', screen === 'projet');
-  if (screen === 'projet') updateQuiz3d(state.color.hex, state.place);
+  if (screen === 'projet') updateQuiz3d(state.color.hex, state.places, pendingFocus);
+  pendingFocus = undefined;
 
   if (screen === 'resultat') {
     el('qzGo3d').addEventListener('click', () => {
@@ -272,12 +290,12 @@ function render(): void {
         tech: 'auto',
         delai: 'standard',
         designHelp: { colors: state.couleurs, format: '', notes: '' },
-        place: state.place,
+        place: [...state.places][0],
       });
       window.location.href = '/personnaliser?mode=3d';
     });
     el('qzAddProduit').addEventListener('click', () => {
-      produits.push({ ...state, color: { ...state.color } });
+      produits.push({ ...state, color: { ...state.color }, places: new Set(state.places) });
       Object.assign(state, nouveauProduit());
       current = order.indexOf('projet');
       render();
@@ -305,7 +323,8 @@ export function initCommencer(): void {
   }
 
   void initQuiz3d((place) => {
-    state.place = place;
+    togglePlace(place);
+    pendingFocus = place;
     render();
   });
 
@@ -332,8 +351,9 @@ export function initCommencer(): void {
       case 'set-color':
         state.color = catalogueColoris.find((c) => c.hex === value) ?? state.color;
         break;
-      case 'set-place':
-        state.place = value as Emplacement;
+      case 'toggle-place':
+        togglePlace(value as Emplacement);
+        pendingFocus = value as Emplacement;
         break;
       case 'set-couleurs':
         state.couleurs = value === '' ? null : +value;

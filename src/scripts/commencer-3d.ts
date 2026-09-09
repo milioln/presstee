@@ -2,14 +2,21 @@
 // coloris, emplacement) — une troisième instance indépendante du modèle,
 // sur le même principe que hero/tshirt-hero.ts : pas de calques ni
 // d'état partagé avec le vrai configurateur (personnalisateur/state.ts),
-// juste une teinte et une zone en surbrillance. PRINT_RECT/PANEL_SCALE
-// sont dupliqués depuis personnalisateur/render.ts (même remarque que
-// dans tshirt-hero.ts : à garder synchronisés si l'atlas change).
+// juste une teinte et les zones choisies en surbrillance. PRINT_RECT/
+// PANEL_SCALE sont dupliqués depuis personnalisateur/render.ts (même
+// remarque que dans tshirt-hero.ts : à garder synchronisés si l'atlas
+// change).
 //
-// Nouveau par rapport aux deux instances existantes : la sélection
-// fonctionne aussi dans l'autre sens — cliquer directement sur le modèle
-// détermine quel emplacement a été visé (placeFromHit), l'inverse de
-// hitOnPlace() dans drag3d.ts qui vérifie un emplacement déjà connu.
+// Plusieurs emplacements peuvent être choisis à la fois (Milio,
+// 2026-09 : "pouvoir sélectionner plusieurs zones, face, dos et
+// manche") — chacun est surligné sur le modèle. Le modèle tourne aussi
+// vers la zone qu'on vient de choisir, pour qu'un clic sur "Dos" montre
+// vraiment le dos plutôt que de surligner une zone hors champ.
+//
+// La sélection fonctionne aussi dans l'autre sens — cliquer directement
+// sur le modèle détermine quel emplacement a été visé (placeFromHit),
+// l'inverse de hitOnPlace() dans drag3d.ts qui vérifie un emplacement
+// déjà connu.
 import type { Emplacement } from '../config/parametres-metier';
 
 const MODEL_URL = '/personnalisateur/model/scene.gltf';
@@ -22,6 +29,19 @@ const PRINT_RECT: Record<Emplacement, { x: number; y: number; w: number; h: numb
   dos: { x: 1238, y: 210, w: 580, h: 750 },
   'manche-droite': { x: 750, y: 1325, w: 480, h: 195 },
   'manche-gauche': { x: 1360, y: 1325, w: 540, h: 195 },
+};
+
+// Angle de caméra qui montre bien chaque zone (thêta autour du modèle, à
+// 85° de hauteur et 105% de la distance "idéale" — mêmes valeurs que le
+// vrai configurateur). Face/cœur restent sur la vue par défaut ; dos à
+// l'opposé ; les manches à un angle 3/4 qui garde le vêtement
+// reconnaissable plutôt qu'un profil à 90° trop serré.
+const CAMERA_FOR_PLACE: Record<Emplacement, string> = {
+  face: '0deg 85deg 105%',
+  coeur: '0deg 85deg 105%',
+  dos: '180deg 85deg 105%',
+  'manche-droite': '-75deg 85deg 105%',
+  'manche-gauche': '75deg 85deg 105%',
 };
 
 function uvFrac(u: number): number {
@@ -64,7 +84,7 @@ function loadBaseImg(): Promise<HTMLImageElement> {
   return baseImgPromise;
 }
 
-async function buildTexture(hex: string, place: Emplacement | null): Promise<string> {
+async function buildTexture(hex: string, places: ReadonlySet<Emplacement>): Promise<string> {
   const base = await loadBaseImg();
   const c = document.createElement('canvas');
   c.width = base.naturalWidth;
@@ -75,7 +95,7 @@ async function buildTexture(hex: string, place: Emplacement | null): Promise<str
   ctx.fillStyle = hex;
   ctx.fillRect(0, 0, c.width, c.height);
   ctx.globalCompositeOperation = 'source-over';
-  if (place) {
+  for (const place of places) {
     const r = PRINT_RECT[place];
     ctx.fillStyle = 'rgba(157,131,207,0.4)';
     ctx.fillRect(r.x, r.y, r.w, r.h);
@@ -88,19 +108,19 @@ async function buildTexture(hex: string, place: Emplacement | null): Promise<str
 
 let mv: any = null;
 let applying = false;
-let queued: { hex: string; place: Emplacement | null } | null = null;
+let queued: { hex: string; places: Set<Emplacement> } | null = null;
 let lastHex = '#FFFFFF';
-let lastPlace: Emplacement | null = 'face';
+let lastPlaces: Set<Emplacement> = new Set(['face']);
 
-async function apply(hex: string, place: Emplacement | null): Promise<void> {
+async function apply(hex: string, places: Set<Emplacement>): Promise<void> {
   if (!mv || !mv.model) return;
   if (applying) {
-    queued = { hex, place };
+    queued = { hex, places };
     return;
   }
   applying = true;
   try {
-    const dataUrl = await buildTexture(hex, place);
+    const dataUrl = await buildTexture(hex, places);
     const material = mv.model.materials[0];
     const texture = await mv.createTexture(dataUrl);
     material.pbrMetallicRoughness.baseColorTexture.setTexture(texture);
@@ -110,19 +130,21 @@ async function apply(hex: string, place: Emplacement | null): Promise<void> {
   if (queued) {
     const next = queued;
     queued = null;
-    void apply(next.hex, next.place);
+    void apply(next.hex, next.places);
   }
 }
 
 // Initialise le modèle une seule fois (import différé de model-viewer,
 // comme partout ailleurs sur le site) et branche le clic-pour-choisir.
-// `onPickPlace` répercute le choix dans l'état du quiz.
+// `onPickPlace` répercute le choix dans l'état du quiz (bascule
+// l'emplacement cliqué, comme une pastille).
 export async function initQuiz3d(onPickPlace: (place: Emplacement) => void): Promise<void> {
   await import('@google/model-viewer');
   mv = document.getElementById('qzStage');
   if (!mv) return;
   mv.src = MODEL_URL;
-  const refresh = () => void apply(lastHex, lastPlace);
+  mv.cameraOrbit = CAMERA_FOR_PLACE.face;
+  const refresh = () => void apply(lastHex, lastPlaces);
   if (mv.loaded) refresh();
   else mv.addEventListener('load', refresh, { once: true });
 
@@ -133,8 +155,12 @@ export async function initQuiz3d(onPickPlace: (place: Emplacement) => void): Pro
   });
 }
 
-export function updateQuiz3d(hex: string, place: Emplacement | null): void {
+// `focus`, si fourni, fait pivoter la caméra vers cette zone précise (la
+// dernière ajoutée à la sélection) — sans ça, choisir "Dos" surlignerait
+// une zone qu'on ne voit pas depuis la vue de face.
+export function updateQuiz3d(hex: string, places: Set<Emplacement>, focus?: Emplacement): void {
   lastHex = hex;
-  lastPlace = place;
-  void apply(hex, place);
+  lastPlaces = places;
+  void apply(hex, places);
+  if (focus && mv) mv.cameraOrbit = CAMERA_FOR_PLACE[focus];
 }

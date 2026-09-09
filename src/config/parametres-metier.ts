@@ -21,15 +21,18 @@ export type Emplacement = 'face' | 'coeur' | 'dos' | 'manche-droite' | 'manche-g
 type Taille = 'unique';
 
 export const zonesImpressionCm: Record<Garment, Record<Emplacement, Record<Taille, number>>> = {
+  // Face et dos à la même largeur max (Milio, 2026-09) : rien ne justifie
+  // qu'un marquage dos accepte plus large qu'un marquage face sur ces deux
+  // vêtements — la largeur imprimable est la même des deux côtés.
   tshirt: {
-    face: { unique: 28 },
+    face: { unique: 30 },
     coeur: { unique: 10 },
     dos: { unique: 30 },
     'manche-droite': { unique: 8 },
     'manche-gauche': { unique: 8 },
   },
   sweat: {
-    face: { unique: 26 },
+    face: { unique: 30 },
     coeur: { unique: 10 },
     dos: { unique: 30 },
     'manche-droite': { unique: 8 },
