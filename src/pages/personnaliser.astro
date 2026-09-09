@@ -359,4 +359,13 @@ import '../styles/personnalisateur.css';
 		font-size: clamp(1.5rem, 3vw, 1.9rem);
 		letter-spacing: -0.02em;
 	}
+
+	/* #mode3d est un <section> sans classe : il retombait sur le padding
+	   par défaut de global.css (clamp(88px,13vw,166px) 0), pensé pour de
+	   grands blocs éditoriaux — pas pour un outil, qui se retrouvait
+	   poussé loin sous le pli avant même de commencer (Milio, 2026-09-09 :
+	   « la page du configurateur vient bien trop bas »). */
+	#mode3d {
+		padding: 20px 0 60px;
+	}
 </style>

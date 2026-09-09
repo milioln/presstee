@@ -79,6 +79,15 @@ async function buildTextureDataUrl(): Promise<string> {
     const panelScale = PANEL_SCALE[layer.place];
     ctx.scale(panelScale.x, panelScale.y);
     ctx.drawImage(logo, -w / 2, -h / 2, w, h);
+    // Cadre discret autour du visuel : montre que c'est une zone
+    // cliquable/déplaçable directement sur le mockup, sans se faire
+    // remarquer plus que ça (Milio, 2026-09-09 : « un cadre... pas trop
+    // visible »). En pointillés pour bien le distinguer d'un vrai
+    // contour imprimé.
+    ctx.setLineDash([18, 10]);
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = 'rgba(157,131,207,0.55)';
+    ctx.strokeRect(-w / 2, -h / 2, w, h);
     ctx.restore();
   }
   return c.toDataURL('image/png');

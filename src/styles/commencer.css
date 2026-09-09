@@ -98,6 +98,9 @@
 
 /* ---------- visuel importé (question 2) ---------- */
 .qzVisuelList{display:flex;flex-direction:column;gap:8px}
+.qzVisuelColors{padding:2px 12px 12px;margin-top:-8px;border:1.5px solid var(--indigo);border-top:0;border-radius:0 0 12px 12px}
+.qzVisuelColors-label{display:block;font-size:.76rem;color:var(--gris);margin:8px 0 6px}
+.pills-sm .pill{padding:5px 11px;font-size:12px}
 .qzVisuelRow{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--ligne);border-radius:12px;font-size:.85rem}
 .qzVisuelRow-empty{cursor:pointer;transition:.15s}
 .qzVisuelRow-empty:hover{border-color:var(--indigo)}

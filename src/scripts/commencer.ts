@@ -26,6 +26,12 @@ interface VisuelImporte {
   vector: boolean;
   natW: number;
   natH: number;
+  // Nombre de couleurs de CE visuel précis — demandé au moment de
+  // l'import plutôt que via la question générale "Nombre de couleurs du
+  // visuel" (Milio, 2026-09-09 : avoir un vrai fichier ET répondre "je ne
+  // sais pas" au nombre de couleurs n'a pas de sens, les deux se
+  // contredisent). Nul tant que l'utilisateur n'a pas encore répondu.
+  colors: number | null;
 }
 
 // Un coloris de textile et la quantité commandée dans ce coloris — un
@@ -87,6 +93,20 @@ function qtyTotal(p: QuizState): number {
 // choisi, dans l'ordre où il a été ajouté.
 function primaryColor(p: QuizState): { nom: string; hex: string } {
   return p.colorLots[0].color;
+}
+
+// Nombre de couleurs à retenir pour la recommandation de technique — dès
+// qu'au moins un visuel est importé, sa propre réponse fait foi (sommée
+// entre emplacements, comme totalColors() dans le vrai configurateur :
+// chaque emplacement se calage/coloris indépendamment). La question
+// générale "Nombre de couleurs du visuel" ne sert plus qu'en l'absence de
+// tout fichier — dès qu'un fichier existe, elle disparaît de l'écran
+// (cf. screenQuantite) pour ne jamais laisser co-exister un fichier réel
+// et un "je ne sais pas" qui le contredirait.
+function effectiveColors(p: QuizState): number | null {
+  const visuels = Object.values(p.visuels).filter((v): v is VisuelImporte => !!v);
+  if (visuels.length === 0) return p.couleurs;
+  return visuels.reduce((s, v) => s + (v.colors ?? 1), 0);
 }
 
 function nouveauProduit(): Omit<QuizState, 'profil'> {
@@ -207,7 +227,7 @@ interface ProduitCalcule {
 // teintes de tissu commandées).
 function calcProduit(p: QuizState): ProduitCalcule {
   const qty = qtyTotal(p);
-  const r = reco(p.couleurs, qty);
+  const r = reco(effectiveColors(p), qty);
   const styles = new Set<string>();
   if (p.coupe) styles.add(p.coupe);
   if (p.genre) styles.add(p.genre);
@@ -263,6 +283,11 @@ function screenProjet(): string {
   </div>`;
 }
 
+// Sans l'option "Je ne sais pas" : une fois un vrai fichier déposé, la
+// question doit avoir une réponse plutôt que de rester compatible avec
+// un "je ne sais pas" qui contredirait le fichier fourni.
+const COULEURS_OPTIONS_FICHIER = COULEURS_OPTIONS.filter((o) => o.value != null);
+
 function visuelRowHtml(place: Emplacement): string {
   const v = state.visuels[place];
   if (v) {
@@ -271,6 +296,10 @@ function visuelRowHtml(place: Emplacement): string {
       <span class="qzVisuelRow-place">${PLACE_LABEL[place]}</span>
       <span class="qzVisuelRow-name">${v.fileName}</span>
       <button type="button" class="qzVisuelRow-remove" data-action="remove-visuel" data-value="${place}" aria-label="Retirer ce visuel">×</button>
+    </div>
+    <div class="qzVisuelColors">
+      <span class="qzVisuelColors-label">Couleurs de ce visuel</span>
+      <div class="pills pills-sm">${COULEURS_OPTIONS_FICHIER.map((o) => `<button type="button" class="pill${v.colors === o.value ? ' on' : ''}" data-action="set-visuel-couleurs" data-value="${place}:${o.value}" aria-pressed="${v.colors === o.value}">${o.label}</button>`).join('')}</div>
     </div>`;
   }
   return `<label class="qzVisuelRow qzVisuelRow-empty">
@@ -294,6 +323,7 @@ function colorQtyRowHtml(lot: ColorLot): string {
 
 function screenQuantite(): string {
   const total = qtyTotal(state);
+  const hasVisuels = Object.keys(state.visuels).length > 0;
   return `<div class="qzStep">
     <h2>Quantité et visuel</h2>
     <p class="qzHint">Question 2 sur 3 — combien de pièces dans chaque coloris choisi, et votre visuel par emplacement</p>
@@ -302,14 +332,14 @@ function screenQuantite(): string {
       <div class="qzColorQtyList">${state.colorLots.map(colorQtyRowHtml).join('')}</div>
       ${state.colorLots.length > 1 ? `<p class="qzHint" style="margin:8px 0 0">Total : ${total} pièce${total > 1 ? 's' : ''}</p>` : ''}
     </div>
-    <div class="qzField">
+    ${hasVisuels ? '' : `<div class="qzField">
       <span class="qzLabel">Nombre de couleurs du visuel</span>
       <div class="pills">${COULEURS_OPTIONS.map((o) => pill('set-couleurs', o.value == null ? '' : String(o.value), o.label, state.couleurs === o.value)).join('')}</div>
-    </div>
+    </div>`}
     <div class="qzField">
       <span class="qzLabel">Votre visuel <span class="qzOptional">par emplacement choisi, facultatif</span></span>
       <div class="qzVisuelList">${[...state.places].map((p) => visuelRowHtml(p)).join('')}</div>
-      <p class="qzHint" style="margin:8px 0 0">Pas encore de fichier ? Pas de souci, notre équipe vous accompagne pour le créer — ça ne bloque pas votre commande.</p>
+      <p class="qzHint" style="margin:8px 0 0">${hasVisuels ? 'Chaque visuel importé demande son propre nombre de couleurs, juste au-dessus de son emplacement.' : "Pas encore de fichier ? Pas de souci, notre équipe vous accompagne pour le créer — ça ne bloque pas votre commande."}</p>
     </div>
   </div>`;
 }
@@ -581,6 +611,12 @@ export function initCommencer(): void {
       case 'remove-visuel':
         delete state.visuels[value as Emplacement];
         break;
+      case 'set-visuel-couleurs': {
+        const [place, colorsStr] = value.split(':');
+        const v = state.visuels[place as Emplacement];
+        if (v) v.colors = +colorsStr;
+        break;
+      }
     }
     render();
   });
@@ -604,7 +640,7 @@ export function initCommencer(): void {
       const dataUrl = reader.result as string;
       const vector = file.type === 'image/svg+xml';
       if (vector) {
-        state.visuels[place] = { dataUrl, fileName: file.name, vector, natW: 0, natH: 0 };
+        state.visuels[place] = { dataUrl, fileName: file.name, vector, natW: 0, natH: 0, colors: null };
         render();
         return;
       }
@@ -613,7 +649,7 @@ export function initCommencer(): void {
         showToast(`« ${file.name} » ne semble pas être une image valide.`);
       };
       img.onload = () => {
-        state.visuels[place] = { dataUrl, fileName: file.name, vector, natW: img.naturalWidth, natH: img.naturalHeight };
+        state.visuels[place] = { dataUrl, fileName: file.name, vector, natW: img.naturalWidth, natH: img.naturalHeight, colors: null };
         render();
       };
       img.src = dataUrl;

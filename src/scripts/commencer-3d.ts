@@ -159,7 +159,24 @@ export async function initQuiz3d(onPickPlace: (place: Emplacement) => void): Pro
   if (mv.loaded) refresh();
   else mv.addEventListener('load', refresh, { once: true });
 
+  // Un simple pointerdown ne suffit pas à distinguer un tap (choisir une
+  // zone) d'un glisser (faire pivoter la caméra) : model-viewer démarre
+  // l'orbite sur ce même événement, donc chaque début de glisser
+  // déclenchait aussi une sélection de zone, qui forçait aussitôt la
+  // caméra sur l'angle de la zone touchée — la caméra "se recadrait"
+  // en pleine rotation manuelle (Milio, 2026-09-09 : "ça bug un peu,
+  // ça nous recadre trop"). On attend le relâché et on ignore le
+  // geste s'il a bougé (seuil de 6px, même valeur que le glisser de
+  // visuel dans drag3d.ts) : seul un vrai tap choisit une zone.
+  let downX = 0;
+  let downY = 0;
   mv.addEventListener('pointerdown', (e: PointerEvent) => {
+    downX = e.clientX;
+    downY = e.clientY;
+  });
+  mv.addEventListener('pointerup', (e: PointerEvent) => {
+    const moved = Math.hypot(e.clientX - downX, e.clientY - downY);
+    if (moved >= 6) return;
     const hit = mv.positionAndNormalFromPoint(e.clientX, e.clientY);
     const place = placeFromHit(hit);
     if (place) onPickPlace(place);

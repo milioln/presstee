@@ -36,10 +36,11 @@
 // propagation avec stopImmediatePropagation() — y compris pour le
 // simple appui qui arme le calque, qui ne doit pas non plus déclencher
 // d'orbite.
-import { activeLayer } from './state';
+import { S, activeLayer, type Layer } from './state';
 import { render } from './render';
 import { PRINT_RECT, TEXTURE_SIZE } from './print-zones';
 import { openLayerPopup } from './layer-popup';
+import { selectLayer } from './layers';
 import type { Emplacement } from '../../config/parametres-metier';
 
 function stage(): any {
@@ -55,17 +56,38 @@ function uvFrac(u: number): number {
 // manche courte, vue de face, garde une normale à dominante Z comme le
 // torse). On les repère plutôt par zone UV : le point touché tombe-t-il
 // dans le rectangle d'impression de la manche visée sur l'atlas ?
-function hitOnPlace(hit: any, place: Emplacement): boolean {
+function onFaceFor(place: Emplacement, hit: any, px: number, py: number): boolean {
   if (place === 'manche-droite' || place === 'manche-gauche') {
-    if (!hit) return false;
-    const px = uvFrac(hit.uv.u) * TEXTURE_SIZE;
-    const py = uvFrac(hit.uv.v) * TEXTURE_SIZE;
     const rect = PRINT_RECT[place];
     return px >= rect.x && px <= rect.x + rect.w && py >= rect.y && py <= rect.y + rect.h;
   }
   const front = !!hit && hit.normal.z > 0.25;
   const back = !!hit && hit.normal.z < -0.25;
   return place === 'dos' ? back : front;
+}
+
+// Contour du calque en pixels d'atlas (mêmes coordonnées que le rendu,
+// cf. render.ts/buildTextureDataUrl) — sans tenir compte de la rotation,
+// une approximation suffisante pour savoir si un tap tombe dessus.
+function layerBoundsPx(layer: Layer): { cx: number; cy: number; halfW: number; halfH: number } {
+  const rect = PRINT_RECT[layer.place];
+  const w = rect.w * layer.w;
+  const ratio = layer.natW && layer.natH ? layer.natH / layer.natW : 1;
+  const h = w * ratio;
+  return { cx: rect.x + rect.w * layer.x, cy: rect.y + rect.h * layer.y, halfW: w / 2, halfH: h / 2 };
+}
+
+// Quel calque, s'il y en a un, est touché exactement à l'endroit où son
+// visuel est imprimé — pas seulement quelque part sur la face qui le
+// porte (Milio, 2026-09-09 : « les logos qu'on apporte sur le textile,
+// il faut qu'ils soient vraiment cliquables à l'endroit du logo »).
+function layerAtPoint(px: number, py: number, hit: any): Layer | null {
+  for (const layer of S.layers) {
+    if (!onFaceFor(layer.place, hit, px, py)) continue;
+    const b = layerBoundsPx(layer);
+    if (px >= b.cx - b.halfW && px <= b.cx + b.halfW && py >= b.cy - b.halfH && py <= b.cy + b.halfH) return layer;
+  }
+  return null;
 }
 
 // Calque actuellement armé (modifiable/déplaçable sur le modèle 3D) :
@@ -75,21 +97,37 @@ let armedLayerId: string | null = null;
 
 function onPointerDown(e: PointerEvent): void {
   const mv = stage();
-  const layer = activeLayer();
-  if (!mv || !layer) return;
+  if (!mv || S.layers.length === 0) return;
   const hit = mv.positionAndNormalFromPoint(e.clientX, e.clientY);
-  // Face avant pour face/cœur, face arrière pour dos, zone UV de la
-  // manche pour manche-droite/gauche — sinon (tranche, ou hors du
-  // modèle) on est en dehors de la zone du calque actif : on désarme et
-  // on laisse la caméra réagir normalement.
-  const onZone = hitOnPlace(hit, layer.place);
-  if (!onZone) {
+  if (!hit) {
+    armedLayerId = null;
+    return;
+  }
+  const px = uvFrac(hit.uv.u) * TEXTURE_SIZE;
+  const py = uvFrac(hit.uv.v) * TEXTURE_SIZE;
+  const touched = layerAtPoint(px, py, hit);
+  if (!touched) {
+    // Rien sous le doigt à cet endroit précis : on laisse la caméra
+    // réagir normalement, comme si aucun visuel n'existait.
+    armedLayerId = null;
+    return;
+  }
+
+  const layer = activeLayer();
+  if (!layer || touched.id !== layer.id) {
+    // Un calque différent de celui actif a été touché directement à
+    // l'endroit de son visuel : on le sélectionne (même effet qu'un clic
+    // sur sa puce dans la bande), sans démarrer de glisser sur ce même
+    // geste — un appui suivant l'arme, comme pour tout calque actif.
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    selectLayer(touched);
     armedLayerId = null;
     return;
   }
 
   if (armedLayerId !== layer.id) {
-    // Premier appui sur la zone : arme le calque sans le déplacer ni
+    // Premier appui sur le visuel : arme le calque sans le déplacer ni
     // laisser l'orbite démarrer sur ce même geste.
     armedLayerId = layer.id;
     e.preventDefault();
@@ -98,11 +136,11 @@ function onPointerDown(e: PointerEvent): void {
   }
 
   const probe = 24;
-  const px = mv.positionAndNormalFromPoint(e.clientX + probe, e.clientY);
-  const py = mv.positionAndNormalFromPoint(e.clientX, e.clientY + probe);
-  if (!px || !py) return;
-  const duPerPxX = (uvFrac(px.uv.u) - uvFrac(hit.uv.u)) / probe;
-  const dvPerPxY = (py.uv.v - hit.uv.v) / probe;
+  const probeX = mv.positionAndNormalFromPoint(e.clientX + probe, e.clientY);
+  const probeY = mv.positionAndNormalFromPoint(e.clientX, e.clientY + probe);
+  if (!probeX || !probeY) return;
+  const duPerPxX = (uvFrac(probeX.uv.u) - uvFrac(hit.uv.u)) / probe;
+  const dvPerPxY = (probeY.uv.v - hit.uv.v) / probe;
   if (!isFinite(duPerPxX) || !isFinite(dvPerPxY) || (duPerPxX === 0 && dvPerPxY === 0)) return;
 
   e.preventDefault();

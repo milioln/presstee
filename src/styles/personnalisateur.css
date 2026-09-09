@@ -22,6 +22,14 @@
 .pz-page h1,.pz-page h6{font-family:'Sora',system-ui,sans-serif;font-weight:700;letter-spacing:-0.015em;line-height:1.12}
 .pz-page h6{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
 .pz-page .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+/* Sur grand écran, l'outil restait bridé à la même largeur qu'une page
+   éditoriale (1180px) alors qu'il a trois colonnes à répartir — laisse
+   la place gagnée profiter surtout à la colonne centrale (le modèle 3D),
+   les deux panneaux latéraux restant à largeur fixe (Milio, 2026-09-09 :
+   « ça ne prend pas assez tout l'espace, il faudrait l'étirer »). */
+@media(min-width:1440px){
+  .pz-page .wrap{max-width:1520px}
+}
 .text-muted{color:var(--muted)}
 
 .intro{padding:42px 0 24px}
@@ -90,7 +98,13 @@
 .posrow{display:flex;align-items:center;gap:6px}
 
 .viewer{display:flex;flex-direction:column}
-.frame{position:relative;flex:1;min-height:620px;overflow:hidden;
+/* Hauteur minimale figée à 620px quelle que soit la taille de l'écran :
+   sur un grand moniteur, le modèle restait petit alors que la fenêtre
+   avait largement la place de l'agrandir (Milio, 2026-09-09 : « trop
+   petit sur mon ordinateur, ça ne prend pas assez tout l'espace »). Liée
+   à la hauteur de la fenêtre plutôt qu'à une valeur fixe, plafonnée pour
+   ne pas déborder sur un écran très haut. */
+.frame{position:relative;flex:1;min-height:min(74vh,760px);overflow:hidden;
   background-image:linear-gradient(color-mix(in srgb,var(--text) 6%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--text) 6%,transparent) 1px,transparent 1px);
   background-size:26px 26px;background-position:center center}
 /* Plein écran du modèle seul (bouton dédié, distinct du plein écran de
@@ -167,6 +181,12 @@
 .layerchip-actions button{flex:1;border:0;background:transparent;color:#fff;font-size:13px;line-height:1;height:20px;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}
 .layerchip-actions button + button{border-left:1px solid rgba(255,255,255,.25)}
 .layerchip-actions button:hover{background:var(--accent)}
+/* La bande liste maintenant tous les calques, pas seulement ceux de la
+   face affichée (Milio, 2026-09-09) — ce petit badge distingue d'un
+   coup d'œil un calque d'une autre face de ceux de la face en cours. */
+.layerchip-place{position:absolute;top:3px;left:3px;font-family:'Sora',sans-serif;font-size:9px;font-weight:700;letter-spacing:.02em;color:#fff;background:rgba(20,18,17,.72);border-radius:5px;padding:1px 5px;pointer-events:none}
+.layerchip.elsewhere{opacity:.6}
+.layerchip.elsewhere:hover{opacity:1}
 
 .diag{margin-top:14px;border-top:1px solid var(--divider);padding-top:14px;display:grid;gap:8px}
 .diag .dt{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600}
