@@ -51,6 +51,35 @@ header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop
 .burger{display:none;margin-left:auto;background:none;border:0;cursor:pointer;padding:8px}
 .burger rect{fill:var(--encre)}
 
+/* ---------- fil du parcours de commande (quiz/configurer/panier) ---------- */
+.parcoursBar{background:var(--lavande);border-bottom:1px solid var(--ligne)}
+.parcoursBar-row{display:flex;align-items:center;justify-content:center;gap:0;padding:11px 24px;flex-wrap:wrap}
+.parcoursBar-step{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--gris);font-size:13px;font-weight:600;padding:4px 6px;border-radius:8px;transition:.15s}
+.parcoursBar-step:hover{color:var(--encre)}
+.parcoursBar-dot{display:flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--ligne);background:#fff;font-family:'Sora',sans-serif;font-size:11px;font-weight:700;flex-shrink:0}
+.parcoursBar-step.on{color:var(--encre)}
+.parcoursBar-step.on .parcoursBar-dot{border-color:var(--indigo);background:var(--indigo);color:#fff}
+.parcoursBar-step.done .parcoursBar-dot{border-color:var(--indigo);color:var(--indigo)}
+.parcoursBar-line{width:32px;height:1.5px;background:var(--ligne);margin:0 6px;flex-shrink:0}
+.parcoursBar-line.done{background:var(--indigo)}
+@media(max-width:640px){
+  .parcoursBar-label{display:none}
+  .parcoursBar-line{width:16px}
+}
+
+/* ---------- easter egg (5 clics sur le logo, accueil) ---------- */
+.eggLayer{position:fixed;inset:0;pointer-events:none;z-index:200;overflow:hidden}
+.eggBit{position:absolute;top:-24px;width:9px;height:22px;border-radius:3px;opacity:.9;animation:eggFall linear forwards}
+@keyframes eggFall{
+  0%{transform:translateY(-24px) rotate(0deg);opacity:.95}
+  100%{transform:translateY(110vh) rotate(540deg);opacity:0}
+}
+.eggToast{position:fixed;left:50%;bottom:32px;transform:translate(-50%,12px);background:var(--encre);color:#fff;font-family:'Sora',sans-serif;font-size:13.5px;font-weight:600;padding:12px 20px;border-radius:100px;box-shadow:0 10px 30px rgba(0,0,0,.2);opacity:0;transition:opacity .25s,transform .25s;z-index:201;pointer-events:none}
+.eggToast.show{opacity:1;transform:translate(-50%,0)}
+@media(prefers-reduced-motion:reduce){
+  .eggBit{animation:none;display:none}
+}
+
 .btn{display:inline-flex;align-items:center;justify-content:center;background:var(--encre);color:#fff;text-decoration:none;font-family:'Sora',sans-serif;font-weight:500;font-size:15.5px;letter-spacing:-0.012em;padding:15px 30px;border-radius:100px;border:0;cursor:pointer;transition:background .18s}
 .btn:hover{background:#332B4A}
 .btn-light{background:#fff;color:var(--encre)}

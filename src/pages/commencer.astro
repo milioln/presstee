@@ -9,6 +9,7 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import ParcoursBar from '../components/ParcoursBar.astro';
 import '../styles/global.css';
 import '../styles/produits.css';
 import '../styles/simulateur.css';
@@ -17,6 +18,7 @@ import '../styles/commencer.css';
 
 <Layout title="Commencer — Presstee" description="Trois questions, une recommandation de technique et de textile, puis direction le configurateur déjà pré-rempli.">
 	<Header />
+	<ParcoursBar step={1} />
 	<main>
 		<section class="qz-hero">
 			<div class="wrap">

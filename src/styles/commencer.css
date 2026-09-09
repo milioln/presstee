@@ -39,7 +39,20 @@
 .qzResultBadge{display:inline-block;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--indigo);background:var(--lavande);border-radius:100px;padding:6px 14px;margin-bottom:10px}
 .qzWhy{color:var(--gris);max-width:52ch;margin:0 auto 26px;font-size:.94rem;line-height:1.55}
 
-.qzResultCard{display:flex;align-items:center;gap:18px;text-align:left;background:var(--lavande);border-radius:18px;padding:18px 22px;margin-bottom:18px}
+/* La recommandation se révèle plutôt que d'apparaître d'un bloc — le
+   t-shirt "se pose" sur la bonne réponse. Rejoue à chaque fois que
+   render() recrée cet écran (nouveau clic sur une référence alternative
+   compris), même principe que .productPreview-shirt côté simulateur. */
+@keyframes qzFadeUp{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes qzSettle{0%{opacity:0;transform:translateY(-16px) rotate(-3deg) scale(.94)}65%{opacity:1;transform:translateY(3px) rotate(1deg) scale(1.015)}100%{opacity:1;transform:translateY(0) rotate(0) scale(1)}}
+.qzResultBadge,.qzStep-resultat h2,.qzWhy{animation:qzFadeUp .4s ease both}
+.qzStep-resultat h2{animation-delay:.05s}
+.qzWhy{animation-delay:.1s}
+@media(prefers-reduced-motion:reduce){
+  .qzResultBadge,.qzStep-resultat h2,.qzWhy,.qzResultCard{animation:none !important}
+}
+
+.qzResultCard{display:flex;align-items:center;gap:18px;text-align:left;background:var(--lavande);border-radius:18px;padding:18px 22px;margin-bottom:18px;animation:qzSettle .5s cubic-bezier(.34,1.56,.64,1) .15s both}
 .qzResultShirt{width:64px;height:74px;flex-shrink:0;filter:drop-shadow(0 3px 6px rgba(23,19,31,.12))}
 .qzResultBody{display:flex;flex-direction:column;gap:3px}
 .qzResultRef{font-family:'Sora',sans-serif;font-weight:700;font-size:1.02rem}

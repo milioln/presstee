@@ -1,0 +1,36 @@
+---
+// Fil visuel commun aux 3 pages du tunnel de commande (quiz → configurer
+// → panier) — matérialise "un seul parcours" plutôt que 3 pages qui n'ont
+// visuellement rien à voir entre elles (retour Milio, 2026-09-09). Chaque
+// étape reste un vrai lien : on ne bloque jamais l'accès aux autres
+// étapes, seule l'étape courante est mise en avant.
+interface Props {
+  step: 1 | 2 | 3;
+}
+const { step } = Astro.props;
+const steps = [
+  { n: 1 as const, label: 'Votre projet', href: '/commencer' },
+  { n: 2 as const, label: 'Configuration', href: '/personnaliser' },
+  { n: 3 as const, label: 'Commande', href: '/panier' },
+];
+---
+
+<nav class="parcoursBar" aria-label="Étape du parcours de commande">
+  <div class="wrap parcoursBar-row">
+    {steps.map((s, i) => (
+      <>
+        <a href={s.href} class:list={['parcoursBar-step', { on: s.n === step, done: s.n < step }]}>
+          <span class="parcoursBar-dot">
+            {s.n < step ? (
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+            ) : (
+              s.n
+            )}
+          </span>
+          <span class="parcoursBar-label">{s.label}</span>
+        </a>
+        {i < steps.length - 1 && <span class:list={['parcoursBar-line', { done: s.n < step }]}></span>}
+      </>
+    ))}
+  </div>
+</nav>

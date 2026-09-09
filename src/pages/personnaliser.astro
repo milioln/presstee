@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import ParcoursBar from '../components/ParcoursBar.astro';
 import '../styles/global.css';
 import '../styles/produits.css';
 import '../styles/simulateur.css';
@@ -12,6 +13,7 @@ import { siteConfig } from '../config/site';
 
 <Layout title="Commander — Presstee" description="Composez votre textile vous-même en 3D et commandez-le, ou obtenez une estimation rapide accompagnée par notre équipe.">
 	<Header />
+	<ParcoursBar step={2} />
 
 	<section class="sim-hero">
 		<div class="wrap">
