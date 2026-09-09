@@ -200,12 +200,16 @@ export function seedFromItem(item: {
   tech: TechKey | 'auto';
   delai: 'standard' | 'express';
   designHelp?: DesignHelp;
+  // Emplacement choisi en amont (ex. dans le quiz) sans qu'un calque
+  // réel n'existe encore — sert de repère par défaut jusqu'à ce que le
+  // client dépose un visuel.
+  place?: Emplacement;
 }): void {
   try {
     const colorIndex = Math.max(0, catalogueColoris.findIndex((c) => c.hex === item.color.hex));
     const payload: Persisted = {
       garment: item.garment,
-      place: item.layers[0]?.place ?? 'face',
+      place: item.layers[0]?.place ?? item.place ?? 'face',
       coupe: VARIANT_DEFAUT.coupe,
       manche: VARIANT_DEFAUT.manche,
       col: VARIANT_DEFAUT.col,

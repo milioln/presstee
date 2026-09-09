@@ -5,12 +5,14 @@
   RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 </IfModule>
 
-# Fusion du configurateur et du simulateur en une seule page /personnaliser
-# (les paramètres de requête existants, ex. ?technique=serigraphie, sont
-# conservés grâce à QSA et fusionnés avec ?mode=...).
+# Anciennes URLs : /configurateur reste la page 3D (/personnaliser, seul
+# mode restant sur cette page) ; /simulateur redirige vers le quiz
+# /commencer, seul point d'entrée rapide du site depuis la fusion des deux
+# parcours de vente en un seul (les paramètres de requête existants, ex.
+# ?technique=serigraphie, sont conservés grâce à QSA).
 <IfModule mod_rewrite.c>
   RewriteRule ^configurateur/?$ /personnaliser?mode=3d [R=301,L,QSA]
-  RewriteRule ^simulateur/?$ /personnaliser?mode=estimation [R=301,L,QSA]
+  RewriteRule ^simulateur/?$ /commencer [R=301,L,QSA]
 </IfModule>
 
 # Compression

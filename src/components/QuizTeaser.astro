@@ -1,0 +1,19 @@
+---
+// Bandeau d'appel vers /commencer — remplace l'ancien SimTeaser qui
+// renvoyait vers /simulateur. Le simulateur multi-produits a été retiré
+// (Milio, 2026-09 : "un seul parcours de vente", pas deux en parallèle) ;
+// le quiz est maintenant le seul point d'entrée rapide du site, et gère
+// lui-même le multiproduit (bouton "Ajouter un autre produit" en fin de
+// parcours).
+export interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<div class:list={['simteaser', className]} id="tsim">
+	<span class="simteaser-eyebrow"><span class="regmark" aria-hidden="true"></span>Quiz — chiffrez votre projet</span>
+	<h2>Combien coûtera votre projet ?</h2>
+	<p>Trois questions rapides, une recommandation de technique et de textile chiffrée, avec la possibilité d'ajouter plusieurs produits si votre projet en compte plusieurs.</p>
+	<a class="btn" href="/commencer">Faire le quiz →</a>
+</div>

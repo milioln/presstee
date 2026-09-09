@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import SimTeaser from '../../components/SimTeaser.astro';
+import QuizTeaser from '../../components/QuizTeaser.astro';
 import { TECHNIQUES } from '../../lib/techniques-data';
 import '../../styles/global.css';
 import '../../styles/techniques.css';
@@ -16,7 +16,7 @@ import '../../styles/techniques.css';
 				<div class="crumb"><a href="/">Accueil</a> / Guide</div>
 				<h1>Bien choisir sa technique de marquage.</h1>
 				<p>Sérigraphie, transfert ou broderie : chacune a ses forces, ses limites et sa propre façon de calculer le prix. Comparez-les ci-dessous.</p>
-				<a class="btn btn-jaune" href="/simulateur">Chiffrer mon projet →</a>
+				<a class="btn btn-jaune" href="/commencer">Chiffrer mon projet →</a>
 			</div>
 		</section>
 
@@ -78,7 +78,7 @@ import '../../styles/techniques.css';
 				</table>
 			</div>
 
-			<SimTeaser />
+			<QuizTeaser />
 		</div>
 	</main>
 	<Footer />

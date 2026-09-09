@@ -1,11 +1,10 @@
 ---
-// Quiz guidé — nouveau point d'entrée léger qui tient enfin la promesse
-// déjà écrite en page d'accueil ("Trois questions, une recommandation
-// claire, puis direction le configurateur déjà pré-rempli"), disparue
-// depuis que le simulateur est devenu un outil multi-produits plus
-// poussé (cf. SimTeaser.astro : "remplace l'ancien TechSimulator intégré
-// (3 questions embarquées)"). Réutilise reco() et seedFromItem() —
-// aucune nouvelle logique de recommandation ou de tarification.
+// Quiz guidé — seul parcours de vente rapide du site ("Trois questions,
+// une recommandation claire, puis direction le configurateur déjà
+// pré-rempli"). Réutilise reco() et seedFromItem() — aucune nouvelle
+// logique de recommandation ou de tarification. Le multiproduit et le
+// modèle 3D cliquable pour choisir l'emplacement vivent dans
+// scripts/commencer.ts et scripts/commencer-3d.ts.
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -30,13 +29,28 @@ import '../styles/commencer.css';
 
 		<section class="qz-body">
 			<div class="wrap qz-wrap">
-				<div class="qzCard">
-					<div class="qzProgress" id="qzProgress"></div>
-					<div id="qzScreen"></div>
-					<div class="qzNav" id="qzNav">
-						<button type="button" class="btn btn-outline" id="qzPrev">Précédent</button>
-						<button type="button" class="btn" id="qzNext">Suivant</button>
+				<div class="qzLayout" id="qzLayout">
+					<div class="qzCard">
+						<div class="qzProgress" id="qzProgress"></div>
+						<div id="qzScreen"></div>
+						<div class="qzNav" id="qzNav">
+							<button type="button" class="btn btn-outline" id="qzPrev">Précédent</button>
+							<button type="button" class="btn" id="qzNext">Suivant</button>
+						</div>
 					</div>
+					<aside class="qz3d">
+						<model-viewer
+							id="qzStage"
+							camera-controls
+							touch-action="pan-y"
+							interaction-prompt="none"
+							shadow-intensity="1"
+							camera-orbit="0deg 85deg 105%"
+							min-camera-orbit="auto 55deg auto"
+							max-camera-orbit="auto 115deg auto"
+						></model-viewer>
+						<p class="qz3d-hint">Cliquez directement sur le modèle pour choisir l'emplacement du visuel.</p>
+					</aside>
 				</div>
 			</div>
 		</section>

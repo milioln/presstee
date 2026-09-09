@@ -1,19 +1,25 @@
-// Quiz guidé /commencer — « Trois questions, une recommandation claire,
-// puis direction le configurateur déjà pré-rempli » (promesse déjà
-// écrite en page d'accueil, tenue ici). Réutilise le même moteur de
-// recommandation et le même catalogue que le simulateur
+// Quiz guidé /commencer — seul parcours de vente rapide du site (le
+// simulateur multi-produits qui vivait dans /personnaliser a été retiré :
+// Milio, 2026-09, "il n'y a qu'un seul parcours de vente"). Réutilise le
+// même moteur de recommandation et le même catalogue que le configurateur
 // (personnalisateur/recommendation.ts, personnalisateur/catalogue-match.ts)
 // plutôt que de dupliquer la logique — seule la présentation change (un
-// écran à la fois, plutôt qu'un long formulaire).
-import { reco, TECHS } from './personnalisateur/recommendation';
+// écran à la fois). Le multiproduit (« Ajouter un autre produit ») est
+// géré ici même, en accumulant des instantanés du produit courant.
+import { reco, TECHS, type TechKey } from './personnalisateur/recommendation';
 import { seedFromItem } from './personnalisateur/state';
 import { getProfil, setProfil, type ProfilClient } from '../lib/profil-client';
-import { catalogueColoris, coutBaseSupportUnique, repartitionTaillesParDefaut, type Garment } from '../config/parametres-metier';
+import { catalogueColoris, coutBaseSupportUnique, getZoneImpressionCm, repartitionTaillesParDefaut, type Garment, type Emplacement } from '../config/parametres-metier';
 import { LABELS_COUPE, LABELS_GENRE } from '../lib/produits-types';
 import { grilleTarifaire, prixVente } from '../config/tarification';
 import { COULEURS_OPTIONS, COUPES, GENRES, candidatsRef, qtyStep, palierPour } from './personnalisateur/catalogue-match';
+import { siteConfig } from '../config/site';
+import { initQuiz3d, updateQuiz3d } from './commencer-3d';
+import type { TShirtCatalogue } from '../data/tshirts';
 
 const GARMENT_LABELS: Record<Garment, string> = { tshirt: 'T-shirt', sweat: 'Sweat', chemise: 'Chemise', casquette: 'Casquette' };
+const PLACES: Emplacement[] = ['face', 'coeur', 'dos', 'manche-droite', 'manche-gauche'];
+const PLACE_LABEL: Record<Emplacement, string> = { face: 'Face', coeur: 'Cœur', dos: 'Dos', 'manche-droite': 'Manche droite', 'manche-gauche': 'Manche gauche' };
 
 interface QuizState {
   profil: ProfilClient | null;
@@ -21,21 +27,30 @@ interface QuizState {
   coupe: string | null;
   genre: string | null;
   color: { nom: string; hex: string };
+  place: Emplacement;
   couleurs: number | null;
   qty: number;
   selectedRef: string | null;
 }
 
-const state: QuizState = {
-  profil: null,
-  garment: 'tshirt',
-  coupe: null,
-  genre: null,
-  color: catalogueColoris[0],
-  couleurs: null,
-  qty: 25,
-  selectedRef: null,
-};
+function nouveauProduit(): Omit<QuizState, 'profil'> {
+  return {
+    garment: 'tshirt',
+    coupe: null,
+    genre: null,
+    color: catalogueColoris[0],
+    place: 'face',
+    couleurs: null,
+    qty: 25,
+    selectedRef: null,
+  };
+}
+
+const state: QuizState = { profil: null, ...nouveauProduit() };
+// Produits déjà validés dans cette session de quiz, en plus de celui en
+// cours d'édition dans `state` — permet d'ajouter plusieurs produits sans
+// repartir de zéro ni ouvrir un second outil.
+const produits: QuizState[] = [];
 
 type Screen = 'profil' | 'projet' | 'quantite' | 'resultat';
 let order: Screen[] = ['profil', 'projet', 'quantite', 'resultat'];
@@ -49,8 +64,35 @@ function fmtPrice(n: number): string {
   return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(n);
 }
 
-function pill(action: string, value: string, label: string, on: boolean): string {
-  return `<button type="button" class="pill${on ? ' on' : ''}" data-action="${action}" data-value="${value}">${label}</button>`;
+function pill(action: string, value: string, label: string, on: boolean, extra = ''): string {
+  return `<button type="button" class="pill${on ? ' on' : ''}" data-action="${action}" data-value="${value}" ${extra}>${label}</button>`;
+}
+
+interface ProduitCalcule {
+  techKey: TechKey;
+  why: string;
+  candidats: TShirtCatalogue[];
+  ref: TShirtCatalogue | null;
+  prixUnitaire: number;
+  prixTotal: number;
+}
+
+// Calcul partagé entre l'écran résultat (produit courant) et le
+// récapitulatif des produits déjà ajoutés — une seule logique de
+// recommandation/tarification, jamais deux qui pourraient diverger.
+function calcProduit(p: QuizState): ProduitCalcule {
+  const r = reco(p.couleurs, p.qty);
+  const styles = new Set<string>();
+  if (p.coupe) styles.add(p.coupe);
+  if (p.genre) styles.add(p.genre);
+  const candidatsTous = p.garment === 'tshirt' ? candidatsRef(styles) : [];
+  const candidats = candidatsTous.slice(0, 3);
+  const ref = candidats.find((c) => c.slug === p.selectedRef) ?? candidats[0] ?? null;
+  const palier = palierPour(p.qty);
+  const coutBase = ref ? ref.baseCost : coutBaseSupportUnique;
+  const prixUnitaire = Math.round(prixVente(coutBase, palier.marge) * 100) / 100;
+  const prixTotal = Math.round(prixUnitaire * p.qty * 100) / 100;
+  return { techKey: r.k, why: r.why, candidats, ref, prixUnitaire, prixTotal };
 }
 
 function screenProfil(): string {
@@ -67,7 +109,7 @@ function screenProfil(): string {
 function screenProjet(): string {
   return `<div class="qzStep">
     <h2>Votre projet</h2>
-    <p class="qzHint">Question 1 sur 3</p>
+    <p class="qzHint">Question 1 sur 3 — le modèle 3D à droite reflète vos choix ; cliquez directement dessus pour choisir l'emplacement.</p>
     <div class="qzField">
       <span class="qzLabel">Type de textile</span>
       <div class="pills">${(Object.keys(GARMENT_LABELS) as Garment[]).map((g) => pill('set-garment', g, GARMENT_LABELS[g], state.garment === g)).join('')}</div>
@@ -83,6 +125,10 @@ function screenProjet(): string {
     <div class="qzField">
       <span class="qzLabel">Couleur du textile</span>
       <div class="swatches">${catalogueColoris.map((c) => `<button type="button" class="sw${c.hex === state.color.hex ? ' on' : ''}" data-action="set-color" data-value="${c.hex}" style="background:${c.hex}" aria-label="${c.nom}"></button>`).join('')}</div>
+    </div>
+    <div class="qzField">
+      <span class="qzLabel">Emplacement du visuel</span>
+      <div class="pills">${PLACES.map((p) => pill('set-place', p, `${PLACE_LABEL[p]} · ${getZoneImpressionCm(state.garment, p)} cm max`, state.place === p)).join('')}</div>
     </div>
   </div>`;
 }
@@ -106,57 +152,62 @@ function screenQuantite(): string {
   </div>`;
 }
 
+function produitMiniRow(p: QuizState, index: number): string {
+  const c = calcProduit(p);
+  return `<div class="qzMiniRow">
+    <span class="qzMiniRow-sw" style="background:${p.color.hex}" aria-hidden="true"></span>
+    <span class="qzMiniRow-name">${c.ref ? `${c.ref.brand} ${c.ref.model}` : GARMENT_LABELS[p.garment]} · ${p.qty} pièce${p.qty > 1 ? 's' : ''}</span>
+    <span class="qzMiniRow-prix">${fmtPrice(c.prixTotal)}</span>
+    <button type="button" class="qzMiniRow-remove" data-action="remove-produit" data-value="${index}" aria-label="Retirer ce produit">×</button>
+  </div>`;
+}
+
 function screenResultat(): string {
-  const r = reco(state.couleurs, state.qty);
-  const tech = TECHS[r.k];
-  const styles = new Set<string>();
-  if (state.coupe) styles.add(state.coupe);
-  if (state.genre) styles.add(state.genre);
-  const candidatsTous = state.garment === 'tshirt' ? candidatsRef(styles) : [];
-  // Trois propositions à prix croissant plutôt qu'une seule référence
-  // imposée — la composition (coton/polyester/mélange...) est souvent
-  // déterminante pour le client, elle doit être visible sans poser une
-  // 4e question.
-  const candidats = candidatsTous.slice(0, 3);
-  if (!state.selectedRef || !candidats.some((c) => c.slug === state.selectedRef)) {
-    state.selectedRef = candidats[0]?.slug ?? null;
-  }
-  const ref = candidats.find((c) => c.slug === state.selectedRef) ?? null;
+  const c = calcProduit(state);
+  const tech = TECHS[c.techKey];
   const palier = palierPour(state.qty);
-  const coutBase = ref ? ref.baseCost : coutBaseSupportUnique;
-  const prixUnitaire = Math.round(prixVente(coutBase, palier.marge) * 100) / 100;
-  const prixTotal = Math.round(prixUnitaire * state.qty * 100) / 100;
-  const grille = grilleTarifaire(coutBase);
+  const grille = grilleTarifaire(c.ref ? c.ref.baseCost : coutBaseSupportUnique);
+
+  if (!state.selectedRef || !c.candidats.some((x) => x.slug === state.selectedRef)) {
+    state.selectedRef = c.candidats[0]?.slug ?? null;
+  }
+
+  const totalGeneral = produits.reduce((s, p) => s + calcProduit(p).prixTotal, 0) + c.prixTotal;
 
   return `<div class="qzStep qzStep-resultat">
+    ${produits.length > 0 ? `<div class="qzMiniList">
+      <span class="qzLabel">Déjà ajoutés (${produits.length})</span>
+      ${produits.map((p, i) => produitMiniRow(p, i)).join('')}
+    </div>` : ''}
+
     <span class="qzResultBadge">Votre recommandation</span>
     <h2>${tech.n}</h2>
-    <p class="qzWhy">${r.why}</p>
+    <p class="qzWhy">${c.why}</p>
 
     <div class="qzResultCard">
       <svg class="qzResultShirt" viewBox="0 0 400 460" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M148,54 L118,44 L52,92 L96,156 L122,136 L122,420 Q122,428 130,428 L270,428 Q278,428 278,420 L278,136 L304,156 L348,92 L282,44 L252,54 Q200,100 148,54 Z" fill="${state.color.hex}" stroke="var(--ligne)" stroke-width="6" />
       </svg>
       <div class="qzResultBody">
-        <span class="qzResultRef">${ref ? `${ref.brand} ${ref.model}` : `${GARMENT_LABELS[state.garment]} · ${state.color.nom}`}</span>
-        ${ref ? `<span class="qzResultMatiere">${ref.detail}</span>` : ''}
-        <span class="qzResultPrix">${fmtPrice(prixUnitaire)} <span>/ pièce</span></span>
-        <span class="qzResultTotal">Soit environ ${fmtPrice(prixTotal)} pour ${state.qty} pièce${state.qty > 1 ? 's' : ''}</span>
+        <span class="qzResultRef">${c.ref ? `${c.ref.brand} ${c.ref.model}` : `${GARMENT_LABELS[state.garment]} · ${state.color.nom}`}</span>
+        ${c.ref ? `<span class="qzResultMatiere">${c.ref.detail}</span>` : ''}
+        <span class="qzResultPrix">${fmtPrice(c.prixUnitaire)} <span>/ pièce</span></span>
+        <span class="qzResultTotal">Soit environ ${fmtPrice(c.prixTotal)} pour ${state.qty} pièce${state.qty > 1 ? 's' : ''}</span>
       </div>
     </div>
 
-    ${candidats.length > 1 ? `<div class="qzField">
+    ${c.candidats.length > 1 ? `<div class="qzField">
       <span class="qzLabel">Autres références possibles <span class="qzOptional">— composition, prix</span></span>
       <div class="refList">
-        ${candidats.map((c) => `<button type="button" class="refRow${c.slug === state.selectedRef ? ' on' : ''}" data-action="select-ref" data-value="${c.slug}">
-          <span class="refRow-name"><b>${c.brand}</b> ${c.model}<br /><span class="qzOptional">${c.detail}</span></span>
-          <span class="refRow-meta">${c.grammage}</span>
-          <span class="refRow-price">${fmtPrice(Math.round(prixVente(c.baseCost, palier.marge) * 100) / 100)} <span>/ pièce</span></span>
+        ${c.candidats.map((r) => `<button type="button" class="refRow${r.slug === state.selectedRef ? ' on' : ''}" data-action="select-ref" data-value="${r.slug}">
+          <span class="refRow-name"><b>${r.brand}</b> ${r.model}<br /><span class="qzOptional">${r.detail}</span></span>
+          <span class="refRow-meta">${r.grammage}</span>
+          <span class="refRow-price">${fmtPrice(Math.round(prixVente(r.baseCost, palier.marge) * 100) / 100)} <span>/ pièce</span></span>
         </button>`).join('')}
       </div>
     </div>` : ''}
 
-    ${candidatsTous.length === 0 && state.garment === 'tshirt' ? `<p class="qzHint">Aucune référence ne correspond exactement à ces filtres — estimation générique ci-dessus. <a href="/produits/t-shirts">Voir tout le catalogue →</a></p>` : ''}
+    ${c.candidats.length === 0 && state.garment === 'tshirt' ? `<p class="qzHint">Aucune référence ne correspond exactement à ces filtres — estimation générique ci-dessus. <a href="/produits/t-shirts">Voir tout le catalogue →</a></p>` : ''}
 
     <details class="qzGrille">
       <summary>Voir le prix par palier de quantité</summary>
@@ -165,11 +216,28 @@ function screenResultat(): string {
       </div>
     </details>
 
+    ${produits.length > 0 ? `<div class="qzGrandTotal"><span>Total pour ${produits.length + 1} produits</span><b>${fmtPrice(totalGeneral)}</b></div>` : ''}
+
     <div class="qzResultActions">
+      <button type="button" class="btn btn-outline" id="qzAddProduit">+ Ajouter un autre produit</button>
       <button type="button" class="btn" id="qzGo3d">Configurer ce projet en 3D</button>
-      <a class="btn btn-outline" href="/personnaliser?mode=estimation" id="qzGoEstimation">Voir une estimation plus détaillée</a>
+      <button type="button" class="btn btn-outline" id="qzGoDevis">Demander un devis${produits.length > 0 ? ' pour tout' : ''}</button>
     </div>
   </div>`;
+}
+
+function resumeMail(): string {
+  const tous = [...produits, state];
+  const lignes = tous.map((p, i) => {
+    const c = calcProduit(p);
+    return `Produit ${i + 1} — ${c.ref ? `${c.ref.brand} ${c.ref.model}` : GARMENT_LABELS[p.garment]} (${TECHS[c.techKey].n})
+- Coloris : ${p.color.nom}
+- Emplacement : ${PLACE_LABEL[p.place]}
+- Quantité : ${p.qty} pièce${p.qty > 1 ? 's' : ''}
+- Sous-total estimé : ${fmtPrice(c.prixTotal)}`;
+  });
+  const total = tous.reduce((s, p) => s + calcProduit(p).prixTotal, 0);
+  return `Bonjour,\n\nSuite au quiz sur presstee.fr, je souhaite un devis pour le projet suivant :\n\n${lignes.join('\n\n')}\n\nTotal estimé : ${fmtPrice(total)}.\n\nMerci de me recontacter pour finaliser ce devis.`;
 }
 
 function render(): void {
@@ -189,6 +257,11 @@ function render(): void {
   el<HTMLButtonElement>('qzPrev').disabled = current === 0;
   el<HTMLButtonElement>('qzNext').textContent = screen === 'quantite' ? 'Voir ma recommandation' : 'Suivant';
 
+  // Le modèle 3D n'accompagne que la question "projet" (support, coloris,
+  // emplacement) — pas les autres écrans, qui n'ont rien à y montrer.
+  el('qzLayout').classList.toggle('has3d', screen === 'projet');
+  if (screen === 'projet') updateQuiz3d(state.color.hex, state.place);
+
   if (screen === 'resultat') {
     el('qzGo3d').addEventListener('click', () => {
       seedFromItem({
@@ -199,8 +272,20 @@ function render(): void {
         tech: 'auto',
         delai: 'standard',
         designHelp: { colors: state.couleurs, format: '', notes: '' },
+        place: state.place,
       });
       window.location.href = '/personnaliser?mode=3d';
+    });
+    el('qzAddProduit').addEventListener('click', () => {
+      produits.push({ ...state, color: { ...state.color } });
+      Object.assign(state, nouveauProduit());
+      current = order.indexOf('projet');
+      render();
+      window.scrollTo({ top: el('qzLayout').getBoundingClientRect().top + window.scrollY - 96, behavior: 'smooth' });
+    });
+    el('qzGoDevis').addEventListener('click', () => {
+      const url = `mailto:${siteConfig.email}?subject=${encodeURIComponent('Demande de devis — quiz presstee.fr')}&body=${encodeURIComponent(resumeMail())}`;
+      window.location.href = url;
     });
   }
 }
@@ -218,6 +303,11 @@ export function initCommencer(): void {
     state.profil = knownProfil;
     order = order.filter((s) => s !== 'profil');
   }
+
+  void initQuiz3d((place) => {
+    state.place = place;
+    render();
+  });
 
   el('qzScreen').addEventListener('click', (e) => {
     const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-action]');
@@ -242,6 +332,9 @@ export function initCommencer(): void {
       case 'set-color':
         state.color = catalogueColoris.find((c) => c.hex === value) ?? state.color;
         break;
+      case 'set-place':
+        state.place = value as Emplacement;
+        break;
       case 'set-couleurs':
         state.couleurs = value === '' ? null : +value;
         break;
@@ -252,6 +345,9 @@ export function initCommencer(): void {
       }
       case 'select-ref':
         state.selectedRef = value;
+        break;
+      case 'remove-produit':
+        produits.splice(+value, 1);
         break;
     }
     render();

@@ -5,10 +5,8 @@ import Footer from '../components/Footer.astro';
 import ParcoursBar from '../components/ParcoursBar.astro';
 import '../styles/global.css';
 import '../styles/produits.css';
-import '../styles/simulateur.css';
 import '../styles/bat.css';
 import '../styles/personnalisateur.css';
-import { siteConfig } from '../config/site';
 ---
 
 <Layout title="Commander — Presstee" description="Composez votre textile vous-même en 3D et commandez-le, ou obtenez une estimation rapide accompagnée par notre équipe.">
@@ -23,65 +21,14 @@ import { siteConfig } from '../config/site';
 		</div>
 	</section>
 
-	<div class="wrap">
-		<div class="modeSwitch" id="modeSwitch">
-			<button type="button" class="modeCard" data-mode="estimation">
-				<strong>Estimation rapide</strong>
-				<span>Sans 3D, accompagné par notre équipe — le plus simple pour démarrer.</span>
-			</button>
-			<button type="button" class="modeCard" data-mode="3d">
-				<strong>Je configure moi-même</strong>
-				<span>Modèle 3D complet : déposez votre visuel, ajustez-le, choisissez la technique.</span>
-			</button>
-		</div>
-	</div>
-
 	<main>
-		<section id="modeEstimation">
-			<div class="wrap">
-				<p class="sim-reassurance">Un doute à tout moment ? <a href={`tel:${siteConfig.telephone.replace(/\s+/g, '')}`}>{siteConfig.telephone}</a> · <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a></p>
-				<div class="sim-restore-note" id="simRestoreNote" style="display:none">
-					Simulation précédente reprise sur cet appareil. <button type="button" class="linkBtn" id="simReset">Recommencer à zéro</button>
-				</div>
-				<div class="sim-layout">
-					<div class="sim-main">
-						<div id="produitsList" class="produitsList"></div>
-						<button type="button" class="mini-btn mini-btn-lg" id="addProduit">+ Ajouter un autre produit</button>
-					</div>
-
-					<aside class="sim-side">
-						<div class="side-card">
-							<h4>Votre simulation</h4>
-							<div class="sim-totals">
-								<div class="sim-totals-row"><span id="simCount">1 produit</span></div>
-								<div class="sim-totals-row"><span id="simQty">25 pièces au total</span></div>
-								<div class="sim-totals-total"><span>Ordre de prix total</span><b id="simTotal">0 €</b></div>
-							</div>
-							<p class="sim-side-note">Cette estimation ne remplace pas un devis : le prix final dépend de votre visuel réel et peut être affiné avec nous.</p>
-							<div class="sim-actions">
-								<button type="button" class="btn" id="simCommander">Passer commande</button>
-								<button type="button" class="btn btn-outline" id="simSauvegarder">Sauvegarder et recevoir un devis</button>
-								<button type="button" class="btn btn-outline" id="simAttente">Mettre en attente</button>
-							</div>
-							<p class="sim-side-note" id="simFeedback" style="display:none"></p>
-							<a class="go" id="simPersonnaliser" href="/personnaliser?mode=3d">Personnaliser avec mon propre visuel →</a>
-						</div>
-						<div class="side-card">
-							<h4>Besoin d'aide sur votre visuel ?</h4>
-							<p>Pas encore de fichier ? Choisissez « Conseillez-moi » ou « En cours de création » sur un visuel : ça ne bloque rien, notre équipe vous accompagne ensuite.</p>
-						</div>
-					</aside>
-				</div>
-			</div>
-		</section>
-
-		<section id="mode3d" style="display:none">
+		<section id="mode3d">
 			<div class="pz-page">
 			<div class="wrap">
 				<div class="intro">
 					<h1>Composez votre textile personnalisé.</h1>
 					<p>Choisissez un modèle, déposez votre visuel, placez-le. Nous analysons votre fichier au passage et vous disons quelle technique convient à votre projet et à votre quantité. Pas encore de visuel ? Décrivez-nous votre projet dans l'onglet « Aide design », ça n'empêche pas de continuer votre commande.</p>
-					<a class="linkBtn" href="/personnaliser?mode=estimation" data-go-mode="estimation">Juste un ordre de prix rapide ? →</a>
+					<a class="linkBtn" href="/commencer">Juste un ordre de prix rapide, sans le 3D ? →</a>
 				</div>
 
 				<div class="board" id="configBoard">
@@ -378,59 +325,26 @@ import { siteConfig } from '../config/site';
 	</div>
 
 	<script>
-		import { initPersonnaliserMode } from '../scripts/personnaliser-mode';
-		initPersonnaliserMode();
+		// /personnaliser n'a plus qu'un seul mode (le 3D) — l'estimation
+		// rapide vit désormais dans /commencer (le quiz), seul point d'entrée
+		// du parcours rapide. Le modèle reste chargé à la demande (import
+		// dynamique) plutôt qu'au chargement du bundle de la page.
+		import('@google/model-viewer').then(() => import('./../scripts/personnalisateur/main')).then(({ init }) => init());
 	</script>
 </Layout>
 
 <style>
-	.modeSwitch {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 12px;
-		margin: 0 0 28px;
-	}
-	.modeCard {
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-		text-align: left;
-		padding: 16px 18px;
-		border: 1.5px solid var(--ligne);
-		border-radius: var(--r);
-		background: #fff;
-		cursor: pointer;
-		font: inherit;
-	}
-	.modeCard strong {
-		font-size: 1rem;
-		color: var(--encre);
-	}
-	.modeCard span {
-		font-size: 0.85rem;
-		color: var(--gris);
-	}
-	.modeCard.on {
-		border-color: var(--indigo);
-		box-shadow: 0 0 0 1px var(--indigo);
-	}
-	@media (max-width: 640px) {
-		.modeSwitch {
-			grid-template-columns: 1fr;
-		}
-	}
-	.sim-reassurance {
-		font-size: 0.85rem;
-		color: var(--gris);
-		margin: 0 0 18px;
-	}
-	.sim-reassurance a {
-		color: inherit;
-		text-decoration: underline;
-	}
 	.intro .linkBtn {
 		display: inline-block;
 		margin-top: 10px;
 		font-size: 0.9rem;
+		background: none;
+		border: 0;
+		color: var(--muted);
+		text-decoration: underline;
+		cursor: pointer;
+	}
+	.intro .linkBtn:hover {
+		color: var(--text);
 	}
 </style>

@@ -30,7 +30,7 @@
 .tcard h3{font-size:1.1rem;margin-bottom:8px}
 .tcard p{color:var(--gris);font-size:.92rem;margin:0}
 
-/* ---------- teaser simulateur (renvoie vers /simulateur) ---------- */
+/* ---------- teaser quiz (renvoie vers /commencer) ---------- */
 .tech-hero .btn{margin-top:26px}
 .simteaser{position:relative;overflow:hidden;scroll-margin-top:96px;background-color:var(--indigo);background-image:radial-gradient(circle,rgba(255,255,255,.13) 1.2px,transparent 1.6px);background-size:16px 16px;border-radius:28px;padding:44px 40px;margin:36px 0 60px;color:#fff;box-shadow:0 24px 56px rgba(75,58,120,.32)}
 .simteaser-eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--jaune);margin-bottom:16px}
