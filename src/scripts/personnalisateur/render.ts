@@ -199,10 +199,18 @@ export function paintTechs(): void {
     })
     .join('');
   el('resetTech').style.display = S.tech === 'auto' ? 'none' : 'block';
-  let box = `<strong>${TECHS[r.k].n}</strong> — ${r.why}`;
-  if (S.tech !== 'auto' && S.tech !== r.k) box += `<br><br>Vous avez choisi ${TECHS[S.tech].n}. ${TECHS[S.tech].good}`;
+  // Deux informations différentes, jusqu'ici mélangées dans un seul bloc
+  // de texte : pourquoi on conseille X, et ce qu'implique le fait d'avoir
+  // choisi Y à la place — bien séparées visuellement plutôt qu'un
+  // paragraphe qui enchaîne les deux sans le dire (Milio, 2026-09-10 :
+  // « une séparation entre l'info sur le conseil et l'info de la
+  // personnalisation choisie »).
+  let box = `<div class="recoBlock recoBlock-conseil"><span class="recoBlock-label">Conseillé</span><p><strong>${TECHS[r.k].n}</strong> — ${r.why}</p></div>`;
+  if (S.tech !== 'auto' && S.tech !== r.k) {
+    box += `<div class="recoBlock recoBlock-choix"><span class="recoBlock-label">Votre choix</span><p><strong>${TECHS[S.tech].n}</strong> — ${TECHS[S.tech].good}</p></div>`;
+  }
   if (activeTech() === 'serigraphie' && total != null && total > seuils.couleursMaxSerigraphie) {
-    box += `<br><br>Attention : ${total} couleurs cumulées en sérigraphie, c'est autant d'écrans à préparer. Le calage devient long et le prix grimpe vite.`;
+    box += `<div class="recoBlock recoBlock-attention"><span class="recoBlock-label">Attention</span><p>${total} couleurs cumulées en sérigraphie, c'est autant d'écrans à préparer. Le calage devient long et le prix grimpe vite.</p></div>`;
   }
   el('recoBox').innerHTML = box;
 }
