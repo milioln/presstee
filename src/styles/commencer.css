@@ -26,7 +26,7 @@
 
 .qzChoices-big{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
 .qzBig{display:flex;flex-direction:column;align-items:center;gap:10px;border:1.5px solid var(--ligne);border-radius:18px;padding:28px 16px;background:var(--lavande);font:inherit;font-weight:600;font-size:1rem;color:var(--encre);cursor:pointer;transition:.15s}
-.qzBig span{font-size:2rem}
+.qzBig span{display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:14px;background:#fff;color:var(--indigo)}
 .qzBig:hover{border-color:var(--indigo);transform:translateY(-2px)}
 
 /* ---------- navigation ---------- */
@@ -43,6 +43,7 @@
 .qzResultShirt{width:64px;height:74px;flex-shrink:0;filter:drop-shadow(0 3px 6px rgba(23,19,31,.12))}
 .qzResultBody{display:flex;flex-direction:column;gap:3px}
 .qzResultRef{font-family:'Sora',sans-serif;font-weight:700;font-size:1.02rem}
+.qzResultMatiere{font-size:.8rem;color:var(--gris)}
 .qzResultPrix{font-family:'Sora',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.02em}
 .qzResultPrix span{font-family:'Manrope',sans-serif;font-weight:400;font-size:.78rem;color:var(--gris)}
 .qzResultTotal{font-size:.85rem;color:var(--gris)}

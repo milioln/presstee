@@ -23,6 +23,7 @@ interface QuizState {
   color: { nom: string; hex: string };
   couleurs: number | null;
   qty: number;
+  selectedRef: string | null;
 }
 
 const state: QuizState = {
@@ -33,6 +34,7 @@ const state: QuizState = {
   color: catalogueColoris[0],
   couleurs: null,
   qty: 25,
+  selectedRef: null,
 };
 
 type Screen = 'profil' | 'projet' | 'quantite' | 'resultat';
@@ -56,8 +58,8 @@ function screenProfil(): string {
     <h2>Vous êtes…</h2>
     <p class="qzHint">Pour vous montrer ce qui compte vraiment.</p>
     <div class="qzChoices qzChoices-big">
-      <button type="button" class="qzBig" data-action="set-profil" data-value="particulier"><span>🧍</span>Un particulier</button>
-      <button type="button" class="qzBig" data-action="set-profil" data-value="entreprise"><span>🏢</span>Une structure</button>
+      <button type="button" class="qzBig" data-action="set-profil" data-value="particulier"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"></path></svg></span>Un particulier</button>
+      <button type="button" class="qzBig" data-action="set-profil" data-value="entreprise"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"></rect><path d="M9 21v-4h6v4"></path><path d="M8 7h1M8 11h1M15 7h1M15 11h1"></path></svg></span>Une structure</button>
     </div>
   </div>`;
 }
@@ -110,8 +112,16 @@ function screenResultat(): string {
   const styles = new Set<string>();
   if (state.coupe) styles.add(state.coupe);
   if (state.genre) styles.add(state.genre);
-  const candidats = state.garment === 'tshirt' ? candidatsRef(styles) : [];
-  const ref = candidats[0] ?? null;
+  const candidatsTous = state.garment === 'tshirt' ? candidatsRef(styles) : [];
+  // Trois propositions à prix croissant plutôt qu'une seule référence
+  // imposée — la composition (coton/polyester/mélange...) est souvent
+  // déterminante pour le client, elle doit être visible sans poser une
+  // 4e question.
+  const candidats = candidatsTous.slice(0, 3);
+  if (!state.selectedRef || !candidats.some((c) => c.slug === state.selectedRef)) {
+    state.selectedRef = candidats[0]?.slug ?? null;
+  }
+  const ref = candidats.find((c) => c.slug === state.selectedRef) ?? null;
   const palier = palierPour(state.qty);
   const coutBase = ref ? ref.baseCost : coutBaseSupportUnique;
   const prixUnitaire = Math.round(prixVente(coutBase, palier.marge) * 100) / 100;
@@ -129,10 +139,24 @@ function screenResultat(): string {
       </svg>
       <div class="qzResultBody">
         <span class="qzResultRef">${ref ? `${ref.brand} ${ref.model}` : `${GARMENT_LABELS[state.garment]} · ${state.color.nom}`}</span>
+        ${ref ? `<span class="qzResultMatiere">${ref.detail}</span>` : ''}
         <span class="qzResultPrix">${fmtPrice(prixUnitaire)} <span>/ pièce</span></span>
         <span class="qzResultTotal">Soit environ ${fmtPrice(prixTotal)} pour ${state.qty} pièce${state.qty > 1 ? 's' : ''}</span>
       </div>
     </div>
+
+    ${candidats.length > 1 ? `<div class="qzField">
+      <span class="qzLabel">Autres références possibles <span class="qzOptional">— composition, prix</span></span>
+      <div class="refList">
+        ${candidats.map((c) => `<button type="button" class="refRow${c.slug === state.selectedRef ? ' on' : ''}" data-action="select-ref" data-value="${c.slug}">
+          <span class="refRow-name"><b>${c.brand}</b> ${c.model}<br /><span class="qzOptional">${c.detail}</span></span>
+          <span class="refRow-meta">${c.grammage}</span>
+          <span class="refRow-price">${fmtPrice(Math.round(prixVente(c.baseCost, palier.marge) * 100) / 100)} <span>/ pièce</span></span>
+        </button>`).join('')}
+      </div>
+    </div>` : ''}
+
+    ${candidatsTous.length === 0 && state.garment === 'tshirt' ? `<p class="qzHint">Aucune référence ne correspond exactement à ces filtres — estimation générique ci-dessus. <a href="/produits/t-shirts">Voir tout le catalogue →</a></p>` : ''}
 
     <details class="qzGrille">
       <summary>Voir le prix par palier de quantité</summary>
@@ -226,6 +250,9 @@ export function initCommencer(): void {
         state.qty = Math.max(1, Math.min(2000, state.qty + delta));
         break;
       }
+      case 'select-ref':
+        state.selectedRef = value;
+        break;
     }
     render();
   });
