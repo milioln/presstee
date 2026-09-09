@@ -15,7 +15,10 @@ import '../styles/personnalisateur.css';
 
 	<section class="cmd-hero">
 		<div class="wrap">
-			<div class="crumb"><a href="/">Accueil</a> / Commander</div>
+			<div class="cmd-hero-row">
+				<div class="crumb"><a href="/">Accueil</a> / Commander</div>
+				<a class="cmd-back" href="/commencer">← Précédent</a>
+			</div>
 			<h1>Composez et commandez votre textile.</h1>
 		</div>
 	</section>
@@ -351,10 +354,16 @@ import '../styles/personnalisateur.css';
 		padding: 28px 0 20px;
 		border-bottom: 1px solid var(--ligne);
 	}
+	.cmd-hero-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		margin-bottom: 10px;
+	}
 	.cmd-hero .crumb {
 		font-size: 13px;
 		color: var(--gris);
-		margin-bottom: 10px;
 	}
 	.cmd-hero .crumb a {
 		text-decoration: none;
@@ -362,6 +371,20 @@ import '../styles/personnalisateur.css';
 	}
 	.cmd-hero .crumb a:hover {
 		color: var(--indigo);
+	}
+	/* Retour explicite vers le quiz (Milio, 2026-09-10 : « un bouton
+	   précédent... pour revenir au simulateur ») — le fil du parcours
+	   (ParcoursBar, étape 1) permet déjà d'y retourner, mais un lien
+	   visible ici évite d'avoir à le chercher. */
+	.cmd-back {
+		font-size: 13px;
+		font-weight: 600;
+		color: var(--indigo);
+		text-decoration: none;
+		white-space: nowrap;
+	}
+	.cmd-back:hover {
+		text-decoration: underline;
 	}
 	.cmd-hero h1 {
 		font-size: clamp(1.5rem, 3vw, 1.9rem);
