@@ -124,13 +124,28 @@ function onPointerDown(e: PointerEvent): void {
   const startX = e.clientX;
   const startY = e.clientY;
 
+  // Borne le centre du visuel pour que le visuel entier reste dans la
+  // zone d'impression plutôt que de le laisser filer jusqu'à ce que son
+  // centre touche le bord (le visuel dépassait alors largement de la
+  // zone, voire du vêtement — signalé par Milio comme "un sacré
+  // bordel"). Se base sur la largeur/hauteur non tournées : à forte
+  // rotation, un léger dépassement reste possible, mais ça couvre le cas
+  // courant (glisser près d'un bord).
+  const halfWFrac = layer.w / 2;
+  const aspect = layer.natW > 0 && layer.natH > 0 ? layer.natH / layer.natW : 1;
+  const halfHFrac = (layer.w * (rect.w / rect.h) * aspect) / 2;
+  const minX = Math.min(0.5, halfWFrac);
+  const maxX = Math.max(0.5, 1 - halfWFrac);
+  const minY = Math.min(0.5, halfHFrac);
+  const maxY = Math.max(0.5, 1 - halfHFrac);
+
   const move = (ev: PointerEvent) => {
     const du = duPerPxX * (ev.clientX - startX);
     const dv = dvPerPxY * (ev.clientY - startY);
     const dSx = (du * TEXTURE_SIZE) / rect.w;
     const dSy = (dv * TEXTURE_SIZE) / rect.h;
-    layer.x = Math.max(0, Math.min(1, x0 + dSx));
-    layer.y = Math.max(0, Math.min(1, y0 + dSy));
+    layer.x = Math.max(minX, Math.min(maxX, x0 + dSx));
+    layer.y = Math.max(minY, Math.min(maxY, y0 + dSy));
     render();
   };
   const cleanup = () => {

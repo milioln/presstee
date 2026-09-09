@@ -204,24 +204,33 @@ function bindResetView(): void {
   });
 }
 
-// Plein écran sur #configBoard (les 3 colonnes : composition, modèle 3D,
-// technique/livraison) plutôt que sur #frame seul — un plein écran limité
-// au modèle 3D n'affichait que le visualiseur, sans aucun des contrôles
-// (emplacement, coloris, ajustement du visuel...) : inutilisable pour
-// vraiment travailler le projet. Le plein écran couvre maintenant l'outil
-// complet, header/footer/texte d'intro masqués, plus confortable pour se
-// concentrer sur la composition — notamment sur mobile.
+// Deux plein écrans distincts (demande Milio) : #fullscreenBtn couvre
+// l'outil complet (#configBoard — composition, modèle 3D, technique/
+// livraison), pour vraiment travailler le projet sans rien perdre des
+// contrôles ; #fullscreenModelBtn ne couvre que le visualiseur (#frame),
+// pour simplement examiner le rendu de près. La Fullscreen API n'accepte
+// qu'un seul élément en plein écran à la fois : cliquer l'un pendant que
+// l'autre est actif bascule directement de l'un à l'autre.
 function bindFullscreen(): void {
   const board = el('configBoard');
+  const frame = el('frame');
   const btn = el('fullscreenBtn');
+  const modelBtn = el('fullscreenModelBtn');
   btn.addEventListener('click', () => {
-    if (document.fullscreenElement) document.exitFullscreen();
+    if (document.fullscreenElement === board) document.exitFullscreen();
     else board.requestFullscreen();
   });
+  modelBtn.addEventListener('click', () => {
+    if (document.fullscreenElement === frame) document.exitFullscreen();
+    else frame.requestFullscreen();
+  });
   document.addEventListener('fullscreenchange', () => {
-    const active = document.fullscreenElement === board;
-    board.classList.toggle('is-fullscreen', active);
-    btn.setAttribute('aria-label', active ? 'Quitter le plein écran' : 'Afficher l’outil en plein écran');
+    const boardActive = document.fullscreenElement === board;
+    const frameActive = document.fullscreenElement === frame;
+    board.classList.toggle('is-fullscreen', boardActive);
+    frame.classList.toggle('is-fullscreen', frameActive);
+    btn.setAttribute('aria-label', boardActive ? 'Quitter le plein écran' : 'Afficher l’outil en plein écran');
+    modelBtn.setAttribute('aria-label', frameActive ? 'Quitter le plein écran' : 'Afficher le modèle 3D seul en plein écran');
   });
 }
 
