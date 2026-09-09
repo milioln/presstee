@@ -15,7 +15,7 @@ export async function getStaticPaths() {
 const { commande } = Astro.props;
 ---
 
-<Layout title={`Facture ${commande.numero} — Presstee`} description={`Facture ${commande.numero} — ${commande.objet}`}>
+<Layout title={`Facture ${commande.numero} — Presstee`} description={`Facture ${commande.numero} — ${commande.objet}`} noindex>
 	<DocumentCommercial
 		type="facture"
 		numero={commande.numero}

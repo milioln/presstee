@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /panier
+Disallow: /demande-devis
+Disallow: /bon-a-tirer
+Disallow: /compte/
+Disallow: /devis/
+Disallow: /facture/
+Disallow: /api/
+Disallow: /mentions-legales
+Disallow: /confidentialite
+Disallow: /cgv
+
+Sitemap: https://presstee.fr/sitemap-index.xml

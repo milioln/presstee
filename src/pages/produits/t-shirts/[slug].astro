@@ -19,9 +19,41 @@ const grille = grilleTarifaire(t.baseCost);
 const autres = TSHIRTS.filter((x) => x.brand === t.brand && x.slug !== t.slug).slice(0, 3);
 
 const TEE = 'M148,54 L118,44 L52,92 L96,156 L122,136 L122,420 Q122,428 130,428 L270,428 Q278,428 278,420 L278,136 L304,156 L348,92 L282,44 L252,54 Q200,100 148,54 Z';
+
+const pageUrl = `https://presstee.fr/produits/t-shirts/${t.slug}`;
+// Pas de champ "image" : la fiche n'a qu'une silhouette générique tant
+// qu'aucune vraie photo produit n'existe (cf. visual ci-dessus) — la
+// répéter identique sur 70 pages ferait plus de mal que de bien.
+const productLd = {
+	'@context': 'https://schema.org',
+	'@type': 'Product',
+	name: `${t.brand} ${t.model}`,
+	description: metaDescriptionProduit(t),
+	sku: t.manufRef,
+	brand: { '@type': 'Brand', name: t.brand },
+	offers: {
+		'@type': 'Offer',
+		url: pageUrl,
+		priceCurrency: 'EUR',
+		price: prixAPartirDe(t.baseCost).toFixed(2),
+		availability: 'https://schema.org/InStock',
+	},
+};
+const breadcrumbLd = {
+	'@context': 'https://schema.org',
+	'@type': 'BreadcrumbList',
+	itemListElement: [
+		{ '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://presstee.fr/' },
+		{ '@type': 'ListItem', position: 2, name: 'Produits', item: 'https://presstee.fr/produits' },
+		{ '@type': 'ListItem', position: 3, name: 'T-shirts', item: 'https://presstee.fr/produits/t-shirts' },
+		{ '@type': 'ListItem', position: 4, name: `${t.brand} ${t.model}`, item: pageUrl },
+	],
+};
 ---
 
 <Layout title={`${t.brand} ${t.model} — Presstee`} description={metaDescriptionProduit(t)}>
+	<script type="application/ld+json" set:html={JSON.stringify(productLd)} />
+	<script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
 	<Header />
 	<main>
 		<section class="prod-hero" style="padding-bottom:0;border-bottom:0">
