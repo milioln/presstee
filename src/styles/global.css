@@ -113,10 +113,26 @@ header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop
 h2{font-size:clamp(2.05rem,5.2vw,3.5rem)}
 .lede{margin-top:26px;font-size:1.08rem}
 .lede + .lede{margin-top:10px}
-.pillars{display:grid;gap:14px}
-.pillar{background:#fff;color:var(--encre);padding:26px 28px;border-radius:var(--r)}
-.pillar h3{font-size:1.14rem;margin-bottom:7px;letter-spacing:-0.02em}
-.pillar p{color:var(--gris);font-size:.95rem;margin:0}
+/* Les 4 points ne sont pas des avantages génériques : c'est la chaîne de
+   valeur que Milio maîtrise de bout en bout (choix du textile, marquage,
+   contrôle, livraison), donc l'ordre porte une vraie information — une
+   suite reliée par un fil, pas une pile de cartes interchangeables
+   (Milio, 2026-09-10 : « c'est moi qui maîtrise la chaîne de valeur »,
+   « intègre mieux ces quatre points »). Les repères de calage (.regmark,
+   déjà utilisés ailleurs sur le site) marquent chaque étape plutôt qu'un
+   numéro ou une icône générique — le même clin d'œil sérigraphie que le
+   reste du site, pas un pictogramme importé d'ailleurs. */
+.valueChain{display:flex;flex-direction:column;gap:22px}
+.valueChain-eyebrow{font-family:'Sora',sans-serif;font-size:12.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--jaune)}
+.valueChain-list{list-style:none;display:flex;flex-direction:column}
+.valueChain-item{display:grid;grid-template-columns:26px 1fr;column-gap:20px;position:relative;padding-bottom:30px}
+.valueChain-item:last-child{padding-bottom:0}
+.valueChain-item:not(:last-child)::before{content:'';position:absolute;left:12px;top:30px;bottom:2px;border-left:1.5px dashed rgba(255,255,255,.4)}
+.valueChain-mark.regmark{position:relative;width:24px;height:24px;color:var(--jaune);opacity:.95;flex-shrink:0}
+.valueChain-item:hover .valueChain-mark{animation:regmarkAlign .6s cubic-bezier(.22,1,.36,1)}
+.valueChain-body h3{color:#fff;font-size:1.1rem;margin-bottom:6px;letter-spacing:-0.02em}
+.valueChain-body p{color:rgba(255,255,255,.8);font-size:.93rem;margin:0;max-width:44ch}
+@media(prefers-reduced-motion:reduce){.valueChain-item:hover .valueChain-mark{animation:none}}
 
 /* ---------- écran 3 : processus ---------- */
 .acc{margin-top:52px;display:grid;gap:10px;position:relative}
