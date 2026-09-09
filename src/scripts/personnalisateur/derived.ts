@@ -45,7 +45,16 @@ export function totalColors(): number | null {
   return Math.max(1, sum);
 }
 
+// Quantité totale du projet, tous coloris confondus (Milio, 2026-09-09 :
+// chaque coloris a maintenant sa propre répartition de tailles) — c'est
+// ce total qui détermine le palier tarifaire, pas la seule répartition
+// du coloris actuellement affiché à l'écran.
 export function qtyTotal(): number {
+  return S.colorLots.reduce((sum, lot) => sum + TAILLES.reduce((s, t) => s + lot.sizeDist[t], 0), 0);
+}
+
+// Quantité du seul coloris actuellement affiché/édité (panneau "5").
+export function qtyActiveColor(): number {
   return TAILLES.reduce((sum, t) => sum + S.sizeDist[t], 0);
 }
 

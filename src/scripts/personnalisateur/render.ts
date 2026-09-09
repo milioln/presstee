@@ -7,7 +7,7 @@
 // tissu quand on fait pivoter le modèle, au lieu d'un calque plat
 // superposé à l'écran.
 import { S, activeLayer } from './state';
-import { place, widthCm, heightCm, dpi, qtyTotal, palierActuel, prixUnitaire, prixTotal, currentZoneCm, totalColors } from './derived';
+import { place, widthCm, heightCm, dpi, qtyTotal, qtyActiveColor, palierActuel, prixUnitaire, prixTotal, currentZoneCm, totalColors } from './derived';
 import { lum, lumRGB } from './color-utils';
 import { TECHS, reco } from './recommendation';
 import { saveState } from './state';
@@ -255,7 +255,14 @@ export function paintSizeDist(): void {
       <button class="mini-step" data-sz="${t}" data-d="1" aria-label="Plus de ${t}">+</button>
     </div>`
   ).join('');
-  el('sizeTotal').textContent = `${qtyTotal()} pièce${qtyTotal() > 1 ? 's' : ''}`;
+  // Le total de ce panneau porte sur le seul coloris affiché — le total
+  // du projet, tous coloris confondus, reste dans le récap (paintRecap).
+  const activeQty = qtyActiveColor();
+  el('sizeTotal').textContent = `${activeQty} pièce${activeQty > 1 ? 's' : ''}`;
+  const sizeActiveColorEl = document.getElementById('sizeActiveColor');
+  if (sizeActiveColorEl) {
+    sizeActiveColorEl.innerHTML = S.colorLots.length > 1 ? `Pour <b>${S.color.nom}</b> — cliquez un autre coloris dans le panneau 2 pour éditer le sien.` : '';
+  }
 }
 
 export function paintDiag(): void {

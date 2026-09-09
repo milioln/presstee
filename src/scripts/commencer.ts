@@ -550,9 +550,12 @@ function render(): void {
       const c = calcProduit(state);
       seedFromItem({
         garment: state.garment,
-        color: primaryColor(state),
+        // Chaque coloris choisi dans le quiz garde sa propre quantité,
+        // répartie en tailles indépendamment des autres (Milio,
+        // 2026-09-09 : « régler précisément la répartition des tailles
+        // selon le coloris »).
+        colorLots: state.colorLots.map((lot) => ({ color: lot.color, sizeDist: sizeDistForQty(lot.qty) })),
         layers,
-        sizeDist: sizeDistForQty(c.qty),
         tech: 'auto',
         delai: 'standard',
         designHelp: { colors: state.couleurs, format: '', notes: '' },

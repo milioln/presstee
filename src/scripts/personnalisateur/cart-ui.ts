@@ -1,8 +1,9 @@
 // Panneau "Mes projets enregistrés" (le panier a sa propre page,
 // /panier, pour une vue plus confortable) — et câblage des 3 boutons de
 // fin de parcours (panier, devis, enregistrer).
-import { getCart, getSaved, removeSaved, loadSaved, addToCart, saveProject, briefForCurrent, visuelsForCurrent, bindOnLoaded, type SavedItem } from './cart';
+import { getCart, getSaved, removeSaved, loadSaved, addToCart, saveProject, briefForCurrent, visuelsForCurrent, savedItemQty, bindOnLoaded, type SavedItem } from './cart';
 import { setDemandeBrief } from '../../lib/demande-brief';
+import { showEggToast } from '../../lib/easter-egg';
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
   return document.getElementById(id) as T;
@@ -17,17 +18,19 @@ function renderList(): void {
   const wrap = el('listItems');
   el('listEmpty').style.display = items.length ? 'none' : 'block';
   wrap.innerHTML = items
-    .map(
-      (it) => `<div class="listRow" data-id="${it.id}">
-        <span class="listSwatch" style="background:${it.color.hex}"></span>
+    .map((it) => {
+      const qty = savedItemQty(it);
+      const colorsLabel = it.colorLots.length > 1 ? `${it.colorLots.length} coloris` : it.colorLots[0].color.nom;
+      return `<div class="listRow" data-id="${it.id}">
+        <span class="listSwatch" style="background:${it.colorLots[0].color.hex}"></span>
         <div class="listInfo">
           <strong>${it.techNom}</strong>
-          <span>${it.color.nom} · ${it.qty} pièce${it.qty > 1 ? 's' : ''} · ${fmtDate(it.savedAt)}</span>
+          <span>${colorsLabel} · ${qty} pièce${qty > 1 ? 's' : ''} · ${fmtDate(it.savedAt)}</span>
         </div>
         <button type="button" class="mini-btn" data-load="${it.id}">Charger</button>
         <button type="button" class="listRm" data-rm="${it.id}" aria-label="Retirer">×</button>
-      </div>`
-    )
+      </div>`;
+    })
     .join('');
 }
 
@@ -85,6 +88,10 @@ export function bindCartUI(): void {
     const batLink = el('batLink');
     batLink.querySelector('a')!.setAttribute('href', `/bon-a-tirer?id=${item.id}`);
     batLink.style.display = 'block';
+    // Clin d'œil : le client n'a jamais dévié de la technique conseillée
+    // (Milio, 2026-09-09, round 2 du menu d'easter eggs — validé, reformulé
+    // à la voix de l'atelier plutôt qu'adressé au client).
+    if (item.tech === 'auto') showEggToast('J’aurais fait pareil.');
   });
   el('saveProject').addEventListener('click', () => {
     saveProject();

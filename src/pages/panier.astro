@@ -46,7 +46,7 @@ import '../styles/panier.css';
 	<Footer />
 
 	<script>
-		import { getCart, removeFromCart, clearCart, briefForCart, visuelsForCart, type SavedItem } from '../scripts/personnalisateur/cart';
+		import { getCart, removeFromCart, clearCart, briefForCart, visuelsForCart, savedItemQty, type SavedItem } from '../scripts/personnalisateur/cart';
 		import { setDemandeBrief } from '../lib/demande-brief';
 		import { seedFromItem } from '../scripts/personnalisateur/state';
 		import { GARMENTS } from '../scripts/personnalisateur/garments';
@@ -107,7 +107,23 @@ import '../styles/panier.css';
 		// différent), donc juste une note amicale, jamais un blocage (Milio,
 		// 2026-09-09, menu d'easter eggs validé).
 		function itemSignature(it: SavedItem): string {
-			return [it.garment, it.color.hex, it.qty, it.techNom, JSON.stringify(it.sizeDist), it.layers.map((l) => l.place).sort().join(',')].join('|');
+			const lots = it.colorLots.map((l) => `${l.color.hex}:${JSON.stringify(l.sizeDist)}`).sort().join(',');
+			return [it.garment, lots, it.techNom, it.layers.map((l) => l.place).sort().join(',')].join('|');
+		}
+
+		// Un ou plusieurs coloris par article, chacun avec sa propre
+		// répartition de tailles (Milio, 2026-09-09).
+		function colorLotsLine(it: SavedItem): string {
+			if (it.colorLots.length === 1) {
+				const lot = it.colorLots[0];
+				return `${lot.color.nom} · ${sizesLabel(lot.sizeDist)} (${savedItemQty(it)} pièce${savedItemQty(it) > 1 ? 's' : ''})`;
+			}
+			return it.colorLots
+				.map((lot) => {
+					const qty = Object.values(lot.sizeDist).reduce((s, n) => s + n, 0);
+					return `${lot.color.nom} : ${sizesLabel(lot.sizeDist)} (${qty})`;
+				})
+				.join(' · ');
 		}
 
 		function itemCard(it: SavedItem, isDuplicate: boolean): string {
@@ -115,10 +131,10 @@ import '../styles/panier.css';
 			const marks = it.layers.length ? it.layers.map((l) => markLine(it, l)).join('') : designHelpLine(it);
 			return `<div class="panierItem" data-id="${it.id}">
 				<div class="panierItem-head">
-					<div class="panierItem-thumb" style="background:${it.color.hex}"></div>
+					<div class="panierItem-thumb" style="background:${it.colorLots[0].color.hex}"></div>
 					<div class="panierItem-headInfo">
 						<h3>${garmentName}</h3>
-						<p class="panierItem-meta">${it.color.nom} · ${sizesLabel(it.sizeDist)} (${it.qty} pièce${it.qty > 1 ? 's' : ''})</p>
+						<p class="panierItem-meta">${colorLotsLine(it)}</p>
 						<p class="panierItem-meta muted">${delaiLabel(it.delai)} · ajouté le ${fmtDate(it.savedAt)}</p>
 					</div>
 					<div class="panierItem-price">${fmtPrice(it.prixTotal)}</div>
@@ -154,7 +170,7 @@ import '../styles/panier.css';
 			});
 			itemsWrap.innerHTML = items.map((it) => itemCard(it, (signatureCounts.get(itemSignature(it)) ?? 0) > 1)).join('');
 
-			const totalQty = items.reduce((s, it) => s + it.qty, 0);
+			const totalQty = items.reduce((s, it) => s + savedItemQty(it), 0);
 			const totalPrice = items.reduce((s, it) => s + it.prixTotal, 0);
 			el('sumCount').textContent = `${items.length} projet${items.length > 1 ? 's' : ''}`;
 			el('sumQty').textContent = `${totalQty} pièce${totalQty > 1 ? 's' : ''} au total`;

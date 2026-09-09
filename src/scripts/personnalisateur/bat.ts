@@ -11,7 +11,7 @@
 // du gabarit de référence sont donc remplacés par un appel à l'action
 // vers l'envoi du devis, plutôt que reproduits tels quels : les faire
 // figurer ici donnerait l'illusion à tort d'un engagement de production.
-import type { SavedItem } from './cart';
+import { savedItemQty, type SavedItem } from './cart';
 import type { Layer } from './state';
 import { GARMENTS } from './garments';
 import { getZoneImpressionCm, PLACE_LABEL, type Emplacement } from '../../config/parametres-metier';
@@ -87,8 +87,13 @@ const PHOTO_MOCKUPS: Record<string, PhotoMockup> = {
   },
 };
 
+// Le mockup visuel reste celui du premier coloris commandé : la position
+// et la taille du visuel ne changent pas d'un coloris à l'autre (seul le
+// tissu change de teinte), donc un seul rendu représentatif suffit — le
+// détail de chaque coloris et sa propre répartition de tailles restent
+// listés dans le bloc d'infos ci-dessous (Milio, 2026-09-09).
 function photoMockupFor(item: SavedItem, place: Emplacement): { mockup: PhotoMockup; zone: Zone } | null {
-  const mockup = PHOTO_MOCKUPS[`${item.garment}:${item.color.hex}`];
+  const mockup = PHOTO_MOCKUPS[`${item.garment}:${item.colorLots[0].color.hex}`];
   const zone = mockup?.places[place];
   return mockup && zone ? { mockup, zone } : null;
 }
@@ -101,11 +106,15 @@ function fmtPrice(n: number): string {
   return `${n.toFixed(2).replace('.', ',')} €`;
 }
 
-function sizesLabel(sizeDist: SavedItem['sizeDist']): string {
+function sizesLabel(sizeDist: Record<string, number>): string {
   const parts = Object.entries(sizeDist)
     .filter(([, n]) => (n as number) > 0)
     .map(([t, n]) => `${t}·${n}`);
   return parts.length ? parts.join(' ') : 'non renseignées';
+}
+
+function lotQty(sizeDist: Record<string, number>): number {
+  return Object.values(sizeDist).reduce((s, n) => s + n, 0);
 }
 
 function layerVisu(item: SavedItem, layer: Layer): string {
@@ -130,7 +139,7 @@ function layerVisu(item: SavedItem, layer: Layer): string {
 
   const zone = PLACE_ZONE[layer.place];
   const pos = positionInZone(zone, layer);
-  const bg = item.color.hex;
+  const bg = item.colorLots[0].color.hex;
   const border = estClair(bg) ? 'var(--ligne)' : bg;
   return `<div class="bat-visu" style="background:${bg};border-color:${border}">
     <div class="bat-visu-collar"></div>
@@ -150,6 +159,14 @@ export function pieceCard(item: SavedItem, index: number): string {
         <div class="bat-visu-zone vide" style="width:60%;height:70%;margin:auto">Visuel à fournir — accompagnement design demandé</div>
       </div>`;
   const fichiers = item.layers.length ? item.layers.map((l) => l.fileName).join(', ') : '—';
+  // Chaque coloris garde sa propre répartition de tailles (Milio,
+  // 2026-09-09) — le mockup ci-dessus reste celui du premier coloris
+  // (cf. photoMockupFor), mais le détail par coloris figure ici, celui
+  // qui compte vraiment pour la production.
+  const colorsLabel = item.colorLots.length > 1 ? item.colorLots.map((l) => l.color.nom).join(', ') : item.colorLots[0].color.nom;
+  const sizesValue = item.colorLots.length > 1
+    ? item.colorLots.map((l) => `${l.color.nom} : ${sizesLabel(l.sizeDist)} (${lotQty(l.sizeDist)})`).join(' · ')
+    : `${sizesLabel(item.colorLots[0].sizeDist)} (${lotQty(item.colorLots[0].sizeDist)} pièce${lotQty(item.colorLots[0].sizeDist) > 1 ? 's' : ''})`;
   return `<div class="bat-piece">
     <div class="bat-piece-head">
       <span class="titre">Pièce ${index + 1} — ${garmentName}</span>
@@ -158,9 +175,9 @@ export function pieceCard(item: SavedItem, index: number): string {
     ${visuHtml}
     <div class="bat-info">
       <span class="label">Support</span><span>${garmentName}</span>
-      <span class="label">Coloris</span><span>${item.color.nom}</span>
+      <span class="label">Coloris</span><span>${colorsLabel}</span>
       <span class="label">Technique</span><span>${item.techNom}</span>
-      <span class="label">Tailles</span><span>${sizesLabel(item.sizeDist)} (${item.qty} pièce${item.qty > 1 ? 's' : ''})</span>
+      <span class="label">Tailles</span><span>${sizesValue}</span>
       <span class="label">Fichier</span><span>${fichiers}</span>
     </div>
   </div>`;
@@ -172,7 +189,7 @@ export interface BATOptions {
 }
 
 export function buildBATHtml(items: SavedItem[], opts: BATOptions): string {
-  const totalQty = items.reduce((s, it) => s + it.qty, 0);
+  const totalQty = items.reduce((s, it) => s + savedItemQty(it), 0);
   const totalPrice = items.reduce((s, it) => s + it.prixTotal, 0);
   const dateLabel = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date());
 

@@ -10,27 +10,37 @@
 // moment de l'ajout, pour que le panier n'affiche pas un total qui
 // change silencieusement si les tarifs évoluent ensuite.
 import { S, type Coloris, type Layer, type DesignHelp } from './state';
-import { qtyTotal, prixUnitaire, prixTotal } from './derived';
+import { prixUnitaire, prixTotal } from './derived';
 import { activeTech } from './render';
 import { TECHS, type TechKey } from './recommendation';
 import { coutBaseSupportUnique, type Garment, type TailleCode } from '../../config/parametres-metier';
 import { GARMENTS } from './garments';
 
+export interface SavedColorLot {
+  color: Coloris;
+  sizeDist: Record<TailleCode, number>;
+}
+
 export interface SavedItem {
   id: string;
   savedAt: number;
   garment: Garment;
-  color: Coloris;
+  // Un ou plusieurs coloris, chacun avec sa propre répartition de
+  // tailles (Milio, 2026-09-09) — remplace les anciens color/sizeDist/qty
+  // singuliers, qui ne pouvaient représenter qu'un seul coloris par article.
+  colorLots: SavedColorLot[];
   layers: Layer[];
-  sizeDist: Record<TailleCode, number>;
   tech: TechKey | 'auto';
   delai: 'standard' | 'express';
   techNom: string;
-  qty: number;
   prixUnitaire: number;
   prixTotal: number;
   designHelp: DesignHelp;
   coutBase: number;
+}
+
+export function savedItemQty(item: SavedItem): number {
+  return item.colorLots.reduce((sum, lot) => sum + Object.values(lot.sizeDist).reduce((s, n) => s + n, 0), 0);
 }
 
 const CART_KEY = 'presstee:personnalisateur:panier';
@@ -69,13 +79,11 @@ export function snapshotCurrent(): SavedItem {
     id: `s${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`,
     savedAt: Date.now(),
     garment: S.garment,
-    color: S.color,
+    colorLots: S.colorLots.map((lot) => ({ color: lot.color, sizeDist: { ...lot.sizeDist } })),
     layers: JSON.parse(JSON.stringify(S.layers)),
-    sizeDist: { ...S.sizeDist },
     tech: S.tech,
     delai: S.delai,
     techNom: TECHS[activeTech()].n,
-    qty: qtyTotal(),
     prixUnitaire: prixUnitaire(),
     prixTotal: prixTotal(),
     designHelp: { ...S.designHelp },
@@ -126,11 +134,12 @@ export function loadSaved(id: string): void {
   const item = getSaved().find((i) => i.id === id);
   if (!item) return;
   S.garment = item.garment;
-  S.color = item.color;
+  S.colorLots = item.colorLots.map((lot) => ({ color: lot.color, sizeDist: { ...lot.sizeDist } }));
+  S.color = S.colorLots[0].color;
+  S.sizeDist = S.colorLots[0].sizeDist;
   S.layers = JSON.parse(JSON.stringify(item.layers));
   S.activeLayerId = S.layers[0]?.id ?? null;
   S.place = S.layers[0]?.place ?? 'face';
-  S.sizeDist = { ...item.sizeDist };
   S.tech = item.tech;
   S.delai = item.delai;
   S.designHelp = { ...item.designHelp };
@@ -142,19 +151,25 @@ export function loadSaved(id: string): void {
 }
 
 function summarizeItem(item: SavedItem, index?: number): string {
-  const sizes = Object.entries(item.sizeDist)
-    .filter(([, n]) => (n as number) > 0)
-    .map(([taille, n]) => `${taille}: ${n}`)
-    .join(', ');
+  const totalQty = savedItemQty(item);
+  const colorLines = item.colorLots.map((lot) => {
+    const sizes = Object.entries(lot.sizeDist)
+      .filter(([, n]) => (n as number) > 0)
+      .map(([taille, n]) => `${taille}: ${n}`)
+      .join(', ');
+    const qty = Object.values(lot.sizeDist).reduce((s, n) => s + n, 0);
+    return `  · ${lot.color.nom} : ${sizes || 'non renseignées'} (${qty} pièce${qty > 1 ? 's' : ''})`;
+  });
   const dh = item.designHelp;
   const wantsDesignHelp = item.layers.length === 0 && (dh.colors != null || dh.format || dh.notes);
   const besoinQualite = item.layers.some((l) => l.qualiteAssistance);
   const lines = [
     index != null ? `Projet ${index + 1}` : null,
     `- Support : ${GARMENTS[item.garment].name}`,
-    `- Coloris : ${item.color.nom}`,
+    `- Coloris et tailles :`,
+    ...colorLines,
     `- Technique : ${item.techNom}`,
-    `- Tailles : ${sizes || 'non renseignées'} (${item.qty} pièce${item.qty > 1 ? 's' : ''})`,
+    `- Quantité totale : ${totalQty} pièce${totalQty > 1 ? 's' : ''}`,
     `- Délai : ${item.delai === 'express' ? 'Express (5 jours ouvrés)' : 'Standard (10 jours ouvrés)'}`,
     `- Estimation : ${item.prixUnitaire.toFixed(2).replace('.', ',')} € / pièce, soit ${item.prixTotal.toFixed(2).replace('.', ',')} € au total`,
     item.layers.length === 0 ? "- Visuel : pas encore de fichier — le client souhaite un accompagnement design" : null,

@@ -4,7 +4,8 @@
 // ("T-shirt col rond unisexe, 180 g/m²") : le choix du support et des
 // caractéristiques (col/manches/coupe) reviendra quand chaque référence
 // du catalogue aura son propre personnalisateur.
-import { S, activeLayer, loadState, saveState } from './state';
+import { S, activeLayer, loadState, saveState, addColorLot, removeColorLot, switchColorLot } from './state';
+import { showEggToast } from '../../lib/easter-egg';
 import { catalogueColoris, TAILLES } from '../../config/parametres-metier';
 import { render, paintTechs, paintRecap, paintSizeDist, paintWidth, paintRotate, syncCamera, removeColorSwatch } from './render';
 import { syncPlace, bindPlacement } from './placement';
@@ -39,19 +40,71 @@ function paintDarkNote(): void {
 // palette sans reposer un deuxième écouteur par-dessus le premier.
 function paintColors(): void {
   el('colors').innerHTML = catalogueColoris
-    .map((c, i) => `<button class="sw${c.hex === S.color.hex ? ' on' : ''}" data-c="${i}" style="background:${c.hex}" aria-label="${c.nom}"></button>`)
+    .map((c) => {
+      const inLots = S.colorLots.some((l) => l.color.hex === c.hex);
+      const editing = c.hex === S.color.hex;
+      return `<button class="sw${inLots ? ' on' : ''}${editing ? ' editing' : ''}" data-c="${c.hex}" style="background:${c.hex}" aria-label="${c.nom}" aria-pressed="${inLots}"></button>`;
+    })
     .join('');
   paintColorName();
   paintDarkNote();
+  paintColorLots();
+}
+
+// Un projet peut commander plusieurs coloris à la fois, chacun avec sa
+// propre répartition de tailles (Milio, 2026-09-09) — cette liste sert à
+// voir tous les coloris déjà retenus et à basculer entre eux pour éditer
+// la répartition de chacun (panneau "5"). N'apparaît qu'à partir de 2
+// coloris : avec un seul, ce serait une ligne pour rien.
+function paintColorLots(): void {
+  const list = el('colorLotsList');
+  if (S.colorLots.length <= 1) {
+    list.innerHTML = '';
+    return;
+  }
+  list.innerHTML = S.colorLots
+    .map((lot) => {
+      const qty = TAILLES.reduce((s, t) => s + lot.sizeDist[t], 0);
+      const active = lot.color.hex === S.color.hex;
+      return `<div class="colorLotRow${active ? ' on' : ''}" data-lot="${lot.color.hex}">
+        <span class="colorLotRow-sw" style="background:${lot.color.hex}"></span>
+        <span class="colorLotRow-name">${lot.color.nom}</span>
+        <span class="colorLotRow-qty">${qty} pièce${qty > 1 ? 's' : ''}</span>
+        <button type="button" class="colorLotRow-rm" data-rm-lot="${lot.color.hex}" aria-label="Retirer ${lot.color.nom}">×</button>
+      </div>`;
+    })
+    .join('');
 }
 
 function bindColors(): void {
   el('colors').addEventListener('click', (e) => {
     const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-c]');
     if (!b) return;
-    S.color = catalogueColoris[+b.dataset.c!];
+    const color = catalogueColoris.find((c) => c.hex === b.dataset.c);
+    if (!color) return;
+    // Ajoute ce coloris à la commande s'il n'y est pas déjà, ou bascule
+    // dessus (pour éditer sa répartition) s'il y est déjà.
+    addColorLot(color);
     paintColors();
+    paintSizeDist();
     render();
+  });
+  el('colorLotsList').addEventListener('click', (e) => {
+    const rm = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-rm-lot]');
+    if (rm) {
+      removeColorLot(rm.dataset.rmLot!);
+      paintColors();
+      paintSizeDist();
+      render();
+      return;
+    }
+    const row = (e.target as HTMLElement).closest<HTMLElement>('[data-lot]');
+    if (row) {
+      switchColorLot(row.dataset.lot!);
+      paintColors();
+      paintSizeDist();
+      render();
+    }
   });
 }
 
@@ -140,6 +193,9 @@ function bindPosition(): void {
     layer.x = 0.5;
     layer.y = 0.5;
     render();
+    // Clin d'œil : prolonge le thème du calage déjà filé ailleurs sur le
+    // site (Milio, 2026-09-09, round 2 du menu d'easter eggs — validé).
+    showEggToast('Parfaitement calé.');
   });
 }
 

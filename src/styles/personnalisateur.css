@@ -55,7 +55,16 @@
   .board:fullscreen .viewer{min-height:0;overflow:hidden}
 }
 
-.layout3{display:grid;grid-template-columns:296px 1fr 344px}
+/* Colonnes latérales à largeur fixe (296px/344px) : très bien sur grand
+   écran, mais sur un ordinateur portable courant (~1100-1300px de large)
+   elles ne laissaient plus que ~400px à la colonne centrale — le modèle
+   3D, pourtant le plus important, se retrouvait plus étroit que chacun
+   des deux panneaux qui l'encadrent (Milio, 2026-09-09 : « ça ne prend
+   pas assez tout l'espace », capture à l'appui). clamp() les laisse
+   respirer sur grand écran tout en se resserrant sur un écran moyen,
+   sans jamais aller sous une largeur où leur propre contenu (boutons,
+   pastilles) ne tiendrait plus. */
+.layout3{display:grid;grid-template-columns:clamp(220px,20vw,296px) 1fr clamp(260px,24vw,344px)}
 .panel{display:flex;flex-direction:column;border-right:2px solid var(--divider)}
 .panel:last-child{border-right:0}
 
@@ -80,7 +89,24 @@
 .swatches{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:14px}
 .sw{width:100%;aspect-ratio:1;border-radius:50%;border:1px solid var(--divider);cursor:pointer;padding:0;transition:.15s}
 .sw:hover{transform:scale(1.08)}
+/* .on : ce coloris fait partie de la commande (plusieurs à la fois
+   possibles). .editing : c'est celui affiché sur le modèle 3D et dont
+   le panneau "5" édite la répartition de tailles — un double anneau
+   pour le distinguer d'un simple coloris sélectionné (Milio,
+   2026-09-09 : « régler précisément la répartition des tailles selon
+   le coloris »). */
 .sw.on{outline:2px solid var(--accent);outline-offset:2px}
+.sw.editing{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--accent)}
+
+.colorLotsList{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.colorLotRow{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:10px;border:1.5px solid var(--divider);cursor:pointer;background:var(--bg);transition:.15s}
+.colorLotRow:hover{border-color:var(--accent)}
+.colorLotRow.on{border-color:var(--accent);background:var(--accent-100)}
+.colorLotRow-sw{width:16px;height:16px;border-radius:50%;border:1px solid var(--divider);flex-shrink:0}
+.colorLotRow-name{font-size:12.5px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.colorLotRow-qty{font-size:11.5px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.colorLotRow-rm{background:none;border:0;color:var(--muted);font-size:15px;line-height:1;cursor:pointer;padding:0 2px;flex-shrink:0}
+.colorLotRow-rm:hover{color:var(--warn)}
 
 .seg3{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .seg2{display:flex;gap:8px;margin-top:14px}

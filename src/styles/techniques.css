@@ -61,6 +61,19 @@
 .steps-list strong{display:block;font-family:'Sora',sans-serif;font-size:.98rem;margin-bottom:4px}
 .steps-list span{font-size:.92rem;color:var(--gris)}
 .steps-list .step-photo{width:100%;height:auto;max-height:360px;object-fit:cover;border-radius:12px;margin-top:12px;display:block}
+/* Clin d'œil : la photo d'une étape se "révèle" au survol, comme un
+   tirage qui se développe (Milio, 2026-09-09, round 2 du menu d'easter
+   eggs — validé). Repos = photo normale (jamais invisible par défaut) ;
+   au survol, un aller-retour bref vers un état "pas encore développé"
+   avant de revenir net. */
+@keyframes stepDevelop{
+  0%{filter:sepia(.8) contrast(.75) brightness(1.35) blur(3px);opacity:.75}
+  100%{filter:none;opacity:1}
+}
+.steps-list .step-photo.developing{animation:stepDevelop 1.1s ease-out}
+@media(prefers-reduced-motion:reduce){
+  .steps-list .step-photo.developing{animation:none}
+}
 
 .proscons{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .proscons .col{border-radius:16px;padding:20px 22px}

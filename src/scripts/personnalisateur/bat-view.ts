@@ -24,10 +24,10 @@ function signatureOf(item: SavedItem): string {
   const layers = item.layers
     .map((l) => [l.place, l.fileName, l.vector, l.natW, l.natH, l.x, l.y, l.w, l.rot, l.colors].join(':'))
     .join('|');
-  const sizes = Object.entries(item.sizeDist)
-    .map(([t, n]) => `${t}${n}`)
-    .join('');
-  return [item.garment, item.color.hex, layers, sizes, item.tech, item.delai].join('§');
+  const colorLots = item.colorLots
+    .map((lot) => `${lot.color.hex}:${Object.entries(lot.sizeDist).map(([t, n]) => `${t}${n}`).join('')}`)
+    .join('|');
+  return [item.garment, colorLots, layers, item.tech, item.delai].join('§');
 }
 
 function fmtDate(ts: number): string {

@@ -122,7 +122,9 @@ import Logo from './Logo.astro';
 
 		if (e.key.length === 1) {
 			typedBuffer = (typedBuffer + e.key).slice(-20).toLowerCase();
-			if (typedBuffer.endsWith('presstee')) {
+			// Vocabulaire du métier, en plus du nom du site (Milio,
+			// 2026-09-09, round 2 du menu d'easter eggs — validé).
+			if (['presstee', 'calage', 'raclette'].some((w) => typedBuffer.endsWith(w))) {
 				typedBuffer = '';
 				triggerCalageEgg();
 			}
