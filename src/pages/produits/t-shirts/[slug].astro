@@ -78,7 +78,7 @@ const TEE = 'M148,54 L118,44 L52,92 L96,156 L122,136 L122,420 Q122,428 130,428 L
 					</div>
 
 					<div class="ctarow">
-						<Button href="/configurateur">Personnaliser ce modèle</Button>
+						<Button href="/personnaliser?mode=3d">Personnaliser ce modèle</Button>
 						<Button href="/contact" variant="light">Demander un devis</Button>
 					</div>
 				</div>
@@ -93,7 +93,7 @@ const TEE = 'M148,54 L118,44 L52,92 L96,156 L122,136 L122,420 Q122,428 130,428 L
 								<div class="brand">{a.brand}</div>
 								<h3>{a.model}</h3>
 								<div class="tags"><span class="tag">{a.grammage}</span></div>
-								<div class="price"><b>{prixAPartirDe(a.baseCost).toFixed(2).replace('.', ',')} €</b> <span>/ pièce à partir de 250</span></div>
+								<div class="price"><b>{prixAPartirDe(a.baseCost).toFixed(2).replace('.', ',')} €</b> <span>/ pièce dès 1 pièce</span></div>
 							</a>
 						))}
 					</div>

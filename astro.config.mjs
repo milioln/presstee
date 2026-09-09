@@ -4,6 +4,6 @@ export default defineConfig({
   site: 'https://presstee.fr',
   compressHTML: true,
   redirects: {
-    '/personnalisateur': '/configurateur',
+    '/personnalisateur': '/personnaliser',
   },
 });

@@ -14,7 +14,7 @@
 // éditeur ne fait qu'alimenter ce pipeline en amont, il ne le duplique
 // pas.
 import type { Emplacement } from '../../config/parametres-metier';
-import { getZoneImpressionCm, seuils } from '../../config/parametres-metier';
+import { getZoneImpressionCm, repartitionTaillesParDefaut, seuils } from '../../config/parametres-metier';
 
 const CANVAS_SIZE = 900;
 
@@ -660,7 +660,7 @@ export function initEditor(): void {
 			colorIndex,
 			layers: [layer],
 			activeLayerId: layer.id,
-			sizeDist: { XS: 0, S: 6, M: 10, L: 8, XL: 4, XXL: 2 },
+			sizeDist: { ...repartitionTaillesParDefaut },
 			tech: techSelect.value === 'serigraphie' || techSelect.value === 'broderie' ? techSelect.value : 'auto',
 			delai: 'standard',
 			designHelp: { colors: null, format: '', notes: '' },
@@ -673,7 +673,7 @@ export function initEditor(): void {
 			// planter — l'utilisateur peut toujours télécharger le PNG.
 			return;
 		}
-		window.location.href = '/configurateur';
+		window.location.href = '/personnaliser?mode=3d';
 	});
 
 	refreshPlaceLabel();

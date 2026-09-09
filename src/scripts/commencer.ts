@@ -9,7 +9,7 @@
 import { reco, TECHS, type TechKey } from './personnalisateur/recommendation';
 import { seedFromItem } from './personnalisateur/state';
 import { getProfil, setProfil, type ProfilClient } from '../lib/profil-client';
-import { catalogueColoris, coutBaseSupportUnique, getZoneImpressionCm, repartitionTaillesParDefaut, type Garment, type Emplacement } from '../config/parametres-metier';
+import { catalogueColoris, coutBaseSupportUnique, getZoneImpressionCm, repartitionTaillesParDefaut, TAILLES, type Garment, type Emplacement, type TailleCode } from '../config/parametres-metier';
 import { LABELS_COUPE, LABELS_GENRE } from '../lib/produits-types';
 import { grilleTarifaire, prixVente } from '../config/tarification';
 import { COULEURS_OPTIONS, COUPES, GENRES, candidatsRef, qtyStep, palierPour } from './personnalisateur/catalogue-match';
@@ -48,6 +48,27 @@ interface QuizState {
   visuels: Partial<Record<Emplacement, VisuelImporte>>;
 }
 
+const REPARTITION_TOTAL = TAILLES.reduce((s, t) => s + repartitionTaillesParDefaut[t], 0);
+
+// Adapte la répartition par défaut (qui totalise 30) à la quantité
+// réellement choisie dans le quiz, sinon la quantité affichée et
+// chiffrée pendant le quiz (ex. 250 pièces) disparaissait silencieusement
+// une fois dans le configurateur — repartitionTaillesParDefaut y reprend
+// toujours le dessus (30 pièces), quel que soit ce qui a été demandé.
+function sizeDistForQty(qty: number): Record<TailleCode, number> {
+  const ratio = qty / REPARTITION_TOTAL;
+  const dist = {} as Record<TailleCode, number>;
+  let attribue = 0;
+  for (const t of TAILLES) {
+    dist[t] = Math.round(repartitionTaillesParDefaut[t] * ratio);
+    attribue += dist[t];
+  }
+  // Le rounding par taille peut légèrement dériver du total demandé —
+  // on rattrape l'écart sur "M", la taille la plus représentée par défaut.
+  dist.M = Math.max(0, dist.M + (qty - attribue));
+  return dist;
+}
+
 function nouveauProduit(): Omit<QuizState, 'profil'> {
   return {
     garment: 'tshirt',
@@ -63,10 +84,17 @@ function nouveauProduit(): Omit<QuizState, 'profil'> {
 }
 
 // Ajoute/retire un emplacement de la sélection (jamais en dessous d'un
-// seul choisi).
+// seul choisi). Retirer un emplacement efface aussi le visuel importé
+// pour cette zone — sans ça, la ligne d'import disparaît de l'écran 2
+// (filtrée sur les emplacements choisis) mais le fichier restait quand
+// même envoyé comme calque au configurateur, une zone qu'on venait
+// pourtant de désélectionner.
 function togglePlace(place: Emplacement): void {
   if (state.places.has(place)) {
-    if (state.places.size > 1) state.places.delete(place);
+    if (state.places.size > 1) {
+      state.places.delete(place);
+      delete state.visuels[place];
+    }
     return;
   }
   state.places.add(place);
@@ -82,8 +110,10 @@ type Screen = 'profil' | 'projet' | 'quantite' | 'resultat';
 let order: Screen[] = ['profil', 'projet', 'quantite', 'resultat'];
 let current = 0;
 // Zone vers laquelle faire pivoter le modèle 3D au prochain render() —
-// seulement quand un emplacement vient d'être ajouté (pas retiré), pour
-// que le modèle montre bien la zone qu'on vient de choisir.
+// posé à chaque clic sur une pastille d'emplacement (ajout ou retrait) :
+// on montre toujours la zone qu'on vient de toucher, qu'elle finisse
+// sélectionnée ou non, plutôt que de laisser la caméra sur une zone
+// qu'on ne regarde plus.
 let pendingFocus: Emplacement | undefined;
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
@@ -357,7 +387,7 @@ function render(): void {
         garment: state.garment,
         color: state.color,
         layers,
-        sizeDist: { ...repartitionTaillesParDefaut },
+        sizeDist: sizeDistForQty(state.qty),
         tech: 'auto',
         delai: 'standard',
         designHelp: { colors: state.couleurs, format: '', notes: '' },

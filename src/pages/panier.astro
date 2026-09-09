@@ -25,7 +25,7 @@ import '../styles/panier.css';
 				<div class="panierEmpty" id="panierEmpty">
 					<h3>Votre panier est vide.</h3>
 					<p>Composez un projet dans le configurateur, puis ajoutez-le au panier pour le retrouver ici avant de demander un devis.</p>
-					<a class="btn" href="/configurateur">Créer un projet</a>
+					<a class="btn" href="/personnaliser?mode=3d">Créer un projet</a>
 				</div>
 
 				<div class="panierItems" id="panierItems" style="display:none"></div>
@@ -74,7 +74,7 @@ import '../styles/panier.css';
 			return parts.length ? parts.join(', ') : 'tailles non renseignées';
 		}
 
-		const PLACE_LABEL: Record<Emplacement, string> = { face: 'Face', coeur: 'Cœur', dos: 'Dos' };
+		const PLACE_LABEL: Record<Emplacement, string> = { face: 'Face', coeur: 'Cœur', dos: 'Dos', 'manche-droite': 'Manche droite', 'manche-gauche': 'Manche gauche' };
 
 		// Le configurateur n'a aujourd'hui qu'une seule technique par
 		// projet (pas encore une par emplacement) : chaque calque déposé
@@ -158,7 +158,7 @@ import '../styles/panier.css';
 				const item = getCart().find((i) => i.id === edit.dataset.edit);
 				if (item) {
 					seedFromItem(item);
-					window.location.href = '/configurateur';
+					window.location.href = '/personnaliser?mode=3d';
 				}
 			}
 		});
