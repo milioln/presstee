@@ -63,6 +63,12 @@ function nouveauProduit(): Produit {
 
 const state: { produits: Produit[] } = { produits: [nouveauProduit()] };
 
+// render() recrée toute la liste à chaque changement (voir commentaire de
+// tête de fichier) : un <details open> perdrait donc son état ouvert au
+// moindre clic ailleurs sur la carte si on ne le trackait pas ici, en
+// dehors du DOM recréé à chaque fois.
+const openSections = new Set<string>();
+
 // Sauvegarde locale explicite (bouton "Sauvegarder"/"Mettre en attente"),
 // jamais automatique : on ne veut pas figer un brouillon à chaque clic,
 // seulement quand le client le demande. Les Set ne se sérialisent pas en
@@ -247,8 +253,24 @@ function produitCard(pc: ProduitCalcule, index: number, retirable: boolean): str
       <div class="pills">${pillsHtml((Object.keys(GARMENT_LABELS) as Garment[]).map((g) => ({ value: g, label: GARMENT_LABELS[g] })), (v) => v === p.garment, 'set-garment', p.id)}</div>
     </div>
 
-    <div class="simField">
-      <span class="simField-label">Style <span class="simField-hint">plusieurs choix possibles</span></span>
+    <div class="simRow2">
+      <div class="simField">
+        <span class="simField-label">Quantité</span>
+        <div class="qtyStepper">
+          <button type="button" class="btn-icon" data-action="qty-step" data-produit="${p.id}" data-delta="-1" aria-label="Diminuer">−</button>
+          <span class="qtyStepper-val">${p.quantite} pièce${p.quantite > 1 ? 's' : ''}</span>
+          <button type="button" class="btn-icon" data-action="qty-step" data-produit="${p.id}" data-delta="1" aria-label="Augmenter">+</button>
+        </div>
+      </div>
+
+      <div class="simField">
+        <span class="simField-label">Couleur du textile</span>
+        <div class="swatches">${catalogueColoris.map((c) => `<button type="button" class="sw${c.hex === p.coloris.hex ? ' on' : ''}" data-action="set-couleris" data-produit="${p.id}" data-value="${c.hex}" style="background:${c.hex}" aria-label="${c.nom}"></button>`).join('')}</div>
+      </div>
+    </div>
+
+    <details class="simDetails" data-key="${p.id}:style"${openSections.has(`${p.id}:style`) ? ' open' : ''}>
+      <summary>Affiner le style <span class="simField-hint">${p.styles.size ? `${p.styles.size} sélectionné${p.styles.size > 1 ? 's' : ''}` : 'optionnel'}</span></summary>
       <div class="styleGroups">
         <div class="pills">${pillsHtml(COUPES.map((c) => ({ value: c, label: LABELS_COUPE[c] })), (v) => p.styles.has(v), 'toggle-style', p.id)}</div>
         <div class="pills">${pillsHtml(MANCHES_OPTIONS.map((m) => ({ value: m, label: LABELS_MANCHES[m] })), (v) => p.styles.has(v), 'toggle-style', p.id)}</div>
@@ -256,26 +278,12 @@ function produitCard(pc: ProduitCalcule, index: number, retirable: boolean): str
         <div class="pills">${pillsHtml(GAMMES.map((g) => ({ value: g, label: LABELS_GAMME_PRIX[g] })), (v) => p.styles.has(v), 'toggle-style', p.id)}</div>
         <div class="pills">${pillsHtml([{ value: 'responsable', label: '🌱 Bio / recyclé' }], (v) => p.styles.has(v), 'toggle-style', p.id)}</div>
       </div>
-    </div>
+    </details>
 
-    <div class="simField">
-      <span class="simField-label">Quantité</span>
-      <div class="qtyStepper">
-        <button type="button" class="btn-icon" data-action="qty-step" data-produit="${p.id}" data-delta="-1" aria-label="Diminuer">−</button>
-        <span class="qtyStepper-val">${p.quantite} pièce${p.quantite > 1 ? 's' : ''}</span>
-        <button type="button" class="btn-icon" data-action="qty-step" data-produit="${p.id}" data-delta="1" aria-label="Augmenter">+</button>
-      </div>
-    </div>
-
-    <div class="simField">
-      <span class="simField-label">Couleur du textile</span>
-      <div class="swatches">${catalogueColoris.map((c) => `<button type="button" class="sw${c.hex === p.coloris.hex ? ' on' : ''}" data-action="set-couleris" data-produit="${p.id}" data-value="${c.hex}" style="background:${c.hex}" aria-label="${c.nom}"></button>`).join('')}</div>
-    </div>
-
-    <div class="simField">
-      <span class="simField-label">Référence produit <span class="simField-hint">optionnel — prix réel du modèle si choisi</span></span>
+    <details class="simDetails" data-key="${p.id}:refs"${openSections.has(`${p.id}:refs`) ? ' open' : ''}>
+      <summary>Référence produit <span class="simField-hint">optionnel — prix réel du modèle si choisi</span></summary>
       ${refListHtml(p)}
-    </div>
+    </details>
 
     <div class="supportLine">
       <span class="supportLine-nom">${pc.ref ? `${pc.ref.brand} ${pc.ref.model}` : `${GARMENT_LABELS[p.garment]} vierge`} · ${p.coloris.nom}</span>
@@ -348,6 +356,16 @@ function findVisuel(p: Produit, id: string): Visuel | undefined {
 }
 
 export function bindSimulateur(): void {
+  // L'évènement "toggle" ne bouillonne pas dans tous les navigateurs :
+  // on écoute en phase de capture sur le conteneur pour l'intercepter
+  // quel que soit le <details> concerné.
+  el('produitsList').addEventListener('toggle', (e) => {
+    const d = e.target as HTMLElement;
+    if (!(d instanceof HTMLDetailsElement) || !d.dataset.key) return;
+    if (d.open) openSections.add(d.dataset.key);
+    else openSections.delete(d.dataset.key);
+  }, true);
+
   el('produitsList').addEventListener('click', (e) => {
     const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-action]');
     if (!b) return;
