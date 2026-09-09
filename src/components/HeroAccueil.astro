@@ -84,9 +84,6 @@
 </section>
 
 <script>
-	import '@google/model-viewer';
-	import { initHero3D } from '../scripts/hero/tshirt-hero';
-
 	const hero = document.getElementById('hero');
 
 	// Lueur qui suit le curseur dans toute la section (le sillage d'encre
@@ -99,7 +96,12 @@
 		hero.style.setProperty('--cy', (y * 100).toFixed(1) + '%');
 	});
 
-	initHero3D();
+	// Import différé (comme sur /personnaliser) : la bibliothèque
+	// @google/model-viewer (WebGL) et le modèle 3D ne bloquent plus le
+	// bundle principal de la page la plus visitée du site — le
+	// chargement démarre dès l'exécution du script, donc le t-shirt
+	// arrive dès l'affichage de la page, juste sans retarder le reste.
+	import('@google/model-viewer').then(() => import('../scripts/hero/tshirt-hero')).then(({ initHero3D }) => initHero3D());
 
 	// Plein écran sur la vignette (t-shirt + palette), pas sur toute la
 	// section : plus lisible sur mobile pour examiner le visuel de près.

@@ -5,13 +5,14 @@
 // étape reste un vrai lien : on ne bloque jamais l'accès aux autres
 // étapes, seule l'étape courante est mise en avant.
 interface Props {
-  step: 1 | 2 | 3;
+  step: 1 | 2 | 3 | 4;
 }
 const { step } = Astro.props;
 const steps = [
   { n: 1 as const, label: 'Votre projet', href: '/commencer' },
   { n: 2 as const, label: 'Configuration', href: '/personnaliser' },
   { n: 3 as const, label: 'Commande', href: '/panier' },
+  { n: 4 as const, label: 'Devis', href: '/demande-devis' },
 ];
 ---
 

@@ -26,7 +26,7 @@ export const TECHNIQUES: Technique[] = [
     couleurs: 'Aplats, jusqu’à 4 couleurs',
     prixRelatif: 1,
     durabilite: 'Très bonne — l’encre est absorbée dans la fibre',
-    image: '/techniques/atelier-serigraphie-textile-presstee.jpg',
+    image: '/techniques/atelier-serigraphie-textile-presstee.webp',
   },
   {
     slug: 'transfert-quadrichromie',
@@ -37,7 +37,7 @@ export const TECHNIQUES: Technique[] = [
     couleurs: 'Illimitées (quadrichromie), dégradés et photos possibles',
     prixRelatif: 2,
     durabilite: 'Bonne — le visuel est appliqué en surface',
-    image: '/techniques/atelier-transfert-quadrichromie-dtf-presstee.jpg',
+    image: '/techniques/atelier-transfert-quadrichromie-dtf-presstee.webp',
   },
   {
     slug: 'transfert-monochrome',
@@ -48,7 +48,7 @@ export const TECHNIQUES: Technique[] = [
     couleurs: 'Une seule couleur',
     prixRelatif: 2,
     durabilite: 'Très bonne — proche de la sérigraphie directe',
-    image: '/techniques/atelier-transfert-monochrome-presstee.jpg',
+    image: '/techniques/atelier-transfert-monochrome-presstee.webp',
   },
   {
     slug: 'broderie',
@@ -59,7 +59,7 @@ export const TECHNIQUES: Technique[] = [
     couleurs: 'Jusqu’à 8 couleurs de fil, sans dégradé',
     prixRelatif: 3,
     durabilite: 'Excellente — le fil est tissé dans la matière',
-    image: '/techniques/atelier-broderie-textile-presstee.jpg',
+    image: '/techniques/atelier-broderie-textile-presstee.webp',
   },
 ];
 
