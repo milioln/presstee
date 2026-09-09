@@ -70,8 +70,7 @@ const breadcrumbLd = {
 
 				<div class="side">
 					<div>
-						<div class="brand">{t.brand}</div>
-						<h1>{t.model}</h1>
+						<h1><span class="brand">{t.brand}</span> {t.model}</h1>
 					</div>
 
 					<p class="lede">{descriptionProduit(t)}</p>
@@ -110,7 +109,7 @@ const breadcrumbLd = {
 					</div>
 
 					<div class="ctarow">
-						<Button href="/personnaliser">Personnaliser ce modèle</Button>
+						<Button href={`/personnaliser?produit=${t.slug}`}>Personnaliser ce modèle</Button>
 						<Button href="/contact" variant="light">Demander un devis</Button>
 					</div>
 				</div>

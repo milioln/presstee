@@ -21,6 +21,7 @@ import { bindCartUI, paintBadges } from './cart-ui';
 import { bindOnLoaded } from './cart';
 import { bindBATView } from './bat-view';
 import { TECHS } from './recommendation';
+import { TSHIRTS } from '../../data/tshirts';
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
   return document.getElementById(id) as T;
@@ -323,6 +324,19 @@ function applyTechFromUrl(): void {
   }
 }
 
+// Arrivée depuis une fiche produit ("Personnaliser ce modèle",
+// ?produit=<slug>) : le vêtement 3D reste le même tant qu'un seul est
+// modélisé (cf. en-tête de ce fichier), mais le prix affiché doit être
+// celui de la référence réellement regardée, pas le coût générique par
+// défaut — sinon le prix change entre la fiche produit et le
+// configurateur, ce qu'on a déjà corrigé une fois pour le quiz.
+function applyProduitFromUrl(): void {
+  const slug = new URLSearchParams(window.location.search).get('produit');
+  if (!slug) return;
+  const t = TSHIRTS.find((x) => x.slug === slug);
+  if (t) S.coutBase = t.baseCost;
+}
+
 // Repeint tout l'écran depuis S — utilisé au chargement initial, et par
 // cart.ts après avoir rechargé un projet enregistré (qui remplace S en
 // bloc : coloris, calques, répartition des tailles, technique, délai
@@ -339,6 +353,7 @@ function refreshAll(): void {
 export function init(): void {
   loadState();
   applyTechFromUrl();
+  applyProduitFromUrl();
 
   bindColors();
   bindDelai();

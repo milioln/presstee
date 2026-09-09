@@ -8,6 +8,7 @@ import SectorSelector from '../components/SectorSelector.astro';
 import RealisationsGrid from '../components/RealisationsGrid.astro';
 import QuizTeaser from '../components/QuizTeaser.astro';
 import { siteConfig } from '../config/site';
+import { SECTEURS } from '../data/secteurs';
 import '../styles/global.css';
 import '../styles/techniques.css';
 ---
@@ -95,11 +96,9 @@ import '../styles/techniques.css';
 						<h3>Des conseils par activité</h3>
 						<p>Les contraintes d'une association ne sont pas celles d'un restaurant. Nous avons rassemblé les besoins récurrents, les textiles adaptés et les budgets réalistes par profil.</p>
 						<div class="chips">
-							<a class="chip" href="/secteurs/associations">Associations</a>
-							<a class="chip" href="/secteurs/bde-ecoles">BDE et écoles</a>
-							<a class="chip" href="/secteurs/entreprises">Entreprises</a>
-							<a class="chip" href="/secteurs/bars-restaurants">Bars et restaurants</a>
-							<a class="chip" href="/secteurs/commerces">Commerces</a>
+							{SECTEURS.map((s) => (
+								<a class="chip" href={`/secteurs/${s.slug}`}>{s.nom}</a>
+							))}
 						</div>
 					</div>
 				</div>
@@ -127,7 +126,7 @@ import '../styles/techniques.css';
 							<h3>En ligne</h3>
 						</div>
 						<p>Choisissez votre textile, ajoutez votre visuel, validez votre projet. Notre optimisateur et notre concepteur vous accompagnent en autonomie.</p>
-						<a class="go" href="/personnaliser">Commencer maintenant</a>
+						<a class="go" href="/personnaliser">Ouvrir le configurateur</a>
 					</div>
 					<div class="way">
 						<div class="way-top">

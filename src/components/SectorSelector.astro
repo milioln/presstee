@@ -53,7 +53,12 @@ const DOMS = SECTEURS.map((s) => ({ k: s.nom, p: s.texte, t: s.textile, m: s.mar
 	function paintDoms() {
 		doms.innerHTML = ordre.map((i) => `<button class="dom${i === dsel ? ' on' : ''}" data-d="${i}">${DOMS[i].k}</button>`).join('');
 		const d = DOMS[dsel];
-		dompanel.innerHTML = `<div><h3>${d.k}</h3><p>${d.p}</p></div>
+		dompanel.innerHTML = `<div><h3>${d.k}</h3><p>${d.p}</p>
+				<div class="dompanel-cta">
+					<a class="btn" href="/commencer">Commencer un projet</a>
+					<a class="dompanel-more" href="/secteurs/${d.slug}">Voir le détail pour ${d.k.toLowerCase()} →</a>
+				</div>
+			</div>
 			<div class="domfacts">
 				<div class="fact"><b>Textile souvent retenu</b><span>${d.t}</span></div>
 				<div class="fact"><b>Marquage conseillé</b><span>${d.m}</span></div>
