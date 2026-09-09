@@ -89,13 +89,28 @@
 
 	const hero = document.getElementById('hero');
 
-	// Lueur et cadre qui suivent le curseur dans toute la section.
+	// Lueur et cadre qui suivent le curseur dans toute la section, plus un
+	// sillage discret de petites gouttes d'encre qui s'effacent derrière
+	// le curseur (Milio, 2026-09-09, menu d'easter eggs validé) — semé au
+	// fil du mouvement plutôt qu'à chaque événement pour rester léger.
+	let lastInkDropAt = 0;
 	hero?.addEventListener('mousemove', (e) => {
 		const r = hero.getBoundingClientRect();
 		const x = (e.clientX - r.left) / r.width;
 		const y = (e.clientY - r.top) / r.height;
 		hero.style.setProperty('--cx', (x * 100).toFixed(1) + '%');
 		hero.style.setProperty('--cy', (y * 100).toFixed(1) + '%');
+
+		const now = performance.now();
+		if (now - lastInkDropAt > 70) {
+			lastInkDropAt = now;
+			const drop = document.createElement('span');
+			drop.className = 'inkDrop';
+			drop.style.left = `${e.clientX - r.left}px`;
+			drop.style.top = `${e.clientY - r.top}px`;
+			hero.appendChild(drop);
+			window.setTimeout(() => drop.remove(), 700);
+		}
 	});
 
 	initHero3D();
@@ -130,6 +145,54 @@
 		inset: 0;
 		background: radial-gradient(420px circle at var(--cx, 70%) var(--cy, 40%), rgba(157, 131, 207, 0.1), transparent 70%);
 		pointer-events: none;
+	}
+	.inkDrop {
+		position: absolute;
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: rgba(157, 131, 207, 0.4);
+		pointer-events: none;
+		transform: translate(-50%, -50%);
+		animation: inkDropFade 0.7s ease-out forwards;
+		z-index: 1;
+	}
+	@keyframes inkDropFade {
+		0% {
+			opacity: 0.55;
+			transform: translate(-50%, -50%) scale(1);
+		}
+		100% {
+			opacity: 0;
+			transform: translate(-50%, -50%) scale(2.8);
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.inkDrop {
+			display: none;
+		}
+	}
+	@keyframes heroSpinBounce {
+		0% {
+			transform: scale(1) rotate(0);
+		}
+		30% {
+			transform: scale(1.045) rotate(-2deg);
+		}
+		60% {
+			transform: scale(0.985) rotate(1.2deg);
+		}
+		100% {
+			transform: scale(1) rotate(0);
+		}
+	}
+	.hero-zone.spin-bounce {
+		animation: heroSpinBounce 0.5s ease;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.hero-zone.spin-bounce {
+			animation: none;
+		}
 	}
 	.hero-inner {
 		position: relative;

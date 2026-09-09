@@ -2,6 +2,7 @@
 import Logo from './Logo.astro';
 ---
 
+
 <header>
 	<div class="wrap nav">
 		<a class="brand" href="/#top">
@@ -23,6 +24,8 @@ import Logo from './Logo.astro';
 </header>
 
 <script>
+	import { showEggToast, pulseRegmarks } from '../lib/easter-egg';
+
 	const burger = document.getElementById('burger')!;
 	const links = document.getElementById('links')!;
 	burger.addEventListener('click', () => {
@@ -88,4 +91,41 @@ import Logo from './Logo.astro';
 			window.setTimeout(() => { layer.remove(); toast.remove(); }, 2700);
 		});
 	}
+
+	// Clin d'œil sitewide : le code Konami classique, ou taper "presstee"
+	// au clavier, fait clignoter puis se réaligner tous les repères de
+	// calage visibles sur la page actuelle (Milio, 2026-09-09, menu
+	// d'easter eggs validé). Ignoré tant qu'un champ de saisie a le focus,
+	// pour ne jamais interférer avec une vraie frappe de texte.
+	const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight'];
+	let konamiProgress = 0;
+	let typedBuffer = '';
+
+	function triggerCalageEgg(): void {
+		pulseRegmarks();
+		showEggToast('Calage parfait.');
+	}
+
+	window.addEventListener('keydown', (e) => {
+		const tag = (document.activeElement as HTMLElement | null)?.tagName;
+		if (tag === 'INPUT' || tag === 'TEXTAREA' || (document.activeElement as HTMLElement | null)?.isContentEditable) return;
+
+		if (e.key === KONAMI[konamiProgress]) {
+			konamiProgress += 1;
+			if (konamiProgress === KONAMI.length) {
+				konamiProgress = 0;
+				triggerCalageEgg();
+			}
+		} else {
+			konamiProgress = e.key === KONAMI[0] ? 1 : 0;
+		}
+
+		if (e.key.length === 1) {
+			typedBuffer = (typedBuffer + e.key).slice(-20).toLowerCase();
+			if (typedBuffer.endsWith('presstee')) {
+				typedBuffer = '';
+				triggerCalageEgg();
+			}
+		}
+	});
 </script>

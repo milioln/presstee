@@ -37,6 +37,18 @@ import { siteConfig } from '../config/site';
 		<div class="legal">
 			<span>© 2026 {siteConfig.nom}</span>
 			<span>{siteConfig.siret ? siteConfig.siret : 'SIRET à compléter après immatriculation'}</span>
+			<span id="footerNightNote" style="display:none">Vous travaillez tard vous aussi ?</span>
 		</div>
 	</div>
 </footer>
+
+<script>
+	// Clin d'œil discret : une ligne de plus en pied de page entre minuit
+	// et 5h — l'heure du visiteur, pas celle du serveur (Milio, 2026-09-09,
+	// menu d'easter eggs validé).
+	const h = new Date().getHours();
+	if (h >= 0 && h < 5) {
+		const note = document.getElementById('footerNightNote');
+		if (note) note.style.display = 'inline';
+	}
+</script>

@@ -101,7 +101,16 @@ import '../styles/panier.css';
 			return `<p class="panierMark-empty">Pas de visuel déposé — accompagnement design demandé${detail ? ` (${detail})` : ''}.${dh.notes ? ` « ${dh.notes} »` : ''}</p>`;
 		}
 
-		function itemCard(it: SavedItem): string {
+		// Clin d'œil : signale deux projets strictement identiques dans le
+		// panier plutôt que de les fusionner ou les bloquer silencieusement
+		// — souvent voulu (une même pièce pour deux coloris de calendrier
+		// différent), donc juste une note amicale, jamais un blocage (Milio,
+		// 2026-09-09, menu d'easter eggs validé).
+		function itemSignature(it: SavedItem): string {
+			return [it.garment, it.color.hex, it.qty, it.techNom, JSON.stringify(it.sizeDist), it.layers.map((l) => l.place).sort().join(',')].join('|');
+		}
+
+		function itemCard(it: SavedItem, isDuplicate: boolean): string {
 			const garmentName = GARMENTS[it.garment].name;
 			const marks = it.layers.length ? it.layers.map((l) => markLine(it, l)).join('') : designHelpLine(it);
 			return `<div class="panierItem" data-id="${it.id}">
@@ -115,6 +124,7 @@ import '../styles/panier.css';
 					<div class="panierItem-price">${fmtPrice(it.prixTotal)}</div>
 				</div>
 				<div class="panierItem-marks">${marks}</div>
+				${isDuplicate ? `<p class="panierItem-dup">Vous avez ajouté deux fois le même projet, c'est voulu ?</p>` : ''}
 				<div class="panierItem-actions">
 					<button type="button" class="linkBtn" data-edit="${it.id}">Modifier</button>
 					<button type="button" class="linkBtn danger" data-rm="${it.id}">Retirer</button>
@@ -137,7 +147,12 @@ import '../styles/panier.css';
 			empty.style.display = 'none';
 			itemsWrap.style.display = 'flex';
 			summary.style.display = 'flex';
-			itemsWrap.innerHTML = items.map(itemCard).join('');
+			const signatureCounts = new Map<string, number>();
+			items.forEach((it) => {
+				const sig = itemSignature(it);
+				signatureCounts.set(sig, (signatureCounts.get(sig) ?? 0) + 1);
+			});
+			itemsWrap.innerHTML = items.map((it) => itemCard(it, (signatureCounts.get(itemSignature(it)) ?? 0) > 1)).join('');
 
 			const totalQty = items.reduce((s, it) => s + it.qty, 0);
 			const totalPrice = items.reduce((s, it) => s + it.prixTotal, 0);

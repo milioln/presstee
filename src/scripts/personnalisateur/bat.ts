@@ -180,6 +180,10 @@ export function buildBATHtml(items: SavedItem[], opts: BATOptions): string {
   <tbody><tr><td class="sheet-cell">
     <div class="doc">
       <img class="watermark" src="/logo/presstee-icone.svg" alt="" aria-hidden="true" />
+      <span class="regmark bat-regmark" style="top:14px;left:14px" aria-hidden="true"></span>
+      <span class="regmark bat-regmark" style="top:14px;right:14px" aria-hidden="true"></span>
+      <span class="regmark bat-regmark" style="bottom:14px;left:14px" aria-hidden="true"></span>
+      <span class="regmark bat-regmark" style="bottom:14px;right:14px" aria-hidden="true"></span>
 
       <div class="doc-head">
         <img class="logo" src="/logo/presstee-horizontal.svg" alt="Presstee" />

@@ -46,6 +46,16 @@
 	gap: 14px;
 }
 
+.bat-regmark {
+	color: var(--gris);
+	z-index: 1;
+}
+@media print {
+	.bat-regmark {
+		display: none;
+	}
+}
+
 .watermark {
 	position: absolute;
 	width: 460px;

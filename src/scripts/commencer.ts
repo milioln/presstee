@@ -197,6 +197,17 @@ function showToast(text: string): void {
   window.setTimeout(() => toast.remove(), 2700);
 }
 
+// Clin d'œil : franchir un palier tarifaire en augmentant la quantité
+// (Milio, 2026-09-09, menu d'easter eggs validé) — se base sur le vrai
+// palier (palierPour) plutôt qu'un chiffre rond arbitraire, et peut se
+// redéclencher à chaque nouveau palier atteint dans la même session.
+function checkPalierEgg(before: number, after: number): void {
+  if (after <= before) return;
+  if (palierPour(after).label !== palierPour(before).label) {
+    showToast('Palier suivant débloqué.');
+  }
+}
+
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
   return document.getElementById(id) as T;
 }
@@ -601,8 +612,10 @@ export function initCommencer(): void {
       case 'qty-step-color': {
         const lot = state.colorLots.find((l) => l.color.hex === value);
         if (lot) {
+          const before = qtyTotal(state);
           const delta = +b.dataset.delta! * qtyStep(lot.qty);
           lot.qty = Math.max(1, Math.min(2000, lot.qty + delta));
+          checkPalierEgg(before, qtyTotal(state));
         }
         break;
       }
@@ -654,6 +667,12 @@ export function initCommencer(): void {
       };
       img.onload = () => {
         state.visuels[place] = { dataUrl, fileName: file.name, vector, natW: img.naturalWidth, natH: img.naturalHeight, colors: null };
+        // Clin d'œil : un visuel parfaitement carré déposé sur le cœur —
+        // proportions déjà connues à cet instant, sans coût de calcul
+        // supplémentaire (Milio, 2026-09-09, menu d'easter eggs validé).
+        if (place === 'coeur' && img.naturalWidth === img.naturalHeight) {
+          showToast('Comme un vrai badge.');
+        }
         render();
       };
       img.src = dataUrl;

@@ -32,6 +32,7 @@ import '../styles/bat.css';
 	import { buildBATHtml } from '../scripts/personnalisateur/bat';
 	import { siteConfig } from '../config/site';
 	import { setDemandeBrief } from '../lib/demande-brief';
+	import { pulseRegmarks } from '../lib/easter-egg';
 
 	function el<T extends HTMLElement = HTMLElement>(id: string): T {
 		return document.getElementById(id) as T;
@@ -53,6 +54,10 @@ import '../styles/bat.css';
 		el('batSend').style.display = 'none';
 	} else {
 		root.innerHTML = buildBATHtml(items, { emailContact: siteConfig.email, telephoneContact: siteConfig.telephone });
+		// Clin d'œil : les repères de calage du gabarit se remettent en
+		// registre à l'arrivée sur l'aperçu (Milio, 2026-09-09, menu
+		// d'easter eggs validé).
+		requestAnimationFrame(() => pulseRegmarks());
 		el('batPrint').addEventListener('click', () => window.print());
 		el('batSend').addEventListener('click', () => {
 			setDemandeBrief(briefForItems(items));

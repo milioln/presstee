@@ -15,7 +15,7 @@ import '../styles/global.css';
 	<main>
 		<section class="err404">
 			<div class="wrap">
-				<span class="err404-code">404</span>
+				<button type="button" class="err404-code" id="err404Code" aria-label="404, cliquez pour recaler">404</button>
 				<h1>Cette page a été mal calée.</h1>
 				<p>Le lien suivi ne mène à rien — la page a peut-être changé d'adresse, ou n'a jamais existé. Voici où repartir :</p>
 				<div class="err404-links">
@@ -29,6 +29,17 @@ import '../styles/global.css';
 	<Footer />
 </Layout>
 
+<script>
+	// Clin d'œil : le "404" se recale tout seul au clic, en écho au titre
+	// juste en dessous (Milio, 2026-09-09, menu d'easter eggs validé).
+	document.getElementById('err404Code')?.addEventListener('click', (e) => {
+		const el = e.currentTarget as HTMLElement;
+		el.classList.remove('recale');
+		void el.offsetWidth;
+		el.classList.add('recale');
+	});
+</script>
+
 <style>
 	.err404 {
 		padding: 100px 0 130px;
@@ -36,12 +47,38 @@ import '../styles/global.css';
 	}
 	.err404-code {
 		display: block;
+		margin: 0 auto;
+		border: 0;
+		background: none;
+		cursor: pointer;
 		font-family: 'Sora', sans-serif;
 		font-weight: 700;
 		font-size: clamp(4rem, 12vw, 7rem);
 		letter-spacing: -0.04em;
 		color: var(--indigo);
 		line-height: 1;
+	}
+	@keyframes err404Recale {
+		0% {
+			transform: rotate(0deg) scale(1);
+		}
+		35% {
+			transform: rotate(-14deg) scale(1.04);
+		}
+		70% {
+			transform: rotate(6deg) scale(0.99);
+		}
+		100% {
+			transform: rotate(0deg) scale(1);
+		}
+	}
+	.err404-code.recale {
+		animation: err404Recale 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.err404-code.recale {
+			animation: none;
+		}
 	}
 	.err404 h1 {
 		font-size: clamp(1.6rem, 3.4vw, 2.2rem);

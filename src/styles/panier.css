@@ -30,6 +30,8 @@
 .panierMark-price{font-family:'Sora',sans-serif;font-weight:600;font-size:.92rem;white-space:nowrap;color:var(--gris)}
 .panierMark-empty{font-size:.88rem;color:var(--gris);margin:0}
 
+.panierItem-dup{font-size:.82rem;color:var(--gris);background:var(--lavande);border-radius:10px;padding:8px 12px;margin:0}
+
 .panierItem-actions{display:flex;gap:18px}
 .linkBtn{background:none;border:0;padding:0;cursor:pointer;font-family:'Sora',sans-serif;font-weight:600;font-size:13px;color:var(--indigo)}
 .linkBtn:hover{text-decoration:underline}

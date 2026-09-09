@@ -83,10 +83,15 @@ async function buildTextureDataUrl(): Promise<string> {
     // cliquable/déplaçable directement sur le mockup, sans se faire
     // remarquer plus que ça (Milio, 2026-09-09 : « un cadre... pas trop
     // visible »). En pointillés pour bien le distinguer d'un vrai
-    // contour imprimé.
+    // contour imprimé. Clin d'œil : le cadre du calque qu'on vient de
+    // sélectionner (cf. pulseLayerFrame) se resserre brièvement, comme un
+    // déclic d'appareil photo (menu d'easter eggs validé le même jour).
+    const pulsing = layer.id === pulseLayerId;
+    const pulseT = pulsing ? Math.min(1, (performance.now() - pulseStartedAt) / PULSE_DURATION) : 0;
+    const pulseEase = Math.sin(pulseT * Math.PI);
     ctx.setLineDash([18, 10]);
-    ctx.lineWidth = 5;
-    ctx.strokeStyle = 'rgba(157,131,207,0.55)';
+    ctx.lineWidth = 5 + pulseEase * 5;
+    ctx.strokeStyle = `rgba(157,131,207,${(0.55 + pulseEase * 0.4).toFixed(2)})`;
     ctx.strokeRect(-w / 2, -h / 2, w, h);
     ctx.restore();
   }
@@ -147,6 +152,31 @@ export function render(): void {
   paintDiag();
   paintRecap();
   saveState();
+}
+
+// Clin d'œil : fait "clicker" brièvement le cadre du calque qu'on vient
+// de sélectionner directement sur le mockup (cf. layers.ts, selectLayer)
+// — quelques repeints successifs de la texture le temps d'un court pulse
+// plutôt qu'une vraie boucle d'animation, cohérent avec le reste du
+// module qui ne fait déjà que peindre un canvas à la demande.
+let pulseLayerId: string | null = null;
+let pulseStartedAt = 0;
+const PULSE_DURATION = 420;
+
+export function pulseLayerFrame(id: string): void {
+  pulseLayerId = id;
+  pulseStartedAt = performance.now();
+  const tick = () => {
+    if (!pulseLayerId) return;
+    if (performance.now() - pulseStartedAt >= PULSE_DURATION) {
+      pulseLayerId = null;
+      render();
+      return;
+    }
+    render();
+    window.setTimeout(tick, 60);
+  };
+  tick();
 }
 
 export function paintTechs(): void {

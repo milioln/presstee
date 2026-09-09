@@ -43,6 +43,13 @@ section{padding:clamp(88px,13vw,166px) 0}
 
 /* ---------- repère de calage (clin d'œil sérigraphie) ---------- */
 .regmark{position:absolute;width:26px;height:26px;border:1px solid currentColor;border-radius:50%;opacity:.3;pointer-events:none;background:linear-gradient(currentColor,currentColor) center/1px 100% no-repeat,linear-gradient(currentColor,currentColor) center/100% 1px no-repeat}
+/* Clin d'œil "calage" : un repère qui était visiblement désaligné se
+   remet en registre — réutilisé au chargement du bon à tirer et sur le
+   code Konami (voir bat-view initiale et le script sitewide dans
+   Header.astro). */
+@keyframes regmarkAlign{0%{opacity:0;transform:scale(1.7) rotate(-25deg)}55%{opacity:.7}100%{opacity:.3;transform:scale(1) rotate(0)}}
+.regmark.align{animation:regmarkAlign .7s cubic-bezier(.22,1,.36,1)}
+@media(prefers-reduced-motion:reduce){.regmark.align{animation:none}}
 
 /* ---------- nav ---------- */
 header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--ligne)}

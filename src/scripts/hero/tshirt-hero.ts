@@ -12,6 +12,7 @@
 // partagée avec le configurateur et le modèle du quiz).
 import { catalogueColoris, type Emplacement } from '../../config/parametres-metier';
 import { PRINT_RECT, PANEL_SCALE } from '../personnalisateur/print-zones';
+import { showEggToast } from '../../lib/easter-egg';
 
 const TEXTURE_URL = '/personnalisateur/model/textures/Material_baseColor.png';
 
@@ -256,8 +257,50 @@ export function initHero3D(): void {
 		return hasFront ? 0 : 180;
 	}
 
+	// Clin d'œil : un tour complet (360°) fait à la main pendant un seul
+	// glisser continu déclenche un petit rebond du modèle, comme s'il
+	// saluait (Milio, 2026-09-09, menu d'easter eggs validé). On cumule le
+	// delta d'angle réel entre deux 'camera-change' plutôt que la distance
+	// en pixels glissés : fiable quel que soit le zoom ou la sensibilité
+	// de l'orbite. defensive : si l'API diffère d'une version à l'autre de
+	// model-viewer, on abandonne silencieusement plutôt que de casser quoi
+	// que ce soit d'autre.
+	let dragAccumDeg = 0;
+	let lastDragThetaDeg: number | null = null;
+	function onCameraChange(): void {
+		if (!dragging) {
+			lastDragThetaDeg = null;
+			return;
+		}
+		try {
+			const orbit = mv.getCameraOrbit();
+			const thetaDeg = (orbit.theta * 180) / Math.PI;
+			if (lastDragThetaDeg != null) {
+				const delta = (((thetaDeg - lastDragThetaDeg + 180) % 360) + 360) % 360 - 180;
+				dragAccumDeg += Math.abs(delta);
+				if (dragAccumDeg >= 360) {
+					dragAccumDeg = -Infinity; // un seul rebond par glisser, même si le tour continue
+					bounceHeroZone();
+				}
+			}
+			lastDragThetaDeg = thetaDeg;
+		} catch {
+			// API absente : pas d'easter egg, tant pis.
+		}
+	}
+	function bounceHeroZone(): void {
+		const zone = document.getElementById('heroZone');
+		if (!zone) return;
+		zone.classList.remove('spin-bounce');
+		void zone.offsetWidth;
+		zone.classList.add('spin-bounce');
+	}
+	mv.addEventListener('camera-change', onCameraChange);
+
 	mv.addEventListener('pointerdown', () => {
 		dragging = true;
+		dragAccumDeg = 0;
+		lastDragThetaDeg = null;
 	});
 	window.addEventListener('pointerup', () => {
 		if (!dragging) return;
@@ -301,10 +344,28 @@ export function initHero3D(): void {
 
 	// ---- Coloris, design, mots interactifs, import -----------------------
 	const swatches = [...document.querySelectorAll<HTMLButtonElement>('#heroColoris button')];
+
+	// Clin d'œil : essayer les deux couleurs de la marque (vérifiées dans
+	// les vrais fichiers logo, pas devinées) — le jaune et le violet
+	// utilisés partout dans /public/logo/*.svg.
+	const BRAND_HEXES = ['#ffd77a', '#9d83cf'];
+	const brandColorsSeen = new Set<string>();
+	let brandEggShown = false;
+	function checkBrandColors(h: string): void {
+		const low = h.toLowerCase();
+		if (!BRAND_HEXES.includes(low)) return;
+		brandColorsSeen.add(low);
+		if (!brandEggShown && BRAND_HEXES.every((b) => brandColorsSeen.has(b))) {
+			brandEggShown = true;
+			showEggToast('Vous avez trouvé nos couleurs.');
+		}
+	}
+
 	function setColorIndex(i: number): void {
 		ic = wrap(i, PALETTE.length);
 		il = wrap(i, LOGOS.length); // le design change avec la couleur (demande Milio)
 		hex = PALETTE[ic].hex;
+		checkBrandColors(hex);
 		swatches.forEach((b, n) => b.classList.toggle('on', n === ic));
 		refresh();
 	}

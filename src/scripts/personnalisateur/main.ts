@@ -12,6 +12,7 @@ import { bindFileInput, bindStageAdd } from './file-input';
 import { bindModeTabs, bindTextInput } from './text-input';
 import { bindDesignHelp, syncDesignHelp } from './design-help';
 import { bindModelDrag } from './drag3d';
+import { bindSpinEgg } from './spin-egg';
 import { bindLayers, syncEditor } from './layers';
 import { bindCrop } from './crop';
 import { bindLayerPopup } from './layer-popup';
@@ -290,6 +291,7 @@ export function init(): void {
   bindTextInput();
   bindDesignHelp();
   bindModelDrag();
+  bindSpinEgg();
   bindLayers();
   bindCrop();
   bindLayerPopup();

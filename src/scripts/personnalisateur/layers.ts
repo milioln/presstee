@@ -7,7 +7,7 @@
 // "le calque actif appartient à l'emplacement affiché" et rafraîchit
 // tout l'écran en conséquence.
 import { S, saveState, activeLayer, type Layer } from './state';
-import { render, paintWidth, paintRotate } from './render';
+import { render, paintWidth, paintRotate, pulseLayerFrame } from './render';
 import { analyse } from './file-analysis';
 import { CROP_ICON_SVG, MOVE_ICON_SVG } from './icons';
 import { syncPlace } from './placement';
@@ -103,6 +103,7 @@ export function selectLayer(layer: Layer): void {
   S.activeLayerId = layer.id;
   syncPlace();
   syncEditor();
+  pulseLayerFrame(layer.id);
 }
 
 export function bindLayers(): void {

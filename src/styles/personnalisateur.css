@@ -111,6 +111,10 @@
    tout l'outil) : occupe tout l'écran, garde la trame de fond. */
 .frame:fullscreen{width:100vw;height:100vh;background-color:var(--bg)}
 #stage{position:absolute;inset:0;width:100%;height:100%;--poster-color:transparent}
+/* Clin d'œil : un tour complet du modèle fait à la main (cf. spin-egg.ts). */
+@keyframes frameSpinBounce{0%{transform:scale(1) rotate(0)}30%{transform:scale(1.015) rotate(-.6deg)}60%{transform:scale(.994) rotate(.35deg)}100%{transform:scale(1) rotate(0)}}
+.frame.spin-bounce{animation:frameSpinBounce .5s ease}
+@media(prefers-reduced-motion:reduce){.frame.spin-bounce{animation:none}}
 #vReset{position:absolute;left:20px;top:20px;background:var(--bg)}
 .frame-actions{position:absolute;right:20px;bottom:20px;display:flex;align-items:center;gap:10px}
 .frame-actions .btn-icon{border-radius:100px;background:var(--bg);box-shadow:0 6px 18px rgba(0,0,0,.18)}
