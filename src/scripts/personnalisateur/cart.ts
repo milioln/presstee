@@ -14,6 +14,7 @@ import { qtyTotal, prixUnitaire, prixTotal } from './derived';
 import { activeTech } from './render';
 import { TECHS, type TechKey } from './recommendation';
 import { coutBaseSupportUnique, type Garment, type TailleCode } from '../../config/parametres-metier';
+import { GARMENTS } from './garments';
 
 export interface SavedItem {
   id: string;
@@ -147,8 +148,10 @@ function summarizeItem(item: SavedItem, index?: number): string {
     .join(', ');
   const dh = item.designHelp;
   const wantsDesignHelp = item.layers.length === 0 && (dh.colors != null || dh.format || dh.notes);
+  const besoinQualite = item.layers.some((l) => l.qualiteAssistance);
   const lines = [
     index != null ? `Projet ${index + 1}` : null,
+    `- Support : ${GARMENTS[item.garment].name}`,
     `- Coloris : ${item.color.nom}`,
     `- Technique : ${item.techNom}`,
     `- Tailles : ${sizes || 'non renseignées'} (${item.qty} pièce${item.qty > 1 ? 's' : ''})`,
@@ -158,6 +161,9 @@ function summarizeItem(item: SavedItem, index?: number): string {
     wantsDesignHelp && dh.colors != null ? `  · Couleurs souhaitées : ${dh.colors >= 12 ? '12 et plus / dégradé' : dh.colors}` : null,
     wantsDesignHelp && dh.format ? `  · Format ou emplacement : ${dh.format}` : null,
     wantsDesignHelp && dh.notes ? `  · Description : ${dh.notes}` : null,
+    // Le client a coché "laissez-nous nous en occuper" sur un avertissement
+    // de résolution basse plutôt que d'être bloqué (Milio, 2026-09-09).
+    besoinQualite ? '- ⚠ Résolution à vérifier : le client nous laisse améliorer le fichier avant impression.' : null,
   ].filter((l): l is string => l != null);
   return lines.join('\n');
 }
@@ -182,4 +188,18 @@ export function briefForCart(): string {
 // briefForCart, sans dépendre de tout le panier.
 export function briefForItems(items: SavedItem[]): string {
   return items.map((it, i) => summarizeItem(it, items.length > 1 ? i : undefined)).join('\n\n');
+}
+
+// Visuels déposés, à proposer en téléchargement sur /demande-devis
+// (Milio, 2026-09-09 — mailto: ne sait pas les joindre lui-même).
+export function visuelsForCurrent(): { fileName: string; dataUrl: string }[] {
+  return S.layers.map((l) => ({ fileName: l.fileName, dataUrl: l.img }));
+}
+
+export function visuelsForCart(): { fileName: string; dataUrl: string }[] {
+  return visuelsForItems(getCart());
+}
+
+export function visuelsForItems(items: SavedItem[]): { fileName: string; dataUrl: string }[] {
+  return items.flatMap((it) => it.layers.map((l) => ({ fileName: l.fileName, dataUrl: l.img })));
 }

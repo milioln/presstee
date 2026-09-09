@@ -4,7 +4,7 @@
 // ("T-shirt col rond unisexe, 180 g/m²") : le choix du support et des
 // caractéristiques (col/manches/coupe) reviendra quand chaque référence
 // du catalogue aura son propre personnalisateur.
-import { S, activeLayer, loadState } from './state';
+import { S, activeLayer, loadState, saveState } from './state';
 import { catalogueColoris, TAILLES } from '../../config/parametres-metier';
 import { render, paintTechs, paintRecap, paintSizeDist, paintWidth, paintRotate, syncCamera, removeColorSwatch } from './render';
 import { syncPlace, bindPlacement } from './placement';
@@ -194,6 +194,17 @@ function bindColorSwatches(): void {
     const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-swatch]');
     if (!b) return;
     removeColorSwatch(+b.dataset.swatch!);
+  });
+  // Case "Laissez-nous nous en occuper" sur l'avertissement de résolution
+  // basse — n'importe jamais la commande, juste une préférence transmise
+  // à l'atelier (cf. cart.ts, summarizeItem).
+  el('diag').addEventListener('change', (e) => {
+    const input = e.target as HTMLInputElement;
+    if (input.id !== 'qualiteAssistance') return;
+    const layer = activeLayer();
+    if (!layer) return;
+    layer.qualiteAssistance = input.checked;
+    saveState();
   });
 }
 

@@ -1,7 +1,7 @@
 // Panneau "Mes projets enregistrés" (le panier a sa propre page,
 // /panier, pour une vue plus confortable) — et câblage des 3 boutons de
 // fin de parcours (panier, devis, enregistrer).
-import { getCart, getSaved, removeSaved, loadSaved, addToCart, saveProject, briefForCurrent, bindOnLoaded, type SavedItem } from './cart';
+import { getCart, getSaved, removeSaved, loadSaved, addToCart, saveProject, briefForCurrent, visuelsForCurrent, bindOnLoaded, type SavedItem } from './cart';
 import { setDemandeBrief } from '../../lib/demande-brief';
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
@@ -92,7 +92,7 @@ export function bindCartUI(): void {
     flash('saveProject', 'Enregistré ✓');
   });
   el('sendQuote').addEventListener('click', () => {
-    setDemandeBrief(briefForCurrent());
+    setDemandeBrief(briefForCurrent(), visuelsForCurrent());
     window.location.href = '/demande-devis';
   });
 

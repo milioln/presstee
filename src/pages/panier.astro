@@ -46,7 +46,7 @@ import '../styles/panier.css';
 	<Footer />
 
 	<script>
-		import { getCart, removeFromCart, clearCart, briefForCart, type SavedItem } from '../scripts/personnalisateur/cart';
+		import { getCart, removeFromCart, clearCart, briefForCart, visuelsForCart, type SavedItem } from '../scripts/personnalisateur/cart';
 		import { setDemandeBrief } from '../lib/demande-brief';
 		import { seedFromItem } from '../scripts/personnalisateur/state';
 		import { GARMENTS } from '../scripts/personnalisateur/garments';
@@ -179,7 +179,7 @@ import '../styles/panier.css';
 		});
 
 		el('sendCart').addEventListener('click', () => {
-			setDemandeBrief(briefForCart());
+			setDemandeBrief(briefForCart(), visuelsForCart());
 			window.location.href = '/demande-devis';
 		});
 		el('clearCart').addEventListener('click', () => {

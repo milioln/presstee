@@ -51,6 +51,12 @@ interface QuizState {
   coupe: string | null;
   genre: string | null;
   colorLots: ColorLot[];
+  // Coloris actuellement affiché sur le modèle 3D — le dernier touché,
+  // pas toujours colorLots[0] : sans ça, choisir un 2e ou 3e coloris ne
+  // se voyait jamais sur le modèle, toujours figé sur le premier ajouté
+  // (Milio, 2026-09-09 : « pouvoir voir le rendu de la couleur du
+  // textile dès l'étape 1 »).
+  previewHex: string;
   // Plusieurs emplacements à la fois (face + dos + manche...) — chacun se
   // chiffre comme un marquage à part, exactement comme dans le vrai
   // configurateur ("le recto-verso se chiffre comme deux marquages").
@@ -95,6 +101,18 @@ function primaryColor(p: QuizState): { nom: string; hex: string } {
   return p.colorLots[0].color;
 }
 
+// Lien vers /produits/t-shirts pré-filtré sur les mêmes critères que le
+// quiz (Milio, 2026-09-09 : « une possibilité de voir les autres
+// textiles qui correspondent au filtre ») — même mécanisme de filtre que
+// la page catalogue elle-même, pas de logique de filtrage dupliquée ici.
+function catalogueFilterUrl(p: QuizState): string {
+  const params = new URLSearchParams();
+  if (p.coupe) params.set('coupe', p.coupe);
+  if (p.genre) params.set('genre', p.genre);
+  const qs = params.toString();
+  return `/produits/t-shirts${qs ? `?${qs}` : ''}`;
+}
+
 // Nombre de couleurs à retenir pour la recommandation de technique — dès
 // qu'au moins un visuel est importé, sa propre réponse fait foi (sommée
 // entre emplacements, comme totalColors() dans le vrai configurateur :
@@ -115,6 +133,7 @@ function nouveauProduit(): Omit<QuizState, 'profil'> {
     coupe: null,
     genre: null,
     colorLots: [{ color: catalogueColoris[0], qty: 25 }],
+    previewHex: catalogueColoris[0].hex,
     places: new Set(['face']),
     couleurs: null,
     selectedRef: null,
@@ -146,11 +165,17 @@ function togglePlace(place: Emplacement): void {
 function toggleColor(hex: string): void {
   const idx = state.colorLots.findIndex((l) => l.color.hex === hex);
   if (idx >= 0) {
-    if (state.colorLots.length > 1) state.colorLots.splice(idx, 1);
+    if (state.colorLots.length > 1) {
+      state.colorLots.splice(idx, 1);
+      state.previewHex = state.colorLots[0].color.hex;
+    }
     return;
   }
   const color = catalogueColoris.find((c) => c.hex === hex);
-  if (color) state.colorLots.push({ color, qty: 25 });
+  if (color) {
+    state.colorLots.push({ color, qty: 25 });
+    state.previewHex = hex;
+  }
 }
 
 const state: QuizState = { profil: null, ...nouveauProduit() };
@@ -267,7 +292,7 @@ function screenProjet(): string {
   const placesDispo = emplacementsValides(state.garment);
   return `<div class="qzStep">
     <h2>Votre projet</h2>
-    <p class="qzHint">Question 1 sur 3 — le modèle 3D à droite reflète vos choix ; cliquez directement dessus pour choisir l'emplacement.</p>
+    <p class="qzHint">Question 1 sur 3 — le modèle 3D à droite reflète vos choix ; cliquez directement dessus pour choisir l'emplacement.${produits.length === 0 ? ' Besoin de plusieurs produits ? Vous pourrez en ajouter d\'autres à la fin.' : ''}</p>
     <div class="qzField">
       <span class="qzLabel">Type de textile</span>
       <div class="pills">${(Object.keys(GARMENT_LABELS) as Garment[]).map((g) => pill('set-garment', g, GARMENT_LABELS[g], state.garment === g)).join('')}</div>
@@ -425,7 +450,8 @@ function screenResultat(): string {
       </div>
     </div>` : ''}
 
-    ${c.candidats.length === 0 && state.garment === 'tshirt' ? `<p class="qzHint">Aucune référence ne correspond exactement à ces filtres — estimation générique ci-dessus. <a href="/produits/t-shirts">Voir tout le catalogue →</a></p>` : ''}
+    ${c.candidats.length === 0 && state.garment === 'tshirt' ? `<p class="qzHint">Aucune référence ne correspond exactement à ces filtres — estimation générique ci-dessus. <a href="${catalogueFilterUrl(state)}">Voir le catalogue filtré →</a></p>` : ''}
+    ${c.candidats.length > 0 && state.garment === 'tshirt' ? `<p class="qzHint"><a href="${catalogueFilterUrl(state)}">Voir plus de t-shirts qui correspondent →</a></p>` : ''}
 
     <details class="qzGrille">
       <summary>Voir le prix par palier de quantité</summary>
@@ -453,15 +479,24 @@ function briefText(): string {
   const lignes = tous.map((p, i) => {
     const c = calcProduit(p);
     const nbVisuels = Object.keys(p.visuels).length;
+    const filtres = [p.coupe ? LABELS_COUPE[p.coupe as keyof typeof LABELS_COUPE] : null, p.genre ? LABELS_GENRE[p.genre as keyof typeof LABELS_GENRE] : null].filter((f): f is string => !!f);
     return `Produit ${i + 1} — ${c.ref ? `${c.ref.brand} ${c.ref.model}` : GARMENT_LABELS[p.garment]} (${TECHS[c.techKey].n})
+- Textile : ${GARMENT_LABELS[p.garment]}${filtres.length ? ` · ${filtres.join(' · ')}` : ''}
 - Coloris : ${p.colorLots.map((l) => `${l.color.nom} (${l.qty} pièce${l.qty > 1 ? 's' : ''})`).join(', ')}
 - Emplacement${p.places.size > 1 ? 's' : ''} : ${[...p.places].map((pl) => PLACE_LABEL[pl]).join(', ')}
-- Visuel : ${nbVisuels ? `${nbVisuels} fichier${nbVisuels > 1 ? 's' : ''} joint${nbVisuels > 1 ? 's' : ''} (envoyé séparément si besoin)` : 'pas encore fourni — accompagnement souhaité'}
+- Visuel : ${nbVisuels ? `${nbVisuels} fichier${nbVisuels > 1 ? 's' : ''} joint${nbVisuels > 1 ? 's' : ''} (à télécharger et joindre ci-dessus)` : 'pas encore fourni — accompagnement souhaité'}
 - Quantité totale : ${c.qty} pièce${c.qty > 1 ? 's' : ''}
 - Sous-total estimé : ${fmtPrice(c.prixTotal)}`;
   });
   const total = tous.reduce((s, p) => s + calcProduit(p).prixTotal, 0);
   return `${lignes.join('\n\n')}\n\nTotal estimé : ${fmtPrice(total)}.`;
+}
+
+// Visuels déposés dans le quiz, à proposer en téléchargement sur
+// /demande-devis (Milio, 2026-09-09 : « ses designs joints »).
+function briefVisuels(): { fileName: string; dataUrl: string }[] {
+  const tous = [...produits, state];
+  return tous.flatMap((p) => Object.values(p.visuels).filter((v): v is VisuelImporte => !!v).map((v) => ({ fileName: v.fileName, dataUrl: v.dataUrl })));
 }
 
 function render(): void {
@@ -487,7 +522,7 @@ function render(): void {
   // Le modèle 3D n'accompagne que la question "projet" (support, coloris,
   // emplacement) — pas les autres écrans, qui n'ont rien à y montrer.
   el('qzLayout').classList.toggle('has3d', screen === 'projet');
-  if (screen === 'projet') updateQuiz3d(primaryColor(state).hex, state.places, state.garment, pendingFocus);
+  if (screen === 'projet') updateQuiz3d(state.previewHex, state.places, state.garment, pendingFocus);
   pendingFocus = undefined;
 
   if (screen === 'resultat') {
@@ -538,7 +573,7 @@ function render(): void {
       window.scrollTo({ top: el('qzLayout').getBoundingClientRect().top + window.scrollY - 96, behavior: 'smooth' });
     });
     el('qzGoDevis').addEventListener('click', () => {
-      setDemandeBrief(briefText());
+      setDemandeBrief(briefText(), briefVisuels());
       window.location.href = '/demande-devis';
     });
   }

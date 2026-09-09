@@ -124,6 +124,14 @@
 .frame.over::after{content:"Déposez le fichier ici";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--accent-100) 88%,transparent);font-family:'Sora',sans-serif;font-weight:800;font-size:14px;color:var(--accent-800);pointer-events:none}
 
 .filebar{border-top:2px solid var(--divider);padding:18px 22px}
+/* "4 — Taille et position" repositionnée sous le modèle 3D, avec les
+   contrôles de fichier plutôt que dans le panneau latéral (Milio,
+   2026-09-09). Redéfinit le padding/bordure de .cell hérité (pensé pour
+   une pile de cellules dans .panel, pas pour vivre dans .filebar, qui a
+   déjà son propre padding) par une carte détachée, cohérente avec
+   .reco/.techs juste à côté dans le panneau de droite. */
+.adjust-cell{padding:14px 16px;border:1.5px solid var(--divider);border-radius:14px;margin-bottom:16px;background:var(--surface)}
+.adjust-cell h6{margin-bottom:12px}
 
 .techs{display:flex;flex-direction:column;gap:8px;margin-top:14px}
 .tech{border:1.5px solid var(--divider);border-radius:14px;background:var(--bg);padding:12px 14px;cursor:pointer;text-align:left;font:inherit;color:var(--text);transition:.15s}
@@ -202,9 +210,13 @@
 .colorswatches .swatch.removable{cursor:pointer}
 .colorswatches .swatch.removable::after{content:'×';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1;color:#fff;background:rgba(20,18,17,.4);opacity:.6;transition:opacity .1s,background .1s}
 .colorswatches .swatch.removable:hover::after{opacity:1;background:var(--accent)}
-.flag{display:flex;gap:8px;font-size:12px;padding:9px 11px;border-radius:10px;line-height:1.45;font-family:'Manrope',system-ui,sans-serif}
+.flag{display:flex;flex-direction:column;gap:8px;font-size:12px;padding:9px 11px;border-radius:10px;line-height:1.45;font-family:'Manrope',system-ui,sans-serif}
 .flag.ok{background:var(--ok-bg);color:var(--ok)}
 .flag.warn{background:var(--warn-bg);color:var(--warn)}
+/* Case "laissez-nous nous en occuper" sur l'avertissement de résolution
+   basse — ne bloque jamais la commande (Milio, 2026-09-09). */
+.diagAssist{display:flex;align-items:flex-start;gap:7px;cursor:pointer;font-weight:600}
+.diagAssist input{margin-top:2px;flex-shrink:0;accent-color:var(--warn)}
 
 .hint{font-size:12px;color:var(--muted);margin-top:12px;font-family:'Manrope',system-ui,sans-serif}
 

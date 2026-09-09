@@ -28,7 +28,7 @@ import '../styles/bat.css';
 </Layout>
 
 <script>
-	import { getCart, briefForItems } from '../scripts/personnalisateur/cart';
+	import { getCart, briefForItems, visuelsForItems } from '../scripts/personnalisateur/cart';
 	import { buildBATHtml } from '../scripts/personnalisateur/bat';
 	import { siteConfig } from '../config/site';
 	import { setDemandeBrief } from '../lib/demande-brief';
@@ -60,7 +60,7 @@ import '../styles/bat.css';
 		requestAnimationFrame(() => pulseRegmarks());
 		el('batPrint').addEventListener('click', () => window.print());
 		el('batSend').addEventListener('click', () => {
-			setDemandeBrief(briefForItems(items));
+			setDemandeBrief(briefForItems(items), visuelsForItems(items));
 			window.location.href = '/demande-devis';
 		});
 	}

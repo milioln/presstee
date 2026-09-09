@@ -48,6 +48,12 @@ import '../styles/global.css';
 					<pre id="dvBrief" class="dv-brief"></pre>
 				</div>
 
+				<div class="dv-field" id="dvVisuelsField" style="display:none">
+					<span class="dv-label">Vos visuels</span>
+					<p class="dv-visuels-hint">Un e-mail ne peut pas joindre de fichier tout seul : téléchargez-les ici, puis joignez-les à votre e-mail avant de l'envoyer.</p>
+					<div class="dv-visuels" id="dvVisuels"></div>
+				</div>
+
 				<div class="dv-field">
 					<label class="dv-label" for="dvDetails">Précisions complémentaires <span class="dv-optional">optionnel</span></label>
 					<textarea id="dvDetails" placeholder="Une contrainte particulière, une question, un point à préciser…"></textarea>
@@ -73,7 +79,7 @@ import '../styles/global.css';
 </Layout>
 
 <script>
-	import { getDemandeBrief } from '../lib/demande-brief';
+	import { getDemandeBrief, getDemandeVisuels } from '../lib/demande-brief';
 	import { siteConfig } from '../config/site';
 
 	function el<T extends HTMLElement = HTMLElement>(id: string): T {
@@ -92,6 +98,14 @@ import '../styles/global.css';
 		el('dvContent').style.display = 'block';
 		el('dvBrief').textContent = brief;
 
+		const visuels = getDemandeVisuels();
+		if (visuels.length) {
+			el('dvVisuelsField').style.display = 'block';
+			el('dvVisuels').innerHTML = visuels
+				.map((v, i) => `<a class="dv-visuel" href="${v.dataUrl}" download="${v.fileName}"><img src="${v.dataUrl}" alt="" /><span>${v.fileName}</span></a>`)
+				.join('');
+		}
+
 		el('dvSend').addEventListener('click', () => {
 			const details = el<HTMLTextAreaElement>('dvDetails').value.trim();
 			const bonCommande = el<HTMLInputElement>('dvBonCommande').value.trim();
@@ -101,6 +115,7 @@ import '../styles/global.css';
 				details ? `Précisions : ${details}` : null,
 				bonCommande ? `Référence bon de commande : ${bonCommande}` : null,
 				date ? `Date de livraison souhaitée : ${fmtDateFr(date)}` : null,
+				visuels.length ? `Fichiers à joindre avant l'envoi (téléchargés depuis cette page) : ${visuels.map((v) => v.fileName).join(', ')}` : null,
 			].filter((l): l is string => l != null);
 
 			const body =
@@ -197,6 +212,46 @@ import '../styles/global.css';
 		letter-spacing: 0;
 		font-weight: 400;
 		opacity: 0.75;
+	}
+
+	.dv-visuels-hint {
+		font-size: 12.5px;
+		color: var(--gris);
+		margin: 0 0 12px;
+	}
+	.dv-visuels {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+	}
+	.dv-visuel {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		border: 1.5px solid var(--ligne);
+		border-radius: 12px;
+		padding: 8px 12px 8px 8px;
+		text-decoration: none;
+		color: var(--encre);
+		font-size: 13px;
+		max-width: 220px;
+		transition: border-color 0.15s;
+	}
+	.dv-visuel:hover {
+		border-color: var(--indigo);
+	}
+	.dv-visuel img {
+		width: 34px;
+		height: 34px;
+		border-radius: 6px;
+		object-fit: cover;
+		background: var(--lavande);
+		flex-shrink: 0;
+	}
+	.dv-visuel span {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.dv-brief {

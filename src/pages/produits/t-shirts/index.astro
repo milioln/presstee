@@ -499,6 +499,22 @@ function grammageTier(g: number | null): string {
 			window.scrollTo({ top: grid.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' });
 		});
 
+		// Filtres pré-appliqués depuis une autre page (ex. le quiz, qui
+		// propose "voir plus de résultats" pour les mêmes critères — Milio,
+		// 2026-09-09). Même mécanisme que le bandeau "trouver mon match" :
+		// on clique la pastille correspondante plutôt que de dupliquer la
+		// logique de filtrage. Valeurs séparées par des virgules pour
+		// pouvoir en pré-cocher plusieurs par groupe.
+		const incoming = new URLSearchParams(location.search);
+		(['coupe', 'genre', 'gamme', 'manches', 'responsable'] as const).forEach((key) => {
+			const raw = incoming.get(key);
+			if (!raw) return;
+			const groupId = key === 'gamme' ? 'fGamme' : key === 'genre' ? 'fGenre' : key === 'manches' ? 'fManches' : key === 'responsable' ? 'fResponsable' : 'fCoupe';
+			raw.split(',').forEach((value) => {
+				document.querySelector<HTMLButtonElement>(`#${groupId} [data-${key}="${value}"]`)?.click();
+			});
+		});
+
 		apply();
 	</script>
 </Layout>

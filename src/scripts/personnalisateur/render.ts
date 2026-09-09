@@ -183,9 +183,16 @@ export function paintTechs(): void {
   const total = totalColors();
   const r = reco(total, qtyTotal());
   const act = activeTech();
-  el('techs').innerHTML = (Object.keys(TECHS) as (keyof typeof TECHS)[])
+  // La technique recommandée passe toujours en tête de liste et garde
+  // son étiquette "Recommandé", même si le client a choisi autre chose
+  // à la main — auparavant l'étiquette disparaissait dès qu'on
+  // s'écartait du conseil, sans plus rien distinguer les deux cartes
+  // (Milio, 2026-09-09 : « il faut toujours mettre en premier la case
+  // conseillée »).
+  const keys = (Object.keys(TECHS) as (keyof typeof TECHS)[]).sort((a, b) => (a === r.k ? -1 : b === r.k ? 1 : 0));
+  el('techs').innerHTML = keys
     .map((k) => {
-      const note = S.tech === 'auto' && act === k ? 'Recommandé' : S.tech === k ? 'Choisi' : '';
+      const note = k === r.k ? 'Recommandé' : S.tech !== 'auto' && S.tech === k ? 'Choisi' : '';
       return `<button class="tech${act === k ? ' on' : ''}" data-t="${k}">
       <div class="th">${TECHS[k].n}${note ? `<span class="tag">${note}</span>` : ''}</div>
       <p>${TECHS[k].d}</p></button>`;
@@ -285,7 +292,13 @@ export function paintDiag(): void {
   } else if (dp != null) {
     if (dp >= 250) flags.push(['ok', `Résolution d’environ ${Math.round(dp)} dpi à cette taille : largement suffisante.`]);
     else if (dp >= 150) flags.push(['ok', `Résolution d’environ ${Math.round(dp)} dpi : correcte pour du textile.`]);
-    else flags.push(['warn', `Résolution d’environ ${Math.round(dp)} dpi : trop basse à cette taille. Réduisez le visuel ou envoyez un fichier plus grand, idéalement vectoriel.`]);
+    else {
+      flags.push([
+        'warn',
+        `Résolution d’environ ${Math.round(dp)} dpi : trop basse à cette taille. Réduisez le visuel ou envoyez un fichier plus grand, idéalement vectoriel.` +
+          `<label class="diagAssist"><input type="checkbox" id="qualiteAssistance"${layer.qualiteAssistance ? ' checked' : ''} /> Laissez-nous nous en occuper — je continue ma commande, l’atelier améliore le fichier avant impression</label>`,
+      ]);
+    }
   }
   if (layer.dom) {
     const dl = lumRGB(...layer.dom);

@@ -35,6 +35,11 @@ export interface Layer {
   y: number;
   w: number;
   rot: number;
+  // Le client accepte que l'atelier améliore la résolution de ce fichier
+  // plutôt que de bloquer sa commande sur un avertissement de qualité
+  // (Milio, 2026-09-09 : « qu'elle ne soit pas bloquée, elle peut
+  // continuer le processus de commande et après nous on corrige ça »).
+  qualiteAssistance?: boolean;
 }
 
 // Le client n'a pas encore de visuel : plutôt que de bloquer la

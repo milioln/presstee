@@ -57,36 +57,6 @@ import '../styles/personnalisateur.css';
 								<p class="hint">Plusieurs visuels peuvent partager un même emplacement (un logo et un texte, par exemple). Le recto-verso se chiffre comme deux marquages.</p>
 							</div>
 
-							<div class="cell" id="adjust" style="display:none">
-								<h6>4 — Taille et position du visuel</h6>
-								<div id="adjustControls" style="display:none">
-									<div class="widthctl">
-										<button class="btn btn-secondary btn-icon" id="wMinus" aria-label="Réduire">−</button>
-										<div class="widthval" id="wCm"></div>
-										<button class="btn btn-secondary btn-icon" id="wPlus" aria-label="Agrandir">+</button>
-									</div>
-									<p class="hint" id="wPct"></p>
-									<p class="hint">Le visuel se déplace aussi directement à la souris ou au doigt, sur le vêtement.</p>
-									<div class="posctl">
-										<button class="btn btn-secondary btn-icon" id="pUp" aria-label="Déplacer vers le haut">↑</button>
-										<div class="posrow">
-											<button class="btn btn-secondary btn-icon" id="pLeft" aria-label="Déplacer vers la gauche">←</button>
-											<button class="btn btn-secondary" id="pCenter">Recentrer</button>
-											<button class="btn btn-secondary btn-icon" id="pRight" aria-label="Déplacer vers la droite">→</button>
-										</div>
-										<button class="btn btn-secondary btn-icon" id="pDown" aria-label="Déplacer vers le bas">↓</button>
-									</div>
-									<div class="widthctl" style="margin-top:14px">
-										<button class="btn btn-secondary btn-icon" id="rMinus" aria-label="Incliner vers la gauche, 1°">⟲</button>
-										<div class="widthval" id="rDeg">0°</div>
-										<button class="btn btn-secondary btn-icon" id="rPlus" aria-label="Incliner vers la droite, 1°">⟳</button>
-									</div>
-									<input type="range" id="rSlider" class="rslider" min="-180" max="180" step="1" value="0" aria-label="Rotation précise, au degré près" />
-									<button class="btn btn-secondary btn-block" id="cropBtn" style="display:none">Recadrer l'image</button>
-								</div>
-								<p class="hint" id="adjustEmpty" style="display:none">Ajoutez un visuel pour cet emplacement pour le positionner.</p>
-							</div>
-
 						</div>
 
 						<div class="viewer">
@@ -131,6 +101,41 @@ import '../styles/personnalisateur.css';
 							</div>
 							<div class="filebar">
 								<div class="layerStrip" id="layerStrip" style="display:none"></div>
+
+								<!-- Repositionné ici depuis le panneau de gauche, juste sous le
+								     modèle 3D et à côté des contrôles de fichier plutôt qu'à part
+								     (Milio, 2026-09-09 : « c'est nul de l'indiquer là-bas alors
+								     qu'il y a déjà une page qui est à peu près faite pour ça »). -->
+								<div class="cell adjust-cell" id="adjust" style="display:none">
+									<h6>4 — Taille et position du visuel</h6>
+									<div id="adjustControls" style="display:none">
+										<div class="widthctl">
+											<button class="btn btn-secondary btn-icon" id="wMinus" aria-label="Réduire">−</button>
+											<div class="widthval" id="wCm"></div>
+											<button class="btn btn-secondary btn-icon" id="wPlus" aria-label="Agrandir">+</button>
+										</div>
+										<p class="hint" id="wPct"></p>
+										<p class="hint">Le visuel se déplace aussi directement à la souris ou au doigt, sur le vêtement.</p>
+										<div class="posctl">
+											<button class="btn btn-secondary btn-icon" id="pUp" aria-label="Déplacer vers le haut">↑</button>
+											<div class="posrow">
+												<button class="btn btn-secondary btn-icon" id="pLeft" aria-label="Déplacer vers la gauche">←</button>
+												<button class="btn btn-secondary" id="pCenter">Recentrer</button>
+												<button class="btn btn-secondary btn-icon" id="pRight" aria-label="Déplacer vers la droite">→</button>
+											</div>
+											<button class="btn btn-secondary btn-icon" id="pDown" aria-label="Déplacer vers le bas">↓</button>
+										</div>
+										<div class="widthctl" style="margin-top:14px">
+											<button class="btn btn-secondary btn-icon" id="rMinus" aria-label="Incliner vers la gauche, 1°">⟲</button>
+											<div class="widthval" id="rDeg">0°</div>
+											<button class="btn btn-secondary btn-icon" id="rPlus" aria-label="Incliner vers la droite, 1°">⟳</button>
+										</div>
+										<input type="range" id="rSlider" class="rslider" min="-180" max="180" step="1" value="0" aria-label="Rotation précise, au degré près" />
+										<button class="btn btn-secondary btn-block" id="cropBtn" style="display:none">Recadrer l'image</button>
+									</div>
+									<p class="hint" id="adjustEmpty" style="display:none">Ajoutez un visuel pour cet emplacement pour le positionner.</p>
+								</div>
+
 								<div class="modetabs">
 									<button class="on" data-mode="image">Image</button>
 									<button data-mode="text">Texte</button>
