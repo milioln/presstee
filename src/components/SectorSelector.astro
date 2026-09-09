@@ -69,18 +69,46 @@ const DOMS = [
 			<h2>Votre activité, vos contraintes.</h2>
 			<p style="color:var(--gris)">Sélectionnez votre domaine : nous vous montrons ce que commandent les structures comme la vôtre, et ce que nous leur conseillons.</p>
 		</div>
+		<div class="profilToggle" id="profilToggle" role="group" aria-label="Votre profil">
+			<button type="button" data-profil="particulier">Je suis un particulier</button>
+			<button type="button" data-profil="entreprise">Je représente une structure</button>
+		</div>
 		<div class="doms" id="doms"></div>
 		<div class="dompanel" id="dompanel"></div>
 	</div>
 </section>
 
 <script define:vars={{ DOMS }}>
+	// Domaines clairement pro (portés au premier plan quand le visiteur se
+	// déclare "professionnel") vs particuliers/associatifs — même liste que
+	// celle déjà éditorialisée dans DOMS, juste réordonnée à l'affichage.
+	const PRO = new Set(['Entreprises', 'Bars et restaurants', 'Commerces', 'Boulangeries']);
+
 	const doms = document.getElementById('doms');
 	const dompanel = document.getElementById('dompanel');
+	const profilToggle = document.getElementById('profilToggle');
 	let dsel = 0;
+	let ordre = DOMS.map((_, i) => i);
+
+	function applyProfil(p) {
+		try {
+			localStorage.setItem('presstee:profil-client', p);
+		} catch {
+			// Stockage indisponible : le tri reste appliqué pour cette visite.
+		}
+		ordre = DOMS.map((_, i) => i).sort((a, b) => {
+			const pa = PRO.has(DOMS[a].k) ? 0 : 1;
+			const pb = PRO.has(DOMS[b].k) ? 0 : 1;
+			const rank = p === 'entreprise' ? [pa, pb] : [1 - pa, 1 - pb];
+			return rank[0] - rank[1];
+		});
+		dsel = ordre[0];
+		profilToggle.querySelectorAll('[data-profil]').forEach((b) => b.classList.toggle('on', b.dataset.profil === p));
+		paintDoms();
+	}
 
 	function paintDoms() {
-		doms.innerHTML = DOMS.map((d, i) => `<button class="dom${i === dsel ? ' on' : ''}" data-d="${i}">${d.k}</button>`).join('');
+		doms.innerHTML = ordre.map((i) => `<button class="dom${i === dsel ? ' on' : ''}" data-d="${i}">${DOMS[i].k}</button>`).join('');
 		const d = DOMS[dsel];
 		dompanel.innerHTML = `<div><h3>${d.k}</h3><p>${d.p}</p></div>
 			<div class="domfacts">
@@ -97,5 +125,22 @@ const DOMS = [
 		paintDoms();
 	});
 
-	paintDoms();
+	profilToggle.addEventListener('click', (e) => {
+		const b = e.target.closest('[data-profil]');
+		if (!b) return;
+		applyProfil(b.dataset.profil);
+	});
+
+	try {
+		const saved = localStorage.getItem('presstee:profil-client');
+		if (saved === 'particulier' || saved === 'entreprise') applyProfil(saved);
+		else paintDoms();
+	} catch {
+		paintDoms();
+	}
+
+	// Un autre point du site (accueil, /contact...) peut fixer le profil
+	// après le chargement de cette section — on réagit au même évènement
+	// plutôt qu'à une relecture périodique du storage.
+	document.addEventListener('presstee:profil-client', (e) => applyProfil(e.detail));
 </script>

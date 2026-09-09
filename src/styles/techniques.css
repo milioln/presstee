@@ -78,6 +78,22 @@
 .side-card p{font-size:.92rem;color:var(--gris);margin:0}
 .side-card .big{font-family:'Sora',sans-serif;font-size:1.3rem;color:var(--encre);margin-bottom:4px}
 
+/* ---------- mini-recommandation ---------- */
+.techMiniReco-field{margin-bottom:14px}
+.techMiniReco-label{display:block;font-family:'Sora',sans-serif;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--gris);margin-bottom:8px;font-weight:600}
+.techMiniReco .pills{display:flex;flex-wrap:wrap;gap:6px}
+.techMiniReco .pill{border:1.5px solid var(--ligne);background:#fff;border-radius:100px;padding:6px 12px;font:inherit;font-size:12.5px;cursor:pointer;color:var(--encre)}
+.techMiniReco .pill:hover{border-color:var(--indigo)}
+.techMiniReco .pill.on{border-color:var(--indigo);background:var(--indigo);color:#fff}
+.techMiniReco .qtyStepper{display:inline-flex;align-items:center;gap:14px;border:1.5px solid var(--ligne);border-radius:100px;padding:5px 7px}
+.techMiniReco .qtyStepper-val{font-family:'Sora',sans-serif;font-size:13px;font-weight:600;min-width:82px;text-align:center;font-variant-numeric:tabular-nums}
+.techMiniReco .btn-icon{width:28px;height:28px;border-radius:50%;border:0;background:var(--gris-clair);color:var(--encre);font-size:16px;line-height:1;cursor:pointer;display:grid;place-items:center}
+.techMiniReco .btn-icon:hover{background:var(--indigo);color:#fff}
+.techMiniReco-result{margin-top:14px;padding-top:14px;border-top:1px solid var(--ligne)}
+.techMiniReco-ok{color:#1F5A4A;font-weight:600;font-size:.88rem;margin:0}
+.techMiniReco-alt{font-size:.88rem;color:var(--gris);margin:0}
+.techMiniReco-alt a{color:var(--indigo);font-weight:600}
+
 .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
 .tags .tag{font-size:12.5px;border:1px solid var(--ligne);border-radius:100px;padding:6px 13px;color:var(--encre)}
 

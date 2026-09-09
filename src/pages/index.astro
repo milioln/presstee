@@ -19,6 +19,24 @@ import '../styles/techniques.css';
 
 		<HeroAccueil />
 
+		<section class="profilPick">
+			<div class="wrap">
+				<p class="profilPick-lede">Pour vous montrer ce qui compte vraiment :</p>
+				<div class="profilPick-cards">
+					<button type="button" class="profilPick-card" data-profil="particulier">
+						<span class="profilPick-ico" aria-hidden="true">🧍</span>
+						<span class="profilPick-title">Je suis un particulier</span>
+						<span class="profilPick-sub">Association, événement, cadeau, projet perso…</span>
+					</button>
+					<button type="button" class="profilPick-card" data-profil="entreprise">
+						<span class="profilPick-ico" aria-hidden="true">🏢</span>
+						<span class="profilPick-title">Je représente une structure</span>
+						<span class="profilPick-sub">Entreprise, commerce, collectivité…</span>
+					</button>
+				</div>
+			</div>
+		</section>
+
 		<section class="s-indigo">
 			<div class="wrap split">
 				<div>
@@ -105,10 +123,10 @@ import '../styles/techniques.css';
 					<div class="way">
 						<div class="way-top">
 							<div class="ico"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#17131F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"></circle><path d="M12 4v4M12 16v4M4 12h4M16 12h4"></path></svg></div>
-							<h3>Via le simulateur</h3>
+							<h3>Via le quiz</h3>
 						</div>
 						<p>Pas sûr de la technique qu'il vous faut ? Trois questions, une recommandation claire, puis direction le configurateur déjà pré-rempli.</p>
-						<a class="go" href="/simulateur">Faire le test</a>
+						<a class="go" href="/commencer">Faire le test</a>
 					</div>
 					<div class="way">
 						<div class="way-top">
@@ -131,3 +149,14 @@ import '../styles/techniques.css';
 
 	<Footer />
 </Layout>
+
+<script>
+	import { setProfil } from '../lib/profil-client';
+
+	document.querySelectorAll<HTMLButtonElement>('.profilPick-card').forEach((btn) => {
+		btn.addEventListener('click', () => {
+			setProfil(btn.dataset.profil as 'particulier' | 'entreprise');
+			document.getElementById('secteurs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		});
+	});
+</script>

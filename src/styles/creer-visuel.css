@@ -16,7 +16,8 @@
 .creer-warning{margin-top:12px;padding:12px 16px;background:#FCEFE9;color:#8A3B22;border-radius:12px;font-size:13.5px}
 
 /* ---------- plan de travail ---------- */
-.creer-board{display:grid;grid-template-columns:auto 1fr 280px;grid-template-areas:"toolbar toolbar toolbar" "canvas canvas side";gap:16px;margin-top:22px}
+.creer-board{display:grid;grid-template-columns:auto 1fr 280px;grid-template-areas:"label1 label1 label1" "toolbar toolbar toolbar" "label2 label2 label2" "canvas canvas side";gap:16px;margin-top:22px}
+.phaseLabel{font-family:'Sora',sans-serif;font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--indigo)}
 .creer-toolbar{grid-area:toolbar;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .creer-shape-group{display:flex;gap:6px}
 .creer-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:#fff;color:var(--encre);border:1.5px solid var(--ligne);border-radius:100px;padding:11px 20px;font-family:'Sora',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:border-color .15s}
@@ -58,5 +59,5 @@
 .creer-hint a{color:var(--indigo)}
 
 @media(max-width:900px){
-	.creer-board{grid-template-columns:1fr;grid-template-areas:"toolbar" "canvas" "side"}
+	.creer-board{grid-template-columns:1fr;grid-template-areas:"label1" "toolbar" "label2" "canvas" "side"}
 }

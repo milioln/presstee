@@ -60,6 +60,24 @@ const typesTextile = Object.keys(LABELS_TYPE_TEXTILE) as TypeTextile[];
 							</label>
 						</div>
 
+						<div class="contact-field contact-pro" id="contactPro" hidden>
+							<span class="contact-label">Informations de facturation <span class="contact-optional">(facultatif)</span></span>
+							<div class="contact-row2">
+								<label>
+									<span>SIRET</span>
+									<input type="text" id="cSiret" placeholder="14 chiffres" inputmode="numeric" />
+								</label>
+								<label>
+									<span>Bon de commande interne</span>
+									<input type="text" id="cBonCommande" placeholder="Référence, si vous en avez une" />
+								</label>
+							</div>
+							<label>
+								<span>Adresse de facturation</span>
+								<input type="text" id="cAdresseFacturation" placeholder="Si différente de l'adresse de contact" />
+							</label>
+						</div>
+
 						<div class="contact-sep"></div>
 
 						<div class="contact-field">
@@ -179,10 +197,22 @@ const typesTextile = Object.keys(LABELS_TYPE_TEXTILE) as TypeTextile[];
 
 <script>
 	import { siteConfig } from '../config/site';
+	import { getProfil } from '../lib/profil-client';
 
 	function el<T extends HTMLElement = HTMLElement>(id: string): T {
 		return document.getElementById(id) as T;
 	}
+
+	// Bloc SIRET/facturation affiché dès que "Structure" est renseigné, ou
+	// d'emblée si le visiteur s'est déjà déclaré professionnel ailleurs sur
+	// le site (accueil, SectorSelector) — jamais un champ obligatoire.
+	const proBlock = el('contactPro');
+	const structureInput = el<HTMLInputElement>('cStructure');
+	function syncProBlock(): void {
+		proBlock.hidden = !structureInput.value.trim() && getProfil() !== 'entreprise';
+	}
+	structureInput.addEventListener('input', syncProBlock);
+	syncProBlock();
 
 	const NOTE_DEFAUT = el('cFichierNote').textContent!;
 	const fichierInput = el<HTMLInputElement>('cFichier');
@@ -238,11 +268,18 @@ const typesTextile = Object.keys(LABELS_TYPE_TEXTILE) as TypeTextile[];
 			submitBtn.disabled = false;
 		}
 
+		const siret = el<HTMLInputElement>('cSiret').value.trim();
+		const bonCommande = el<HTMLInputElement>('cBonCommande').value.trim();
+		const adresseFacturation = el<HTMLInputElement>('cAdresseFacturation').value.trim();
+
 		const lignes = [
 			`Nom : ${nom}`,
 			structure ? `Structure : ${structure}` : null,
 			`E-mail : ${emailClient}`,
 			tel ? `Téléphone : ${tel}` : null,
+			siret ? `SIRET : ${siret}` : null,
+			bonCommande ? `Bon de commande interne : ${bonCommande}` : null,
+			adresseFacturation ? `Adresse de facturation : ${adresseFacturation}` : null,
 			`Type de textile souhaité : ${typeTextile}`,
 			`Technique souhaitée : ${technique}`,
 			`Quantité : ${qte}`,

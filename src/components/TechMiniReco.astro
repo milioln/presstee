@@ -1,0 +1,38 @@
+---
+// Mini-widget de recommandation, réutilisé sur les 4 pages /techniques/*
+// (éditoriales jusqu'ici) — appelle reco() en direct, le même moteur que
+// le configurateur et le simulateur, plutôt qu'une nouvelle logique.
+interface Props {
+	tech: string;
+}
+const { tech } = Astro.props;
+---
+
+<div class="side-card">
+	<h4>Ce projet vous correspond ?</h4>
+	<div class="techMiniReco" id="techMiniReco" data-tech={tech}>
+		<div class="techMiniReco-field">
+			<span class="techMiniReco-label">Couleurs</span>
+			<div class="pills" id="tmrCouleurs">
+				<button type="button" class="pill" data-value="1">1 couleur</button>
+				<button type="button" class="pill" data-value="3">2 à 4</button>
+				<button type="button" class="pill" data-value="6">5 à 8</button>
+				<button type="button" class="pill on" data-value="">Je ne sais pas</button>
+			</div>
+		</div>
+		<div class="techMiniReco-field">
+			<span class="techMiniReco-label">Quantité</span>
+			<div class="qtyStepper">
+				<button type="button" class="btn-icon" id="tmrMinus" aria-label="Diminuer">−</button>
+				<span class="qtyStepper-val" id="tmrQtyVal">25 pièces</span>
+				<button type="button" class="btn-icon" id="tmrPlus" aria-label="Augmenter">+</button>
+			</div>
+		</div>
+		<div id="tmrResult" class="techMiniReco-result"></div>
+	</div>
+</div>
+
+<script>
+	import { initTechMiniReco } from '../scripts/techniques/mini-reco';
+	initTechMiniReco();
+</script>

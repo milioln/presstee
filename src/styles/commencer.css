@@ -1,0 +1,62 @@
+/* ---------- en-tête ---------- */
+.qz-hero{padding:56px 0 40px;border-bottom:1px solid var(--ligne)}
+.qz-hero .crumb{font-size:13px;color:var(--gris);margin-bottom:14px}
+.qz-hero .crumb a{text-decoration:none;color:var(--gris)}
+.qz-hero .crumb a:hover{color:var(--indigo)}
+.qz-hero h1{font-size:clamp(2rem,4.4vw,3rem);letter-spacing:-0.03em}
+.qz-hero p{color:var(--gris);margin-top:14px;max-width:62ch;font-size:1.02rem}
+
+.qz-body{padding:44px 0 90px}
+.qz-wrap{display:flex;justify-content:center}
+.qzCard{width:100%;max-width:640px;border:1px solid var(--ligne);border-radius:24px;padding:36px;background:#fff}
+
+/* ---------- progression ---------- */
+.qzProgress{display:flex;justify-content:center;gap:8px;margin-bottom:28px}
+.qzDot{width:8px;height:8px;border-radius:50%;background:var(--ligne)}
+.qzDot.on{background:var(--indigo);width:22px;border-radius:100px;transition:width .2s}
+.qzDot.done{background:var(--jaune)}
+
+/* ---------- écrans ---------- */
+.qzStep h2{font-size:1.5rem;letter-spacing:-0.02em;margin-bottom:4px}
+.qzHint{color:var(--gris);font-size:.85rem;margin-bottom:22px}
+.qzField{margin-bottom:22px}
+.qzField:last-child{margin-bottom:0}
+.qzLabel{display:block;font-family:'Sora',sans-serif;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--gris);margin-bottom:10px;font-weight:600}
+.qzOptional{text-transform:none;letter-spacing:0;font-weight:400;opacity:.75}
+
+.qzChoices-big{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+.qzBig{display:flex;flex-direction:column;align-items:center;gap:10px;border:1.5px solid var(--ligne);border-radius:18px;padding:28px 16px;background:var(--lavande);font:inherit;font-weight:600;font-size:1rem;color:var(--encre);cursor:pointer;transition:.15s}
+.qzBig span{font-size:2rem}
+.qzBig:hover{border-color:var(--indigo);transform:translateY(-2px)}
+
+/* ---------- navigation ---------- */
+.qzNav{display:flex;justify-content:space-between;gap:12px;margin-top:28px;padding-top:24px;border-top:1px solid var(--ligne)}
+.qzNav .btn{flex:1}
+.qzNav .btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* ---------- résultat ---------- */
+.qzStep-resultat{text-align:center}
+.qzResultBadge{display:inline-block;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--indigo);background:var(--lavande);border-radius:100px;padding:6px 14px;margin-bottom:10px}
+.qzWhy{color:var(--gris);max-width:52ch;margin:0 auto 26px;font-size:.94rem;line-height:1.55}
+
+.qzResultCard{display:flex;align-items:center;gap:18px;text-align:left;background:var(--lavande);border-radius:18px;padding:18px 22px;margin-bottom:18px}
+.qzResultShirt{width:64px;height:74px;flex-shrink:0;filter:drop-shadow(0 3px 6px rgba(23,19,31,.12))}
+.qzResultBody{display:flex;flex-direction:column;gap:3px}
+.qzResultRef{font-family:'Sora',sans-serif;font-weight:700;font-size:1.02rem}
+.qzResultPrix{font-family:'Sora',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.02em}
+.qzResultPrix span{font-family:'Manrope',sans-serif;font-weight:400;font-size:.78rem;color:var(--gris)}
+.qzResultTotal{font-size:.85rem;color:var(--gris)}
+
+.qzGrille{margin-bottom:26px;text-align:left}
+.qzGrille summary{cursor:pointer;font-size:.85rem;color:var(--gris);text-decoration:underline;text-underline-offset:3px}
+.qzGrille summary:hover{color:var(--encre)}
+.qzGrilleRows{display:grid;gap:6px;margin-top:12px;padding:14px 16px;background:var(--lavande);border-radius:12px}
+.qzGrilleRow{display:flex;justify-content:space-between;font-size:.85rem}
+.qzGrilleRow b{font-variant-numeric:tabular-nums}
+
+.qzResultActions{display:flex;flex-direction:column;gap:10px}
+
+@media(max-width:640px){
+  .qzCard{padding:24px}
+  .qzChoices-big{grid-template-columns:1fr}
+}

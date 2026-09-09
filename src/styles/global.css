@@ -90,10 +90,27 @@ h2{font-size:clamp(2.05rem,5.2vw,3.5rem)}
 .sub strong{font-family:'Sora',sans-serif;font-size:.96rem;font-weight:600;display:block}
 .sub span{font-size:.93rem;color:var(--gris)}
 
+/* ---------- choix de profil (accueil) ---------- */
+.profilPick{padding:34px 0}
+.profilPick-lede{text-align:center;color:var(--gris);font-size:.9rem;margin-bottom:14px;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.profilPick-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:760px;margin:0 auto}
+.profilPick-card{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;border:1.5px solid var(--ligne);background:#fff;border-radius:var(--r);padding:18px 20px;font:inherit;cursor:pointer;transition:.15s}
+.profilPick-card:hover{border-color:var(--indigo);transform:translateY(-2px)}
+.profilPick-ico{font-size:1.5rem;margin-bottom:4px}
+.profilPick-title{font-family:'Sora',sans-serif;font-weight:700;font-size:1rem;color:var(--encre)}
+.profilPick-sub{font-size:.85rem;color:var(--gris)}
+@media(max-width:640px){
+  .profilPick-cards{grid-template-columns:1fr}
+}
+
 /* ---------- secteurs ---------- */
+.profilToggle{display:flex;justify-content:center;gap:8px;margin-bottom:22px}
+.profilToggle button{border:1.5px solid var(--ligne);background:var(--lavande);border-radius:100px;padding:9px 18px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;color:var(--gris);transition:.15s}
+.profilToggle button:hover{border-color:var(--indigo);color:var(--encre)}
+.profilToggle button.on{border-color:var(--indigo);background:var(--indigo);color:#fff}
 .doms{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-bottom:30px}
 .dom{border:1.5px solid var(--ligne);background:#fff;border-radius:100px;padding:11px 20px;font:inherit;font-size:14.5px;font-weight:500;cursor:pointer;color:var(--encre);transition:.15s}
-.dom:hover{border-color:var(--indigo)}
+.dom:hover{border-color:var(--indigo);transform:translateY(-2px)}
 .dom.on{border-color:var(--indigo);background:var(--indigo);color:#fff}
 .dompanel{background:#fff;border:1px solid var(--ligne);border-radius:20px;padding:34px;display:grid;grid-template-columns:1.1fr .9fr;gap:34px;align-items:start}
 .dompanel h3{font-size:1.5rem;margin-bottom:12px}
@@ -129,7 +146,9 @@ h2{font-size:clamp(2.05rem,5.2vw,3.5rem)}
 /* ---------- écran 6 : réalisations ---------- */
 .gal{columns:3;column-gap:18px;margin-top:52px}
 .tile{break-inside:avoid;margin-bottom:18px;border-radius:var(--r);display:grid;place-items:center;overflow:hidden}
-.tile svg{width:50%;height:auto}
+.tile svg{width:50%;height:auto;transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.tile:hover svg{transform:scale(1.12) rotate(-4deg)}
+@media(prefers-reduced-motion:reduce){.tile:hover svg{transform:none}}
 .t-w{background:#fff}
 .t-i{background:var(--indigo)}
 

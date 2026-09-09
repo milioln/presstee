@@ -1,0 +1,48 @@
+---
+// Quiz guidé — nouveau point d'entrée léger qui tient enfin la promesse
+// déjà écrite en page d'accueil ("Trois questions, une recommandation
+// claire, puis direction le configurateur déjà pré-rempli"), disparue
+// depuis que le simulateur est devenu un outil multi-produits plus
+// poussé (cf. SimTeaser.astro : "remplace l'ancien TechSimulator intégré
+// (3 questions embarquées)"). Réutilise reco() et seedFromItem() —
+// aucune nouvelle logique de recommandation ou de tarification.
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+import '../styles/produits.css';
+import '../styles/simulateur.css';
+import '../styles/commencer.css';
+---
+
+<Layout title="Commencer — Presstee" description="Trois questions, une recommandation de technique et de textile, puis direction le configurateur déjà pré-rempli.">
+	<Header />
+	<main>
+		<section class="qz-hero">
+			<div class="wrap">
+				<div class="crumb"><a href="/">Accueil</a> / Commencer</div>
+				<h1>Trois questions,<br />une recommandation claire.</h1>
+				<p>Répondez en quelques clics : on vous propose une technique, un textile et un ordre de prix, puis vous pouvez configurer votre visuel en 3D directement à partir de ce résultat.</p>
+			</div>
+		</section>
+
+		<section class="qz-body">
+			<div class="wrap qz-wrap">
+				<div class="qzCard">
+					<div class="qzProgress" id="qzProgress"></div>
+					<div id="qzScreen"></div>
+					<div class="qzNav" id="qzNav">
+						<button type="button" class="btn btn-outline" id="qzPrev">Précédent</button>
+						<button type="button" class="btn" id="qzNext">Suivant</button>
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>
+
+<script>
+	import { initCommencer } from '../scripts/commencer';
+	initCommencer();
+</script>

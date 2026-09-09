@@ -50,6 +50,7 @@ import '../styles/creer-visuel.css';
 			<p class="creer-warning" id="creerColorWarning" style="display:none"></p>
 
 			<div class="creer-board">
+				<div class="phaseLabel" style="grid-area:label1">1 — Ajouter un élément</div>
 				<div class="creer-toolbar">
 					<button type="button" class="creer-btn" id="creerAddText">+ Texte</button>
 					<div class="creer-shape-group">
@@ -64,6 +65,8 @@ import '../styles/creer-visuel.css';
 					</label>
 					<button type="button" class="creer-btn" id="creerDuplicate">Dupliquer</button>
 				</div>
+
+				<div class="phaseLabel" style="grid-area:label2">2 — Ajuster</div>
 
 				<div class="creer-canvas-wrap">
 					<canvas id="creerCanvas"></canvas>
@@ -84,11 +87,14 @@ import '../styles/creer-visuel.css';
 				</aside>
 			</div>
 
-			<div class="creer-actions">
-				<button type="button" class="creer-btn" id="creerDownload">Télécharger en PNG</button>
-				<button type="button" class="btn" id="creerUse">Utiliser dans le configurateur →</button>
+			<div class="phaseGroup">
+				<div class="phaseLabel">3 — Couleurs et export</div>
+				<div class="creer-actions">
+					<button type="button" class="creer-btn" id="creerDownload">Télécharger en PNG</button>
+					<button type="button" class="btn" id="creerUse">Utiliser dans le configurateur →</button>
+				</div>
+				<p class="creer-hint">Astuce : peu de couleurs et des formes simples impriment mieux et coûtent souvent moins cher. Besoin d'aide ? <a href="/contact">Décrivez votre projet</a>, notre équipe peut le créer avec vous.</p>
 			</div>
-			<p class="creer-hint">Astuce : peu de couleurs et des formes simples impriment mieux et coûtent souvent moins cher. Besoin d'aide ? <a href="/contact">Décrivez votre projet</a>, notre équipe peut le créer avec vous.</p>
 		</div>
 	</main>
 	<Footer />

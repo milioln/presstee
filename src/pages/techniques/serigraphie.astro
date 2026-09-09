@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import Button from '../../components/Button.astro';
+import TechMiniReco from '../../components/TechMiniReco.astro';
 import { TECHNIQUES, getTechnique } from '../../lib/techniques-data';
 import '../../styles/global.css';
 import '../../styles/techniques.css';
@@ -82,6 +83,7 @@ const autres = TECHNIQUES.filter((x) => x.slug !== t.slug);
 						<h4>Durabilité</h4>
 						<p>{t.durabilite}.</p>
 					</div>
+					<TechMiniReco tech={t.slug} />
 					<Button href="/configurateur?technique=serigraphie">Personnaliser en sérigraphie</Button>
 				</aside>
 			</div>

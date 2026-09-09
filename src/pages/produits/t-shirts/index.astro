@@ -37,6 +37,25 @@ function grammageTier(g: number | null): string {
 		</section>
 
 		<div class="wrap">
+			<div class="pmatch" id="pMatch">
+				<div class="pmatch-lede">Trouver mon match, en 2 clics :</div>
+				<div class="pmatch-row">
+					<span class="pmatch-q">Budget</span>
+					<div class="pills">
+						{gammes.map((g) => <button type="button" class="pill" data-forward={`fGamme:${g}`}>{LABELS_GAMME_PRIX[g]}</button>)}
+					</div>
+				</div>
+				<div class="pmatch-row">
+					<span class="pmatch-q">Coupe</span>
+					<div class="pills">
+						{coupes.map((c) => <button type="button" class="pill" data-forward={`fCoupe:${c}`}>{LABELS_COUPE[c]}</button>)}
+					</div>
+				</div>
+				<div class="pmatch-result">
+					<b id="pMatchCount">{TSHIRTS.length}</b> référence{TSHIRTS.length > 1 ? 's' : ''} correspondent déjà
+				</div>
+			</div>
+
 			<div class="plist">
 				<aside class="pfilters">
 					<div class="fgroup">
@@ -366,6 +385,19 @@ function grammageTier(g: number | null): string {
 		bindMultiPillGroup('fGamme', 'gamme');
 		bindMultiPillGroup('fResponsable', 'responsable');
 
+		// Bandeau "trouver mon match" : plutôt que dupliquer la logique de
+		// filtrage, chaque pastille déclenche un clic sur la pastille
+		// correspondante de la barre latérale (même valeur, même groupe) —
+		// un seul mécanisme de filtrage, deux points d'entrée visuels.
+		document.getElementById('pMatch')!.addEventListener('click', (e) => {
+			const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-forward]');
+			if (!b) return;
+			const [groupId, value] = b.dataset.forward!.split(':');
+			const target = document.querySelector<HTMLButtonElement>(`#${groupId} [data-${groupId === 'fGamme' ? 'gamme' : 'coupe'}="${value}"]`);
+			target?.click();
+			b.classList.toggle('on', target?.classList.contains('on') ?? false);
+		});
+
 		searchInput.addEventListener('input', () => {
 			state.page = 1;
 			apply();
@@ -434,6 +466,14 @@ function grammageTier(g: number | null): string {
 			grid.style.display = visible.length === 0 ? 'none' : 'grid';
 
 			paintPagination(totalPages);
+
+			const matchCount = document.getElementById('pMatchCount')!;
+			if (matchCount.textContent !== String(visible.length)) {
+				matchCount.textContent = String(visible.length);
+				matchCount.classList.remove('pmatch-pulse');
+				void matchCount.offsetWidth;
+				matchCount.classList.add('pmatch-pulse');
+			}
 		}
 
 		function paintPagination(totalPages: number) {

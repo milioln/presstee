@@ -13,13 +13,14 @@
 // cart-ui.ts/personnalisateur (rendu complet + délégation d'événements
 // sur un conteneur stable, plutôt qu'un correctif fin du DOM).
 import { reco, TECHS, type TechKey } from './personnalisateur/recommendation';
-import { PALIERS_TARIF, prixVente } from '../config/tarification';
+import { prixVente } from '../config/tarification';
 import { coutBaseSupportUnique, catalogueColoris, repartitionTaillesParDefaut, type Garment } from '../config/parametres-metier';
 import { seedFromItem } from './personnalisateur/state';
-import { LABELS_COUPE, LABELS_MANCHES, LABELS_GENRE, LABELS_GAMME_PRIX, inferCoupe, inferGammePrix, inferResponsable, type Coupe, type Manches, type Genre, type GammePrix } from '../lib/produits-types';
+import { LABELS_COUPE, LABELS_MANCHES, LABELS_GENRE, LABELS_GAMME_PRIX } from '../lib/produits-types';
 import { TSHIRTS, type TShirtCatalogue } from '../data/tshirts';
 import { getTechnique } from '../lib/techniques-data';
 import { siteConfig } from '../config/site';
+import { COULEURS_OPTIONS, COUPES, MANCHES_OPTIONS, GENRES, GAMMES, qtyStep, palierPour, candidatsRef, styleLabel } from './personnalisateur/catalogue-match';
 
 type Statut = 'fourni' | 'en_cours' | 'conseil';
 type Format = 'petit' | 'moyen' | 'grand';
@@ -101,59 +102,6 @@ const refThumb = `<span class="refRow-thumb"><svg viewBox="0 0 400 460" xmlns="h
 const GARMENT_LABELS: Record<Garment, string> = { tshirt: 'T-shirt', sweat: 'Sweat', chemise: 'Chemise', casquette: 'Casquette' };
 const FORMAT_LABELS: Record<Format, string> = { petit: 'Petit · 10×10 cm max', moyen: 'Moyen · format A4', grand: 'Grand · format A3' };
 const STATUT_LABELS: Record<Statut, string> = { fourni: "J'ai mon visuel", en_cours: 'En cours de création', conseil: 'Conseillez-moi' };
-const COULEURS_OPTIONS: { value: number | null; label: string }[] = [
-  { value: 1, label: '1 couleur' },
-  { value: 3, label: '2 à 4' },
-  { value: 6, label: '5 à 8' },
-  { value: 12, label: 'Dégradés / photo' },
-  { value: null, label: 'Je ne sais pas' },
-];
-
-const COUPES: Coupe[] = ['rond', 'v', 'oversize', 'autre'];
-const MANCHES_OPTIONS: Manches[] = ['courtes', 'longues', 'sans-manches'];
-const GENRES: Genre[] = ['homme', 'femme', 'enfant', 'unisexe'];
-const GAMMES: GammePrix[] = ['petit-prix', 'qualite-prix', 'premium'];
-
-function qtyStep(qty: number): number {
-  if (qty < 20) return 1;
-  if (qty < 100) return 5;
-  return 10;
-}
-
-function palierPour(qty: number) {
-  return PALIERS_TARIF.find((p) => qty >= p.min && (p.max == null || qty <= p.max)) ?? PALIERS_TARIF[PALIERS_TARIF.length - 1];
-}
-
-// Catégorisation identique à /produits (coupe déduite du modèle, gamme de
-// prix déduite du prix au plus petit palier, textile responsable détecté
-// dans la composition) — pour filtrer le catalogue avec les mêmes pastilles
-// de style que ce produit du simulateur.
-function coupeDe(t: TShirtCatalogue): Coupe {
-  return inferCoupe(t.model, t.col);
-}
-function gammeDe(t: TShirtCatalogue): GammePrix {
-  return inferGammePrix(Math.round(prixVente(t.baseCost, PALIERS_TARIF[0].marge) * 100) / 100);
-}
-
-// Seul le type "t-shirt" a un catalogue réel pour l'instant (comme sur
-// /produits, sweats/polos/chemises/casquettes sont "bientôt disponibles") :
-// pour les autres types de textile, on reste sur l'estimation générique.
-function candidatsRef(p: Produit): TShirtCatalogue[] {
-  if (p.garment !== 'tshirt') return [];
-  const coupesSel = COUPES.filter((c) => p.styles.has(c));
-  const manchesSel = MANCHES_OPTIONS.filter((m) => p.styles.has(m));
-  const genresSel = GENRES.filter((g) => p.styles.has(g));
-  const gammesSel = GAMMES.filter((g) => p.styles.has(g));
-  const responsableSel = p.styles.has('responsable');
-  return TSHIRTS.filter((t) => {
-    if (coupesSel.length && !coupesSel.includes(coupeDe(t))) return false;
-    if (manchesSel.length && !manchesSel.includes(t.manches)) return false;
-    if (genresSel.length && !genresSel.includes(t.genre)) return false;
-    if (gammesSel.length && !gammesSel.includes(gammeDe(t))) return false;
-    if (responsableSel && !inferResponsable(t.detail)) return false;
-    return true;
-  }).sort((a, b) => a.baseCost - b.baseCost);
-}
 
 const fmtPriceIntl = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
 function fmtPrice(n: number): string {
@@ -203,15 +151,6 @@ function el<T extends HTMLElement = HTMLElement>(id: string): T {
   return document.getElementById(id) as T;
 }
 
-function styleLabel(key: string): string {
-  if (key in LABELS_COUPE) return LABELS_COUPE[key as Coupe];
-  if (key in LABELS_MANCHES) return LABELS_MANCHES[key as Manches];
-  if (key in LABELS_GENRE) return LABELS_GENRE[key as Genre];
-  if (key in LABELS_GAMME_PRIX) return LABELS_GAMME_PRIX[key as GammePrix];
-  if (key === 'responsable') return 'Bio / recyclé';
-  return key;
-}
-
 function pillsHtml(options: { value: string; label: string }[], selected: (v: string) => boolean, action: string, produitId: string, extra = ''): string {
   return options
     .map((o) => `<button type="button" class="pill${selected(o.value) ? ' on' : ''}" data-action="${action}" data-produit="${produitId}" data-value="${o.value}" ${extra}>${o.label}</button>`)
@@ -253,7 +192,7 @@ function refListHtml(p: Produit): string {
   if (p.garment !== 'tshirt') {
     return `<p class="refNote">Références précises bientôt disponibles pour ce type de textile — estimation générique utilisée en attendant.</p>`;
   }
-  const candidats = candidatsRef(p);
+  const candidats = candidatsRef(p.styles);
   const palier = palierPour(p.quantite);
   if (candidats.length === 0) {
     return `<p class="refNote">Aucune référence ne correspond à ces filtres pour l'instant — estimation générique utilisée.</p>`;
