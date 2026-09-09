@@ -28,9 +28,10 @@ import '../styles/bat.css';
 </Layout>
 
 <script>
-	import { getCart, sendQuoteForItems } from '../scripts/personnalisateur/cart';
+	import { getCart, briefForItems } from '../scripts/personnalisateur/cart';
 	import { buildBATHtml } from '../scripts/personnalisateur/bat';
 	import { siteConfig } from '../config/site';
+	import { setDemandeBrief } from '../lib/demande-brief';
 
 	function el<T extends HTMLElement = HTMLElement>(id: string): T {
 		return document.getElementById(id) as T;
@@ -53,6 +54,9 @@ import '../styles/bat.css';
 	} else {
 		root.innerHTML = buildBATHtml(items, { emailContact: siteConfig.email, telephoneContact: siteConfig.telephone });
 		el('batPrint').addEventListener('click', () => window.print());
-		el('batSend').addEventListener('click', () => sendQuoteForItems(items));
+		el('batSend').addEventListener('click', () => {
+			setDemandeBrief(briefForItems(items));
+			window.location.href = '/demande-devis';
+		});
 	}
 </script>

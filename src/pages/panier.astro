@@ -46,7 +46,8 @@ import '../styles/panier.css';
 	<Footer />
 
 	<script>
-		import { getCart, removeFromCart, clearCart, sendQuoteForCart, type SavedItem } from '../scripts/personnalisateur/cart';
+		import { getCart, removeFromCart, clearCart, briefForCart, type SavedItem } from '../scripts/personnalisateur/cart';
+		import { setDemandeBrief } from '../lib/demande-brief';
 		import { seedFromItem } from '../scripts/personnalisateur/state';
 		import { GARMENTS } from '../scripts/personnalisateur/garments';
 		import { PLACE_LABEL, type TailleCode } from '../config/parametres-metier';
@@ -162,7 +163,10 @@ import '../styles/panier.css';
 			}
 		});
 
-		el('sendCart').addEventListener('click', () => sendQuoteForCart());
+		el('sendCart').addEventListener('click', () => {
+			setDemandeBrief(briefForCart());
+			window.location.href = '/demande-devis';
+		});
 		el('clearCart').addEventListener('click', () => {
 			if (!window.confirm('Vider le panier ?')) return;
 			clearCart();

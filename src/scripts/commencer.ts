@@ -14,7 +14,7 @@ import { catalogueColoris, coutBaseSupportUnique, getZoneImpressionCm, repartiti
 import { LABELS_COUPE, LABELS_GENRE } from '../lib/produits-types';
 import { grilleTarifaire, prixVente } from '../config/tarification';
 import { COULEURS_OPTIONS, COUPES, GENRES, candidatsRef, qtyStep, palierPour } from './personnalisateur/catalogue-match';
-import { siteConfig } from '../config/site';
+import { setDemandeBrief } from '../lib/demande-brief';
 import { initQuiz3d, updateQuiz3d } from './commencer-3d';
 import type { TShirtCatalogue } from '../data/tshirts';
 
@@ -433,7 +433,11 @@ function screenResultat(): string {
   </div>`;
 }
 
-function resumeMail(): string {
+// Brief affiché sur /demande-devis (Milio, 2026-09-09) — juste les
+// lignes du projet, sans formule de politesse : la page compose son
+// propre message final avec ce brief, les précisions éventuelles, la
+// référence de bon de commande et la date souhaitée.
+function briefText(): string {
   const tous = [...produits, state];
   const lignes = tous.map((p, i) => {
     const c = calcProduit(p);
@@ -446,7 +450,7 @@ function resumeMail(): string {
 - Sous-total estimé : ${fmtPrice(c.prixTotal)}`;
   });
   const total = tous.reduce((s, p) => s + calcProduit(p).prixTotal, 0);
-  return `Bonjour,\n\nSuite au quiz sur presstee.fr, je souhaite un devis pour le projet suivant :\n\n${lignes.join('\n\n')}\n\nTotal estimé : ${fmtPrice(total)}.\n\nMerci de me recontacter pour finaliser ce devis.`;
+  return `${lignes.join('\n\n')}\n\nTotal estimé : ${fmtPrice(total)}.`;
 }
 
 function render(): void {
@@ -523,8 +527,8 @@ function render(): void {
       window.scrollTo({ top: el('qzLayout').getBoundingClientRect().top + window.scrollY - 96, behavior: 'smooth' });
     });
     el('qzGoDevis').addEventListener('click', () => {
-      const url = `mailto:${siteConfig.email}?subject=${encodeURIComponent('Demande de devis — quiz presstee.fr')}&body=${encodeURIComponent(resumeMail())}`;
-      window.location.href = url;
+      setDemandeBrief(briefText());
+      window.location.href = '/demande-devis';
     });
   }
 }

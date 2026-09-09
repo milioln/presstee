@@ -13,7 +13,6 @@ import { S, type Coloris, type Layer, type DesignHelp } from './state';
 import { qtyTotal, prixUnitaire, prixTotal } from './derived';
 import { activeTech } from './render';
 import { TECHS, type TechKey } from './recommendation';
-import { siteConfig } from '../../config/site';
 import { coutBaseSupportUnique, type Garment, type TailleCode } from '../../config/parametres-metier';
 
 export interface SavedItem {
@@ -163,30 +162,24 @@ function summarizeItem(item: SavedItem, index?: number): string {
   return lines.join('\n');
 }
 
-// mailto: plutôt qu'un vrai formulaire — le formulaire d'envoi reste
-// volontairement désactivé tant que le SIRET n'est pas renseigné
-// (cf. config/site.ts), et mailto: ne dépend d'aucun backend : ça
-// fonctionne dès aujourd'hui, avec le client mail du visiteur.
-function openMailto(subject: string, body: string): void {
-  const url = `mailto:${siteConfig.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  window.location.href = url;
+// Le brief affiché sur /demande-devis, plutôt qu'un mailto: ouvert
+// directement au clic (Milio, 2026-09-09 : voir le projet, ajouter des
+// précisions, une référence de bon de commande et une date souhaitée
+// avant d'envoyer). L'envoi lui-même reste un mailto: — un vrai
+// formulaire vers un backend reste volontairement hors de portée tant
+// que le SIRET n'est pas renseigné (cf. config/site.ts) : mailto: ne
+// dépend d'aucun serveur ni d'aucune collecte de données côté site.
+export function briefForCurrent(): string {
+  return summarizeItem(snapshotCurrent());
 }
 
-export function sendQuoteForCurrent(): void {
-  const item = snapshotCurrent();
-  const body = `Bonjour,\n\nJe souhaite un devis pour le projet suivant :\n\n${summarizeItem(item)}\n\nMerci de me recontacter pour finaliser ce projet.`;
-  openMailto('Demande de devis — Presstee', body);
-}
-
-export function sendQuoteForCart(): void {
-  sendQuoteForItems(getCart());
+export function briefForCart(): string {
+  return briefForItems(getCart());
 }
 
 // Sous-ensemble explicite du panier (ex. un seul article visé depuis
-// l'aperçu du bon à tirer, /bon-a-tirer?id=...) — même gabarit de
-// message que sendQuoteForCart, sans dépendre de tout le panier.
-export function sendQuoteForItems(items: SavedItem[]): void {
-  if (!items.length) return;
-  const body = `Bonjour,\n\nJe souhaite un devis pour les projets suivants :\n\n${items.map((it, i) => summarizeItem(it, i)).join('\n\n')}\n\nMerci de me recontacter pour finaliser ces projets.`;
-  openMailto(`Demande de devis — ${items.length} projet${items.length > 1 ? 's' : ''} — Presstee`, body);
+// l'aperçu du bon à tirer, /bon-a-tirer?id=...) — même gabarit que
+// briefForCart, sans dépendre de tout le panier.
+export function briefForItems(items: SavedItem[]): string {
+  return items.map((it, i) => summarizeItem(it, items.length > 1 ? i : undefined)).join('\n\n');
 }

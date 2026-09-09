@@ -1,0 +1,261 @@
+---
+// Page de demande de devis — remplace l'ancien clic direct sur un lien
+// mailto: (Milio, 2026-09-09 : « voir le brief de ce qu'on a choisi,
+// ajouter un texte libre, une référence de bon de commande et une date
+// souhaitée, puis envoyer depuis la page »). Le brief est déposé par la
+// page d'origine (quiz, configurateur, panier ou bon à tirer) dans
+// sessionStorage via src/lib/demande-brief.ts — cette page n'a pas
+// d'état propre, juste un texte à afficher et compléter.
+//
+// L'envoi reste un mailto: : un vrai formulaire vers un backend
+// (stockage, back-office) est volontairement hors de portée tant que le
+// SIRET n'est pas renseigné (cf. config/site.ts, déjà la raison pour
+// laquelle mailto: avait été choisi partout ailleurs sur le site) — pas
+// une limite technique, une limite légale le temps que la structure soit
+// enregistrée. À revoir explicitement avec Milio une fois que ce sera
+// fait : mailto: dépend du client mail du visiteur, un vrai formulaire
+// serait plus fiable.
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+---
+
+<Layout title="Demande de devis — Presstee" description="Vérifiez votre projet, ajoutez vos précisions, puis envoyez votre demande de devis.">
+	<Header />
+	<main>
+		<section class="dv-hero">
+			<div class="wrap">
+				<div class="crumb"><a href="/">Accueil</a> / Demande de devis</div>
+				<h1>Votre demande de devis.</h1>
+				<p>Vérifiez le projet ci-dessous, complétez si besoin, puis envoyez.</p>
+			</div>
+		</section>
+
+		<div class="wrap dv-body">
+			<div id="dvEmpty" class="dv-empty" style="display:none">
+				<h3>Rien à envoyer pour l'instant.</h3>
+				<p>Composez un projet pour démarrer une demande de devis.</p>
+				<div class="dv-empty-links">
+					<a class="btn" href="/commencer">Commencer un projet</a>
+					<a class="btn btn-outline" href="/panier">Voir le panier</a>
+				</div>
+			</div>
+
+			<div id="dvContent" style="display:none">
+				<div class="dv-field">
+					<span class="dv-label">Votre projet</span>
+					<pre id="dvBrief" class="dv-brief"></pre>
+				</div>
+
+				<div class="dv-field">
+					<label class="dv-label" for="dvDetails">Précisions complémentaires <span class="dv-optional">optionnel</span></label>
+					<textarea id="dvDetails" placeholder="Une contrainte particulière, une question, un point à préciser…"></textarea>
+				</div>
+
+				<div class="dv-row2">
+					<div class="dv-field">
+						<label class="dv-label" for="dvBonCommande">Référence bon de commande <span class="dv-optional">optionnel</span></label>
+						<input type="text" id="dvBonCommande" placeholder="ex. BC-2026-0042" />
+					</div>
+					<div class="dv-field">
+						<label class="dv-label" for="dvDate">Date de livraison souhaitée <span class="dv-optional">optionnel</span></label>
+						<input type="date" id="dvDate" />
+					</div>
+				</div>
+
+				<button type="button" class="btn dv-send" id="dvSend">Envoyer ma demande</button>
+				<p class="dv-note" id="dvNote" style="display:none">Votre client mail a dû s'ouvrir avec la demande pré-remplie — vérifiez qu'elle parte bien. Pas de client mail configuré ? Écrivez-nous directement à <a id="dvNoteEmail" href="#"></a>.</p>
+			</div>
+		</div>
+	</main>
+	<Footer />
+</Layout>
+
+<script>
+	import { getDemandeBrief } from '../lib/demande-brief';
+	import { siteConfig } from '../config/site';
+
+	function el<T extends HTMLElement = HTMLElement>(id: string): T {
+		return document.getElementById(id) as T;
+	}
+
+	function fmtDateFr(iso: string): string {
+		const [y, m, d] = iso.split('-');
+		return `${d}/${m}/${y}`;
+	}
+
+	const brief = getDemandeBrief();
+	if (!brief) {
+		el('dvEmpty').style.display = 'block';
+	} else {
+		el('dvContent').style.display = 'block';
+		el('dvBrief').textContent = brief;
+
+		el('dvSend').addEventListener('click', () => {
+			const details = el<HTMLTextAreaElement>('dvDetails').value.trim();
+			const bonCommande = el<HTMLInputElement>('dvBonCommande').value.trim();
+			const date = el<HTMLInputElement>('dvDate').value;
+
+			const extra = [
+				details ? `Précisions : ${details}` : null,
+				bonCommande ? `Référence bon de commande : ${bonCommande}` : null,
+				date ? `Date de livraison souhaitée : ${fmtDateFr(date)}` : null,
+			].filter((l): l is string => l != null);
+
+			const body =
+				`Bonjour,\n\nJe souhaite un devis pour le projet suivant :\n\n${brief}` +
+				(extra.length ? `\n\n${extra.join('\n')}` : '') +
+				`\n\nMerci de me recontacter pour finaliser ce devis.`;
+
+			const url = `mailto:${siteConfig.email}?subject=${encodeURIComponent('Demande de devis — presstee.fr')}&body=${encodeURIComponent(body)}`;
+			window.location.href = url;
+
+			const noteEmail = el<HTMLAnchorElement>('dvNoteEmail');
+			noteEmail.textContent = siteConfig.email;
+			noteEmail.href = `mailto:${siteConfig.email}`;
+			el('dvNote').style.display = 'block';
+		});
+	}
+</script>
+
+<style>
+	.dv-hero {
+		padding: 40px 0 28px;
+		border-bottom: 1px solid var(--ligne);
+	}
+	.dv-hero .crumb {
+		font-size: 13px;
+		color: var(--gris);
+		margin-bottom: 12px;
+	}
+	.dv-hero .crumb a {
+		text-decoration: none;
+		color: var(--gris);
+	}
+	.dv-hero .crumb a:hover {
+		color: var(--indigo);
+	}
+	.dv-hero h1 {
+		font-size: clamp(1.7rem, 3.6vw, 2.3rem);
+		letter-spacing: -0.02em;
+	}
+	.dv-hero p {
+		color: var(--gris);
+		margin-top: 10px;
+	}
+
+	.dv-body {
+		max-width: 640px;
+		padding: 44px 24px 90px;
+	}
+
+	.dv-empty {
+		border: 1.5px dashed var(--ligne);
+		border-radius: 18px;
+		padding: 40px 28px;
+		text-align: center;
+	}
+	.dv-empty h3 {
+		font-size: 1.2rem;
+	}
+	.dv-empty p {
+		color: var(--gris);
+		margin: 10px 0 22px;
+	}
+	.dv-empty-links {
+		display: flex;
+		gap: 10px;
+		justify-content: center;
+		flex-wrap: wrap;
+	}
+	.btn-outline {
+		background: #fff;
+		color: var(--encre);
+		border: 1.5px solid var(--ligne);
+	}
+	.btn-outline:hover {
+		border-color: var(--indigo);
+		background: var(--lavande);
+	}
+
+	.dv-field {
+		margin-bottom: 24px;
+	}
+	.dv-label {
+		display: block;
+		font-family: 'Sora', sans-serif;
+		font-size: 12.5px;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		color: var(--gris);
+		font-weight: 600;
+		margin-bottom: 10px;
+	}
+	.dv-optional {
+		text-transform: none;
+		letter-spacing: 0;
+		font-weight: 400;
+		opacity: 0.75;
+	}
+
+	.dv-brief {
+		white-space: pre-wrap;
+		font-family: 'Manrope', system-ui, sans-serif;
+		font-size: 13.5px;
+		line-height: 1.6;
+		background: var(--lavande);
+		border-radius: 14px;
+		padding: 18px 20px;
+		color: var(--encre);
+		margin: 0;
+	}
+
+	.dv-body textarea,
+	.dv-body input[type='text'],
+	.dv-body input[type='date'] {
+		width: 100%;
+		border: 1.5px solid var(--ligne);
+		border-radius: 12px;
+		padding: 12px 14px;
+		font: inherit;
+		font-size: 14px;
+		color: var(--encre);
+		background: #fff;
+	}
+	.dv-body textarea:focus-visible,
+	.dv-body input:focus-visible {
+		outline: 2px solid var(--indigo);
+		outline-offset: 1px;
+	}
+	.dv-body textarea {
+		min-height: 90px;
+		resize: vertical;
+	}
+
+	.dv-row2 {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 20px;
+	}
+	@media (max-width: 560px) {
+		.dv-row2 {
+			grid-template-columns: 1fr;
+			gap: 0;
+		}
+	}
+
+	.dv-send {
+		width: 100%;
+	}
+	.dv-note {
+		margin-top: 14px;
+		text-align: center;
+		font-size: 13px;
+		color: var(--gris);
+		line-height: 1.5;
+	}
+	.dv-note a {
+		color: var(--indigo);
+	}
+</style>
