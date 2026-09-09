@@ -1,0 +1,49 @@
+---
+// Une page par famille de textile pas encore en ligne (polos, sweats,
+// chemises, tote bags) — remplace les liens morts (href="#") de
+// l'accueil et de /produits par une vraie page honnête plutôt qu'un
+// catalogue inventé : le seul textile en ligne aujourd'hui est le
+// t-shirt (src/pages/produits/t-shirts/).
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { PRODUITS_A_VENIR } from '../../data/produits-a-venir';
+import { TSHIRTS } from '../../data/tshirts';
+import { prixAPartirDe } from '../../config/tarification';
+import '../../styles/global.css';
+import '../../styles/techniques.css';
+
+export function getStaticPaths() {
+	return PRODUITS_A_VENIR.map((p) => ({ params: { categorie: p.slug }, props: { p } }));
+}
+
+const { p } = Astro.props as { p: (typeof PRODUITS_A_VENIR)[number] };
+const prixTShirt = prixAPartirDe(Math.min(...TSHIRTS.map((t) => t.baseCost)));
+---
+
+<Layout title={`${p.nom} — bientôt chez Presstee`} description={`${p.desc} Cette famille n'est pas encore en ligne : le catalogue Presstee propose aujourd'hui des t-shirts personnalisables, ${p.nom.toLowerCase()} à venir.`}>
+	<Header />
+	<main>
+		<section class="tech-hero">
+			<div class="wrap">
+				<div class="crumb"><a href="/">Accueil</a> / <a href="/produits">Produits</a> / {p.nom}</div>
+				<h1>{p.nom}, bientôt chez Presstee.</h1>
+				<p>{p.desc} Cette famille n'est pas encore en ligne : à ce jour, le catalogue Presstee propose des t-shirts personnalisables, dès {prixTShirt.toFixed(2).replace('.', ',')} € la pièce.</p>
+				<div class="soon-cta">
+					<a class="btn" href="/produits/t-shirts">Voir les t-shirts en ligne</a>
+					<a class="btn btn-light" href="/contact">Être prévenu·e / poser une question</a>
+				</div>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	.soon-cta {
+		display: flex;
+		gap: 12px;
+		flex-wrap: wrap;
+		margin-top: 26px;
+	}
+</style>

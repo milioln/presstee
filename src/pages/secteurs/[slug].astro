@@ -1,0 +1,121 @@
+---
+// Une page dédiée par secteur d'activité — même contenu que le panneau
+// interactif de l'accueil (SectorSelector.astro, source commune :
+// src/data/secteurs.ts), mais sous une adresse propre à chaque secteur
+// pour être trouvable depuis une recherche Google qui le mentionne
+// (« t-shirt personnalisé association », « polo brodé entreprise »…),
+// ce qu'un simple panneau au milieu de l'accueil ne permet pas.
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SECTEURS } from '../../data/secteurs';
+import '../../styles/global.css';
+import '../../styles/techniques.css';
+
+export function getStaticPaths() {
+	return SECTEURS.map((s) => ({ params: { slug: s.slug }, props: { s } }));
+}
+
+const { s } = Astro.props as { s: (typeof SECTEURS)[number] };
+const autres = SECTEURS.filter((x) => x.slug !== s.slug);
+---
+
+<Layout title={`Textile personnalisé pour ${s.nom.toLowerCase()} — Presstee`} description={`${s.texte} Textile conseillé : ${s.textile}. Marquage conseillé : ${s.marquage}.`}>
+	<Header />
+	<main>
+		<section class="tech-hero">
+			<div class="wrap">
+				<div class="crumb"><a href="/">Accueil</a> / <a href="/#secteurs">Secteurs</a> / {s.nom}</div>
+				<h1>Textile personnalisé pour {s.nom.toLowerCase()}.</h1>
+				<p>{s.texte}</p>
+				<a class="btn" href="/commencer">Commencer un projet</a>
+			</div>
+		</section>
+
+		<section class="secteur-body">
+			<div class="wrap">
+				<div class="secteur-facts">
+					<div class="fact"><b>Textile souvent retenu</b><span>{s.textile}</span></div>
+					<div class="fact"><b>Marquage conseillé</b><span>{s.marquage}</span></div>
+					<div class="fact"><b>Volumes habituels</b><span>{s.volumes}</span></div>
+				</div>
+				<p class="secteur-note">Ces repères viennent des projets les plus fréquents pour ce profil — chaque commande reste chiffrée sur mesure selon votre visuel et votre quantité exacte. <a href="/commencer">Faites le test</a> pour une recommandation et un prix précis, ou <a href="/contact">contactez-nous</a> directement.</p>
+
+				<div class="secteur-autres">
+					<h2>Les autres secteurs</h2>
+					<div class="secteur-chips">
+						{autres.map((a) => (
+							<a class="chip" href={`/secteurs/${a.slug}`}>{a.nom}</a>
+						))}
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	.secteur-body {
+		padding: 44px 0 80px;
+	}
+	.secteur-facts {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 14px;
+		margin-bottom: 26px;
+	}
+	.secteur-facts .fact {
+		border: 1.5px solid var(--ligne);
+		border-radius: 14px;
+		padding: 18px 20px;
+	}
+	.secteur-facts .fact b {
+		display: block;
+		font-family: 'Sora', sans-serif;
+		font-size: 12px;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--gris);
+		margin-bottom: 8px;
+	}
+	.secteur-facts .fact span {
+		font-size: 15px;
+	}
+	.secteur-note {
+		color: var(--gris);
+		max-width: 68ch;
+		margin-bottom: 46px;
+	}
+	.secteur-note a {
+		color: var(--indigo);
+	}
+	.secteur-autres h2 {
+		font-size: 1.1rem;
+		margin-bottom: 14px;
+	}
+	.secteur-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+	.secteur-chips .chip {
+		display: inline-flex;
+		border: 1.5px solid var(--ligne);
+		border-radius: 999px;
+		padding: 8px 16px;
+		font-size: 13.5px;
+		text-decoration: none;
+		color: var(--encre);
+		transition: border-color 0.15s;
+	}
+	.secteur-chips .chip:hover {
+		border-color: var(--indigo);
+		color: var(--indigo);
+	}
+	@media (max-width: 700px) {
+		.secteur-facts {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

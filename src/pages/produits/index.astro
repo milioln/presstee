@@ -20,13 +20,13 @@ import '../../styles/produits.css';
 
 const prixTShirt = prixAPartirDe(Math.min(...TSHIRTS.map((t) => t.baseCost)));
 
-const familles: { type: TypeTextile; desc: string; actif: boolean }[] = [
+const familles: { type: TypeTextile; desc: string; actif: boolean; href?: string }[] = [
 	{ type: 't-shirts', desc: 'De 130 à 300 g/m², col rond, col V ou oversize, en coupes homme, femme, enfant et unisexe.', actif: true },
-	{ type: 'sweats', desc: 'Crewneck, capuche et zippés.', actif: false },
-	{ type: 'polos', desc: 'Piqué coton, broderie poitrine.', actif: false },
-	{ type: 'chemises', desc: 'Coupes ajustées, marquage discret.', actif: false },
+	{ type: 'sweats', desc: 'Crewneck, capuche et zippés.', actif: false, href: '/produits/sweats' },
+	{ type: 'polos', desc: 'Piqué coton, broderie poitrine.', actif: false, href: '/produits/polos' },
+	{ type: 'chemises', desc: 'Coupes ajustées, marquage discret.', actif: false, href: '/produits/chemises' },
 	{ type: 'casquettes', desc: '5 et 6 panneaux, broderie frontale.', actif: false },
-	{ type: 'bagagerie', desc: 'Totes, sacs à dos, sacs de sport.', actif: false },
+	{ type: 'bagagerie', desc: 'Totes, sacs à dos, sacs de sport.', actif: false, href: '/produits/tote-bags' },
 ];
 
 // Sélection éditoriale plutôt que calculée : le site n'a pas encore de
@@ -104,7 +104,7 @@ function barWidth(marge: number): number {
 						</div>
 						<a class="fam-link" href="/produits/t-shirts">Parcourir les t-shirts</a>
 					</div>
-					<a class="fam-card fam-card-soon" href="/produits/t-shirts">
+					<a class="fam-card fam-card-soon" href={familles[1].href}>
 						<div>
 							<div class="fam-eyebrow">Famille 02</div>
 							<h3>Sweats</h3>
@@ -114,14 +114,23 @@ function barWidth(marge: number): number {
 					</a>
 				</div>
 				<div class="fam-grid fam-grid-small">
-					{familles.slice(2).map((f, i) => (
-						<div class="fam-card fam-card-mini">
-							<div class="fam-eyebrow">Famille {String(i + 3).padStart(2, '0')}</div>
-							<h3>{LABELS_TYPE_TEXTILE[f.type]}</h3>
-							<p>{f.desc}</p>
-							<span class="fam-tag">Bientôt</span>
-						</div>
-					))}
+					{familles.slice(2).map((f, i) =>
+						f.href ? (
+							<a class="fam-card fam-card-mini" href={f.href}>
+								<div class="fam-eyebrow">Famille {String(i + 3).padStart(2, '0')}</div>
+								<h3>{LABELS_TYPE_TEXTILE[f.type]}</h3>
+								<p>{f.desc}</p>
+								<span class="fam-tag">Bientôt</span>
+							</a>
+						) : (
+							<div class="fam-card fam-card-mini">
+								<div class="fam-eyebrow">Famille {String(i + 3).padStart(2, '0')}</div>
+								<h3>{LABELS_TYPE_TEXTILE[f.type]}</h3>
+								<p>{f.desc}</p>
+								<span class="fam-tag">Bientôt</span>
+							</div>
+						)
+					)}
 				</div>
 			</div>
 		</section>

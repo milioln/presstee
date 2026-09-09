@@ -1,0 +1,77 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { siteConfig } from '../config/site';
+import '../styles/global.css';
+import '../styles/techniques.css';
+---
+
+<Layout title="Politique de confidentialité — Presstee" description="Politique de confidentialité de presstee.fr." noindex>
+	<Header />
+	<main>
+		<section class="tech-hero">
+			<div class="wrap">
+				<div class="crumb"><a href="/">Accueil</a> / Politique de confidentialité</div>
+				<h1>Politique de confidentialité.</h1>
+			</div>
+		</section>
+
+		<section class="legal-body">
+			<div class="wrap">
+				<div class="legal-notice">
+					<p><strong>Cette page sera complétée dès l'immatriculation de {siteConfig.nom}.</strong> En attendant une politique de confidentialité formelle et conforme au RGPD, voici, en toute transparence, ce que le site fait réellement aujourd'hui.</p>
+				</div>
+
+				<h2>Ce qui reste sur votre appareil</h2>
+				<p>Votre projet en cours (quiz, configurateur, panier) est enregistré uniquement dans le navigateur que vous utilisez (stockage local), pas sur un serveur. Fermer votre navigateur ou changer d'appareil peut faire perdre ce projet.</p>
+
+				<h2>Ce qui nous est transmis</h2>
+				<p>Une demande de devis ou un message via le formulaire de contact vous fait envoyer un e-mail à {siteConfig.email}, avec les informations que vous y indiquez vous-même (coordonnées, projet, visuels joints). Rien n'est transmis à un tiers.</p>
+
+				<h2>Mesure d'audience</h2>
+				<p>Le site utilise un outil de mesure d'audience (Microsoft Clarity) pour comprendre comment les pages sont utilisées et corriger ce qui ne fonctionne pas bien.</p>
+
+				<p class="legal-footer-note">Une question sur vos données ? <a href="/contact">Contactez-nous</a>.</p>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	.legal-body {
+		padding: 44px 0 90px;
+		max-width: 640px;
+		margin: 0 auto;
+	}
+	.legal-notice {
+		background: var(--lavande);
+		border-radius: 14px;
+		padding: 20px 22px;
+		margin-bottom: 32px;
+	}
+	.legal-notice p {
+		margin: 0;
+		font-size: 14.5px;
+		line-height: 1.6;
+	}
+	.legal-body h2 {
+		font-size: 1.05rem;
+		margin: 28px 0 10px;
+	}
+	.legal-body h2:first-of-type {
+		margin-top: 0;
+	}
+	.legal-body p {
+		color: var(--gris);
+		font-size: 14.5px;
+		line-height: 1.6;
+	}
+	.legal-footer-note {
+		margin-top: 28px;
+	}
+	.legal-footer-note a {
+		color: var(--indigo);
+	}
+</style>

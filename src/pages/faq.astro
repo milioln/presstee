@@ -1,0 +1,106 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { seuils, delais } from '../config/parametres-metier';
+import { siteConfig } from '../config/site';
+import '../styles/global.css';
+import '../styles/techniques.css';
+
+const QUESTIONS = [
+	{
+		q: 'Quel délai pour recevoir ma commande ?',
+		r: `${delais.standardJoursOuvres} jours ouvrés en délai standard, ${delais.expressJoursOuvres} jours ouvrés en express. Le compteur démarre à la validation de votre bon à tirer, pas à la commande.`,
+	},
+	{
+		q: 'Y a-t-il une quantité minimum pour commander ?',
+		r: `Non pour le transfert (dès 1 pièce). La sérigraphie devient intéressante à partir de ${seuils.quantitePiecesSerigraphie} pièces, la broderie à partir de ${seuils.quantitePiecesBroderie} pièces — en dessous, une autre technique est presque toujours plus économique pour le même rendu.`,
+	},
+	{
+		q: 'Quelle technique de marquage choisir ?',
+		r: 'Cela dépend du nombre de couleurs, de la quantité et du budget. Le quiz recommande une technique en trois questions, et le guide détaille chacune (rendu, durabilité, prix) page par page.',
+	},
+	{
+		q: 'Quel fichier envoyer pour mon visuel ?',
+		r: 'PNG, JPEG, SVG ou WebP. Un visuel vectoriel (SVG) ou en haute résolution donne le meilleur rendu ; si le fichier envoyé semble trop léger, le configurateur vous prévient sans bloquer votre commande — vous pouvez toujours l\'envoyer, nous vérifions ensuite avec vous.',
+	},
+	{
+		q: 'Le prix affiché est-il définitif ?',
+		r: 'Non : c\'est une estimation indicative. Le devis définitif est confirmé après vérification de votre visuel et de votre projet, sans mauvaise surprise sur les éléments déjà annoncés (quantité, textile, technique).',
+	},
+	{
+		q: 'Puis-je voir un aperçu avant la production ?',
+		r: 'Oui : un aperçu automatique de votre projet (bon à tirer) est généré depuis votre panier. Rien ne part en fabrication sans que vous l\'ayez vu et validé.',
+	},
+	{
+		q: 'Où êtes-vous situés ?',
+		r: `Notre atelier est à ${siteConfig.adresse.ville}, en ${siteConfig.adresse.departement}.`,
+	},
+	{
+		q: 'Comment vous contacter ?',
+		r: `Par le formulaire de la page contact, ou directement par mail à ${siteConfig.email}.`,
+	},
+];
+
+const faqLd = {
+	'@context': 'https://schema.org',
+	'@type': 'FAQPage',
+	mainEntity: QUESTIONS.map((item) => ({
+		'@type': 'Question',
+		name: item.q,
+		acceptedAnswer: { '@type': 'Answer', text: item.r },
+	})),
+};
+---
+
+<Layout title="Questions fréquentes — Presstee" description="Délais, quantités minimums, format de fichier, prix, aperçu avant production : les réponses aux questions les plus fréquentes sur le textile personnalisé Presstee.">
+	<script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+	<Header />
+	<main>
+		<section class="tech-hero">
+			<div class="wrap">
+				<div class="crumb"><a href="/">Accueil</a> / FAQ</div>
+				<h1>Questions fréquentes.</h1>
+				<p>Les réponses les plus demandées avant de se lancer. Une autre question ? <a href="/contact">Contactez-nous</a> directement.</p>
+			</div>
+		</section>
+
+		<section class="faq-body">
+			<div class="wrap">
+				{QUESTIONS.map((item) => (
+					<div class="faq-item">
+						<h2>{item.q}</h2>
+						<p set:html={item.r} />
+					</div>
+				))}
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	.faq-body {
+		padding: 44px 0 90px;
+		max-width: 760px;
+		margin: 0 auto;
+	}
+	.faq-item {
+		padding: 24px 0;
+		border-bottom: 1px solid var(--ligne);
+	}
+	.faq-item:first-child {
+		padding-top: 0;
+	}
+	.faq-item h2 {
+		font-size: 1.05rem;
+		margin-bottom: 10px;
+	}
+	.faq-item p {
+		color: var(--gris);
+		margin: 0;
+	}
+	.faq-item p a {
+		color: var(--indigo);
+	}
+</style>

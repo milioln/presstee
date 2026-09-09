@@ -1,0 +1,61 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { siteConfig } from '../config/site';
+import '../styles/global.css';
+import '../styles/techniques.css';
+---
+
+<Layout title="Conditions générales de vente — Presstee" description="Conditions générales de vente de presstee.fr." noindex>
+	<Header />
+	<main>
+		<section class="tech-hero">
+			<div class="wrap">
+				<div class="crumb"><a href="/">Accueil</a> / Conditions générales de vente</div>
+				<h1>Conditions générales de vente.</h1>
+			</div>
+		</section>
+
+		<section class="legal-body">
+			<div class="wrap">
+				<div class="legal-notice">
+					<p><strong>Ces conditions ne sont pas encore figées.</strong> {siteConfig.nom} n'étant pas encore immatriculé, il serait prématuré de publier des conditions de vente contractuelles (paiement, rétractation, garanties) avant que la structure existe formellement. Elles seront publiées ici dès l'immatriculation.</p>
+				</div>
+				<p>En attendant, chaque commande passe par un devis explicite que vous validez avant toute production, ainsi que par un bon à tirer (aperçu du visuel positionné sur le vêtement) que vous approuvez avant lancement — rien ne part en fabrication sans votre accord écrit sur ces deux points.</p>
+				<p class="legal-footer-note">Une question sur les conditions d'une commande précise ? <a href="/contact">Contactez-nous</a>.</p>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	.legal-body {
+		padding: 44px 0 90px;
+		max-width: 640px;
+		margin: 0 auto;
+	}
+	.legal-notice {
+		background: var(--lavande);
+		border-radius: 14px;
+		padding: 20px 22px;
+		margin-bottom: 32px;
+	}
+	.legal-notice p {
+		margin: 0;
+		font-size: 14.5px;
+		line-height: 1.6;
+	}
+	.legal-body p {
+		color: var(--gris);
+		font-size: 14.5px;
+		line-height: 1.6;
+	}
+	.legal-footer-note {
+		margin-top: 28px;
+	}
+	.legal-footer-note a {
+		color: var(--indigo);
+	}
+</style>

@@ -1,66 +1,9 @@
 ---
-// Contenu éditorial provisoire (fourchettes de volumes, grammages,
-// techniques conseillées par secteur) — à valider par Milio avant
-// publication. Deviendra une collection de contenu en session 3
-// (document de passage, section 4 et 7).
-const DOMS = [
-	{
-		k: 'Associations',
-		p: "Budgets serrés, commandes groupées et renouvellement régulier au fil des événements. L'enjeu est d'obtenir une pièce correcte sans faire exploser la cotisation des adhérents.",
-		t: 'T-shirt coton 150 à 180 g/m²',
-		m: 'Sérigraphie à partir d’une trentaine de pièces',
-		q: '30 à 150 pièces',
-	},
-	{
-		k: 'BDE et écoles',
-		p: 'Intégration, week-ends, soirées : de grosses séries commandées d’un coup, souvent avec un visuel unique et un délai serré autour de la rentrée.',
-		t: 'Sweat molleton 280 à 320 g/m²',
-		m: 'Sérigraphie, très rentable sur ces volumes',
-		q: '80 à 400 pièces',
-	},
-	{
-		k: 'Entreprises',
-		p: 'Uniformiser les équipes et porter l’image de marque, avec une exigence de sobriété et de tenue dans le temps plus forte que sur un textile événementiel.',
-		t: 'Polo piqué ou chemise',
-		m: 'Broderie sur le cœur, ou transfert monochrome',
-		q: '10 à 100 pièces',
-	},
-	{
-		k: 'Bars et restaurants',
-		p: 'Tenues portées tous les jours et lavées à haute température. Le marquage doit tenir plusieurs centaines de lavages sans se fissurer.',
-		t: 'T-shirt épais 185 g/m² ou tablier',
-		m: 'Transfert monochrome sous 25 pièces, sérigraphie au-delà',
-		q: '10 à 60 pièces',
-	},
-	{
-		k: 'Événements',
-		p: 'Délai court, quantité parfois incertaine jusqu’au dernier moment, et un visuel souvent riche en couleurs. La réactivité prime sur la durabilité.',
-		t: 'T-shirt léger 150 g/m²',
-		m: 'Transfert quadrichromie, sans frais de calage',
-		q: '20 à 300 pièces',
-	},
-	{
-		k: 'Commerces',
-		p: 'Petites séries, parfois des collections capsule à tester avant de réassortir. Le rendu compte autant que le prix, puisque la pièce est vendue.',
-		t: 'Coton lourd 200 g/m² et plus',
-		m: 'Sérigraphie ou transfert monochrome',
-		q: '20 à 100 pièces',
-	},
-	{
-		k: 'Boulangeries',
-		p: 'Image artisanale et tenue professionnelle, avec un textile qui encaisse la farine, la chaleur et les lavages fréquents.',
-		t: 'Tablier ou polo',
-		m: 'Broderie, pour le rendu et la tenue',
-		q: '10 à 30 pièces',
-	},
-	{
-		k: 'Clubs sportifs',
-		p: 'Maillots techniques, floquage de noms et de numéros, et un renouvellement partiel chaque saison plutôt qu’une commande unique.',
-		t: 'Maillot polyester respirant',
-		m: 'Transfert monochrome, adapté aux textiles techniques',
-		q: '15 à 60 pièces',
-	},
-];
+// Contenu par secteur : source unique dans src/data/secteurs.ts,
+// partagée avec les pages dédiées /secteurs/[slug] (une page par
+// secteur, référençable depuis une recherche propre à ce secteur).
+import { SECTEURS } from '../data/secteurs';
+const DOMS = SECTEURS.map((s) => ({ k: s.nom, p: s.texte, t: s.textile, m: s.marquage, q: s.volumes, slug: s.slug }));
 ---
 
 <section id="secteurs">
