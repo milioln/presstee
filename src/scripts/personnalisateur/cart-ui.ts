@@ -85,6 +85,7 @@ export function bindCartUI(): void {
     const item = addToCart();
     paintBadges();
     flash('addToCart', 'Ajouté ✓');
+    el('addedHint').style.display = 'block';
     const batLink = el('batLink');
     batLink.querySelector('a')!.setAttribute('href', `/bon-a-tirer?id=${item.id}`);
     batLink.style.display = 'block';
