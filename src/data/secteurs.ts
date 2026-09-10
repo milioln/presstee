@@ -1,9 +1,9 @@
-// Source unique du contenu par secteur d'activité — utilisée à la fois
-// par le sélecteur interactif de l'accueil (SectorSelector.astro, teaser
-// court : accroche + insight) et par les pages dédiées /secteurs/[slug]
-// (contenu complet, pour être trouvable depuis une recherche Google
-// propre à ce secteur — Milio, 2026-09-10 : « développer beaucoup plus,
-// écrire pour le référencement, parler au client, l'aider à commander »).
+// Source unique du contenu par secteur d'activité — utilisée par la
+// liste de puces "Des conseils par activité" de l'accueil (teaser :
+// juste le nom) et par les pages dédiées /secteurs/[slug] (contenu
+// complet, pour être trouvable depuis une recherche Google propre à ce
+// secteur — Milio, 2026-09-10 : « développer beaucoup plus, écrire pour
+// le référencement, parler au client, l'aider à commander »).
 //
 // Contenu éditorial (fourchettes de volumes, grammages, techniques
 // conseillées par secteur) — à valider par Milio avant publication.
@@ -42,7 +42,7 @@ export const SECTEURS: Secteur[] = [
 		motivation:
 			"La difficulté n'est rarement l'envie : c'est de savoir, avant de s'engager, combien coûtera vraiment la commande une fois le nombre de pièces et les couleurs fixés. Beaucoup d'associations renoncent ou attendent le dernier moment faute d'une estimation claire. Le test guidé de Presstee répond à cette question en quelques clics, sans échange de mail préalable ni devis à réclamer.",
 		insight:
-			"Le t-shirt de l'association peut aussi devenir une petite source de financement : vendu aux adhérents ou lors d'un événement (loto, kermesse, tournoi), il finance une partie du budget sans passer par une hausse de cotisation. Sur une série de 50 pièces vendues 12 à 15 € l'unité, la marge dégagée couvre souvent une bonne partie, voire la totalité, du coût de la commande.",
+			"Vendu aux adhérents ou lors d'un événement — loto, kermesse, tournoi —, le t-shirt de l'association devient une petite source de financement : sur une série de 50 pièces revendues 12 à 15 € l'unité, la marge couvre souvent une bonne partie du coût de la commande, sans toucher à la cotisation.",
 		conseil:
 			"Pour une association, le bon compromis est presque toujours un t-shirt coton 150 à 180 g/m² : assez épais pour ne pas être transparent, assez léger pour être porté toute l'année. Au-delà d'une trentaine de pièces, la sérigraphie devient la technique la plus économique — son coût de calage se répartit sur toute la série, ce qui fait mécaniquement baisser le prix unitaire à mesure que la commande grossit.",
 		textile: 'T-shirt coton 150 à 180 g/m²',
@@ -58,7 +58,7 @@ export const SECTEURS: Secteur[] = [
 		motivation:
 			"La contrainte est presque toujours la même : un délai serré autour de la rentrée, un visuel unique décidé collectivement, et une grosse série à commander d'un coup sans mauvaise surprise sur le prix. Plus la commande est grande, plus l'écart entre une estimation approximative et le prix réel peut peser sur le budget de la promo.",
 		insight:
-			"Le sweat ou le t-shirt de promo devient souvent un objet-souvenir gardé des années après la sortie de l'école — ce qui pousse à en commander pour davantage que les seuls présents le jour de l'événement, y compris pour d'anciens élèves ou des proches qui n'y participeront pas.",
+			"Beaucoup d'anciens élèves commandent le sweat ou le t-shirt de promo des années après avoir quitté l'école : l'objet dépasse largement le cercle des présents le jour J, ce qui justifie de prévoir plus de pièces que de participants annoncés.",
 		conseil:
 			"Sur ces volumes, souvent 80 à 400 pièces, un sweat molleton 280 à 320 g/m² en sérigraphie est la combinaison la plus rentable : un visuel unique, valable pour toute la promo, imprimé en une seule fois sur des écrans qui serviront pour toute la série.",
 		textile: 'Sweat molleton 280 à 320 g/m²',
@@ -74,7 +74,7 @@ export const SECTEURS: Secteur[] = [
 		motivation:
 			"L'enjeu, pour une entreprise, n'est pas seulement d'avoir un logo brodé : c'est que le vêtement reste net, présentable et identifiable après des dizaines de lavages, sur des quantités souvent plus réduites (10 à 100 pièces) mais renouvelées régulièrement au fil des recrutements.",
 		insight:
-			"Porté par les salariés en dehors du travail — trajet, sport, weekend —, le vêtement floqué aux couleurs de l'entreprise devient une publicité mobile gratuite : un polo croisé dans la rue ou sur les réseaux vaut largement son coût de fabrication en visibilité.",
+			"Un polo floqué croisé dans la rue ou sur les réseaux vaut largement son coût de fabrication en visibilité : porté par les salariés en dehors du travail — trajet, sport, weekend —, le vêtement aux couleurs de l'entreprise devient une publicité mobile gratuite.",
 		conseil:
 			"Pour une entreprise, la broderie sur le cœur reste la référence sur polo ou chemise : elle tient particulièrement bien dans le temps et donne un rendu plus qualitatif qu'un marquage imprimé. Le transfert monochrome est une alternative plus économique sur de petites séries, ou pour un logo très détaillé que la broderie rendrait mal.",
 		textile: 'Polo piqué ou chemise',
@@ -90,7 +90,7 @@ export const SECTEURS: Secteur[] = [
 		motivation:
 			"Un tablier ou un t-shirt floqué au nom de l'établissement renforce l'identité du lieu autant qu'il évite la confusion en salle sur qui fait partie du service. Le vrai critère de choix n'est pas esthétique en premier lieu : c'est la tenue du marquage dans le temps, lavage après lavage.",
 		insight:
-			"Au-delà de l'uniforme de service, de plus en plus d'établissements vendent aussi le t-shirt ou le tote bag à leur clientèle — une pratique déjà courante à l'étranger, qui fonctionne bien. Entre le prix d'achat en gros et le prix de vente à l'unité, la marge est confortable pour un produit qui ne demande presque pas de stock ni de gestion supplémentaire.",
+			"Certains établissements vont plus loin que l'uniforme de service : ils vendent le t-shirt ou le tote bag directement à leur clientèle, une pratique déjà courante à l'étranger. Entre le prix d'achat en gros et le prix de vente à l'unité, la marge est confortable pour un produit qui ne demande presque pas de stock.",
 		conseil:
 			"Sous 25 pièces, le transfert monochrome est le plus économique et suffisant pour un logo simple ; au-delà, la sérigraphie prend le relais et tient mieux sur le long terme. Un t-shirt épais (185 g/m²) ou un tablier en toile résistante encaissent mieux les lavages répétés qu'un textile plus léger.",
 		textile: 'T-shirt épais 185 g/m² ou tablier',
@@ -106,7 +106,7 @@ export const SECTEURS: Secteur[] = [
 		motivation:
 			"Un visuel riche en couleurs, une quantité parfois révisée jusqu'au dernier moment, un délai serré : la réactivité compte plus que la durabilité, puisque le t-shirt sera surtout porté le jour même et dans les semaines qui suivent.",
 		insight:
-			"Le t-shirt de l'événement est souvent le seul souvenir tangible qui reste une fois la soirée finie — porté ensuite dans la rue par les participants, il fait une publicité gratuite et durable pour l'édition suivante, bien après que l'événement soit terminé.",
+			"Une fois la soirée terminée, le t-shirt de l'événement est souvent tout ce qu'il en reste concrètement — porté ensuite dans la rue par les participants, il continue de faire de la publicité pour l'édition suivante, longtemps après coup.",
 		conseil:
 			"Le transfert quadrichromie est la technique la plus adaptée : couleurs et dégradés illimités, sans frais de calage à amortir, ce qui le rend rentable même sur une série décidée dans l'urgence. Un t-shirt léger (150 g/m²) reste le plus confortable à porter toute une journée, en intérieur comme en extérieur.",
 		textile: 'T-shirt léger 150 g/m²',
@@ -122,7 +122,7 @@ export const SECTEURS: Secteur[] = [
 		motivation:
 			"Contrairement à un vêtement de travail, le textile vendu en commerce doit plaire visuellement autant qu'il doit être rentable — le rendu du marquage compte alors autant que le prix, puisque c'est votre client qui l'achète, pas vous qui l'offrez.",
 		insight:
-			"Une petite série en édition limitée, à l'effigie du commerce ou du quartier, devient un produit à part entière que le client achète en plus de son passage habituel — pas seulement un support de communication gratuit. Tester une petite quantité avant de réassortir limite le risque si le visuel ne rencontre pas son public.",
+			"À l'effigie du commerce ou du quartier, une petite série en édition limitée devient un produit à part entière que le client achète en plus de son passage habituel, pas un simple support de communication offert. Tester une petite quantité avant de réassortir limite le risque si le visuel ne rencontre pas son public.",
 		conseil:
 			"Un coton lourd (200 g/m² et plus) donne un tombé plus qualitatif, apprécié sur un produit vendu plutôt qu'offert. La sérigraphie reste la référence pour un rendu net sur de petites séries (20 à 100 pièces) ; le transfert monochrome convient mieux à un visuel unique très détaillé.",
 		textile: 'Coton lourd 200 g/m² et plus',
@@ -138,7 +138,7 @@ export const SECTEURS: Secteur[] = [
 		motivation:
 			"Un tablier brodé au nom de la boulangerie donne une image professionnelle immédiate, sans dénaturer le côté artisanal qui fait la différence avec une chaîne. La broderie, contrairement à un marquage imprimé, ne craint ni la chaleur ni les frottements répétés contre le plan de travail.",
 		insight:
-			"Au-delà du tablier de l'équipe, de plus en plus de boulangeries proposent en caisse un petit tote bag personnalisé à prix doux — un produit d'appel qui fidélise sans effort commercial et se glisse facilement dans le panier moyen, en plus de la vente du pain lui-même.",
+			"Certaines boulangeries ajoutent en caisse un petit tote bag personnalisé à prix doux, en plus du tablier de l'équipe : un produit d'appel qui fidélise sans effort commercial et se glisse facilement dans le panier moyen.",
 		conseil:
 			"La broderie est le choix le plus adapté sur tablier ou polo : elle tient mieux dans la durée que n'importe quel marquage imprimé face à la chaleur et aux lavages répétés. Sur de petites séries (10 à 30 pièces), le surcoût de la broderie reste raisonnable au regard de sa longévité.",
 		textile: 'Tablier ou polo',
@@ -154,7 +154,7 @@ export const SECTEURS: Secteur[] = [
 		motivation:
 			"Entre les maillots de match, les survêtements d'entraînement et le renouvellement partiel chaque saison, un club a rarement besoin d'une commande unique figée dans le temps, mais d'un partenaire capable de reproduire le même flocage saison après saison, joueur après joueur.",
 		insight:
-			"Le maillot floqué au nom du joueur crée un attachement individuel qui pousse à l'achat même hors saison, et se revend souvent aux familles ou aux supporters en plus de l'équipement officiel — une source de revenu complémentaire pour le club, en plus du sentiment d'appartenance qu'il crée.",
+			"Floqué au nom du joueur, le maillot crée un attachement individuel qui pousse à l'achat même hors saison — beaucoup de clubs le revendent aussi aux familles ou aux supporters en plus de l'équipement officiel, une source de revenu complémentaire.",
 		conseil:
 			"Le transfert monochrome est la technique la plus adaptée aux textiles techniques (polyester respirant) : il adhère bien à une matière que la sérigraphie classique accroche mal, et permet un flocage individuel nom et numéro sans repartir de zéro pour chaque joueur.",
 		textile: 'Maillot polyester respirant',

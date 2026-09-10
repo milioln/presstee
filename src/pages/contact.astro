@@ -205,7 +205,7 @@ const typesTextile = Object.keys(LABELS_TYPE_TEXTILE) as TypeTextile[];
 
 	// Bloc SIRET/facturation affiché dès que "Structure" est renseigné, ou
 	// d'emblée si le visiteur s'est déjà déclaré professionnel ailleurs sur
-	// le site (accueil, SectorSelector) — jamais un champ obligatoire.
+	// le site (la question "Vous êtes..." du quiz) — jamais un champ obligatoire.
 	const proBlock = el('contactPro');
 	const structureInput = el<HTMLInputElement>('cStructure');
 	function syncProBlock(): void {

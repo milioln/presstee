@@ -21,14 +21,15 @@ const { p } = Astro.props as { p: (typeof PRODUITS_A_VENIR)[number] };
 const prixTShirt = prixAPartirDe(Math.min(...TSHIRTS.map((t) => t.baseCost)));
 ---
 
-<Layout title={`${p.nom} — bientôt chez Presstee`} description={`${p.desc} Cette famille n'est pas encore en ligne : le catalogue Presstee propose aujourd'hui des t-shirts personnalisables, ${p.nom.toLowerCase()} à venir.`}>
+<Layout title={`${p.nom} — bientôt chez Presstee`} description={p.desc}>
 	<Header />
 	<main>
 		<section class="tech-hero">
 			<div class="wrap">
 				<div class="crumb"><a href="/">Accueil</a> / <a href="/produits">Produits</a> / {p.nom}</div>
 				<h1>{p.nom}, bientôt chez Presstee.</h1>
-				<p>{p.desc} Cette famille n'est pas encore en ligne : à ce jour, le catalogue Presstee propose des t-shirts personnalisables, dès {prixTShirt.toFixed(2).replace('.', ',')} € la pièce.</p>
+				<p>{p.paragraphe}</p>
+				<p>Cette famille n'est pas encore en ligne : à ce jour, le catalogue Presstee propose des t-shirts personnalisables, dès {prixTShirt.toFixed(2).replace('.', ',')} € la pièce.</p>
 				<div class="soon-cta">
 					<a class="btn" href="/produits/t-shirts">Voir les t-shirts en ligne</a>
 					<a class="btn btn-light" href="/contact">Être prévenu·e / poser une question</a>

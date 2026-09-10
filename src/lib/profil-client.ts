@@ -22,8 +22,4 @@ export function setProfil(p: ProfilClient): void {
     // Stockage indisponible (navigation privée, quota dépassé...) : on
     // n'interrompt jamais l'expérience pour une persistance qui échoue.
   }
-  // Les sections déjà affichées sur la page (ex. SectorSelector) écoutent
-  // cet évènement pour se retrier sans rechargement, plutôt qu'une
-  // relecture périodique du storage.
-  document.dispatchEvent(new CustomEvent<ProfilClient>('presstee:profil-client', { detail: p }));
 }

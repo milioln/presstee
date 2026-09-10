@@ -16,6 +16,18 @@ interface Props {
 
 const { title, description = siteConfig.baseline, noindex = false } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+// Identité de l'entreprise pour Google — un minimum possible dès
+// maintenant (nom, site, logo) sans attendre le numéro de téléphone ou
+// le SIRET, encore vides (cf. config/site.ts). Un LocalBusiness complet
+// (adresse, horaires) suivra quand ces informations existeront.
+const organizationLd = {
+	'@context': 'https://schema.org',
+	'@type': 'Organization',
+	name: siteConfig.nom,
+	url: 'https://presstee.fr',
+	logo: new URL('/logo/presstee-horizontal.svg', Astro.site).toString(),
+};
 ---
 
 <!DOCTYPE html>
@@ -27,6 +39,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 	<title>{title}</title>
 	<link rel="canonical" href={canonicalURL} />
 	{noindex && <meta name="robots" content="noindex, nofollow" />}
+	{!noindex && <script type="application/ld+json" set:html={JSON.stringify(organizationLd)} />}
 	<meta property="og:type" content="website" />
 	<meta property="og:site_name" content={siteConfig.nom} />
 	<meta property="og:locale" content="fr_FR" />

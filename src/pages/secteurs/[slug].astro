@@ -5,13 +5,15 @@
 // visiteur à se décider et à commander — pas seulement une fiche
 // technique (Milio, 2026-09-10 : « développer beaucoup plus, écrire
 // pour le référencement, parler au client, l'aider à commander, un CTA
-// simple »). Contenu : src/data/secteurs.ts (source commune avec le
-// panneau interactif de l'accueil, SectorSelector.astro).
+// simple »). Contenu : src/data/secteurs.ts (source commune avec la
+// liste de puces "Des conseils par activité" de l'accueil, seul point
+// d'entrée restant vers ces pages depuis l'accueil).
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { SECTEURS } from '../../data/secteurs';
 import { getTechnique } from '../../lib/techniques-data';
+import { siteConfig } from '../../config/site';
 import '../../styles/global.css';
 import '../../styles/techniques.css';
 
@@ -22,17 +24,29 @@ export function getStaticPaths() {
 const { s } = Astro.props as { s: (typeof SECTEURS)[number] };
 const autres = SECTEURS.filter((x) => x.slug !== s.slug);
 const technique = getTechnique(s.techniqueSlug)!;
+
+const serviceLd = {
+	'@context': 'https://schema.org',
+	'@type': 'Service',
+	serviceType: 'Personnalisation textile',
+	name: `Textile personnalisé pour ${s.nom.toLowerCase()}`,
+	description: s.texte,
+	url: `https://presstee.fr/secteurs/${s.slug}`,
+	provider: { '@type': 'Organization', name: siteConfig.nom, url: 'https://presstee.fr' },
+	areaServed: { '@type': 'Place', name: `${siteConfig.adresse.ville}, ${siteConfig.adresse.departement}` },
+};
 ---
 
 <Layout
 	title={`Textile personnalisé pour ${s.nom.toLowerCase()} — Presstee`}
 	description={`${s.textile} en ${technique.nom.toLowerCase()} : ce que Presstee conseille pour ${s.nom.toLowerCase()}, avec une recommandation et un prix en quelques clics.`}
 >
+	<script type="application/ld+json" set:html={JSON.stringify(serviceLd)} />
 	<Header />
 	<main>
 		<section class="tech-hero">
 			<div class="wrap">
-				<div class="crumb"><a href="/">Accueil</a> / <a href="/#secteurs">Secteurs</a> / {s.nom}</div>
+				<div class="crumb"><a href="/">Accueil</a> / <a href="/#pourqui">Secteurs</a> / {s.nom}</div>
 				<h1>Textile personnalisé pour {s.nom.toLowerCase()}.</h1>
 				<p>{s.texte}</p>
 				<a class="btn" href="/commencer">Faire le test</a>
