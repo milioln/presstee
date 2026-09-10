@@ -160,10 +160,6 @@ h2{font-size:clamp(2.05rem,5.2vw,3.5rem)}
 .sub span{font-size:.93rem;color:var(--gris)}
 
 /* ---------- secteurs ---------- */
-.profilToggle{display:flex;justify-content:center;gap:8px;margin-bottom:22px}
-.profilToggle button{border:1.5px solid var(--ligne);background:var(--lavande);border-radius:100px;padding:9px 18px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;color:var(--gris);transition:.15s}
-.profilToggle button:hover{border-color:var(--indigo);color:var(--encre)}
-.profilToggle button.on{border-color:var(--indigo);background:var(--indigo);color:#fff}
 .doms{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-bottom:30px}
 .dom{border:1.5px solid var(--ligne);background:#fff;border-radius:100px;padding:11px 20px;font:inherit;font-size:14.5px;font-weight:500;cursor:pointer;color:var(--encre);transition:.15s}
 .dom:hover{border-color:var(--indigo);transform:translateY(-2px)}
@@ -171,6 +167,7 @@ h2{font-size:clamp(2.05rem,5.2vw,3.5rem)}
 .dompanel{background:#fff;border:1px solid var(--ligne);border-radius:20px;padding:34px;display:grid;grid-template-columns:1.1fr .9fr;gap:34px;align-items:start}
 .dompanel h3{font-size:1.5rem;margin-bottom:12px}
 .dompanel p{color:var(--gris);font-size:1rem}
+.dompanel-insight{background:var(--lavande);border-left:3px solid var(--indigo);border-radius:0 12px 12px 0;padding:14px 18px;margin-top:18px;font-size:.92rem;color:var(--encre)}
 .dompanel-cta{display:flex;align-items:center;flex-wrap:wrap;gap:8px 18px;margin-top:22px}
 .dompanel-more{font-size:13.5px;color:var(--gris);text-decoration:none}
 .dompanel-more:hover{color:var(--indigo)}

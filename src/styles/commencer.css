@@ -19,7 +19,11 @@
 .qz3d-hint{margin-top:12px;font-size:.8rem;color:var(--gris);text-align:center}
 @media(max-width:900px){
   .qzLayout,.qzLayout.has3d{flex-direction:column;align-items:center;max-width:640px}
-  .qz3d{width:100%;max-width:360px;position:static;margin:0 auto 20px}
+  /* Le t-shirt 3D passe avant le formulaire (demande Milio, 2026-09-10) :
+     sur téléphone, on doit comprendre dès l'arrivée qu'il réagit à la
+     couleur et à l'emplacement choisis, pas seulement le découvrir après
+     avoir répondu à toute la première question. */
+  .qz3d{width:100%;max-width:360px;position:static;margin:0 auto 20px;order:-1}
 }
 
 /* ---------- progression ---------- */
@@ -125,6 +129,7 @@
 .qzColorBreakdown-sw{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
 
 @media(max-width:640px){
-  .qzCard{padding:24px}
+  .qzCard{padding:20px;border-radius:16px}
+  .qzResultCard{padding:14px 16px}
   .qzChoices-big{grid-template-columns:1fr}
 }

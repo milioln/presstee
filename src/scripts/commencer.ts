@@ -292,7 +292,7 @@ function screenProjet(): string {
   const placesDispo = emplacementsValides(state.garment);
   return `<div class="qzStep">
     <h2>Votre projet</h2>
-    <p class="qzHint">Question 1 sur 3 — le modèle 3D à droite reflète vos choix ; cliquez directement dessus pour choisir l'emplacement.${produits.length === 0 ? ' Besoin de plusieurs produits ? Vous pourrez en ajouter d\'autres à la fin.' : ''}</p>
+    <p class="qzHint">Question 1 sur 3.${produits.length === 0 ? ' Besoin de plusieurs produits ? Vous pourrez en ajouter d\'autres à la fin.' : ''}</p>
     <div class="qzField">
       <span class="qzLabel">Type de textile</span>
       <div class="pills">${(Object.keys(GARMENT_LABELS) as Garment[]).map((g) => pill('set-garment', g, GARMENT_LABELS[g], state.garment === g)).join('')}</div>

@@ -39,6 +39,12 @@ const autres = SECTEURS.filter((x) => x.slug !== s.slug);
 					<div class="fact"><b>Marquage conseillé</b><span>{s.marquage}</span></div>
 					<div class="fact"><b>Volumes habituels</b><span>{s.volumes}</span></div>
 				</div>
+
+				<div class="secteur-insight">
+					<span class="secteur-insight-label">Un usage à ne pas négliger</span>
+					<p>{s.insight}</p>
+				</div>
+
 				<p class="secteur-note">Ces repères viennent des projets les plus fréquents pour ce profil — chaque commande reste chiffrée sur mesure selon votre visuel et votre quantité exacte. <a href="/commencer">Faites le test</a> pour une recommandation et un prix précis, ou <a href="/contact">contactez-nous</a> directement.</p>
 
 				<div class="secteur-autres">
@@ -81,6 +87,28 @@ const autres = SECTEURS.filter((x) => x.slug !== s.slug);
 	}
 	.secteur-facts .fact span {
 		font-size: 15px;
+	}
+	.secteur-insight {
+		background: var(--lavande);
+		border-left: 3px solid var(--indigo);
+		border-radius: 0 14px 14px 0;
+		padding: 18px 22px;
+		margin-bottom: 26px;
+		max-width: 68ch;
+	}
+	.secteur-insight-label {
+		display: block;
+		font-family: 'Sora', sans-serif;
+		font-size: 12px;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--indigo);
+		font-weight: 600;
+		margin-bottom: 8px;
+	}
+	.secteur-insight p {
+		margin: 0;
+		font-size: 0.95rem;
 	}
 	.secteur-note {
 		color: var(--gris);
