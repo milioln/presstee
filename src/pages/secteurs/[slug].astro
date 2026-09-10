@@ -1,14 +1,17 @@
 ---
-// Une page dédiée par secteur d'activité — même contenu que le panneau
-// interactif de l'accueil (SectorSelector.astro, source commune :
-// src/data/secteurs.ts), mais sous une adresse propre à chaque secteur
-// pour être trouvable depuis une recherche Google qui le mentionne
-// (« t-shirt personnalisé association », « polo brodé entreprise »…),
-// ce qu'un simple panneau au milieu de l'accueil ne permet pas.
+// Une page dédiée par secteur d'activité, développée pour être trouvée
+// depuis une recherche propre à ce secteur (« t-shirt personnalisé
+// association », « polo brodé entreprise »…) et pour vraiment aider le
+// visiteur à se décider et à commander — pas seulement une fiche
+// technique (Milio, 2026-09-10 : « développer beaucoup plus, écrire
+// pour le référencement, parler au client, l'aider à commander, un CTA
+// simple »). Contenu : src/data/secteurs.ts (source commune avec le
+// panneau interactif de l'accueil, SectorSelector.astro).
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { SECTEURS } from '../../data/secteurs';
+import { getTechnique } from '../../lib/techniques-data';
 import '../../styles/global.css';
 import '../../styles/techniques.css';
 
@@ -18,9 +21,13 @@ export function getStaticPaths() {
 
 const { s } = Astro.props as { s: (typeof SECTEURS)[number] };
 const autres = SECTEURS.filter((x) => x.slug !== s.slug);
+const technique = getTechnique(s.techniqueSlug)!;
 ---
 
-<Layout title={`Textile personnalisé pour ${s.nom.toLowerCase()} — Presstee`} description={`${s.texte} Textile conseillé : ${s.textile}. Marquage conseillé : ${s.marquage}.`}>
+<Layout
+	title={`Textile personnalisé pour ${s.nom.toLowerCase()} — Presstee`}
+	description={`${s.textile} en ${technique.nom.toLowerCase()} : ce que Presstee conseille pour ${s.nom.toLowerCase()}, avec une recommandation et un prix en quelques clics.`}
+>
 	<Header />
 	<main>
 		<section class="tech-hero">
@@ -28,24 +35,58 @@ const autres = SECTEURS.filter((x) => x.slug !== s.slug);
 				<div class="crumb"><a href="/">Accueil</a> / <a href="/#secteurs">Secteurs</a> / {s.nom}</div>
 				<h1>Textile personnalisé pour {s.nom.toLowerCase()}.</h1>
 				<p>{s.texte}</p>
-				<a class="btn" href="/commencer">Commencer un projet</a>
+				<a class="btn" href="/commencer">Faire le test</a>
 			</div>
 		</section>
 
 		<section class="secteur-body">
 			<div class="wrap">
-				<div class="secteur-facts">
-					<div class="fact"><b>Textile souvent retenu</b><span>{s.textile}</span></div>
-					<div class="fact"><b>Marquage conseillé</b><span>{s.marquage}</span></div>
-					<div class="fact"><b>Volumes habituels</b><span>{s.volumes}</span></div>
-				</div>
+				<h2>Pourquoi personnaliser votre textile</h2>
+				<p class="secteur-p">{s.motivation}</p>
 
 				<div class="secteur-insight">
 					<span class="secteur-insight-label">Un usage à ne pas négliger</span>
 					<p>{s.insight}</p>
 				</div>
 
-				<p class="secteur-note">Ces repères viennent des projets les plus fréquents pour ce profil — chaque commande reste chiffrée sur mesure selon votre visuel et votre quantité exacte. <a href="/commencer">Faites le test</a> pour une recommandation et un prix précis, ou <a href="/contact">contactez-nous</a> directement.</p>
+				<div class="secteur-facts">
+					<div class="fact"><b>Textile souvent retenu</b><span>{s.textile}</span></div>
+					<div class="fact"><b>Marquage conseillé</b><span>{s.marquage}</span></div>
+					<div class="fact"><b>Volumes habituels</b><span>{s.volumes}</span></div>
+				</div>
+
+				<h2>Notre conseil</h2>
+				<p class="secteur-p">{s.conseil} <a href={`/techniques/${s.techniqueSlug}`}>En savoir plus sur la technique {technique.nom.toLowerCase()} →</a></p>
+
+				<h2>Comment commander</h2>
+				<div class="secteur-steps">
+					<div class="secteur-step">
+						<span class="secteur-step-n">1</span>
+						<div>
+							<strong>Faites le test</strong>
+							<p>Trois questions, une recommandation de textile et de technique, et un ordre de prix immédiat — sans attendre un devis par mail.</p>
+						</div>
+					</div>
+					<div class="secteur-step">
+						<span class="secteur-step-n">2</span>
+						<div>
+							<strong>Configurez votre visuel en 3D</strong>
+							<p>Le résultat du test pré-remplit directement le configurateur : ajustez la couleur, la taille et la position de votre visuel sur le vêtement.</p>
+						</div>
+					</div>
+					<div class="secteur-step">
+						<span class="secteur-step-n">3</span>
+						<div>
+							<strong>Validez avant production</strong>
+							<p>Un aperçu automatique (bon à tirer) de votre projet vous permet de tout valider avant lancement. Rien ne part en fabrication sans votre accord.</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="secteur-cta">
+					<a class="btn" href="/commencer">Faire le test pour {s.nom.toLowerCase()}</a>
+					<span class="secteur-cta-or">ou <a href="/contact">contactez-nous directement</a></span>
+				</div>
 
 				<div class="secteur-autres">
 					<h2>Les autres secteurs</h2>
@@ -64,12 +105,52 @@ const autres = SECTEURS.filter((x) => x.slug !== s.slug);
 <style>
 	.secteur-body {
 		padding: 44px 0 80px;
+		max-width: 760px;
+		margin: 0 auto;
 	}
+	.secteur-body h2 {
+		font-size: 1.25rem;
+		margin: 46px 0 14px;
+	}
+	.secteur-body h2:first-of-type {
+		margin-top: 0;
+	}
+	.secteur-p {
+		color: var(--gris);
+		font-size: 1rem;
+		line-height: 1.65;
+	}
+	.secteur-p a {
+		color: var(--indigo);
+	}
+
+	.secteur-insight {
+		background: var(--lavande);
+		border-left: 3px solid var(--indigo);
+		border-radius: 0 14px 14px 0;
+		padding: 18px 22px;
+		margin: 24px 0;
+	}
+	.secteur-insight-label {
+		display: block;
+		font-family: 'Sora', sans-serif;
+		font-size: 12px;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--indigo);
+		font-weight: 600;
+		margin-bottom: 8px;
+	}
+	.secteur-insight p {
+		margin: 0;
+		font-size: 0.95rem;
+	}
+
 	.secteur-facts {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
 		gap: 14px;
-		margin-bottom: 26px;
+		margin: 24px 0;
 	}
 	.secteur-facts .fact {
 		border: 1.5px solid var(--ligne);
@@ -88,39 +169,61 @@ const autres = SECTEURS.filter((x) => x.slug !== s.slug);
 	.secteur-facts .fact span {
 		font-size: 15px;
 	}
-	.secteur-insight {
-		background: var(--lavande);
-		border-left: 3px solid var(--indigo);
-		border-radius: 0 14px 14px 0;
-		padding: 18px 22px;
-		margin-bottom: 26px;
-		max-width: 68ch;
+
+	.secteur-steps {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
 	}
-	.secteur-insight-label {
-		display: block;
+	.secteur-step {
+		display: grid;
+		grid-template-columns: 34px 1fr;
+		gap: 16px;
+		align-items: start;
+	}
+	.secteur-step-n {
+		width: 34px;
+		height: 34px;
+		border-radius: 50%;
+		border: 1.5px solid var(--indigo);
+		color: var(--indigo);
 		font-family: 'Sora', sans-serif;
-		font-size: 12px;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
-		color: var(--indigo);
 		font-weight: 600;
-		margin-bottom: 8px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
 	}
-	.secteur-insight p {
-		margin: 0;
-		font-size: 0.95rem;
+	.secteur-step strong {
+		display: block;
+		font-size: 1rem;
+		margin-bottom: 4px;
 	}
-	.secteur-note {
+	.secteur-step p {
 		color: var(--gris);
-		max-width: 68ch;
-		margin-bottom: 46px;
+		font-size: 0.92rem;
+		margin: 0;
 	}
-	.secteur-note a {
+
+	.secteur-cta {
+		margin-top: 40px;
+		padding-top: 32px;
+		border-top: 1px solid var(--ligne);
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 8px 18px;
+	}
+	.secteur-cta-or {
+		font-size: 13.5px;
+		color: var(--gris);
+	}
+	.secteur-cta-or a {
 		color: var(--indigo);
 	}
+
 	.secteur-autres h2 {
 		font-size: 1.1rem;
-		margin-bottom: 14px;
 	}
 	.secteur-chips {
 		display: flex;
