@@ -84,17 +84,8 @@
 </section>
 
 <script>
-	const hero = document.getElementById('hero');
-
-	// Lueur qui suit le curseur dans toute la section (le sillage d'encre
-	// lui-même est géré globalement par Header.astro, actif sur tout le site).
-	hero?.addEventListener('mousemove', (e) => {
-		const r = hero.getBoundingClientRect();
-		const x = (e.clientX - r.left) / r.width;
-		const y = (e.clientY - r.top) / r.height;
-		hero.style.setProperty('--cx', (x * 100).toFixed(1) + '%');
-		hero.style.setProperty('--cy', (y * 100).toFixed(1) + '%');
-	});
+	// La lueur qui suit le curseur est gérée globalement par Header.astro
+	// (active sur tout le site, plus seulement ici).
 
 	// Import différé (comme sur /personnaliser) : la bibliothèque
 	// @google/model-viewer (WebGL) et le modèle 3D ne bloquent plus le
@@ -126,13 +117,6 @@
 		background-image: linear-gradient(rgba(157, 131, 207, 0.22) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(157, 131, 207, 0.22) 1.5px, transparent 1.5px);
 		background-size: 44px 44px;
 		overflow: hidden;
-	}
-	.hero::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background: radial-gradient(420px circle at var(--cx, 70%) var(--cy, 40%), rgba(157, 131, 207, 0.1), transparent 70%);
-		pointer-events: none;
 	}
 	@keyframes heroSpinBounce {
 		0% {

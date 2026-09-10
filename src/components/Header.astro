@@ -23,6 +23,8 @@ import Logo from './Logo.astro';
 	</div>
 </header>
 
+<div class="cursorGlow" aria-hidden="true"></div>
+
 <script>
 	import { showEggToast, pulseRegmarks } from '../lib/easter-egg';
 
@@ -34,23 +36,16 @@ import Logo from './Logo.astro';
 	});
 	links.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => links.classList.remove('open')));
 
-	// Sillage d'encre sous le curseur, actif sur tout le site (Milio,
-	// 2026-09-10 — auparavant limité au héros de l'accueil). Semé au fil du
-	// mouvement plutôt qu'à chaque événement pour rester léger ; positionné
-	// en fixed/viewport donc valable sur n'importe quelle page.
+	// Lueur qui suit le curseur, active sur tout le site (Milio, 2026-09-10
+	// — remplace le sillage d'encre qui créait un élément DOM à chaque
+	// mouvement et finissait par ralentir la page). Reprend l'effet déjà
+	// présent sur le héros de l'accueil (deux variables CSS mises à jour,
+	// rien créé ni supprimé) plutôt que de le limiter à cette seule section.
 	const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 	if (!reduceMotion) {
-		let lastInkDropAt = 0;
 		window.addEventListener('mousemove', (e) => {
-			const now = performance.now();
-			if (now - lastInkDropAt <= 70) return;
-			lastInkDropAt = now;
-			const drop = document.createElement('span');
-			drop.className = 'inkDrop';
-			drop.style.left = `${e.clientX}px`;
-			drop.style.top = `${e.clientY}px`;
-			document.body.appendChild(drop);
-			window.setTimeout(() => drop.remove(), 700);
+			document.documentElement.style.setProperty('--cx', ((e.clientX / window.innerWidth) * 100).toFixed(1) + '%');
+			document.documentElement.style.setProperty('--cy', ((e.clientY / window.innerHeight) * 100).toFixed(1) + '%');
 		});
 	}
 
