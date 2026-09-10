@@ -46,12 +46,18 @@ import '../styles/personnalisateur.css';
 								<div class="cellhead"><h6>2 — Coloris</h6><span class="text-muted" id="colorName"></span></div>
 								<div class="swatches" id="colors"></div>
 								<p class="hint" id="darkNote"></p>
-								<p class="hint">Plusieurs coloris possibles : chacun garde sa propre répartition de tailles (panneau 5).</p>
+								<p class="hint">Plusieurs coloris possibles : chacun garde sa propre répartition de tailles ci-dessous.</p>
 								<div class="colorLotsList" id="colorLotsList"></div>
 							</div>
 
+							<div class="cell">
+								<div class="cellhead"><h6>3 — Répartition des tailles</h6><span class="text-muted" id="sizeTotal"></span></div>
+								<p class="hint" id="sizeActiveColor" style="margin-top:-6px"></p>
+								<div id="sizeRows"></div>
+							</div>
+
 							<div class="cell" id="placeBlock" style="display:none">
-								<h6>3 — Emplacement</h6>
+								<h6>4 — Emplacement</h6>
 								<div class="seg3" id="place">
 									<button data-p="face" class="on"><strong>Face</strong><em>30 cm max</em></button>
 									<button data-p="coeur"><strong>Cœur</strong><em>10 cm max</em></button>
@@ -112,7 +118,7 @@ import '../styles/personnalisateur.css';
 								     (Milio, 2026-09-09 : « c'est nul de l'indiquer là-bas alors
 								     qu'il y a déjà une page qui est à peu près faite pour ça »). -->
 								<div class="cell adjust-cell" id="adjust" style="display:none">
-									<h6>4 — Taille et position du visuel</h6>
+									<h6>5 — Taille et position du visuel</h6>
 									<div id="adjustControls" style="display:none">
 										<div class="widthctl">
 											<button class="btn btn-secondary btn-icon" id="wMinus" aria-label="Réduire">−</button>
@@ -227,13 +233,7 @@ import '../styles/personnalisateur.css';
 						<div class="panel">
 
 							<div class="phaseGroup">
-								<div class="phaseLabel">Tailles &amp; technique</div>
-
-								<div class="cell">
-									<div class="cellhead"><h6>5 — Répartition des tailles</h6><span class="text-muted" id="sizeTotal"></span></div>
-									<p class="hint" id="sizeActiveColor" style="margin-top:-6px"></p>
-									<div id="sizeRows"></div>
-								</div>
+								<div class="phaseLabel">Technique</div>
 
 								<div class="cell">
 									<h6>6 — Technique</h6>
