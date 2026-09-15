@@ -168,9 +168,18 @@
 		display: grid;
 		/* Colonne de texte élargie (Milio, 2026-09-15) — le titre plus
 		   court avait l'air à l'étroit face à la vignette 3D. */
-		grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.85fr);
+		grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.7fr);
 		gap: clamp(28px, 4vw, 56px);
-		align-items: center;
+		/* Les deux colonnes occupent désormais la même hauteur (Milio,
+		   2026-09-15 : « même hauteur pour la gauche que la droite ») —
+		   .hero-copy répartit alors son contenu du haut au bas de cette
+		   hauteur commune plutôt que de rester centré sur lui-même. */
+		align-items: stretch;
+	}
+	.hero-copy {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
 	}
 
 	/* Entrée orchestrée au chargement — le titre, les actions puis le
@@ -226,7 +235,7 @@
 		font-weight: 400;
 		/* Légèrement agrandi (Milio, 2026-09-15 : « agrandis-le un tout
 		   petit peu ») — 2.7rem → 2.9rem au plancher mobile. */
-		font-size: clamp(2.9rem, 5vw, 4.4rem);
+		font-size: clamp(3.2rem, 5vw, 4.6rem);
 		line-height: 1.15;
 		letter-spacing: -0.01em;
 		max-width: 19ch;
@@ -259,7 +268,11 @@
 	}
 
 	.hero-actions {
+		/* Les deux CTA s'écartent jusqu'aux bords de la colonne de texte
+		   (Milio, 2026-09-15, capture annotée) plutôt que de rester
+		   groupés à gauche avec du vide après le second bouton. */
 		display: flex;
+		justify-content: space-between;
 		gap: 12px;
 		flex-wrap: wrap;
 		margin-top: 26px;
