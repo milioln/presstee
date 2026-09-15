@@ -6,10 +6,11 @@
 // écrire pour le référencement, parler au client, l'aider à commander »,
 // puis 2026-09-15 : « plus d'éléments graphiques, un meilleur article »).
 //
-// Pas de photo réelle par secteur pour l'instant (aucune fournie) — image
-// reste à null en attendant que Milio en fournisse une par secteur (cf.
-// échange du 2026-09-15) ; les cases du guide affichent alors juste le
-// tampon, sans fond flouté, plutôt qu'une photo au hasard sans rapport.
+// Photos libres de droits (Pexels), une par secteur (Milio, 2026-09-15 :
+// « télécharge des photos libres de droit... on va les flouter, c'est
+// pas grave de ce qu'on voit dessus, il faut juste qu'on comprenne que
+// ça soit en lien ») — le flou appliqué en case (.tcard-bg) rend le
+// détail exact de la photo secondaire, seule l'ambiance générale compte.
 export interface Secteur {
 	slug: string;
 	nom: string;
@@ -18,7 +19,7 @@ export interface Secteur {
 	// utilisée dans la case compacte du guide, pas sur la page dédiée.
 	accroche: string;
 	// Photo réelle en fond flouté de la case du guide (cf. accroche
-	// ci-dessus) — null tant qu'aucune n'est fournie pour ce secteur.
+	// ci-dessus).
 	image: string | null;
 	// Accroche courte, adressée directement au lecteur — utilisée en haut
 	// de la page dédiée et comme teaser dans le panneau de l'accueil.
@@ -49,7 +50,7 @@ export const SECTEURS: Secteur[] = [
 		slug: 'associations',
 		nom: 'Associations',
 		accroche: 'Financez vos événements avec des t-shirts vendus aux adhérents.',
-		image: null,
+		image: '/secteurs/associations.webp',
 		texte:
 			"Vous représentez une association ? Un textile personnalisé — t-shirt, sweat, tote bag — donne une présence visible à votre structure lors d'un événement, d'une sortie ou d'un forum, sans faire exploser un budget déjà serré.",
 		motivation:
@@ -67,7 +68,7 @@ export const SECTEURS: Secteur[] = [
 		slug: 'bde-ecoles',
 		nom: 'BDE et écoles',
 		accroche: "Le sweat de promo que tout le monde s'arrache à la rentrée.",
-		image: null,
+		image: '/secteurs/bde-ecoles.webp',
 		texte:
 			"Vous organisez l'intégration, un week-end ou une soirée pour votre BDE, votre association étudiante ou votre école ? Le sweat ou le t-shirt de promo est souvent le seul objet qui reste une fois l'événement terminé — et celui que tout le monde veut porter le jour J.",
 		motivation:
@@ -85,7 +86,7 @@ export const SECTEURS: Secteur[] = [
 		slug: 'bars-restaurants',
 		nom: 'Bars et restaurants',
 		accroche: 'Un uniforme qui tient au lavage, commande après commande.',
-		image: null,
+		image: '/secteurs/bars-restaurants.webp',
 		texte:
 			"Vous voulez habiller votre équipe en salle ou en cuisine avec un t-shirt ou un tablier reconnaissable ? Le textile professionnel dans la restauration doit avant tout résister à un usage quotidien et à des lavages fréquents à haute température.",
 		motivation:
@@ -103,7 +104,7 @@ export const SECTEURS: Secteur[] = [
 		slug: 'evenements',
 		nom: 'Événements',
 		accroche: "Un visuel prêt en quelques jours, même dans l'urgence.",
-		image: null,
+		image: '/secteurs/evenements.webp',
 		texte:
 			"Vous organisez un événement — festival, course, salon, soirée — et avez besoin d'un t-shirt visuel, produit vite et en quantité ? La contrainte n'est presque jamais le budget : c'est le délai.",
 		motivation:
@@ -121,7 +122,7 @@ export const SECTEURS: Secteur[] = [
 		slug: 'commerces',
 		nom: 'Commerces',
 		accroche: 'Une petite série à votre effigie, vendue ou offerte en boutique.',
-		image: null,
+		image: '/secteurs/commerces.webp',
 		texte:
 			"Vous tenez un commerce et voulez proposer une pièce à l'effigie de votre enseigne ou de votre quartier ? Une petite série bien choisie peut devenir un vrai produit, pas seulement un support de communication.",
 		motivation:
@@ -139,7 +140,7 @@ export const SECTEURS: Secteur[] = [
 		slug: 'marques-de-vetements',
 		nom: 'Marques de vêtements',
 		accroche: "Le même calage, reproductible à l'identique d'un drop à l'autre.",
-		image: null,
+		image: '/secteurs/marques-de-vetements.webp',
 		texte:
 			"Vous créez votre propre marque de vêtements et cherchez un atelier pour produire vos pièces ? Contrairement à un événement ponctuel, chaque collection doit pouvoir être reproduite à l'identique, saison après saison, avec un rendu qui tient la comparaison avec ce que vendent déjà les marques établies.",
 		motivation:

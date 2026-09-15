@@ -17,16 +17,25 @@ const SECTEUR_STAMP: Record<string, string> = {
 	'bars-restaurants': 'Bar',
 	evenements: 'Évén.',
 	commerces: 'Shop',
-	'marques-de-vetements': 'Marque',
+};
+// "Marques de vêtements" a droit à un petit dessin plutôt qu'un mot
+// (Milio, 2026-09-15 : « ne mets pas Marque, mets-moi un t-shirt dans
+// le carré ») — les autres secteurs gardent leur tampon texte.
+const SECTEUR_ICON: Record<string, string> = {
+	'marques-de-vetements':
+		'<path d="M8 3L3 7l3 3 2-1.5V20a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V8.5l2 1.5 3-3-5-4-2 2h-2z"/>',
 };
 // Petits dessins très simples plutôt que des initiales (Milio,
 // 2026-09-15 : « Sérig, Quadri, Mono... ça passe à côté de l'intérêt,
 // je voudrais un petit dessin ») : le carrousel de sérigraphie, une
 // presse avec les points de couleur du CMJN pour la quadrichromie (un
 // seul point pour le monochrome), un cercle à broder pour la broderie.
+// Les 4 écrans du carrousel de sérigraphie sont colorés différemment
+// (Milio, 2026-09-15 : « mets-moi une couleur pour chaque écran... on
+// comprend mieux ») plutôt qu'en une seule couleur uniforme.
 const TECHNIQUE_ICON: Record<string, string> = {
 	serigraphie:
-		'<circle cx="12" cy="12" r="2.6"/><rect x="10" y="1.5" width="4" height="4.5" rx="1"/><rect x="10" y="18" width="4" height="4.5" rx="1"/><rect x="1.5" y="10" width="4.5" height="4" rx="1"/><rect x="18" y="10" width="4.5" height="4" rx="1"/>',
+		'<circle cx="12" cy="12" r="2.6"/><rect x="10" y="1.5" width="4" height="4.5" rx="1" fill="#9B07FF" stroke="none"/><rect x="10" y="18" width="4" height="4.5" rx="1" fill="#FFC500" stroke="none"/><rect x="1.5" y="10" width="4.5" height="4" rx="1" fill="#2EC4B6" stroke="none"/><rect x="18" y="10" width="4.5" height="4" rx="1" fill="#F25C54" stroke="none"/>',
 	'transfert-quadrichromie':
 		'<rect x="4" y="2.5" width="16" height="5" rx="1.5"/><circle cx="8" cy="15" r="1.7" fill="#00AEEF" stroke="none"/><circle cx="16" cy="15" r="1.7" fill="#EC008C" stroke="none"/><circle cx="8" cy="20" r="1.7" fill="#FFE000" stroke="none"/><circle cx="16" cy="20" r="1.7" fill="#17131F" stroke="none"/>',
 	'transfert-monochrome':
@@ -68,14 +77,49 @@ const TECHNIQUE_ICON: Record<string, string> = {
 				))}
 			</div>
 
-			<!-- Comparatif juste après les 4 cartes qu'il compare (Milio,
-			     2026-09-15 : « les gens ne vont pas forcément descendre tout
-			     en bas, mais je ne veux pas non plus le mettre tout en
-			     haut ») — enchaîne naturellement sur "voici les 4
-			     techniques", plutôt que d'ouvrir la page dessus (trop
-			     dense pour un premier contact) ou de le laisser tout en bas
-			     (jamais vu par la plupart des visiteurs). -->
+			<!-- Même présentation, même alignement et même échelle que le
+			     hero de la page (Milio, 2026-09-15 : « exactement la même
+			     forme que bien choisir sa technique de marquage ») — vrai
+			     H1 (Milio : « je veux que ça soit vraiment en H1 ») plutôt
+			     qu'un H2 simplement stylé pareil. -->
+			<div class="techIntro" style="margin-top:60px">
+				<h1 class="likeH1">Des conseils selon votre activité</h1>
+				<p>Association, restaurant, événement, commerce... chaque secteur a ses contraintes et ses habitudes de commande.</p>
+			</div>
+			<div class="tgrid tgrid-3col">
+				{SECTEURS.map((s) => (
+					<a class="tcard" href={`/secteurs/${s.slug}`}>
+						<div class="tcard-photo">
+							{s.image && <img class="tcard-bg" src={s.image} alt="" aria-hidden="true" loading="lazy" />}
+							<span class="techsect-stamp" aria-hidden="true">
+								{SECTEUR_ICON[s.slug] ? (
+									<span
+										class="techsect-stamp-icon"
+										set:html={`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:26px;height:26px">${SECTEUR_ICON[s.slug]}</svg>`}
+									/>
+								) : (
+									<span class="techsect-stamp-mono">{SECTEUR_STAMP[s.slug] ?? s.nom.slice(0, 2)}</span>
+								)}
+							</span>
+						</div>
+						<div class="body">
+							<h3>{s.nom}</h3>
+							<p>{s.accroche}</p>
+						</div>
+					</a>
+				))}
+			</div>
+
+			<!-- Tableau ramené tout en bas de page (Milio, 2026-09-15 :
+			     « finalement, mets le tableau en bas de la page ») — après
+			     un essai juste sous les 4 techniques, jugé pas assez lisible
+			     par-dessus le reste. Rendu plus facile au doigt (même
+			     demande) : première colonne collée à l'écran pendant le
+			     défilement horizontal, et un repère "faites glisser"
+			     visible seulement sur mobile. -->
 			<div class="tcompare">
+				<h2 class="sr-only">Tableau comparatif des techniques</h2>
+				<p class="tcompare-hint">Faites glisser pour comparer →</p>
 				<table>
 					<thead>
 						<tr>
@@ -112,32 +156,6 @@ const TECHNIQUE_ICON: Record<string, string> = {
 						</tr>
 					</tbody>
 				</table>
-			</div>
-
-			<!-- Même présentation, même alignement et même échelle que le
-			     hero de la page (Milio, 2026-09-15 : « exactement la même
-			     forme que bien choisir sa technique de marquage ») —
-			     .head-center centrait ce bloc alors que le hero est aligné
-			     à gauche. -->
-			<div class="techIntro" style="margin-top:60px">
-				<h2 class="likeH1">Des conseils selon votre activité</h2>
-				<p>Association, restaurant, événement, commerce... chaque secteur a ses contraintes et ses habitudes de commande.</p>
-			</div>
-			<div class="tgrid tgrid-3col">
-				{SECTEURS.map((s) => (
-					<a class="tcard" href={`/secteurs/${s.slug}`}>
-						<div class="tcard-photo">
-							{s.image && <img class="tcard-bg" src={s.image} alt="" aria-hidden="true" loading="lazy" />}
-							<span class="techsect-stamp" aria-hidden="true">
-								<span class="techsect-stamp-mono">{SECTEUR_STAMP[s.slug] ?? s.nom.slice(0, 2)}</span>
-							</span>
-						</div>
-						<div class="body">
-							<h3>{s.nom}</h3>
-							<p>{s.accroche}</p>
-						</div>
-					</a>
-				))}
 			</div>
 		</div>
 	</main>

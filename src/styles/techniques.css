@@ -5,11 +5,12 @@
 .tech-hero .crumb a{text-decoration:none;color:var(--gris)}
 .tech-hero .crumb a:hover{color:var(--indigo)}
 .tech-hero h1{font-size:clamp(2rem,4.4vw,3rem);letter-spacing:-0.03em}
-/* "Des conseils selon votre activité" reprend la même présentation que
-   "Bien choisir sa technique de marquage" (Milio, 2026-09-15) — même
-   police (Anton, cf. règle h1 globale) et même échelle, un cran en
-   dessous puisque ce n'est pas le H1 de la page. */
-.likeH1{font-family:'Anton',system-ui,sans-serif;font-weight:400;font-size:clamp(1.8rem,3.6vw,2.5rem);letter-spacing:-0.01em}
+/* "Des conseils selon votre activité" reprend EXACTEMENT la présentation
+   du H1 "Bien choisir sa technique de marquage" (Milio, 2026-09-15 :
+   « je veux que ça soit vraiment en H1, que ça fasse la même taille de
+   titre... exactement la même mise en forme ») — même valeurs que
+   .tech-hero h1 ci-dessus, pas une échelle réduite. */
+.likeH1{font-family:'Anton',system-ui,sans-serif;font-weight:400;font-size:clamp(2rem,4.4vw,3rem);letter-spacing:-0.03em}
 .tech-hero p{color:var(--gris);margin-top:14px;max-width:64ch;font-size:1.02rem}
 
 /* ---------- hub : tableau comparatif ---------- */
@@ -24,6 +25,20 @@
 .tcompare .prixdots{display:inline-flex;gap:4px}
 .tcompare .prixdots span{width:8px;height:8px;border-radius:50%;background:var(--ligne)}
 .tcompare .prixdots span.on{background:var(--indigo)}
+.tcompare-hint{display:none}
+@media(max-width:900px){
+  /* Plus facile au doigt (Milio, 2026-09-15 : « rends-le plus facile sur
+     téléphone ») : la première colonne (le libellé de chaque ligne)
+     reste visible pendant qu'on fait défiler les techniques, plutôt que
+     de disparaître à gauche de l'écran comme le reste du tableau. */
+  .tcompare-hint{display:block;font-size:12.5px;color:var(--gris);margin-bottom:14px}
+  .tcompare th:first-child,.tcompare td:first-child{
+    position:sticky;
+    left:0;
+    background:#fff;
+    box-shadow:4px 0 8px -4px rgba(23,19,31,.18);
+  }
+}
 
 /* "Des conseils selon votre activité" — même alignement à gauche que le
    hero de la page (cf. .likeH1 plus haut). */

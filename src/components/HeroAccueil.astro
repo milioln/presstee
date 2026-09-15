@@ -235,10 +235,12 @@
 		   sa rotation au survol. */
 		font-family: 'Anton', system-ui, sans-serif;
 		font-weight: 400;
-		/* Légèrement agrandi (Milio, 2026-09-15 : « agrandis-le un tout
-		   petit peu ») — 2.7rem → 2.9rem au plancher mobile. */
-		font-size: clamp(3.2rem, 5vw, 4.6rem);
-		line-height: 1.15;
+		/* Nettement agrandi (Milio, 2026-09-15 : « tu vois bien que là il
+		   laisse de la place, agrandis-le... aussi gros que le modèle 3D
+		   à côté ») — la colonne de texte laissait un vide sur sa droite
+		   par rapport au t-shirt, qui occupe toute sa colonne. */
+		font-size: clamp(3.4rem, 7.2vw, 6rem);
+		line-height: 1.1;
 		letter-spacing: -0.01em;
 		max-width: 19ch;
 		color: var(--jaune);
@@ -276,20 +278,26 @@
 		   bords avec justify-content:space-between ; on grossit plutôt
 		   les boutons eux-mêmes pour occuper la largeur. */
 		display: flex;
-		gap: 12px;
+		gap: 16px;
 		flex-wrap: nowrap;
-		margin-top: 26px;
+		margin-top: 30px;
 	}
 	.hero-actions .btn {
 		/* Transparents plutôt que pleins noirs (Milio, 2026-09-15) — .btn
 		   reste plein ailleurs sur le site (bouton partagé), ce style ne
-		   touche que les deux CTA du hero. Plus larges (Milio,
-		   2026-09-15 : « fais-les plus gros pour qu'ils soient plus
-		   larges »), hauteur inchangée (padding vertical constant) ; pas
+		   touche que les deux CTA du hero. Encore élargis (Milio,
+		   2026-09-15 : « mets le texte aussi large que les deux boutons
+		   CTA ») pour se rapprocher de la largeur du titre agrandi
+		   au-dessus, hauteur inchangée (padding vertical constant) ; pas
 		   de flex-wrap pour qu'ils restent toujours collés côte à côte. */
 		border-radius: 999px;
-		padding: 15px 34px;
-		font-size: 16px;
+		/* Le rembourrage horizontal suit la largeur de colonne (padding
+		   fixe des deux côtés) plutôt qu'une valeur figée, pour que "Voir
+		   le catalogue" reste sur une ligne aux largeurs intermédiaires
+		   (tablette) sans revenir aux petits boutons du 1er essai. */
+		padding: 15px clamp(24px, 4vw, 56px);
+		font-size: clamp(15px, 1.4vw, 17.5px);
+		white-space: nowrap;
 		background: transparent;
 		color: var(--encre);
 		border: 1.5px solid var(--encre);
