@@ -166,7 +166,9 @@
 		margin: 0 auto;
 		padding: 0 28px;
 		display: grid;
-		grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+		/* Colonne de texte élargie (Milio, 2026-09-15) — le titre plus
+		   court avait l'air à l'étroit face à la vignette 3D. */
+		grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.85fr);
 		gap: clamp(28px, 4vw, 56px);
 		align-items: center;
 	}
