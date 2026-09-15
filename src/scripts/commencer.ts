@@ -441,9 +441,15 @@ function screenResultat(): string {
 
     ${state.colorLots.length > 1 ? `<div class="qzColorBreakdown">${state.colorLots.map((l) => `<span><span class="qzColorBreakdown-sw" style="background:${l.color.hex}"></span>${l.color.nom} × ${l.qty}</span>`).join('')}</div>` : ''}
 
-    ${c.candidats.length > 1 ? `<div class="qzField">
-      <button type="button" class="qzCompareToggle" id="qzCompareToggle" aria-expanded="false">Comparer les ${c.candidats.length} références conseillées</button>
-      <div class="refList" id="qzRefList" hidden>
+    ${c.candidats.length > 0 ? `<div class="qzField">
+      <div class="qzRefHead">
+        <span class="qzLabel">Références conseillées</span>
+        ${c.candidats.length > 1 ? `<button type="button" class="qzCompareBtn" id="qzCompareOpen">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="18" rx="1.5" /><rect x="14" y="3" width="7" height="12" rx="1.5" /></svg>
+          Comparer
+        </button>` : ''}
+      </div>
+      <div class="refList">
         ${c.candidats.map((r) => `<button type="button" class="refRow${r.slug === state.selectedRef ? ' on' : ''}" data-action="select-ref" data-value="${r.slug}">
           <span class="refRow-name"><b>${r.brand}</b> ${r.model}<br /><span class="qzOptional">${r.grammage} · ${r.detail}</span></span>
           <span class="refRow-price">${fmtPrice(Math.round(prixVente(r.baseCost, palier.marge) * 100) / 100)} <span>/ pièce</span></span>
@@ -453,6 +459,23 @@ function screenResultat(): string {
 
     ${c.candidats.length === 0 && state.garment === 'tshirt' ? `<p class="qzHint">Aucune référence ne correspond exactement à ces filtres — estimation générique ci-dessus. <a href="${catalogueFilterUrl(state)}">Voir le catalogue filtré →</a></p>` : ''}
     ${c.candidats.length > 0 && state.garment === 'tshirt' ? `<p class="qzHint"><a href="${catalogueFilterUrl(state)}">Voir plus de t-shirts qui correspondent →</a></p>` : ''}
+
+    ${c.candidats.length > 1 ? `<div class="comparemodal" id="qzCompareModal">
+      <div class="comparemodal-inner">
+        <button type="button" class="comparemodal-close" id="qzCompareClose" aria-label="Fermer">×</button>
+        <h3>Comparer les références</h3>
+        <div class="comparemodal-scroll">
+          <table id="compareTable">
+            <thead><tr><th></th>${c.candidats.map((r) => `<th>${r.brand}<br />${r.model}</th>`).join('')}</tr></thead>
+            <tbody>
+              <tr><th scope="row">Grammage</th>${c.candidats.map((r) => `<td>${r.grammage}</td>`).join('')}</tr>
+              <tr><th scope="row">Composition</th>${c.candidats.map((r) => `<td>${r.detail}</td>`).join('')}</tr>
+              <tr><th scope="row">Prix / pièce</th>${c.candidats.map((r) => `<td><b>${fmtPrice(Math.round(prixVente(r.baseCost, palier.marge) * 100) / 100)}</b></td>`).join('')}</tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>` : ''}
 
     <div class="qzTechNote">
       <span class="qzLabel">Technique de marquage conseillée</span>
@@ -521,15 +544,19 @@ function render(): void {
   pendingFocus = undefined;
 
   if (screen === 'resultat') {
-    // Comparateur replié par défaut (Milio, 2026-09-15 : « si on le veut »)
-    // — les 3 références restent choisissables sans imposer la comparaison
-    // à qui se satisfait déjà de la recommandation.
-    document.getElementById('qzCompareToggle')?.addEventListener('click', (e) => {
-      const btn = e.currentTarget as HTMLButtonElement;
-      const list = document.getElementById('qzRefList')!;
-      const open = list.hidden;
-      list.hidden = !open;
-      btn.setAttribute('aria-expanded', String(open));
+    // Les 3 références restent toujours affichées (Milio, 2026-09-15 :
+    // « toujours présenter les trois t-shirts, pas mettre qu'un seul » —
+    // revient sur le comparateur replié par défaut d'un précédent essai) ;
+    // le bouton "Comparer" ouvre juste le détail côte à côte, même
+    // principe que le comparateur de /produits/t-shirts (produits.css).
+    document.getElementById('qzCompareOpen')?.addEventListener('click', () => {
+      document.getElementById('qzCompareModal')?.classList.add('open');
+    });
+    document.getElementById('qzCompareClose')?.addEventListener('click', () => {
+      document.getElementById('qzCompareModal')?.classList.remove('open');
+    });
+    document.getElementById('qzCompareModal')?.addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) (e.currentTarget as HTMLElement).classList.remove('open');
     });
     el('qzGo3d').addEventListener('click', () => {
       // Un calque réel par visuel importé (un par emplacement), sinon le
