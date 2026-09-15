@@ -19,11 +19,19 @@ const SECTEUR_STAMP: Record<string, string> = {
 	evenements: 'Évén.',
 	commerces: 'Shop',
 };
-const TECHNIQUE_STAMP: Record<string, string> = {
-	serigraphie: 'Sérig.',
-	'transfert-quadrichromie': 'Quadri',
-	'transfert-monochrome': 'Mono',
-	broderie: 'Brod.',
+// Petits dessins très simples plutôt que des initiales (Milio,
+// 2026-09-15 : « Sérig, Quadri, Mono... ça passe à côté de l'intérêt,
+// je voudrais un petit dessin ») : le carrousel de sérigraphie, une
+// presse avec les points de couleur du CMJN pour la quadrichromie (un
+// seul point pour le monochrome), un cercle à broder pour la broderie.
+const TECHNIQUE_ICON: Record<string, string> = {
+	serigraphie:
+		'<circle cx="12" cy="12" r="2.6"/><rect x="10" y="1.5" width="4" height="4.5" rx="1"/><rect x="10" y="18" width="4" height="4.5" rx="1"/><rect x="1.5" y="10" width="4.5" height="4" rx="1"/><rect x="18" y="10" width="4.5" height="4" rx="1"/>',
+	'transfert-quadrichromie':
+		'<rect x="4" y="2.5" width="16" height="5" rx="1.5"/><circle cx="8" cy="15" r="1.7" fill="#00AEEF" stroke="none"/><circle cx="16" cy="15" r="1.7" fill="#EC008C" stroke="none"/><circle cx="8" cy="20" r="1.7" fill="#FFE000" stroke="none"/><circle cx="16" cy="20" r="1.7" fill="#17131F" stroke="none"/>',
+	'transfert-monochrome':
+		'<rect x="4" y="2.5" width="16" height="5" rx="1.5"/><circle cx="12" cy="16.5" r="2.2" fill="currentColor" stroke="none"/>',
+	broderie: '<path d="M12 2v6.5"/><circle cx="12" cy="10" r="1.3" fill="currentColor" stroke="none"/><path d="M2.5 16c2.3-3 4.7-3 7 0s4.7 3 7 0s3-3 5-2.2"/>',
 };
 ---
 
@@ -46,7 +54,10 @@ const TECHNIQUE_STAMP: Record<string, string> = {
 						<div class="tcard-photo">
 							{t.image && <img class="tcard-bg" src={t.image} alt="" aria-hidden="true" loading="lazy" />}
 							<span class="techsect-stamp" aria-hidden="true">
-								<span class="techsect-stamp-mono">{TECHNIQUE_STAMP[t.slug] ?? t.nom.slice(0, 2)}</span>
+								<span
+									class="techsect-stamp-icon"
+									set:html={`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:26px;height:26px">${TECHNIQUE_ICON[t.slug] ?? ''}</svg>`}
+								/>
 								<span class="regmark techsect-stamp-mark"></span>
 							</span>
 						</div>
@@ -59,7 +70,7 @@ const TECHNIQUE_STAMP: Record<string, string> = {
 			</div>
 
 			<div class="head-center" style="margin-top:60px">
-				<h2>Des conseils selon votre activité</h2>
+				<h2 class="likeH1">Des conseils selon votre activité</h2>
 				<p>Association, restaurant, événement, commerce... chaque secteur a ses contraintes et ses habitudes de commande.</p>
 			</div>
 			<div class="techsect-grid">

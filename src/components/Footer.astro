@@ -1,5 +1,4 @@
 ---
-import Logo from './Logo.astro';
 import { siteConfig } from '../config/site';
 ---
 
@@ -9,7 +8,7 @@ import { siteConfig } from '../config/site';
 		<div class="fgrid">
 			<div>
 				<a class="brand" href="/#top" style="margin-bottom:14px">
-					<Logo size={32} />
+					<img src="/logo/presstee-horizontal-header.webp" alt="Presstee" height="28" style="height:28px;width:auto" />
 				</a>
 				<p style="color:var(--gris);font-size:14.5px;max-width:30ch">Atelier de personnalisation textile. {siteConfig.adresse.ville}, {siteConfig.adresse.departement}.</p>
 			</div>

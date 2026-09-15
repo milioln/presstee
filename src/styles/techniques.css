@@ -5,6 +5,11 @@
 .tech-hero .crumb a{text-decoration:none;color:var(--gris)}
 .tech-hero .crumb a:hover{color:var(--indigo)}
 .tech-hero h1{font-size:clamp(2rem,4.4vw,3rem);letter-spacing:-0.03em}
+/* "Des conseils selon votre activité" reprend la même présentation que
+   "Bien choisir sa technique de marquage" (Milio, 2026-09-15) — même
+   police (Anton, cf. règle h1 globale) et même échelle, un cran en
+   dessous puisque ce n'est pas le H1 de la page. */
+.likeH1{font-family:'Anton',system-ui,sans-serif;font-weight:400;font-size:clamp(1.8rem,3.6vw,2.5rem);letter-spacing:-0.01em}
 .tech-hero p{color:var(--gris);margin-top:14px;max-width:64ch;font-size:1.02rem}
 
 /* ---------- hub : tableau comparatif ---------- */
@@ -52,20 +57,21 @@
 .techsect-stamp{position:relative;width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;transition:transform .2s}
 .techsect-card:hover .techsect-stamp,.tcard:hover .techsect-stamp{transform:rotate(0deg) scale(1.08)}
 .techsect-stamp-mono{font-family:'Sora',sans-serif;font-weight:700;font-size:17px;letter-spacing:.02em}
+.techsect-stamp-icon{display:flex;align-items:center;justify-content:center}
 .techsect-stamp-mark{position:absolute;top:-8px;right:-8px;width:19px;height:19px;background:#fff;opacity:1;border-radius:50%;box-shadow:0 1px 3px rgba(23,19,31,.18)}
 /* Même cycle de 4 variantes pour les cartes techniques (.tcard) — le
    tampon y vit dans .tcard-photo, d'où le sélecteur imbriqué en plus. */
 .techsect-card:nth-child(4n+1) .techsect-stamp,.tcard:nth-child(4n+1) .techsect-stamp{background:var(--indigo);transform:rotate(-6deg)}
-.techsect-card:nth-child(4n+1) .techsect-stamp-mono,.tcard:nth-child(4n+1) .techsect-stamp-mono{color:#fff}
+.techsect-card:nth-child(4n+1) .techsect-stamp-mono,.tcard:nth-child(4n+1) .techsect-stamp-icon{color:#fff}
 .techsect-card:nth-child(4n+1) .techsect-stamp-mark,.tcard:nth-child(4n+1) .techsect-stamp-mark{color:var(--indigo)}
 .techsect-card:nth-child(4n+2) .techsect-stamp,.tcard:nth-child(4n+2) .techsect-stamp{background:var(--jaune);transform:rotate(4deg)}
-.techsect-card:nth-child(4n+2) .techsect-stamp-mono,.tcard:nth-child(4n+2) .techsect-stamp-mono{color:var(--encre)}
+.techsect-card:nth-child(4n+2) .techsect-stamp-mono,.tcard:nth-child(4n+2) .techsect-stamp-icon{color:var(--encre)}
 .techsect-card:nth-child(4n+2) .techsect-stamp-mark,.tcard:nth-child(4n+2) .techsect-stamp-mark{color:var(--jaune)}
 .techsect-card:nth-child(4n+3) .techsect-stamp,.tcard:nth-child(4n+3) .techsect-stamp{background:#fff;border:2px solid var(--indigo);transform:rotate(-3deg)}
-.techsect-card:nth-child(4n+3) .techsect-stamp-mono,.tcard:nth-child(4n+3) .techsect-stamp-mono{color:var(--indigo)}
+.techsect-card:nth-child(4n+3) .techsect-stamp-mono,.tcard:nth-child(4n+3) .techsect-stamp-icon{color:var(--indigo)}
 .techsect-card:nth-child(4n+3) .techsect-stamp-mark,.tcard:nth-child(4n+3) .techsect-stamp-mark{color:var(--indigo)}
 .techsect-card:nth-child(4n+4) .techsect-stamp,.tcard:nth-child(4n+4) .techsect-stamp{background:var(--encre);transform:rotate(5deg)}
-.techsect-card:nth-child(4n+4) .techsect-stamp-mono,.tcard:nth-child(4n+4) .techsect-stamp-mono{color:var(--jaune)}
+.techsect-card:nth-child(4n+4) .techsect-stamp-mono,.tcard:nth-child(4n+4) .techsect-stamp-icon{color:var(--jaune)}
 .techsect-card:nth-child(4n+4) .techsect-stamp-mark,.tcard:nth-child(4n+4) .techsect-stamp-mark{color:var(--encre)}
 @media(max-width:700px){
   .techsect-grid{grid-template-columns:repeat(2,1fr)}

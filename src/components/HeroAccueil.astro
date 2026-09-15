@@ -224,7 +224,9 @@
 		   sa rotation au survol. */
 		font-family: 'Anton', system-ui, sans-serif;
 		font-weight: 400;
-		font-size: clamp(2.7rem, 5vw, 4.4rem);
+		/* Légèrement agrandi (Milio, 2026-09-15 : « agrandis-le un tout
+		   petit peu ») — 2.7rem → 2.9rem au plancher mobile. */
+		font-size: clamp(2.9rem, 5vw, 4.4rem);
 		line-height: 1.15;
 		letter-spacing: -0.01em;
 		max-width: 19ch;
@@ -571,7 +573,6 @@
 			text-align: center;
 		}
 		.hero-title {
-			justify-content: center;
 			max-width: none;
 		}
 		.hero-actions {
