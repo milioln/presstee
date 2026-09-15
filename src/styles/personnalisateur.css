@@ -19,8 +19,8 @@
   --r:18px;
 }
 .pz-page{font-family:'Sora',system-ui,sans-serif;color:var(--text);background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased}
-.pz-page h1,.pz-page h6{font-family:'Sora',system-ui,sans-serif;font-weight:700;letter-spacing:-0.015em;line-height:1.12}
-.pz-page h6{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.pz-page h1{font-family:'Anton',system-ui,sans-serif;font-weight:400;letter-spacing:-0.005em;line-height:1.12}
+.pz-page h6{font-family:'Sora',system-ui,sans-serif;font-weight:700;line-height:1.12;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
 .pz-page .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
 /* Sur grand écran, l'outil restait bridé à la même largeur qu'une page
    éditoriale (1180px) alors qu'il a trois colonnes à répartir — laisse
