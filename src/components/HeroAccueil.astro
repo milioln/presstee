@@ -166,9 +166,11 @@
 		margin: 0 auto;
 		padding: 0 28px;
 		display: grid;
-		/* Colonne de texte élargie (Milio, 2026-09-15) — le titre plus
-		   court avait l'air à l'étroit face à la vignette 3D. */
-		grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.7fr);
+		/* Deux colonnes de même largeur (Milio, 2026-09-15 : « la partie
+		   gauche fasse la même largeur que la partie droite ») — un essai
+		   précédent élargissait le texte au détriment de la vignette 3D,
+		   qui s'en trouvait réduite ; ce n'était pas voulu. */
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 		gap: clamp(28px, 4vw, 56px);
 		/* Les deux colonnes occupent désormais la même hauteur (Milio,
 		   2026-09-15 : « même hauteur pour la gauche que la droite ») —
@@ -268,22 +270,26 @@
 	}
 
 	.hero-actions {
-		/* Les deux CTA s'écartent jusqu'aux bords de la colonne de texte
-		   (Milio, 2026-09-15, capture annotée) plutôt que de rester
-		   groupés à gauche avec du vide après le second bouton. */
+		/* Les deux CTA restent collés côte à côte (Milio, 2026-09-15 :
+		   « tu n'as pas fait comme je t'ai montré... colle les deux
+		   boutons à côté ») — l'essai précédent les écartait jusqu'aux
+		   bords avec justify-content:space-between ; on grossit plutôt
+		   les boutons eux-mêmes pour occuper la largeur. */
 		display: flex;
-		justify-content: space-between;
 		gap: 12px;
-		flex-wrap: wrap;
+		flex-wrap: nowrap;
 		margin-top: 26px;
 	}
 	.hero-actions .btn {
 		/* Transparents plutôt que pleins noirs (Milio, 2026-09-15) — .btn
 		   reste plein ailleurs sur le site (bouton partagé), ce style ne
-		   touche que les deux CTA du hero. */
+		   touche que les deux CTA du hero. Plus larges (Milio,
+		   2026-09-15 : « fais-les plus gros pour qu'ils soient plus
+		   larges »), hauteur inchangée (padding vertical constant) ; pas
+		   de flex-wrap pour qu'ils restent toujours collés côte à côte. */
 		border-radius: 999px;
-		padding: 15px 30px;
-		font-size: 15.5px;
+		padding: 15px 34px;
+		font-size: 16px;
 		background: transparent;
 		color: var(--encre);
 		border: 1.5px solid var(--encre);
