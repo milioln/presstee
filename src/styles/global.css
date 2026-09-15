@@ -93,12 +93,25 @@ header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.55);backdro
    panneaux superposés au même endroit. */
 .nav{position:relative;display:flex;align-items:center;gap:32px;height:76px}
 .mobileMenu{display:contents}
-.brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+/* Centrage réservé au logo du header (.nav .brand) : .brand est une
+   classe partagée, réutilisée telle quelle par le logo du footer — un
+   position:absolute générique sur .brand seul l'avait fait atterrir
+   n'importe où dans la grille du footer (bug signalé par Milio,
+   2026-09-15, capture avec le logo égaré près de "Notre processus"). */
+.nav .brand{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
 .links{display:flex;gap:26px;align-items:center}
 .links-right{margin-left:auto}
 .links a{text-decoration:none;font-size:14.5px;color:var(--indigo);font-weight:500;padding:6px 0;border-bottom:1.5px solid transparent}
 .links a:hover,.links a:focus-visible{color:var(--encre);border-bottom-color:var(--indigo)}
 .links .cart-link{display:flex;align-items:center;gap:7px}
+/* Icône plutôt que le mot "Connexion" (Milio, 2026-09-15 : « équilibrer
+   le header ») — .links-right avait un mot de plus que .links-left,
+   une icône compacte pèse moins visuellement qu'un mot entier. Le
+   libellé texte reste dans le DOM (mis à jour en JS entre "Connexion"/
+   "Mon compte") pour le panneau mobile, où l'espace ne manque pas. */
+.account-link{display:flex;align-items:center;gap:8px;padding:4px 0}
+.account-link-label{display:none}
 .cart-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--indigo);color:#fff;font-size:11px;font-weight:700;font-family:'Sora',sans-serif}
 .burger{display:none;margin-left:auto;background:none;border:0;cursor:pointer;padding:8px}
 .burger rect{fill:var(--encre)}
@@ -251,9 +264,17 @@ footer .regmark{top:44px;right:28px;color:var(--gris)}
 
 @media(max-width:940px){
   .mobileMenu{display:none}
-  .mobileMenu.open{display:flex;flex-direction:column;position:absolute;top:76px;left:0;right:0;background:#fff;padding:14px 28px 26px;border-bottom:1px solid var(--ligne)}
-  .mobileMenu.open .links{flex-direction:column;gap:0}
+  /* Transparent/vitré comme le header (Milio, 2026-09-15), et
+     .links-left/.links-right recentrés sur toute la largeur du panneau :
+     .links-right gardait son margin-left:auto de la mise en page
+     ordinateur, qui le rétrécissait à son propre contenu et décalait ses
+     liens vers la droite plutôt que de les aligner avec ceux de
+     .links-left. */
+  .mobileMenu.open{display:flex;flex-direction:column;position:absolute;top:76px;left:0;right:0;background:rgba(255,255,255,.7);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding:14px 28px 26px;border-bottom:1px solid var(--ligne)}
+  .mobileMenu.open .links{flex-direction:column;gap:0;width:100%;margin-left:0}
   .mobileMenu.open .links a{padding:12px 0;font-size:16px;border-bottom:0}
+  .mobileMenu.open .account-link{justify-content:center}
+  .mobileMenu.open .account-link-label{display:inline}
   .burger{display:block}
   .split,.trio{grid-template-columns:1fr}
   .fgrid{grid-template-columns:1fr 1fr}

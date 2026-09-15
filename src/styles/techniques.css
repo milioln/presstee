@@ -24,11 +24,16 @@
 .tgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding-bottom:20px}
 .tcard{border:1.5px solid var(--ligne);border-radius:20px;overflow:hidden;text-decoration:none;color:var(--encre);background:#fff;transition:.15s;display:flex;flex-direction:column}
 .tcard:hover{border-color:var(--indigo);box-shadow:0 4px 20px rgba(23,19,31,.06)}
-.tcard .thumb{aspect-ratio:4/3;background:var(--voile);overflow:hidden}
-.tcard .thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .tcard .body{padding:20px}
 .tcard h3{font-size:1.1rem;margin-bottom:8px}
 .tcard p{color:var(--gris);font-size:.92rem;margin:0}
+/* Même tampon que les cases "par activité" juste en dessous, la vraie
+   photo de l'atelier gardée en fond flouté plutôt que retirée (Milio,
+   2026-09-15 : « les cases que tu m'as faites... en laissant les images
+   en flou »). */
+.tcard-photo{position:relative;aspect-ratio:16/10;background:var(--voile);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.tcard-bg{position:absolute;inset:-10%;width:120%;height:120%;object-fit:cover;filter:blur(9px) saturate(1.15) brightness(.92);display:block}
+.tcard-photo .techsect-stamp{position:relative;box-shadow:0 6px 18px rgba(23,19,31,.28)}
 
 /* ---------- hub : cases "par activité" ---------- */
 /* Pas de pictogramme par secteur (déjà tenté deux fois — cœur, chapeau,
@@ -38,25 +43,30 @@
    calage .regmark (déjà utilisé pour la chaîne de valeur de l'accueil
    précisément pour éviter "un numéro ou une icône générique") en accent
    posé dessus, comme un coin de tampon encreur. */
-.techsect-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:26px}
-.techsect-card{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;background:#fff;border:1.5px solid var(--ligne);border-radius:18px;padding:26px 12px 22px;text-decoration:none;color:var(--encre);font-size:13.5px;font-weight:600;transition:border-color .15s,transform .15s}
+/* 3 colonnes et cases plus grandes (Milio, 2026-09-15 : « grossir un peu
+   ces cases ») — 5 secteurs se répartissent aussi mieux en 3+2 qu'en
+   4+1 (un seul orphelin sur sa propre ligne). */
+.techsect-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}
+.techsect-card{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;background:#fff;border:1.5px solid var(--ligne);border-radius:18px;padding:32px 16px 28px;text-decoration:none;color:var(--encre);font-size:14.5px;font-weight:600;transition:border-color .15s,transform .15s}
 .techsect-card:hover{border-color:var(--indigo);transform:translateY(-3px)}
-.techsect-stamp{position:relative;width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;transition:transform .2s}
-.techsect-card:hover .techsect-stamp{transform:rotate(0deg) scale(1.08)}
-.techsect-stamp-mono{font-family:'Sora',sans-serif;font-weight:700;font-size:15px;letter-spacing:.02em}
-.techsect-stamp-mark{position:absolute;top:-7px;right:-7px;width:17px;height:17px;background:#fff;opacity:1;border-radius:50%;box-shadow:0 1px 3px rgba(23,19,31,.18)}
-.techsect-card:nth-child(4n+1) .techsect-stamp{background:var(--indigo);transform:rotate(-6deg)}
-.techsect-card:nth-child(4n+1) .techsect-stamp-mono{color:#fff}
-.techsect-card:nth-child(4n+1) .techsect-stamp-mark{color:var(--indigo)}
-.techsect-card:nth-child(4n+2) .techsect-stamp{background:var(--jaune);transform:rotate(4deg)}
-.techsect-card:nth-child(4n+2) .techsect-stamp-mono{color:var(--encre)}
-.techsect-card:nth-child(4n+2) .techsect-stamp-mark{color:var(--jaune)}
-.techsect-card:nth-child(4n+3) .techsect-stamp{background:#fff;border:2px solid var(--indigo);transform:rotate(-3deg)}
-.techsect-card:nth-child(4n+3) .techsect-stamp-mono{color:var(--indigo)}
-.techsect-card:nth-child(4n+3) .techsect-stamp-mark{color:var(--indigo)}
-.techsect-card:nth-child(4n+4) .techsect-stamp{background:var(--encre);transform:rotate(5deg)}
-.techsect-card:nth-child(4n+4) .techsect-stamp-mono{color:var(--jaune)}
-.techsect-card:nth-child(4n+4) .techsect-stamp-mark{color:var(--encre)}
+.techsect-stamp{position:relative;width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;transition:transform .2s}
+.techsect-card:hover .techsect-stamp,.tcard:hover .techsect-stamp{transform:rotate(0deg) scale(1.08)}
+.techsect-stamp-mono{font-family:'Sora',sans-serif;font-weight:700;font-size:17px;letter-spacing:.02em}
+.techsect-stamp-mark{position:absolute;top:-8px;right:-8px;width:19px;height:19px;background:#fff;opacity:1;border-radius:50%;box-shadow:0 1px 3px rgba(23,19,31,.18)}
+/* Même cycle de 4 variantes pour les cartes techniques (.tcard) — le
+   tampon y vit dans .tcard-photo, d'où le sélecteur imbriqué en plus. */
+.techsect-card:nth-child(4n+1) .techsect-stamp,.tcard:nth-child(4n+1) .techsect-stamp{background:var(--indigo);transform:rotate(-6deg)}
+.techsect-card:nth-child(4n+1) .techsect-stamp-mono,.tcard:nth-child(4n+1) .techsect-stamp-mono{color:#fff}
+.techsect-card:nth-child(4n+1) .techsect-stamp-mark,.tcard:nth-child(4n+1) .techsect-stamp-mark{color:var(--indigo)}
+.techsect-card:nth-child(4n+2) .techsect-stamp,.tcard:nth-child(4n+2) .techsect-stamp{background:var(--jaune);transform:rotate(4deg)}
+.techsect-card:nth-child(4n+2) .techsect-stamp-mono,.tcard:nth-child(4n+2) .techsect-stamp-mono{color:var(--encre)}
+.techsect-card:nth-child(4n+2) .techsect-stamp-mark,.tcard:nth-child(4n+2) .techsect-stamp-mark{color:var(--jaune)}
+.techsect-card:nth-child(4n+3) .techsect-stamp,.tcard:nth-child(4n+3) .techsect-stamp{background:#fff;border:2px solid var(--indigo);transform:rotate(-3deg)}
+.techsect-card:nth-child(4n+3) .techsect-stamp-mono,.tcard:nth-child(4n+3) .techsect-stamp-mono{color:var(--indigo)}
+.techsect-card:nth-child(4n+3) .techsect-stamp-mark,.tcard:nth-child(4n+3) .techsect-stamp-mark{color:var(--indigo)}
+.techsect-card:nth-child(4n+4) .techsect-stamp,.tcard:nth-child(4n+4) .techsect-stamp{background:var(--encre);transform:rotate(5deg)}
+.techsect-card:nth-child(4n+4) .techsect-stamp-mono,.tcard:nth-child(4n+4) .techsect-stamp-mono{color:var(--jaune)}
+.techsect-card:nth-child(4n+4) .techsect-stamp-mark,.tcard:nth-child(4n+4) .techsect-stamp-mark{color:var(--encre)}
 @media(max-width:700px){
   .techsect-grid{grid-template-columns:repeat(2,1fr)}
 }

@@ -7,6 +7,24 @@ import { TECHNIQUES } from '../../lib/techniques-data';
 import { SECTEURS } from '../../data/secteurs';
 import '../../styles/global.css';
 import '../../styles/techniques.css';
+
+// Libellés courts des tampons — un simple découpage à 2 lettres tombait
+// parfois sans aucun sens ("BD" pour BDE, "BA" pour Bars et restaurants)
+// (Milio, 2026-09-15). Un mot ou une abréviation choisis à la main par
+// entrée plutôt qu'une règle automatique.
+const SECTEUR_STAMP: Record<string, string> = {
+	associations: 'Asso',
+	'bde-ecoles': 'BDE',
+	'bars-restaurants': 'Bar',
+	evenements: 'Évén.',
+	commerces: 'Shop',
+};
+const TECHNIQUE_STAMP: Record<string, string> = {
+	serigraphie: 'Sérig.',
+	'transfert-quadrichromie': 'Quadri',
+	'transfert-monochrome': 'Mono',
+	broderie: 'Brod.',
+};
 ---
 
 <Layout title="Guide des techniques de marquage — Presstee" description="Sérigraphie, transfert monochrome, transfert quadrichromie, broderie : comment ça marche, avantages, limites et comment le prix se calcule pour chaque technique.">
@@ -17,21 +35,20 @@ import '../../styles/techniques.css';
 				<div class="crumb"><a href="/">Accueil</a> / Guide</div>
 				<h1>Bien choisir sa technique de marquage.</h1>
 				<p>Sérigraphie, transfert ou broderie : chacune a ses forces, ses limites et sa propre façon de calculer le prix. Comparez-les ci-dessous.</p>
-				<a class="btn btn-jaune" href="/commencer">Chiffrer mon projet →</a>
 			</div>
 		</section>
 
 		<div class="wrap">
 			<h2 class="sr-only">Les techniques</h2>
-			<div class="tgrid" style="margin-top:44px">
+			<div class="tgrid tgrid-stamp" style="margin-top:44px">
 				{TECHNIQUES.map((t) => (
 					<a class="tcard" href={`/techniques/${t.slug}`}>
-						<div class="thumb">
-							{t.image ? (
-								<img src={t.image} alt={`Atelier Presstee — ${t.nom}`} loading="lazy" />
-							) : (
-								<div style="width:100%;height:100%;display:grid;place-items:center;color:var(--gris);font-size:12px">Presstee</div>
-							)}
+						<div class="tcard-photo">
+							{t.image && <img class="tcard-bg" src={t.image} alt="" aria-hidden="true" loading="lazy" />}
+							<span class="techsect-stamp" aria-hidden="true">
+								<span class="techsect-stamp-mono">{TECHNIQUE_STAMP[t.slug] ?? t.nom.slice(0, 2)}</span>
+								<span class="regmark techsect-stamp-mark"></span>
+							</span>
 						</div>
 						<div class="body">
 							<h3>{t.nom}</h3>
@@ -43,13 +60,13 @@ import '../../styles/techniques.css';
 
 			<div class="head-center" style="margin-top:60px">
 				<h2>Des conseils selon votre activité</h2>
-				<p>Association, entreprise, restaurant, boulangerie, club sportif... chaque secteur a ses contraintes et ses habitudes de commande.</p>
+				<p>Association, restaurant, événement, commerce... chaque secteur a ses contraintes et ses habitudes de commande.</p>
 			</div>
 			<div class="techsect-grid">
 				{SECTEURS.map((s) => (
 					<a class="techsect-card" href={`/secteurs/${s.slug}`}>
 						<span class="techsect-stamp" aria-hidden="true">
-							<span class="techsect-stamp-mono">{s.nom.slice(0, 2).toUpperCase()}</span>
+							<span class="techsect-stamp-mono">{SECTEUR_STAMP[s.slug] ?? s.nom.slice(0, 2)}</span>
 							<span class="regmark techsect-stamp-mark"></span>
 						</span>
 						<span class="techsect-name">{s.nom}</span>
