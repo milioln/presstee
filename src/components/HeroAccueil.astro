@@ -10,10 +10,9 @@
 	<div class="hero-inner">
 		<div class="hero-copy">
 			<h1 class="hero-title">
-				<span class="jeu" data-jeu="couleur">Textile</span>
-				<span class="jeu" data-jeu="placement">personnalisé</span>
-				<span>en</span>
-				<span class="jeu jeu-jaune" data-jeu="spin">3 clics.</span>
+				<span class="jeu" data-jeu="couleur">Votre textile</span><br />
+				<span class="jeu" data-jeu="placement">personnalisé</span><br />
+				<span>en</span> <span class="jeu jeu-jaune" data-jeu="spin">3 clics.</span>
 			</h1>
 
 			<div class="hero-actions">
@@ -215,18 +214,22 @@
 	}
 
 	.hero-title {
+		/* 3 lignes fixes ("Votre textile" / "personnalisé" / "en 3 clics.")
+		   via de vrais <br> plutôt qu'un retour à la ligne naturel — même
+		   découpage sur ordinateur et mobile (Milio, 2026-09-15). Un <br>
+		   n'a aucun effet dans un conteneur flex, d'où le retour à un bloc
+		   normal ; chaque mot reste en inline-block pour garder son fond/
+		   sa rotation au survol. */
 		font-family: 'Anton', system-ui, sans-serif;
 		font-weight: 400;
 		font-size: clamp(2.7rem, 5vw, 4.4rem);
-		line-height: 1.02;
+		line-height: 1.15;
 		letter-spacing: -0.01em;
 		max-width: 19ch;
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0 0.26em;
 		color: var(--jaune);
 	}
 	.hero-title span {
+		display: inline-block;
 		border-radius: 10px;
 		padding: 0 0.08em;
 		transition:
@@ -241,7 +244,9 @@
 	}
 	.hero-title .jeu {
 		cursor: pointer;
-		text-decoration: underline dotted var(--indigo);
+		/* Trait plein et fin plutôt que pointillé (Milio, 2026-09-15). */
+		text-decoration: underline solid var(--indigo);
+		text-decoration-thickness: 1.5px;
 		text-underline-offset: 10px;
 	}
 	.hero-title .jeu-jaune:hover {
@@ -256,17 +261,33 @@
 		margin-top: 26px;
 	}
 	.hero-actions .btn {
+		/* Transparents plutôt que pleins noirs (Milio, 2026-09-15) — .btn
+		   reste plein ailleurs sur le site (bouton partagé), ce style ne
+		   touche que les deux CTA du hero. */
 		border-radius: 999px;
-		padding: 16px 32px;
+		padding: 15px 30px;
 		font-size: 15.5px;
+		background: transparent;
+		color: var(--encre);
+		border: 1.5px solid var(--encre);
+		transition:
+			background 0.18s,
+			color 0.18s,
+			border-color 0.18s;
+	}
+	.hero-actions .btn:hover {
+		background: var(--encre);
+		color: #fff;
 	}
 
 	.hero-atelier {
+		/* Remontée (Milio, 2026-09-15) — moins d'espace au-dessus
+		   maintenant que le titre tient sur 3 lignes courtes. */
 		font-family: 'Sora', sans-serif;
 		font-size: 13.5px;
 		color: #6c6580;
-		margin-top: 28px;
-		padding-top: 22px;
+		margin-top: 16px;
+		padding-top: 14px;
 		border-top: 1px solid #e7e3f2;
 	}
 	/* Doublon affiché uniquement sur mobile, en petit repère discret en
