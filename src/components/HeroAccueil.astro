@@ -10,12 +10,18 @@
 	<div class="hero-inner">
 		<div class="hero-copy">
 			<h1 class="hero-title">
-				<span>Obtenez</span>
-				<span>vos</span>
-				<span class="jeu" data-jeu="couleur">textiles</span>
-				<span class="jeu" data-jeu="placement">personnalisés</span>
-				<span>en</span>
-				<span class="jeu jeu-jaune" data-jeu="spin">3 clics.</span>
+				<span class="hero-title-line">
+					<span>Obtenez</span>
+					<span>vos</span>
+				</span>
+				<span class="hero-title-line">
+					<span class="jeu" data-jeu="couleur">textiles</span>
+					<span class="jeu" data-jeu="placement">personnalisés</span>
+				</span>
+				<span class="hero-title-line">
+					<span>en</span>
+					<span class="jeu jeu-jaune" data-jeu="spin">3 clics.</span>
+				</span>
 			</h1>
 
 			<div class="hero-actions">
@@ -70,7 +76,7 @@
 		</div>
 
 		<label class="logo-hint" title="Importer votre visuel">
-			<svg class="logo-hint-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<svg class="logo-hint-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 				<path d="M17 1l4 4-4 4" />
 				<path d="M3 11V9a4 4 0 0 1 4-4h14" />
 				<path d="M7 23l-4-4 4-4" />
@@ -228,6 +234,13 @@
 		gap: 0 0.26em;
 		color: var(--jaune);
 	}
+	/* Regroupements de mots par ligne, utilisés seulement sur mobile pour
+	   forcer 3 lignes précises (cf. media query plus bas) — display:contents
+	   les rend invisibles ici : leurs mots rejoignent directement le flex
+	   de .hero-title, comme si ces spans n'existaient pas. */
+	.hero-title-line {
+		display: contents;
+	}
 	.hero-title span {
 		border-radius: 10px;
 		padding: 0 0.08em;
@@ -291,14 +304,21 @@
 		/* <model-viewer> se comporte comme un élément remplacé (cf. <img>,
 		   <video>) : position:absolute + inset seuls ne l'étirent pas, il
 		   retombe sur sa taille par défaut de 300×150px. width/height
-		   explicites forcent l'étirement. */
+		   explicites forcent l'étirement. Marges resserrées au plus près
+		   de ce qu'elles doivent vraiment dégager (Milio, 2026-09-15 : « il
+		   y a de l'espace en bas jusqu'à la palette et en haut jusqu'à
+		   atelier ») — 62px en haut pour dégager le bouton plein écran
+		   (top:22px, 38px de haut), 58px en bas pour dégager la barre de
+		   coloris, au lieu de 70/78px choisis avec une marge trop large.
+		   Le t-shirt dispose ainsi d'une zone plus grande, moins souvent
+		   coupé au bord en tournant. */
 		position: absolute;
 		left: 0;
 		right: 0;
-		top: 70px;
-		bottom: 78px;
+		top: 62px;
+		bottom: 58px;
 		width: 100%;
-		height: calc(100% - 148px);
+		height: calc(100% - 120px);
 	}
 
 	.mark {
@@ -427,18 +447,20 @@
 	   et rend le contrôle plus visible qu'un simple lien texte. Toute la
 	   pastille est cliquable (label enveloppant l'input masqué). */
 	.logo-hint {
+		/* Réduit (Milio, 2026-09-15 : « diminue un peu la taille »), sur
+		   ordinateur comme sur téléphone. */
 		position: absolute;
 		top: 50%;
-		left: -22px;
+		left: -18px;
 		transform: translateY(-50%);
 		z-index: 2;
 		display: flex;
 		align-items: center;
-		gap: 8px;
+		gap: 6px;
 		background: #fff;
 		border: 1.5px solid #e7e3f2;
 		border-radius: 999px;
-		padding: 12px 20px 12px 14px;
+		padding: 9px 16px 9px 11px;
 		box-shadow: 0 10px 28px rgba(23, 19, 31, 0.14);
 		cursor: pointer;
 		color: #17131f;
@@ -454,7 +476,7 @@
 	}
 	.logo-hint span {
 		font-family: 'Sora', sans-serif;
-		font-size: 13px;
+		font-size: 11.5px;
 		font-weight: 600;
 		letter-spacing: 0.01em;
 		white-space: nowrap;
@@ -477,11 +499,11 @@
 
 	@media (max-width: 520px) {
 		.logo-hint {
-			left: -10px;
-			padding: 10px 16px 10px 12px;
+			left: -8px;
+			padding: 7px 13px 7px 9px;
 		}
 		.logo-hint span {
-			font-size: 12px;
+			font-size: 10.5px;
 		}
 	}
 
@@ -530,23 +552,44 @@
 			white-space: nowrap;
 			pointer-events: none;
 		}
-		/* Titre du hero justifié plutôt qu'aligné à gauche avec un retour
-		   à la ligne irrégulier (Milio, 2026-09-15 : « ça fait bizarre sur
-		   téléphone », puis précisé en « justifié » plutôt que centré) —
-		   text-align ne s'applique pas à un conteneur flex, donc .hero-title
-		   repasse en bloc normal ici (spans en inline-block, gap remplacé
-		   par des marges) le temps de cette largeur, pour que justify ait
-		   vraiment un effet sur les mots. */
+		/* Titre du hero en 3 lignes fixes et justifiées (Milio, 2026-09-15,
+		   précisé après un premier essai en simple text-align:justify qui
+		   ne tenait pas compte des vrais regroupements voulus) :
+		   "Obtenez vos" / "textiles personnalisés" / "en 3 clics.", quelle
+		   que soit la largeur — plus fiable qu'un retour à la ligne naturel
+		   qui dépend de la largeur de l'écran. Chaque .hero-title-line est
+		   un mini flex en space-between : les deux mots de la ligne sont
+		   poussés chacun vers un bord, ce qui donne le même effet visuel
+		   qu'un texte justifié même sur une ligne de 2 mots courts (là où
+		   text-align:justify n'a pas vraiment de prise). Sur ordinateur,
+		   .hero-title-line reste display:contents (cf. règle de base) : ces
+		   groupes n'existent pas visuellement, le flex-wrap d'origine reste
+		   inchangé. */
 		.hero-copy {
 			text-align: center;
 		}
 		.hero-title {
-			display: block;
-			text-align: justify;
+			flex-direction: column;
+			flex-wrap: nowrap;
+			gap: 0.06em 0;
+			/* 19ch (pensé pour l'agencement libre d'origine) coupait
+			   "personnalisés" sur sa propre ligne — chaque ligne fixe a
+			   besoin de toute la largeur disponible pour se justifier. */
+			max-width: none;
+			/* Le clamp d'origine (2.7rem mini) débordait largement sur
+			   "textiles personnalisés" — la ligne la plus longue des 3 —
+			   dès qu'on force exactement 3 lignes plutôt qu'un retour à la
+			   ligne libre. Recalibré pour que cette ligne tienne sur toute
+			   la plage mobile (jusqu'à 900px). */
+			font-size: clamp(1.3rem, 6.4vw, 2.1rem);
 		}
-		.hero-title span {
-			display: inline-block;
-			margin: 0 0.13em;
+		.hero-title-line {
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
+			padding: 0;
+			border-radius: 0;
+			background: none;
 		}
 		.hero-actions {
 			justify-content: center;

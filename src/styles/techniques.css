@@ -158,3 +158,50 @@
 @media(max-width:560px){
   .tgrid{grid-template-columns:1fr}
 }
+
+/* ---------- accueil : "Bien choisir" en carrousel sur mobile ---------- */
+/* Sur ordinateur, #techniques .trio reste la grille à 3 colonnes normale
+   (règle .trio de global.css, non touchée ici). Sur mobile (Milio,
+   2026-09-15 : « qu'il n'y en ait qu'un seul à la fois... que ça défile
+   tout seul »), #techCarousel devient un rail à défilement horizontal
+   avec accroche (scroll-snap) qu'un script (index.astro) fait avancer
+   automatiquement d'une carte à l'autre ; un appui dessus arrête
+   l'avance pour de bon et laisse le swipe natif prendre le relais. */
+.techCarousel-dots{display:none}
+@media(max-width:900px){
+  #techCarousel{
+    display:flex;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    margin:0 -28px;
+    padding:0 28px;
+  }
+  #techCarousel::-webkit-scrollbar{display:none}
+  #techCarousel .card{
+    flex:0 0 100%;
+    scroll-snap-align:center;
+  }
+  .techCarousel-dots{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin-top:22px;
+  }
+  .techCarousel-dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:rgba(23,19,31,.2);
+    transition:background .2s,transform .2s;
+  }
+  .techCarousel-dot.on{
+    background:#5C4A1F;
+    transform:scale(1.35);
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .techCarousel-dot{transition:none}
+}

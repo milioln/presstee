@@ -67,7 +67,7 @@ import '../styles/techniques.css';
 					<h2>Bien choisir, c'est avant tout comprendre.</h2>
 					<p style="color:#5C4A1F">Le textile et la technique de marquage influencent directement la qualité du rendu, sa durabilité, les délais et le prix. Voici de quoi décider en connaissance de cause.</p>
 				</div>
-				<div class="trio">
+				<div class="trio" id="techCarousel">
 					<div class="card">
 						<h3>Les techniques de marquage</h3>
 						<p>Comment fonctionne chaque technique, à quoi ressemble le rendu, combien de temps elle tient au lavage, à partir de quelle quantité elle devient intéressante.</p>
@@ -98,6 +98,14 @@ import '../styles/techniques.css';
 							))}
 						</div>
 					</div>
+				</div>
+				<!-- Défilement automatique réservé au mobile (cf. techniques.css et
+				     le script plus bas) : sur ordinateur, .trio reste la grille à 3
+				     colonnes normale et ces points restent masqués. -->
+				<div class="techCarousel-dots" id="techCarouselDots" aria-hidden="true">
+					<span class="techCarousel-dot on"></span>
+					<span class="techCarousel-dot"></span>
+					<span class="techCarousel-dot"></span>
 				</div>
 			</div>
 		</section>
@@ -146,3 +154,83 @@ import '../styles/techniques.css';
 
 	<Footer />
 </Layout>
+
+<script>
+	// Carrousel "Bien choisir" — mobile uniquement (Milio, 2026-09-15) :
+	// sur ordinateur .trio reste la grille normale et ce script ne fait
+	// rien. Sur mobile, .trio devient un rail à défilement horizontal
+	// (scroll-snap, cf. techniques.css) que ce script fait avancer tout
+	// seul, carte par carte, avec des points pour qu'on comprenne que ça
+	// défile. Un appui quelconque sur le rail arrête l'avance automatique
+	// pour de bon (« si on appuie, ça bloque ») — on laisse alors le
+	// visiteur swiper librement, le scroll-snap natif prenant le relais.
+	const mq = window.matchMedia('(max-width: 900px)');
+	const track = document.getElementById('techCarousel');
+	const dotsWrap = document.getElementById('techCarouselDots');
+
+	if (track && dotsWrap) {
+		const cards = [...track.children] as HTMLElement[];
+		const dots = [...dotsWrap.children] as HTMLElement[];
+		let index = 0;
+		let timer: number | null = null;
+		let paused = false;
+
+		function setActive(i: number): void {
+			index = ((i % cards.length) + cards.length) % cards.length;
+			dots.forEach((d, n) => d.classList.toggle('on', n === index));
+		}
+		function goTo(i: number): void {
+			setActive(i);
+			cards[index].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+		}
+		function stop(): void {
+			if (timer != null) {
+				window.clearInterval(timer);
+				timer = null;
+			}
+		}
+		function start(): void {
+			if (paused || !mq.matches || document.hidden || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+			stop();
+			timer = window.setInterval(() => goTo(index + 1), 4200);
+		}
+		function pauseForGood(): void {
+			if (paused) return;
+			paused = true;
+			stop();
+		}
+
+		// Le scroll-snap natif peut aussi bien venir d'un swipe que du
+		// scrollIntoView programmatique ci-dessus : on recale juste l'index
+		// et les points sur la carte réellement au centre après coup,
+		// plutôt que de dupliquer la détection swipe/auto.
+		let scrollRaf = 0;
+		track.addEventListener(
+			'scroll',
+			() => {
+				if (scrollRaf) return;
+				scrollRaf = requestAnimationFrame(() => {
+					scrollRaf = 0;
+					const trackMid = track.getBoundingClientRect().left + track.clientWidth / 2;
+					let closest = 0;
+					let closestDist = Infinity;
+					cards.forEach((c, i) => {
+						const r = c.getBoundingClientRect();
+						const dist = Math.abs(r.left + r.width / 2 - trackMid);
+						if (dist < closestDist) {
+							closestDist = dist;
+							closest = i;
+						}
+					});
+					setActive(closest);
+				});
+			},
+			{ passive: true }
+		);
+		track.addEventListener('pointerdown', pauseForGood, { passive: true });
+		document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+		mq.addEventListener('change', () => (mq.matches ? start() : stop()));
+
+		start();
+	}
+</script>
