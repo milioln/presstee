@@ -133,7 +133,7 @@
 		content: '';
 		position: absolute;
 		inset: 0;
-		background: radial-gradient(420px circle at var(--cx, 70%) var(--cy, 40%), rgba(255, 197, 0, 0.14), transparent 70%);
+		background: radial-gradient(420px circle at var(--cx, 70%) var(--cy, 40%), rgba(155, 7, 255, 0.1), transparent 70%);
 		pointer-events: none;
 	}
 	@media (prefers-reduced-motion: reduce) {
@@ -226,6 +226,7 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0 0.26em;
+		color: var(--jaune);
 	}
 	.hero-title span {
 		border-radius: 10px;
@@ -242,7 +243,7 @@
 	}
 	.hero-title .jeu {
 		cursor: pointer;
-		text-decoration: underline dotted #FFC500;
+		text-decoration: underline dotted var(--indigo);
 		text-underline-offset: 10px;
 	}
 	.hero-title .jeu-jaune:hover {
