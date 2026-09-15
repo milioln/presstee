@@ -41,6 +41,16 @@ import '../../styles/techniques.css';
 				))}
 			</div>
 
+			<div class="head-center" style="margin-top:60px">
+				<h2>Des conseils selon votre activité</h2>
+				<p>Association, entreprise, restaurant, boulangerie, club sportif... chaque secteur a ses contraintes et ses habitudes de commande.</p>
+				<div class="chips" style="justify-content:center">
+					{SECTEURS.map((s) => (
+						<a class="chip" href={`/secteurs/${s.slug}`}>{s.nom}</a>
+					))}
+				</div>
+			</div>
+
 			<div class="tcompare">
 				<table>
 					<thead>
@@ -78,16 +88,6 @@ import '../../styles/techniques.css';
 						</tr>
 					</tbody>
 				</table>
-			</div>
-
-			<div class="head-center" style="margin-top:70px">
-				<h2>Des conseils selon votre activité</h2>
-				<p>Association, entreprise, restaurant, boulangerie, club sportif... chaque secteur a ses contraintes et ses habitudes de commande.</p>
-				<div class="chips" style="justify-content:center">
-					{SECTEURS.map((s) => (
-						<a class="chip" href={`/secteurs/${s.slug}`}>{s.nom}</a>
-					))}
-				</div>
 			</div>
 
 			<QuizTeaser />

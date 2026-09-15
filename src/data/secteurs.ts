@@ -51,7 +51,7 @@ export const SECTEURS: Secteur[] = [
 		exemple:
 			"Une association sportive qui organise son tournoi de fin de saison commande par exemple 60 t-shirts en sérigraphie, aux couleurs du club, pour ses joueurs et son bureau — une partie est ensuite vendue aux familles présentes, ce qui finance une bonne part de la commande.",
 		techniqueSlug: 'serigraphie',
-		icon: '<path d="M12 21s-6.5-4.2-9-8.6C1.3 8.9 2.4 5 6 5c2 0 3.6 1.4 6 4 2.4-2.6 4-4 6-4 3.6 0 4.7 3.9 3 7.4-2.5 4.4-9 8.6-9 8.6z"/>',
+		icon: '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3.4 2.5-6 5.5-6s5.5 2.6 5.5 6"/><circle cx="17" cy="8.5" r="2.4"/><path d="M15.8 14.2c2.7.3 4.7 2.7 4.7 5.8"/>',
 	},
 	{
 		slug: 'bde-ecoles',
@@ -67,7 +67,7 @@ export const SECTEURS: Secteur[] = [
 		exemple:
 			"Un BDE qui prépare son week-end d'intégration commande souvent 150 sweats à capuche floqués du nom de la promo, livrés avant le départ — largement au-delà du nombre d'étudiants inscrits, pour couvrir aussi ceux qui les commandent après coup.",
 		techniqueSlug: 'serigraphie',
-		icon: '<path d="M12 3 2 8l10 5 10-5-10-5z"/><path d="M6 10.5V16c0 1.7 2.7 3 6 3s6-1.3 6-3v-5.5"/><path d="M22 8v6"/>',
+		icon: '<path d="M3.5 5.2c2.7-1 5.4-1 7.5.6v13c-2.1-1.6-4.8-1.6-7.5-.6V5.2z"/><path d="M20.5 5.2c-2.7-1-5.4-1-7.5.6v13c2.1-1.6 4.8-1.6 7.5-.6V5.2z"/>',
 	},
 	{
 		slug: 'entreprises',
