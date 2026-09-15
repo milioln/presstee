@@ -2,7 +2,6 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import QuizTeaser from '../../components/QuizTeaser.astro';
 import { TECHNIQUES } from '../../lib/techniques-data';
 import { SECTEURS } from '../../data/secteurs';
 import '../../styles/global.css';
@@ -18,6 +17,7 @@ const SECTEUR_STAMP: Record<string, string> = {
 	'bars-restaurants': 'Bar',
 	evenements: 'Évén.',
 	commerces: 'Shop',
+	'marques-de-vetements': 'Marque',
 };
 // Petits dessins très simples plutôt que des initiales (Milio,
 // 2026-09-15 : « Sérig, Quadri, Mono... ça passe à côté de l'intérêt,
@@ -48,7 +48,7 @@ const TECHNIQUE_ICON: Record<string, string> = {
 
 		<div class="wrap">
 			<h2 class="sr-only">Les techniques</h2>
-			<div class="tgrid tgrid-stamp" style="margin-top:44px">
+			<div class="tgrid" style="margin-top:44px">
 				{TECHNIQUES.map((t) => (
 					<a class="tcard" href={`/techniques/${t.slug}`}>
 						<div class="tcard-photo">
@@ -58,7 +58,6 @@ const TECHNIQUE_ICON: Record<string, string> = {
 									class="techsect-stamp-icon"
 									set:html={`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:26px;height:26px">${TECHNIQUE_ICON[t.slug] ?? ''}</svg>`}
 								/>
-								<span class="regmark techsect-stamp-mark"></span>
 							</span>
 						</div>
 						<div class="body">
@@ -69,22 +68,13 @@ const TECHNIQUE_ICON: Record<string, string> = {
 				))}
 			</div>
 
-			<div class="head-center" style="margin-top:60px">
-				<h2 class="likeH1">Des conseils selon votre activité</h2>
-				<p>Association, restaurant, événement, commerce... chaque secteur a ses contraintes et ses habitudes de commande.</p>
-			</div>
-			<div class="techsect-grid">
-				{SECTEURS.map((s) => (
-					<a class="techsect-card" href={`/secteurs/${s.slug}`}>
-						<span class="techsect-stamp" aria-hidden="true">
-							<span class="techsect-stamp-mono">{SECTEUR_STAMP[s.slug] ?? s.nom.slice(0, 2)}</span>
-							<span class="regmark techsect-stamp-mark"></span>
-						</span>
-						<span class="techsect-name">{s.nom}</span>
-					</a>
-				))}
-			</div>
-
+			<!-- Comparatif juste après les 4 cartes qu'il compare (Milio,
+			     2026-09-15 : « les gens ne vont pas forcément descendre tout
+			     en bas, mais je ne veux pas non plus le mettre tout en
+			     haut ») — enchaîne naturellement sur "voici les 4
+			     techniques", plutôt que d'ouvrir la page dessus (trop
+			     dense pour un premier contact) ou de le laisser tout en bas
+			     (jamais vu par la plupart des visiteurs). -->
 			<div class="tcompare">
 				<table>
 					<thead>
@@ -124,7 +114,31 @@ const TECHNIQUE_ICON: Record<string, string> = {
 				</table>
 			</div>
 
-			<QuizTeaser />
+			<!-- Même présentation, même alignement et même échelle que le
+			     hero de la page (Milio, 2026-09-15 : « exactement la même
+			     forme que bien choisir sa technique de marquage ») —
+			     .head-center centrait ce bloc alors que le hero est aligné
+			     à gauche. -->
+			<div class="techIntro" style="margin-top:60px">
+				<h2 class="likeH1">Des conseils selon votre activité</h2>
+				<p>Association, restaurant, événement, commerce... chaque secteur a ses contraintes et ses habitudes de commande.</p>
+			</div>
+			<div class="tgrid tgrid-3col">
+				{SECTEURS.map((s) => (
+					<a class="tcard" href={`/secteurs/${s.slug}`}>
+						<div class="tcard-photo">
+							{s.image && <img class="tcard-bg" src={s.image} alt="" aria-hidden="true" loading="lazy" />}
+							<span class="techsect-stamp" aria-hidden="true">
+								<span class="techsect-stamp-mono">{SECTEUR_STAMP[s.slug] ?? s.nom.slice(0, 2)}</span>
+							</span>
+						</div>
+						<div class="body">
+							<h3>{s.nom}</h3>
+							<p>{s.accroche}</p>
+						</div>
+					</a>
+				))}
+			</div>
 		</div>
 	</main>
 	<Footer />

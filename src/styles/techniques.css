@@ -25,70 +25,53 @@
 .tcompare .prixdots span{width:8px;height:8px;border-radius:50%;background:var(--ligne)}
 .tcompare .prixdots span.on{background:var(--indigo)}
 
-/* ---------- hub : cartes techniques ---------- */
+/* "Des conseils selon votre activité" — même alignement à gauche que le
+   hero de la page (cf. .likeH1 plus haut). */
+.techIntro p{color:var(--gris);margin-top:14px;max-width:64ch;font-size:1.02rem}
+
+/* ---------- hub : cartes techniques + cases "par activité" ---------- */
+/* Les deux grilles (techniques et secteurs) partagent maintenant la même
+   présentation (Milio, 2026-09-15 : « les cases, il faut que tu nous
+   présentes comme pour les techniques de marquage ») : tampon + photo
+   floutée en fond + un court texte en dessous. .tgrid-3col n'ajuste que
+   le nombre de colonnes pour la grille des secteurs (6 entrées, 3+3
+   plutôt que les 4 des techniques). */
 .tgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding-bottom:20px}
+.tgrid.tgrid-3col{grid-template-columns:repeat(3,1fr)}
 .tcard{border:1.5px solid var(--ligne);border-radius:20px;overflow:hidden;text-decoration:none;color:var(--encre);background:#fff;transition:.15s;display:flex;flex-direction:column}
 .tcard:hover{border-color:var(--indigo);box-shadow:0 4px 20px rgba(23,19,31,.06)}
 .tcard .body{padding:20px}
 .tcard h3{font-size:1.1rem;margin-bottom:8px}
 .tcard p{color:var(--gris);font-size:.92rem;margin:0}
-/* Même tampon que les cases "par activité" juste en dessous, la vraie
-   photo de l'atelier gardée en fond flouté plutôt que retirée (Milio,
+/* Vraie photo gardée en fond flouté plutôt que retirée (Milio,
    2026-09-15 : « les cases que tu m'as faites... en laissant les images
-   en flou »). */
+   en flou ») — un peu moins flouté qu'au premier essai ("je veux qu'on
+   les voit un peu plus"), et sans la pastille blanche en coin ("comme
+   elle est blanche, ça ne sert à rien" — .techsect-stamp-mark retirée du
+   markup). Reste transparent tant qu'aucune image n'est fournie pour un
+   secteur (cf. secteurs.ts, image:null) : juste le tampon, sur le fond
+   neutre de .tcard-photo. */
 .tcard-photo{position:relative;aspect-ratio:16/10;background:var(--voile);overflow:hidden;display:flex;align-items:center;justify-content:center}
-.tcard-bg{position:absolute;inset:-10%;width:120%;height:120%;object-fit:cover;filter:blur(9px) saturate(1.15) brightness(.92);display:block}
+.tcard-bg{position:absolute;inset:-10%;width:120%;height:120%;object-fit:cover;filter:blur(5px) saturate(1.15) brightness(.94);display:block}
 .tcard-photo .techsect-stamp{position:relative;box-shadow:0 6px 18px rgba(23,19,31,.28)}
-
-/* ---------- hub : cases "par activité" ---------- */
-/* Pas de pictogramme par secteur (déjà tenté deux fois — cœur, chapeau,
-   puis des icônes plus littérales — jamais vraiment convaincant, "ça fait
-   IA"). On reprend plutôt deux clins d'œil déjà propres à Presstee :
-   le tampon incliné à initiales façon steps-list (.n) et le repère de
-   calage .regmark (déjà utilisé pour la chaîne de valeur de l'accueil
-   précisément pour éviter "un numéro ou une icône générique") en accent
-   posé dessus, comme un coin de tampon encreur. */
-/* 3 colonnes et cases plus grandes (Milio, 2026-09-15 : « grossir un peu
-   ces cases ») — 5 secteurs se répartissent aussi mieux en 3+2 qu'en
-   4+1 (un seul orphelin sur sa propre ligne). */
-.techsect-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}
-.techsect-card{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;background:#fff;border:1.5px solid var(--ligne);border-radius:18px;padding:32px 16px 28px;text-decoration:none;color:var(--encre);font-size:14.5px;font-weight:600;transition:border-color .15s,transform .15s}
-.techsect-card:hover{border-color:var(--indigo);transform:translateY(-3px)}
 .techsect-stamp{position:relative;width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;transition:transform .2s}
-.techsect-card:hover .techsect-stamp,.tcard:hover .techsect-stamp{transform:rotate(0deg) scale(1.08)}
+.tcard:hover .techsect-stamp{transform:rotate(0deg) scale(1.08)}
 .techsect-stamp-mono{font-family:'Sora',sans-serif;font-weight:700;font-size:17px;letter-spacing:.02em}
 .techsect-stamp-icon{display:flex;align-items:center;justify-content:center}
-.techsect-stamp-mark{position:absolute;top:-8px;right:-8px;width:19px;height:19px;background:#fff;opacity:1;border-radius:50%;box-shadow:0 1px 3px rgba(23,19,31,.18)}
-/* Même cycle de 4 variantes pour les cartes techniques (.tcard) — le
-   tampon y vit dans .tcard-photo, d'où le sélecteur imbriqué en plus. */
-.techsect-card:nth-child(4n+1) .techsect-stamp,.tcard:nth-child(4n+1) .techsect-stamp{background:var(--indigo);transform:rotate(-6deg)}
-.techsect-card:nth-child(4n+1) .techsect-stamp-mono,.tcard:nth-child(4n+1) .techsect-stamp-icon{color:#fff}
-.techsect-card:nth-child(4n+1) .techsect-stamp-mark,.tcard:nth-child(4n+1) .techsect-stamp-mark{color:var(--indigo)}
-.techsect-card:nth-child(4n+2) .techsect-stamp,.tcard:nth-child(4n+2) .techsect-stamp{background:var(--jaune);transform:rotate(4deg)}
-.techsect-card:nth-child(4n+2) .techsect-stamp-mono,.tcard:nth-child(4n+2) .techsect-stamp-icon{color:var(--encre)}
-.techsect-card:nth-child(4n+2) .techsect-stamp-mark,.tcard:nth-child(4n+2) .techsect-stamp-mark{color:var(--jaune)}
-.techsect-card:nth-child(4n+3) .techsect-stamp,.tcard:nth-child(4n+3) .techsect-stamp{background:#fff;border:2px solid var(--indigo);transform:rotate(-3deg)}
-.techsect-card:nth-child(4n+3) .techsect-stamp-mono,.tcard:nth-child(4n+3) .techsect-stamp-icon{color:var(--indigo)}
-.techsect-card:nth-child(4n+3) .techsect-stamp-mark,.tcard:nth-child(4n+3) .techsect-stamp-mark{color:var(--indigo)}
-.techsect-card:nth-child(4n+4) .techsect-stamp,.tcard:nth-child(4n+4) .techsect-stamp{background:var(--encre);transform:rotate(5deg)}
-.techsect-card:nth-child(4n+4) .techsect-stamp-mono,.tcard:nth-child(4n+4) .techsect-stamp-icon{color:var(--jaune)}
-.techsect-card:nth-child(4n+4) .techsect-stamp-mark,.tcard:nth-child(4n+4) .techsect-stamp-mark{color:var(--encre)}
-@media(max-width:700px){
-  .techsect-grid{grid-template-columns:repeat(2,1fr)}
-}
+/* Cycle de 4 variantes de couleur, réparti sur les deux grilles (chacune
+   recompte à 1 puisque nth-child compte parmi les enfants de son propre
+   parent). */
+.tcard:nth-child(4n+1) .techsect-stamp{background:var(--indigo);transform:rotate(-6deg)}
+.tcard:nth-child(4n+1) .techsect-stamp-mono,.tcard:nth-child(4n+1) .techsect-stamp-icon{color:#fff}
+.tcard:nth-child(4n+2) .techsect-stamp{background:var(--jaune);transform:rotate(4deg)}
+.tcard:nth-child(4n+2) .techsect-stamp-mono,.tcard:nth-child(4n+2) .techsect-stamp-icon{color:var(--encre)}
+.tcard:nth-child(4n+3) .techsect-stamp{background:#fff;border:2px solid var(--indigo);transform:rotate(-3deg)}
+.tcard:nth-child(4n+3) .techsect-stamp-mono,.tcard:nth-child(4n+3) .techsect-stamp-icon{color:var(--indigo)}
+.tcard:nth-child(4n+4) .techsect-stamp{background:var(--encre);transform:rotate(5deg)}
+.tcard:nth-child(4n+4) .techsect-stamp-mono,.tcard:nth-child(4n+4) .techsect-stamp-icon{color:var(--jaune)}
 @media(prefers-reduced-motion:reduce){
-  .techsect-card,.techsect-stamp{transition:none}
+  .tcard,.techsect-stamp{transition:none}
 }
-
-/* ---------- teaser quiz (renvoie vers /commencer) ---------- */
-.tech-hero .btn{margin-top:26px}
-.simteaser{position:relative;overflow:hidden;scroll-margin-top:96px;background-color:var(--indigo);background-image:radial-gradient(circle,rgba(255,255,255,.13) 1.2px,transparent 1.6px);background-size:16px 16px;border-radius:28px;padding:44px 40px;margin:36px 0 60px;color:#fff;box-shadow:0 24px 56px rgba(75,58,120,.32)}
-.simteaser-eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--jaune);margin-bottom:16px}
-.simteaser-eyebrow .regmark{position:static;width:17px;height:17px;border-color:var(--jaune);color:var(--jaune);opacity:1;flex-shrink:0}
-.simteaser h2{font-size:1.75rem;margin-bottom:10px;color:#fff}
-.simteaser>p{color:rgba(255,255,255,.8);margin-bottom:26px;max-width:60ch;font-size:1.02rem}
-@media(max-width:560px){.simteaser{padding:30px 24px}}
-
 
 /* ---------- fiche technique ---------- */
 .tdetail-hero{position:relative;aspect-ratio:21/9;background:var(--voile);overflow:hidden}
@@ -167,12 +150,12 @@
 @media(max-width:900px){
   .tdetail{grid-template-columns:1fr}
   .tdetail aside{position:static}
-  .tgrid{grid-template-columns:repeat(2,1fr)}
+  .tgrid,.tgrid.tgrid-3col{grid-template-columns:repeat(2,1fr)}
   .tsim-grid{grid-template-columns:1fr}
   .proscons{grid-template-columns:1fr}
 }
 @media(max-width:560px){
-  .tgrid{grid-template-columns:1fr}
+  .tgrid,.tgrid.tgrid-3col{grid-template-columns:1fr}
 }
 
 /* ---------- accueil : "Bien choisir" en carrousel sur mobile ---------- */

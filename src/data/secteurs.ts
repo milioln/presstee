@@ -6,12 +6,20 @@
 // écrire pour le référencement, parler au client, l'aider à commander »,
 // puis 2026-09-15 : « plus d'éléments graphiques, un meilleur article »).
 //
-// Pas de photo réelle par secteur pour l'instant (aucune fournie) — les
-// icônes ci-dessous tiennent cette place en attendant de vraies images ;
-// à remplacer dès que Milio en fournit (cf. échange du 2026-09-15).
+// Pas de photo réelle par secteur pour l'instant (aucune fournie) — image
+// reste à null en attendant que Milio en fournisse une par secteur (cf.
+// échange du 2026-09-15) ; les cases du guide affichent alors juste le
+// tampon, sans fond flouté, plutôt qu'une photo au hasard sans rapport.
 export interface Secteur {
 	slug: string;
 	nom: string;
+	// Une phrase très courte, dans l'esprit de l'accroche des fiches
+	// technique (ex. "Le plus économique... à partir de 25 pièces.") —
+	// utilisée dans la case compacte du guide, pas sur la page dédiée.
+	accroche: string;
+	// Photo réelle en fond flouté de la case du guide (cf. accroche
+	// ci-dessus) — null tant qu'aucune n'est fournie pour ce secteur.
+	image: string | null;
 	// Accroche courte, adressée directement au lecteur — utilisée en haut
 	// de la page dédiée et comme teaser dans le panneau de l'accueil.
 	texte: string;
@@ -40,6 +48,8 @@ export const SECTEURS: Secteur[] = [
 	{
 		slug: 'associations',
 		nom: 'Associations',
+		accroche: 'Financez vos événements avec des t-shirts vendus aux adhérents.',
+		image: null,
 		texte:
 			"Vous représentez une association ? Un textile personnalisé — t-shirt, sweat, tote bag — donne une présence visible à votre structure lors d'un événement, d'une sortie ou d'un forum, sans faire exploser un budget déjà serré.",
 		motivation:
@@ -56,6 +66,8 @@ export const SECTEURS: Secteur[] = [
 	{
 		slug: 'bde-ecoles',
 		nom: 'BDE et écoles',
+		accroche: "Le sweat de promo que tout le monde s'arrache à la rentrée.",
+		image: null,
 		texte:
 			"Vous organisez l'intégration, un week-end ou une soirée pour votre BDE, votre association étudiante ou votre école ? Le sweat ou le t-shirt de promo est souvent le seul objet qui reste une fois l'événement terminé — et celui que tout le monde veut porter le jour J.",
 		motivation:
@@ -72,6 +84,8 @@ export const SECTEURS: Secteur[] = [
 	{
 		slug: 'bars-restaurants',
 		nom: 'Bars et restaurants',
+		accroche: 'Un uniforme qui tient au lavage, commande après commande.',
+		image: null,
 		texte:
 			"Vous voulez habiller votre équipe en salle ou en cuisine avec un t-shirt ou un tablier reconnaissable ? Le textile professionnel dans la restauration doit avant tout résister à un usage quotidien et à des lavages fréquents à haute température.",
 		motivation:
@@ -88,6 +102,8 @@ export const SECTEURS: Secteur[] = [
 	{
 		slug: 'evenements',
 		nom: 'Événements',
+		accroche: "Un visuel prêt en quelques jours, même dans l'urgence.",
+		image: null,
 		texte:
 			"Vous organisez un événement — festival, course, salon, soirée — et avez besoin d'un t-shirt visuel, produit vite et en quantité ? La contrainte n'est presque jamais le budget : c'est le délai.",
 		motivation:
@@ -104,6 +120,8 @@ export const SECTEURS: Secteur[] = [
 	{
 		slug: 'commerces',
 		nom: 'Commerces',
+		accroche: 'Une petite série à votre effigie, vendue ou offerte en boutique.',
+		image: null,
 		texte:
 			"Vous tenez un commerce et voulez proposer une pièce à l'effigie de votre enseigne ou de votre quartier ? Une petite série bien choisie peut devenir un vrai produit, pas seulement un support de communication.",
 		motivation:
@@ -116,6 +134,24 @@ export const SECTEURS: Secteur[] = [
 			"Une boutique de quartier commande une série limitée de 40 t-shirts à l'occasion d'un anniversaire ou d'une ouverture, pour les offrir aux premiers clients ou les vendre en édition limitée.",
 		techniqueSlug: 'serigraphie',
 		icon: '<path d="M4 9.5 5 4h14l1 5.5"/><path d="M4 9.5a2.2 2.2 0 0 0 4.4 0 2.2 2.2 0 0 0 4.4 0 2.2 2.2 0 0 0 4.4 0 2.2 2.2 0 0 0 4.4 0"/><path d="M5.5 9.5V20h13V9.5"/>',
+	},
+	{
+		slug: 'marques-de-vetements',
+		nom: 'Marques de vêtements',
+		accroche: "Le même calage, reproductible à l'identique d'un drop à l'autre.",
+		image: null,
+		texte:
+			"Vous créez votre propre marque de vêtements et cherchez un atelier pour produire vos pièces ? Contrairement à un événement ponctuel, chaque collection doit pouvoir être reproduite à l'identique, saison après saison, avec un rendu qui tient la comparaison avec ce que vendent déjà les marques établies.",
+		motivation:
+			"Le vrai enjeu pour une marque n'est pas de réussir une seule série : c'est de pouvoir la refaire à l'identique six mois plus tard pour réassortir un best-seller ou lancer un nouveau drop, sans repartir de zéro à chaque fois — même textile, mêmes coloris, même calage.",
+		insight:
+			"Beaucoup de marques démarrent sur de très petites séries (30 à 100 pièces) pour tester un visuel avant d'investir dans une production plus large — mieux vaut découvrir qu'un motif ne se vend pas sur 50 pièces que sur 500.",
+		conseil:
+			"Pour une marque, le choix du textile compte autant que la technique : un coton épais et bien coupé (180 à 220 g/m²) donne un tombé qui se remarque en photo comme en boutique. La sérigraphie reste la référence dès qu'un même visuel doit être refait à l'identique sur plusieurs commandes — une fois réglé, le calage se réutilise d'une série à l'autre sans frais supplémentaire.",
+		exemple:
+			"Une marque de streetwear qui lance un nouveau drop commande par exemple 80 hoodies en sérigraphie sur un coton épais, avec le même calage réutilisé trois mois plus tard pour un réassort de 50 pièces supplémentaires sur le même visuel.",
+		techniqueSlug: 'serigraphie',
+		icon: '<path d="M12.6 2.6H20a1.4 1.4 0 0 1 1.4 1.4v7.4a2 2 0 0 1-.6 1.4l-8.8 8.8a2 2 0 0 1-2.8 0L2.6 15a2 2 0 0 1 0-2.8l8.8-8.8a2 2 0 0 1 1.2-.8z"/><circle cx="16.5" cy="7.5" r="1.6"/>',
 	},
 ];
 
