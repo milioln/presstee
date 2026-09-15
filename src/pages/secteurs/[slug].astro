@@ -14,7 +14,6 @@ import { SECTEURS } from '../../data/secteurs';
 import { getTechnique } from '../../lib/techniques-data';
 import { siteConfig } from '../../config/site';
 import '../../styles/global.css';
-import '../../styles/techniques.css';
 
 export function getStaticPaths() {
 	return SECTEURS.map((s) => ({ params: { slug: s.slug }, props: { s } }));
@@ -34,6 +33,20 @@ const serviceLd = {
 	provider: { '@type': 'Organization', name: siteConfig.nom, url: 'https://presstee.fr' },
 	areaServed: { '@type': 'Place', name: `${siteConfig.adresse.ville}, ${siteConfig.adresse.departement}` },
 };
+// Ces pages se trouvent depuis le Guide (grille "Des conseils selon
+// votre activité"), pas depuis une page "Secteurs" qui n'existe pas
+// (Milio, 2026-09-15 : « le fil d'Ariane n'est pas bon... on y accède
+// par le guide ») — le fil d'Ariane, visible et structuré, doit suivre
+// le même chemin que les fiches technique (Guide / Sérigraphie...).
+const breadcrumbLd = {
+	'@context': 'https://schema.org',
+	'@type': 'BreadcrumbList',
+	itemListElement: [
+		{ '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://presstee.fr/' },
+		{ '@type': 'ListItem', position: 2, name: 'Guide', item: 'https://presstee.fr/techniques' },
+		{ '@type': 'ListItem', position: 3, name: s.nom, item: `https://presstee.fr/secteurs/${s.slug}` },
+	],
+};
 ---
 
 <Layout
@@ -41,22 +54,24 @@ const serviceLd = {
 	description={`${s.texte} Technique conseillée : ${technique.nom.toLowerCase()}.`}
 >
 	<script type="application/ld+json" set:html={JSON.stringify(serviceLd)} />
+	<script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
 	<Header />
 	<main>
-		<section class="tech-hero">
+		<section class="secteur-hero">
 			<div class="wrap">
-				<div class="crumb"><a href="/">Accueil</a> / <a href="/#pourqui">Secteurs</a> / {s.nom}</div>
+				<div class="crumb"><a href="/">Accueil</a> / <a href="/techniques">Guide</a> / {s.nom}</div>
 				<h1>Textile personnalisé pour {s.nom.toLowerCase()}.</h1>
 				<p>{s.texte}</p>
 				<a class="btn" href="/commencer">Faire le test</a>
+
+				<div class="secteur-photo">
+					<picture>
+						<source media="(max-width: 700px)" srcset="/secteurs/sport-association-loin-mobile.webp" />
+						<img src="/secteurs/sport-association-loin.webp" alt="Association sportive amateur en tenue personnalisée, vue de loin sur le terrain." loading="lazy" />
+					</picture>
+				</div>
 			</div>
 		</section>
-
-		<div class="secteur-visual">
-			<span class="secteur-visual-icon" set:html={`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:clamp(56px,8vw,84px);height:clamp(56px,8vw,84px)">${s.icon}</svg>`} />
-			<span class="regmark secteur-visual-mark secteur-visual-mark-a" aria-hidden="true"></span>
-			<span class="regmark secteur-visual-mark secteur-visual-mark-b" aria-hidden="true"></span>
-		</div>
 
 		<section class="secteur-body">
 			<div class="wrap">
@@ -126,36 +141,69 @@ const serviceLd = {
 </Layout>
 
 <style>
-	/* ---------- bandeau visuel (tient lieu de photo, en attendant de
-	   vraies images par secteur — cf. commentaire de secteurs.ts) ---------- */
-	.secteur-visual {
-		position: relative;
+	/* ---------- en-tête : titre agrandi + photo alignée sur le texte ---------- */
+	.secteur-hero {
+		padding: 56px 0 60px;
+		border-bottom: 1px solid var(--ligne);
+	}
+	.secteur-hero .crumb {
+		font-size: 13px;
+		color: var(--gris);
+		margin-bottom: 14px;
+	}
+	.secteur-hero .crumb a {
+		text-decoration: none;
+		color: var(--gris);
+	}
+	.secteur-hero .crumb a:hover {
+		color: var(--indigo);
+	}
+	/* Titre nettement agrandi (Milio, 2026-09-15 : « le texte est trop
+	   petit, il ne prend pas du tout l'espace qu'il faut ») — ces pages
+	   jouent le rôle de page d'atterrissage par secteur, elles méritent
+	   un traitement plus affirmé que le simple H1 du Guide. */
+	.secteur-hero h1 {
+		font-family: 'Anton', system-ui, sans-serif;
+		font-weight: 400;
+		font-size: clamp(2.2rem, 5vw, 3.6rem);
+		letter-spacing: -0.03em;
+		max-width: 22ch;
+	}
+	.secteur-hero p {
+		color: var(--gris);
+		margin-top: 14px;
+		max-width: 64ch;
+		font-size: 1.02rem;
+	}
+	.secteur-hero .btn {
+		display: inline-block;
+		margin-top: 24px;
+	}
+	/* Remplace l'ancien bandeau violet + pictogramme (Milio, 2026-09-15 :
+	   « le fond violet avec les deux personnes, tu me changes ça avec une
+	   image de loin d'une asso dans le sport ») — surtout, la photo vit
+	   DANS le même .wrap que le titre, pour garantir qu'elle est alignée
+	   avec le texte plutôt que plaquée à part en pleine largeur (l'ancien
+	   bandeau, en dehors du .wrap, n'était d'ailleurs même pas centré :
+	   aspect-ratio + max-height calculaient sa largeur à partir de la
+	   hauteur plafonnée, au lieu de remplir la colonne). */
+	.secteur-photo {
+		margin-top: 36px;
+		width: 100%;
+		aspect-ratio: 3 / 1;
+		border-radius: 20px;
 		overflow: hidden;
-		aspect-ratio: 21 / 6;
-		max-height: 220px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background-color: var(--indigo);
-		background-image: radial-gradient(circle, rgba(255, 255, 255, 0.14) 1.2px, transparent 1.6px);
-		background-size: 16px 16px;
 	}
-	.secteur-visual-icon {
-		display: flex;
-		color: #fff;
-		opacity: 0.92;
+	.secteur-photo img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
 	}
-	.secteur-visual-mark {
-		color: #fff;
-		opacity: 0.5;
-	}
-	.secteur-visual-mark-a {
-		top: 22px;
-		left: 26px;
-	}
-	.secteur-visual-mark-b {
-		bottom: 22px;
-		right: 26px;
+	@media (max-width: 700px) {
+		.secteur-photo {
+			aspect-ratio: 4 / 3;
+		}
 	}
 
 	.secteur-body {
