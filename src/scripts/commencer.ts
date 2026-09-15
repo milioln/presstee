@@ -400,6 +400,7 @@ function screenResultat(): string {
   const palier = palierPour(c.qty);
   const grille = grilleTarifaire(c.ref ? c.ref.baseCost : coutBaseSupportUnique);
   const primaire = primaryColor(state);
+  const nbCouleurs = effectiveColors(state);
 
   if (!state.selectedRef || !c.candidats.some((x) => x.slug === state.selectedRef)) {
     state.selectedRef = c.candidats[0]?.slug ?? null;
@@ -407,31 +408,44 @@ function screenResultat(): string {
 
   const totalGeneral = produits.reduce((s, p) => s + calcProduit(p).prixTotal, 0) + c.prixTotal;
 
+  // Le produit passe devant la technique (Milio, 2026-09-15 : « recommande
+  // le t-shirt en premier ») — la technique de marquage reste conseillée
+  // juste en dessous, mais en retrait (petit label + texte, plus de gros
+  // titre ni de badge) pour ne pas perdre le client dans deux
+  // recommandations mises sur le même plan.
   return `<div class="qzStep qzStep-resultat">
     <span class="qzResultBadge">Votre recommandation</span>
-    <h2>${tech.n}</h2>
-    <p class="qzWhy">${c.why}</p>
+    <h2>${c.ref ? `${c.ref.brand} ${c.ref.model}` : `${GARMENT_LABELS[state.garment]} · ${primaire.nom}`}</h2>
 
     <div class="qzResultCard">
       <svg class="qzResultShirt" viewBox="0 0 400 460" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M148,54 L118,44 L52,92 L96,156 L122,136 L122,420 Q122,428 130,428 L270,428 Q278,428 278,420 L278,136 L304,156 L348,92 L282,44 L252,54 Q200,100 148,54 Z" fill="${primaire.hex}" stroke="var(--ligne)" stroke-width="6" />
       </svg>
       <div class="qzResultBody">
-        <span class="qzResultRef">${c.ref ? `${c.ref.brand} ${c.ref.model}` : `${GARMENT_LABELS[state.garment]} · ${primaire.nom}`}</span>
-        ${c.ref ? `<span class="qzResultMatiere">${c.ref.detail}</span>` : ''}
         <span class="qzResultPrix">${fmtPrice(c.prixUnitaire)} <span>/ pièce</span></span>
         <span class="qzResultTotal">Soit environ ${fmtPrice(c.prixTotal)} pour ${c.qty} pièce${c.qty > 1 ? 's' : ''}</span>
+        <div class="qzResultSpecs">
+          ${c.ref ? `<span><b>Grammage</b> ${c.ref.grammage}</span>` : ''}
+          ${c.ref ? (/^composition/i.test(c.ref.detail) ? `<span>${c.ref.detail}</span>` : `<span><b>Composition</b> ${c.ref.detail}</span>`) : ''}
+          <span><b>Couleurs du visuel</b> ${nbCouleurs != null ? nbCouleurs : 'à définir'}</span>
+        </div>
       </div>
     </div>
+
+    <details class="qzGrille">
+      <summary>Prix par palier de quantité</summary>
+      <div class="qzGrilleRows">
+        ${grille.map((p) => `<div class="qzGrilleRow"><span>${p.label} pièces</span><b>${fmtPrice(p.prixUnitaire)}</b></div>`).join('')}
+      </div>
+    </details>
 
     ${state.colorLots.length > 1 ? `<div class="qzColorBreakdown">${state.colorLots.map((l) => `<span><span class="qzColorBreakdown-sw" style="background:${l.color.hex}"></span>${l.color.nom} × ${l.qty}</span>`).join('')}</div>` : ''}
 
     ${c.candidats.length > 1 ? `<div class="qzField">
-      <span class="qzLabel">Autres références possibles <span class="qzOptional">— composition, prix</span></span>
-      <div class="refList">
+      <button type="button" class="qzCompareToggle" id="qzCompareToggle" aria-expanded="false">Comparer les ${c.candidats.length} références conseillées</button>
+      <div class="refList" id="qzRefList" hidden>
         ${c.candidats.map((r) => `<button type="button" class="refRow${r.slug === state.selectedRef ? ' on' : ''}" data-action="select-ref" data-value="${r.slug}">
-          <span class="refRow-name"><b>${r.brand}</b> ${r.model}<br /><span class="qzOptional">${r.detail}</span></span>
-          <span class="refRow-meta">${r.grammage}</span>
+          <span class="refRow-name"><b>${r.brand}</b> ${r.model}<br /><span class="qzOptional">${r.grammage} · ${r.detail}</span></span>
           <span class="refRow-price">${fmtPrice(Math.round(prixVente(r.baseCost, palier.marge) * 100) / 100)} <span>/ pièce</span></span>
         </button>`).join('')}
       </div>
@@ -440,12 +454,10 @@ function screenResultat(): string {
     ${c.candidats.length === 0 && state.garment === 'tshirt' ? `<p class="qzHint">Aucune référence ne correspond exactement à ces filtres — estimation générique ci-dessus. <a href="${catalogueFilterUrl(state)}">Voir le catalogue filtré →</a></p>` : ''}
     ${c.candidats.length > 0 && state.garment === 'tshirt' ? `<p class="qzHint"><a href="${catalogueFilterUrl(state)}">Voir plus de t-shirts qui correspondent →</a></p>` : ''}
 
-    <details class="qzGrille">
-      <summary>Voir le prix par palier de quantité</summary>
-      <div class="qzGrilleRows">
-        ${grille.map((p) => `<div class="qzGrilleRow"><span>${p.label} pièces</span><b>${fmtPrice(p.prixUnitaire)}</b></div>`).join('')}
-      </div>
-    </details>
+    <div class="qzTechNote">
+      <span class="qzLabel">Technique de marquage conseillée</span>
+      <p><b>${tech.n}</b> — ${c.why}</p>
+    </div>
 
     ${produits.length > 0 ? `<div class="qzGrandTotal"><span>Total pour ${produits.length + 1} produits</span><b>${fmtPrice(totalGeneral)}</b></div>` : ''}
 
@@ -509,6 +521,16 @@ function render(): void {
   pendingFocus = undefined;
 
   if (screen === 'resultat') {
+    // Comparateur replié par défaut (Milio, 2026-09-15 : « si on le veut »)
+    // — les 3 références restent choisissables sans imposer la comparaison
+    // à qui se satisfait déjà de la recommandation.
+    document.getElementById('qzCompareToggle')?.addEventListener('click', (e) => {
+      const btn = e.currentTarget as HTMLButtonElement;
+      const list = document.getElementById('qzRefList')!;
+      const open = list.hidden;
+      list.hidden = !open;
+      btn.setAttribute('aria-expanded', String(open));
+    });
     el('qzGo3d').addEventListener('click', () => {
       // Un calque réel par visuel importé (un par emplacement), sinon le
       // configurateur démarre à vide sur l'emplacement choisi — dans les

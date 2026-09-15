@@ -48,7 +48,6 @@
 /* ---------- résultat ---------- */
 .qzStep-resultat{text-align:center}
 .qzResultBadge{display:inline-block;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--indigo);background:var(--lavande);border-radius:100px;padding:6px 14px;margin-bottom:10px}
-.qzWhy{color:var(--gris);max-width:52ch;margin:0 auto 26px;font-size:.94rem;line-height:1.55}
 
 /* La recommandation se révèle plutôt que d'apparaître d'un bloc — le
    t-shirt "se pose" sur la bonne réponse. Rejoue à chaque fois que
@@ -56,28 +55,42 @@
    compris), même principe que .productPreview-shirt côté simulateur. */
 @keyframes qzFadeUp{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
 @keyframes qzSettle{0%{opacity:0;transform:translateY(-16px) rotate(-3deg) scale(.94)}65%{opacity:1;transform:translateY(3px) rotate(1deg) scale(1.015)}100%{opacity:1;transform:translateY(0) rotate(0) scale(1)}}
-.qzResultBadge,.qzStep-resultat h2,.qzWhy{animation:qzFadeUp .4s ease both}
+.qzResultBadge,.qzStep-resultat h2{animation:qzFadeUp .4s ease both}
 .qzStep-resultat h2{animation-delay:.05s}
-.qzWhy{animation-delay:.1s}
 @media(prefers-reduced-motion:reduce){
-  .qzResultBadge,.qzStep-resultat h2,.qzWhy,.qzResultCard{animation:none !important}
+  .qzResultBadge,.qzStep-resultat h2,.qzResultCard{animation:none !important}
 }
 
-.qzResultCard{display:flex;align-items:center;gap:18px;text-align:left;background:var(--lavande);border-radius:18px;padding:18px 22px;margin-bottom:18px;animation:qzSettle .5s cubic-bezier(.34,1.56,.64,1) .15s both}
+.qzResultCard{display:flex;align-items:center;gap:18px;text-align:left;background:var(--lavande);border-radius:18px;padding:18px 22px;margin-bottom:14px;animation:qzSettle .5s cubic-bezier(.34,1.56,.64,1) .15s both}
 .qzResultShirt{width:64px;height:74px;flex-shrink:0;filter:drop-shadow(0 3px 6px rgba(23,19,31,.12))}
-.qzResultBody{display:flex;flex-direction:column;gap:3px}
-.qzResultRef{font-family:'Sora',sans-serif;font-weight:700;font-size:1.02rem}
-.qzResultMatiere{font-size:.8rem;color:var(--gris)}
+.qzResultBody{display:flex;flex-direction:column;gap:3px;min-width:0}
 .qzResultPrix{font-family:'Sora',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.02em}
 .qzResultPrix span{font-family:'Manrope',sans-serif;font-weight:400;font-size:.78rem;color:var(--gris)}
 .qzResultTotal{font-size:.85rem;color:var(--gris)}
+.qzResultSpecs{display:flex;flex-direction:column;gap:2px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(23,19,31,.08)}
+.qzResultSpecs span{font-size:.78rem;color:var(--gris)}
+.qzResultSpecs b{font-family:'Sora',sans-serif;font-weight:600;color:var(--encre);margin-right:5px}
 
-.qzGrille{margin-bottom:26px;text-align:left}
+.qzGrille{margin-bottom:20px;text-align:left}
 .qzGrille summary{cursor:pointer;font-size:.85rem;color:var(--gris);text-decoration:underline;text-underline-offset:3px}
 .qzGrille summary:hover{color:var(--encre)}
 .qzGrilleRows{display:grid;gap:6px;margin-top:12px;padding:14px 16px;background:var(--lavande);border-radius:12px}
 .qzGrilleRow{display:flex;justify-content:space-between;font-size:.85rem}
 .qzGrilleRow b{font-variant-numeric:tabular-nums}
+
+/* ---------- comparateur (optionnel) ---------- */
+.qzCompareToggle{background:none;border:0;padding:0;font:inherit;cursor:pointer;font-size:.85rem;color:var(--indigo);font-weight:600;text-decoration:underline;text-underline-offset:3px;margin-bottom:10px}
+.qzCompareToggle:hover{color:var(--encre)}
+/* .refList (simulateur.css) impose display:grid, plus fort que le
+   display:none par défaut du navigateur pour [hidden] : sans cette règle,
+   l'attribut hidden n'a plus aucun effet ici et le comparateur reste
+   toujours ouvert. */
+#qzRefList[hidden]{display:none}
+
+/* ---------- technique conseillée (en retrait sous le produit) ---------- */
+.qzTechNote{text-align:left;margin-bottom:22px;padding-top:18px;border-top:1px solid var(--ligne)}
+.qzTechNote p{color:var(--gris);font-size:.88rem;line-height:1.55;margin:4px 0 0}
+.qzTechNote p b{color:var(--encre)}
 
 .qzResultActions{display:flex;flex-direction:column;gap:10px}
 
