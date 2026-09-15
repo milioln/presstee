@@ -119,24 +119,6 @@ export const SECTEURS: Secteur[] = [
 		icon: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>',
 	},
 	{
-		slug: 'commerces',
-		nom: 'Commerces',
-		accroche: 'Une petite série à votre effigie, vendue ou offerte en boutique.',
-		image: '/secteurs/commerces.webp',
-		texte:
-			"Vous tenez un commerce et voulez proposer une pièce à l'effigie de votre enseigne ou de votre quartier ? Une petite série bien choisie peut devenir un vrai produit, pas seulement un support de communication.",
-		motivation:
-			"Contrairement à un vêtement de travail, le textile vendu en commerce doit plaire visuellement autant qu'il doit être rentable — le rendu du marquage compte alors autant que le prix, puisque c'est votre client qui l'achète, pas vous qui l'offrez.",
-		insight:
-			"À l'effigie du commerce ou du quartier, une petite série en édition limitée devient un produit à part entière que le client achète en plus de son passage habituel, pas un simple support de communication offert. Tester une petite quantité avant de réassortir limite le risque si le visuel ne rencontre pas son public.",
-		conseil:
-			"Un coton lourd (200 g/m² et plus) donne un tombé plus qualitatif, apprécié sur un produit vendu plutôt qu'offert. La sérigraphie reste la référence pour un rendu net sur de petites séries (20 à 100 pièces) ; le transfert monochrome convient mieux à un visuel unique très détaillé.",
-		exemple:
-			"Une boutique de quartier commande une série limitée de 40 t-shirts à l'occasion d'un anniversaire ou d'une ouverture, pour les offrir aux premiers clients ou les vendre en édition limitée.",
-		techniqueSlug: 'serigraphie',
-		icon: '<path d="M4 9.5 5 4h14l1 5.5"/><path d="M4 9.5a2.2 2.2 0 0 0 4.4 0 2.2 2.2 0 0 0 4.4 0 2.2 2.2 0 0 0 4.4 0 2.2 2.2 0 0 0 4.4 0"/><path d="M5.5 9.5V20h13V9.5"/>',
-	},
-	{
 		slug: 'marques-de-vetements',
 		nom: 'Marques de vêtements',
 		accroche: "Le même calage, reproductible à l'identique d'un drop à l'autre.",

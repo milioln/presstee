@@ -20,7 +20,6 @@ export function getStaticPaths() {
 }
 
 const { s } = Astro.props as { s: (typeof SECTEURS)[number] };
-const autres = SECTEURS.filter((x) => x.slug !== s.slug);
 const technique = getTechnique(s.techniqueSlug)!;
 
 // Une photo par secteur (Milio, 2026-09-16 : « t'as mis une bonne image
@@ -30,11 +29,10 @@ const technique = getTechnique(s.techniqueSlug)!;
 // `{slug}-hero(.webp|-mobile.webp)` dans public/secteurs/.
 const HERO_ALT: Record<string, string> = {
 	associations: 'Association sportive amateur en tenue personnalisée, vue de loin sur le terrain.',
-	'bde-ecoles': 'Étudiants fêtant leur remise de diplômes, en t-shirts personnalisés.',
-	'bars-restaurants': 'Équipe de restaurant en tabliers et t-shirts personnalisés au nom de l’établissement.',
-	evenements: 'Foule enthousiaste, bras levés, lors d’un concert.',
-	commerces: 'Vitrine d’une boutique de vêtements, mannequins habillés en devanture.',
-	'marques-de-vetements': 'Sweats à capuche floqués du logo d’une marque, alignés sur un portant.',
+	'bde-ecoles': 'Jeunes amis dansant lors d’une soirée étudiante.',
+	'bars-restaurants': 'Serveur en tenue de salle accueillant un client en terrasse, à Paris.',
+	evenements: 'Coureurs portant le même t-shirt numéroté lors d’un semi-marathon.',
+	'marques-de-vetements': 'Deux mannequins portant des sweats à capuche floqués du logo d’une marque.',
 };
 
 const serviceLd = {
@@ -133,20 +131,6 @@ const breadcrumbLd = {
 				<div class="secteur-cta">
 					<a class="btn" href="/commencer">Faire le test</a>
 					<span class="secteur-cta-or">ou <a href="/contact">contactez-nous directement</a></span>
-				</div>
-			</div>
-		</section>
-
-		<section class="secteur-autres">
-			<div class="wrap">
-				<h2>Les autres secteurs</h2>
-				<div class="secteur-autres-grid">
-					{autres.map((a) => (
-						<a class="secteur-autres-card" href={`/secteurs/${a.slug}`}>
-							<span class="secteur-autres-icon" set:html={`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:26px;height:26px">${a.icon}</svg>`} />
-							<span>{a.nom}</span>
-						</a>
-					))}
 				</div>
 			</div>
 		</section>
@@ -331,48 +315,4 @@ const breadcrumbLd = {
 		color: var(--indigo);
 	}
 
-	/* ---------- les autres secteurs ---------- */
-	.secteur-autres {
-		background: var(--lavande);
-		padding: 50px 0 64px;
-	}
-	.secteur-autres h2 {
-		font-size: 1.2rem;
-		margin: 0 0 22px;
-	}
-	.secteur-autres-grid {
-		display: grid;
-		grid-template-columns: repeat(4, 1fr);
-		gap: 12px;
-	}
-	.secteur-autres-card {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 10px;
-		text-align: center;
-		background: #fff;
-		border: 1.5px solid var(--ligne);
-		border-radius: 16px;
-		padding: 20px 12px;
-		text-decoration: none;
-		color: var(--encre);
-		font-size: 13.5px;
-		font-weight: 600;
-		transition: border-color 0.15s, transform 0.15s;
-	}
-	.secteur-autres-card:hover {
-		border-color: var(--indigo);
-		transform: translateY(-2px);
-	}
-	.secteur-autres-icon {
-		display: flex;
-		color: var(--indigo);
-	}
-
-	@media (max-width: 700px) {
-		.secteur-autres-grid {
-			grid-template-columns: repeat(2, 1fr);
-		}
-	}
 </style>
