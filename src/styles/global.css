@@ -46,7 +46,11 @@ h2,h3{transition:text-shadow .25s ease-in}
 p{max-width:62ch}
 a{color:inherit}
 .wrap{max-width:var(--max);margin:0 auto;padding:0 28px}
-section{padding:clamp(88px,13vw,166px) 0}
+/* Réduit le 2026-09-15 (Milio : « des fois tu fais des espaces trop
+   importants... entre les sections ») — 166px de haut ET de bas cumulés
+   entre deux sections faisait plus de 300px de vide. Toujours assez
+   d'air pour distinguer les sections, sans les espacer autant qu'avant. */
+section{padding:clamp(56px,9vw,120px) 0}
 .s-indigo{background-color:var(--indigo);background-image:radial-gradient(circle,rgba(255,255,255,.11) 1.1px,transparent 1.6px);background-size:15px 15px;color:#fff}
 .s-jaune{background-color:var(--jaune);background-image:radial-gradient(circle,rgba(23,19,31,.07) 1.1px,transparent 1.6px);background-size:15px 15px}
 
@@ -64,26 +68,29 @@ section{padding:clamp(88px,13vw,166px) 0}
 /* ---------- nav ---------- */
 header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--ligne)}
 /* Logo centré (Milio, 2026-09-15), sur ordinateur comme sur téléphone :
-   grille à 3 colonnes, les liens répartis en 2 groupes de part et
-   d'autre (linksLeft/linksRight dans .mobileMenu, cf. Header.astro)
-   plutôt qu'un simple centrage absolu qui l'aurait fait chevaucher les
-   liens dès que la fenêtre n'est pas très large. .mobileMenu est
-   display:contents sur ordinateur (linksLeft/linksRight rejoignent
-   directement la grille, le wrapper ne générant aucune boîte) et devient
-   le panneau déplié du burger sur mobile (cf. media query plus bas) : un
-   seul menu qui empile les deux groupes, plutôt que deux panneaux
-   superposés au même endroit. */
-.nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:32px;height:76px}
+   une grille 1fr/auto/1fr ne centrait le logo QUE si les deux colonnes
+   de liens faisaient exactement la même largeur — avec 3 liens à gauche
+   et 4 à droite (linksLeft/linksRight dans .mobileMenu, cf. Header.astro)
+   ce n'était jamais le cas, le logo se retrouvait décalé du côté du
+   groupe le plus court. Positionnement absolu par rapport au centre réel
+   de .nav à la place : les deux groupes restent en flux normal (gauche
+   naturel, droite poussée par margin-left:auto), le logo flotte dessus,
+   toujours exactement au milieu quel que soit le nombre de liens de
+   chaque côté. .mobileMenu est display:contents sur ordinateur
+   (linksLeft/linksRight rejoignent le flux de .nav directement) et
+   devient le panneau déplié du burger sur mobile (cf. media query plus
+   bas) : un seul menu qui empile les deux groupes, plutôt que deux
+   panneaux superposés au même endroit. */
+.nav{position:relative;display:flex;align-items:center;gap:32px;height:76px}
 .mobileMenu{display:contents}
-.brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;grid-column:2;grid-row:1;justify-self:center}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
 .links{display:flex;gap:26px;align-items:center}
-.links-left{grid-column:1;grid-row:1;justify-self:start}
-.links-right{grid-column:3;grid-row:1;justify-self:end}
+.links-right{margin-left:auto}
 .links a{text-decoration:none;font-size:14.5px;color:var(--indigo);font-weight:500;padding:6px 0;border-bottom:1.5px solid transparent}
 .links a:hover,.links a:focus-visible{color:var(--encre);border-bottom-color:var(--indigo)}
 .links .cart-link{display:flex;align-items:center;gap:7px}
 .cart-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--indigo);color:#fff;font-size:11px;font-weight:700;font-family:'Sora',sans-serif}
-.burger{display:none;grid-column:3;grid-row:1;justify-self:end;background:none;border:0;cursor:pointer;padding:8px}
+.burger{display:none;margin-left:auto;background:none;border:0;cursor:pointer;padding:8px}
 .burger rect{fill:var(--encre)}
 
 /* ---------- fil du parcours de commande (quiz/configurer/panier) ---------- */
@@ -178,7 +185,7 @@ h2{font-size:clamp(2.05rem,5.2vw,3.5rem)}
 .sub span{font-size:.93rem;color:var(--gris)}
 
 /* ---------- écran 4 : comprendre ---------- */
-.head-center{text-align:center;max-width:680px;margin:0 auto 60px}
+.head-center{text-align:center;max-width:680px;margin:0 auto 44px}
 .head-center p{margin:22px auto 0}
 .trio{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .card{border-radius:var(--r);padding:34px 30px;background:#fff;color:var(--encre)}
@@ -235,7 +242,7 @@ footer .regmark{top:44px;right:28px;color:var(--gris)}
 @media(max-width:940px){
   .mobileMenu{display:none}
   .mobileMenu.open{display:flex;flex-direction:column;position:absolute;top:76px;left:0;right:0;background:#fff;padding:14px 28px 26px;border-bottom:1px solid var(--ligne)}
-  .mobileMenu.open .links{flex-direction:column;gap:0;justify-self:stretch}
+  .mobileMenu.open .links{flex-direction:column;gap:0}
   .mobileMenu.open .links a{padding:12px 0;font-size:16px;border-bottom:0}
   .burger{display:block}
   .split,.trio{grid-template-columns:1fr}
