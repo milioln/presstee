@@ -419,11 +419,12 @@ export function initHero3D(): void {
 	swatches.forEach((b, n) => b.classList.toggle('on', n === 0));
 	refresh();
 
-	// Changement automatique de coloris (et donc de design) toutes les 2
-	// secondes. En pause si l'onglet est en arrière-plan (pour ne pas
-	// relancer une texture 2048² à vide) ou si le visiteur a pris la main.
+	// Changement automatique de coloris (et donc de design) toutes les 4
+	// secondes (Milio, 2026-09-15 : « passer à 4 secondes par couleur »).
+	// En pause si l'onglet est en arrière-plan (pour ne pas relancer une
+	// texture 2048² à vide) ou si le visiteur a pris la main.
 	setInterval(() => {
 		if (document.hidden || userInteracted) return;
 		setColorIndex(ic + 1);
-	}, 2000);
+	}, 4000);
 }
