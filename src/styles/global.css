@@ -1,11 +1,12 @@
 /*
   Port direct du CSS de la maquette presstee-homepage.html (V0).
-  Ne pas modifier les valeurs de design sans validation — la direction
-  artistique est figée (document de passage, section 0 et 5).
+  Couleurs de marque recalées le 2026-09-15 (Milio) sur le nouveau logo
+  ("logo presstee horizontal vf.webp") — violet et jaune plus vifs que
+  l'indigo/jaune pastel d'origine.
 */
 :root{
-  --indigo:#9d83cf;
-  --jaune:#ffd77a;
+  --indigo:#9B07FF;
+  --jaune:#FFC500;
   --encre:#17131F;
   --gris:#6C6580;
   --gris-clair:#EDEAF6;
@@ -54,14 +55,27 @@ section{padding:clamp(88px,13vw,166px) 0}
 
 /* ---------- nav ---------- */
 header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--ligne)}
-.nav{display:flex;align-items:center;gap:32px;height:76px}
-.brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
-.links{display:flex;gap:26px;margin-left:auto;align-items:center}
-.links a{text-decoration:none;font-size:14.5px;color:var(--gris);font-weight:500;padding:6px 0;border-bottom:1.5px solid transparent}
+/* Logo centré (Milio, 2026-09-15), sur ordinateur comme sur téléphone :
+   grille à 3 colonnes, les liens répartis en 2 groupes de part et
+   d'autre (linksLeft/linksRight dans .mobileMenu, cf. Header.astro)
+   plutôt qu'un simple centrage absolu qui l'aurait fait chevaucher les
+   liens dès que la fenêtre n'est pas très large. .mobileMenu est
+   display:contents sur ordinateur (linksLeft/linksRight rejoignent
+   directement la grille, le wrapper ne générant aucune boîte) et devient
+   le panneau déplié du burger sur mobile (cf. media query plus bas) : un
+   seul menu qui empile les deux groupes, plutôt que deux panneaux
+   superposés au même endroit. */
+.nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:32px;height:76px}
+.mobileMenu{display:contents}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;grid-column:2;grid-row:1;justify-self:center}
+.links{display:flex;gap:26px;align-items:center}
+.links-left{grid-column:1;grid-row:1;justify-self:start}
+.links-right{grid-column:3;grid-row:1;justify-self:end}
+.links a{text-decoration:none;font-size:14.5px;color:var(--indigo);font-weight:500;padding:6px 0;border-bottom:1.5px solid transparent}
 .links a:hover,.links a:focus-visible{color:var(--encre);border-bottom-color:var(--indigo)}
 .links .cart-link{display:flex;align-items:center;gap:7px}
 .cart-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--indigo);color:#fff;font-size:11px;font-weight:700;font-family:'Sora',sans-serif}
-.burger{display:none;margin-left:auto;background:none;border:0;cursor:pointer;padding:8px}
+.burger{display:none;grid-column:3;grid-row:1;justify-self:end;background:none;border:0;cursor:pointer;padding:8px}
 .burger rect{fill:var(--encre)}
 
 /* ---------- fil du parcours de commande (quiz/configurer/panier) ---------- */
@@ -211,9 +225,10 @@ footer .regmark{top:44px;right:28px;color:var(--gris)}
 .legal{margin-top:52px;padding-top:26px;border-top:1px solid var(--ligne);display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;font-size:13.5px;color:var(--gris)}
 
 @media(max-width:940px){
-  .links{display:none}
-  .links.open{display:flex;position:absolute;top:76px;left:0;right:0;background:#fff;flex-direction:column;gap:0;padding:14px 28px 26px;border-bottom:1px solid var(--ligne)}
-  .links.open a{padding:12px 0;font-size:16px;border-bottom:0}
+  .mobileMenu{display:none}
+  .mobileMenu.open{display:flex;flex-direction:column;position:absolute;top:76px;left:0;right:0;background:#fff;padding:14px 28px 26px;border-bottom:1px solid var(--ligne)}
+  .mobileMenu.open .links{flex-direction:column;gap:0;justify-self:stretch}
+  .mobileMenu.open .links a{padding:12px 0;font-size:16px;border-bottom:0}
   .burger{display:block}
   .split,.trio{grid-template-columns:1fr}
   .gal{columns:2}

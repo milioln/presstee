@@ -354,7 +354,7 @@ export function initHero3D(): void {
 	// Clin d'œil : essayer les deux couleurs de la marque (vérifiées dans
 	// les vrais fichiers logo, pas devinées) — le jaune et le violet
 	// utilisés partout dans /public/logo/*.svg.
-	const BRAND_HEXES = ['#ffd77a', '#9d83cf'];
+	const BRAND_HEXES = ['#FFC500', '#9B07FF'];
 	const brandColorsSeen = new Set<string>();
 	let brandEggShown = false;
 	function checkBrandColors(h: string): void {

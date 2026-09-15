@@ -51,9 +51,9 @@
 				<div class="coloris" id="heroColoris">
 					<button type="button" data-nom="Blanc" aria-label="Coloris blanc" style="background:#ffffff"></button>
 					<button type="button" data-nom="Sable" aria-label="Coloris sable" style="background:#E4D6BD"></button>
-					<button type="button" data-nom="Indigo" aria-label="Coloris indigo" style="background:#9d83cf"></button>
+					<button type="button" data-nom="Indigo" aria-label="Coloris indigo" style="background:#9B07FF"></button>
 					<button type="button" data-nom="Noir" aria-label="Coloris noir" style="background:#1B1B1F"></button>
-					<button type="button" data-nom="Jaune Presstee" aria-label="Coloris jaune Presstee" style="background:#ffd77a"></button>
+					<button type="button" data-nom="Jaune Presstee" aria-label="Coloris jaune Presstee" style="background:#FFC500"></button>
 					<button type="button" data-nom="Bleu marine" aria-label="Coloris bleu marine" style="background:#20304F"></button>
 					<button type="button" data-nom="Rouge" aria-label="Coloris rouge" style="background:#BF3B32"></button>
 					<button type="button" data-nom="Vert bouteille" aria-label="Coloris vert bouteille" style="background:#1F5A4A"></button>
@@ -133,7 +133,7 @@
 		content: '';
 		position: absolute;
 		inset: 0;
-		background: radial-gradient(420px circle at var(--cx, 70%) var(--cy, 40%), rgba(157, 131, 207, 0.1), transparent 70%);
+		background: radial-gradient(420px circle at var(--cx, 70%) var(--cy, 40%), rgba(255, 197, 0, 0.14), transparent 70%);
 		pointer-events: none;
 	}
 	@media (prefers-reduced-motion: reduce) {
@@ -236,17 +236,17 @@
 			transform 0.18s;
 	}
 	.hero-title span:hover {
-		background: #9d83cf;
+		background: #9B07FF;
 		color: #fff;
 		transform: rotate(-1.2deg);
 	}
 	.hero-title .jeu {
 		cursor: pointer;
-		text-decoration: underline dotted #ffd77a;
+		text-decoration: underline dotted #FFC500;
 		text-underline-offset: 10px;
 	}
 	.hero-title .jeu-jaune:hover {
-		background: #ffd77a;
+		background: #FFC500;
 		color: #17131f;
 	}
 
@@ -308,29 +308,29 @@
 	.mark-tl {
 		left: 22px;
 		top: 22px;
-		border-left: 1.5px solid #9d83cf;
-		border-top: 1.5px solid #9d83cf;
+		border-left: 1.5px solid #9B07FF;
+		border-top: 1.5px solid #9B07FF;
 		border-radius: 5px 0 0 0;
 	}
 	.mark-tr {
 		right: 22px;
 		top: 22px;
-		border-right: 1.5px solid #9d83cf;
-		border-top: 1.5px solid #9d83cf;
+		border-right: 1.5px solid #9B07FF;
+		border-top: 1.5px solid #9B07FF;
 		border-radius: 0 5px 0 0;
 	}
 	.mark-bl {
 		left: 22px;
 		bottom: 22px;
-		border-left: 1.5px solid #9d83cf;
-		border-bottom: 1.5px solid #9d83cf;
+		border-left: 1.5px solid #9B07FF;
+		border-bottom: 1.5px solid #9B07FF;
 		border-radius: 0 0 0 5px;
 	}
 	.mark-br {
 		right: 22px;
 		bottom: 22px;
-		border-right: 1.5px solid #9d83cf;
-		border-bottom: 1.5px solid #9d83cf;
+		border-right: 1.5px solid #9B07FF;
+		border-bottom: 1.5px solid #9B07FF;
 		border-radius: 0 0 5px 0;
 	}
 
@@ -377,11 +377,11 @@
 			transform 0.18s;
 	}
 	.fullscreen-btn:hover {
-		border-color: #9d83cf;
+		border-color: #9B07FF;
 		transform: scale(1.06);
 	}
 	.fullscreen-btn:focus-visible {
-		outline: 2px solid #9d83cf;
+		outline: 2px solid #9B07FF;
 		outline-offset: 2px;
 	}
 	/* Plein écran natif (Fullscreen API) : la vignette occupe tout l'écran,
@@ -416,7 +416,7 @@
 		border-color: #17131f;
 	}
 	.coloris button:focus-visible {
-		outline: 2px solid #9d83cf;
+		outline: 2px solid #9B07FF;
 		outline-offset: 2px;
 	}
 
@@ -448,7 +448,7 @@
 	}
 	.logo-hint:hover {
 		transform: translateY(-50%) translateX(-5px);
-		border-color: #9d83cf;
+		border-color: #9B07FF;
 		box-shadow: 0 14px 32px rgba(157, 131, 207, 0.3);
 	}
 	.logo-hint span {
@@ -460,10 +460,10 @@
 	}
 	.logo-hint-icon {
 		flex-shrink: 0;
-		color: #9d83cf;
+		color: #9B07FF;
 	}
 	.logo-hint:focus-within {
-		outline: 2px solid #9d83cf;
+		outline: 2px solid #9B07FF;
 		outline-offset: 2px;
 	}
 	.logo-hint input {

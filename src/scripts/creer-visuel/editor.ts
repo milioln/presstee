@@ -176,7 +176,7 @@ export function initEditor(): void {
 			ctx.save();
 			ctx.translate(s.x, s.y);
 			ctx.rotate((s.rot * Math.PI) / 180);
-			ctx.strokeStyle = '#9d83cf';
+			ctx.strokeStyle = '#9B07FF';
 			ctx.lineWidth = 2;
 			ctx.setLineDash([6, 5]);
 			ctx.strokeRect(-s.w / 2 - 6, -s.h / 2 - 6, s.w + 12, s.h + 12);
@@ -191,7 +191,7 @@ export function initEditor(): void {
 			ctx.lineWidth = 1.5;
 			ctx.stroke();
 			ctx.fillStyle = '#fff';
-			ctx.strokeStyle = '#9d83cf';
+			ctx.strokeStyle = '#9B07FF';
 			ctx.lineWidth = 2;
 			ctx.beginPath();
 			ctx.arc(rh.x, rh.y, 9, 0, Math.PI * 2);
@@ -443,7 +443,7 @@ export function initEditor(): void {
 
 	function addShape(shape: ShapeKind): void {
 		const p = spawnPoint();
-		const s: ShapeEl = { id: uid(), type: 'shape', x: p.x, y: p.y, w: 220, h: 220, rot: 0, shape, color: '#9d83cf' };
+		const s: ShapeEl = { id: uid(), type: 'shape', x: p.x, y: p.y, w: 220, h: 220, rot: 0, shape, color: '#9B07FF' };
 		els.push(s);
 		selectedId = s.id;
 		paint();

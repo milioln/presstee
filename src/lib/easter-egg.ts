@@ -4,7 +4,7 @@
 // éléments à chaque nouvel easter egg. Reprend le motif visuel du tout
 // premier (le clic sur le logo, Header.astro), dont le HTML/CSS reste
 // tel quel — pas la peine de le refactorer pour ça, il fonctionne déjà.
-const CONFETTI_COLORS = ['#9d83cf', '#ffd77a', '#BF3B32', '#1F5A4A', '#20304F', '#E4D6BD'];
+const CONFETTI_COLORS = ['#9B07FF', '#FFC500', '#BF3B32', '#1F5A4A', '#20304F', '#E4D6BD'];
 
 export function showEggToast(text: string, confetti = false): void {
   if (confetti) {

@@ -4,34 +4,50 @@
 
 <header>
 	<div class="wrap nav">
+		<!-- Sur ordinateur, mobileMenu est display:contents : linksLeft/
+		     linksRight rejoignent directement la grille de .nav (une colonne
+		     de chaque côté du logo centré). Sur mobile, ce même wrapper
+		     devient le panneau déplié du burger, et les deux groupes s'y
+		     empilent l'un sous l'autre comme un seul menu (cf. global.css). -->
+		<div class="mobileMenu" id="mobileMenu">
+			<nav class="links links-left" id="linksLeft">
+				<a href="/techniques">Guide</a>
+				<a href="/commencer">Commander</a>
+				<a href="/produits">Produits</a>
+			</nav>
+			<nav class="links links-right" id="linksRight">
+				<a href="/#creations">Réalisations</a>
+				<a href="/contact">Contact</a>
+				<a href="/panier" class="cart-link">Panier<span class="cart-badge" id="headerCartCount" style="display:none">0</span></a>
+				<a href="/compte/connexion" id="accountLink">Connexion</a>
+			</nav>
+		</div>
 		<a class="brand" href="/#top">
 			<img src="/logo/presstee-horizontal-header.webp" alt="Presstee" height="36" style="height:36px;width:auto" />
 		</a>
 		<button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false">
 			<svg width="24" height="16" viewBox="0 0 24 16"><rect width="24" height="2" rx="1"></rect><rect y="7" width="24" height="2" rx="1"></rect><rect y="14" width="18" height="2" rx="1"></rect></svg>
 		</button>
-		<nav class="links" id="links">
-			<a href="/techniques">Guide</a>
-			<a href="/commencer">Commander</a>
-			<a href="/produits">Produits</a>
-			<a href="/#creations">Réalisations</a>
-			<a href="/contact">Contact</a>
-			<a href="/panier" class="cart-link">Panier<span class="cart-badge" id="headerCartCount" style="display:none">0</span></a>
-			<a href="/compte/connexion" id="accountLink">Connexion</a>
-		</nav>
 	</div>
 </header>
 
 <script>
 	import { showEggToast, pulseRegmarks } from '../lib/easter-egg';
 
+	// Deux groupes de liens de part et d'autre du logo, désormais centré
+	// (Milio, 2026-09-15) — mobileMenu les rejoint dans un seul wrapper
+	// (display:contents sur ordinateur, panneau déplié du burger sur
+	// mobile, cf. global.css) : un seul toggle suffit.
 	const burger = document.getElementById('burger')!;
-	const links = document.getElementById('links')!;
+	const mobileMenu = document.getElementById('mobileMenu')!;
 	burger.addEventListener('click', () => {
-		const open = links.classList.toggle('open');
+		const open = mobileMenu.classList.toggle('open');
 		burger.setAttribute('aria-expanded', String(open));
 	});
-	links.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => links.classList.remove('open')));
+	mobileMenu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => {
+		mobileMenu.classList.remove('open');
+		burger.setAttribute('aria-expanded', 'false');
+	}));
 
 	try {
 		const raw = localStorage.getItem('presstee:personnalisateur:panier');
@@ -69,7 +85,7 @@
 		const brand = document.querySelector<HTMLAnchorElement>('.brand')!;
 		brand.addEventListener('click', (e) => {
 			e.preventDefault();
-			const colors = ['#9d83cf', '#ffd77a', '#BF3B32', '#1F5A4A', '#20304F', '#E4D6BD'];
+			const colors = ['#9B07FF', '#FFC500', '#BF3B32', '#1F5A4A', '#20304F', '#E4D6BD'];
 			const layer = document.createElement('div');
 			layer.className = 'eggLayer';
 			for (let i = 0; i < 18; i++) {
