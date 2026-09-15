@@ -39,8 +39,6 @@
 .simteaser>p{color:rgba(255,255,255,.8);margin-bottom:26px;max-width:60ch;font-size:1.02rem}
 @media(max-width:560px){.simteaser{padding:30px 24px}}
 
-/* ---------- teaser en contexte compact (page d'accueil) ---------- */
-.simteaser.simteaser-compact{margin:0;max-width:760px}
 
 /* ---------- fiche technique ---------- */
 .tdetail-hero{position:relative;aspect-ratio:21/9;background:var(--voile);overflow:hidden}

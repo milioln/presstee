@@ -51,18 +51,6 @@ section{padding:clamp(88px,13vw,166px) 0}
 .regmark.align{animation:regmarkAlign .7s cubic-bezier(.22,1,.36,1)}
 @media(prefers-reduced-motion:reduce){.regmark.align{animation:none}}
 
-/* ---------- lueur du curseur (tout le site) ---------- */
-/* Remplace le sillage d'encre (Milio, 2026-09-10 : « ça fait bloquer le
-   site ») — celui-ci créait un élément DOM à chaque mouvement de souris,
-   sur toute la page ; celui-ci se contente de déplacer un dégradé déjà
-   présent via deux variables CSS, sans jamais créer ni supprimer
-   d'élément. Un seul calque fixe, superposé en mode "multiply" : visible
-   comme une touche de lumière sur les sections claires (l'essentiel du
-   site), discret sur les sections de couleur (indigo, jaune) plutôt que
-   de les recouvrir.
-*/
-.cursorGlow{position:fixed;inset:0;pointer-events:none;z-index:9999;mix-blend-mode:multiply;background:radial-gradient(480px circle at var(--cx,50%) var(--cy,35%),rgba(157,131,207,.16),transparent 70%)}
-@media(prefers-reduced-motion:reduce){.cursorGlow{display:none}}
 
 /* ---------- nav ---------- */
 header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--ligne)}

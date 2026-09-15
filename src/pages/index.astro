@@ -5,7 +5,6 @@ import Footer from '../components/Footer.astro';
 import HeroAccueil from '../components/HeroAccueil.astro';
 import ProcessAccordion from '../components/ProcessAccordion.astro';
 import RealisationsGrid from '../components/RealisationsGrid.astro';
-import QuizTeaser from '../components/QuizTeaser.astro';
 import { siteConfig } from '../config/site';
 import { SECTEURS } from '../data/secteurs';
 import '../styles/global.css';
@@ -105,41 +104,33 @@ import '../styles/techniques.css';
 			</div>
 		</section>
 
-		<section>
-			<div class="wrap">
-				<QuizTeaser class="simteaser-compact" />
-			</div>
-		</section>
-
 		<section id="commander" class="s-indigo">
 			<div class="wrap">
 				<div class="head-center">
-					<h2>Trois façons simples de passer commande.</h2>
-					<p style="color:#EDE8FB">La personnalisation textile est un domaine technique. Nous vous invitons à nous contacter pour être conseillé, mais vous restez libre de commander comme vous le souhaitez.</p>
+					<h2>Trois façons de commander.</h2>
 				</div>
 				<div class="trio">
 					<div class="way">
 						<div class="way-top">
-							<div class="ico"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="M16 16l4.5 4.5"></path></svg></div>
+							<div class="ico"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M8 20h8M12 16v4"></path></svg></div>
 							<h3>En ligne</h3>
 						</div>
-						<p>Choisissez votre textile, ajoutez votre visuel, validez votre projet. Notre optimisateur et notre concepteur vous accompagnent en autonomie.</p>
-						<a class="go" href="/personnaliser">Ouvrir le configurateur</a>
+						<p>Catalogue, test guidé ou configurateur 3D : à vous de choisir votre point de départ.</p>
+						<a class="go" href="/commencer">Lancer le test</a>
 					</div>
 					<div class="way">
 						<div class="way-top">
-							<div class="ico"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#17131F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"></circle><path d="M12 4v4M12 16v4M4 12h4M16 12h4"></path></svg></div>
-							<h3>Via le quiz</h3>
+							<div class="ico"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#17131F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg></div>
+							<h3>Par formulaire</h3>
 						</div>
-						<p>Pas sûr de la technique qu'il vous faut ? Trois questions, une recommandation claire, puis direction le configurateur déjà pré-rempli.</p>
-						<a class="go" href="/commencer">Faire le test</a>
+						<p>Décrivez votre projet, recevez une recommandation et un devis chiffré.</p>
+						<a class="go" href="/contact">Nous contacter</a>
 					</div>
 					<div class="way">
 						<div class="way-top">
 							<div class="ico"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M4.5 5.5c0 8 6 14 14 14l2.5-3-4-2.5-2 2c-2.5-1.3-4.7-3.5-6-6l2-2L8.5 4l-3 1.5z"></path></svg></div>
 							<h3>Par téléphone ou mail</h3>
 						</div>
-						<p>Un doute sur la technique, le textile ou la quantité ? Parlons-en directement.</p>
 						<div class="coord">
 							<a href={`tel:${siteConfig.telephone.replace(/\s/g, '')}`}>{siteConfig.telephone}</a>
 							<a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>

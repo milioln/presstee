@@ -19,7 +19,7 @@
 			</h1>
 
 			<div class="hero-actions">
-				<a class="btn btn-primary" href="/commencer">Commencez votre projet</a>
+				<a class="btn btn-primary" href="/commencer">Lancez le test</a>
 				<a class="btn btn-secondary" href="/produits/t-shirts">Voir le catalogue</a>
 			</div>
 
@@ -84,8 +84,19 @@
 </section>
 
 <script>
-	// La lueur qui suit le curseur est gérée globalement par Header.astro
-	// (active sur tout le site, plus seulement ici).
+	const hero = document.getElementById('hero');
+
+	// Lueur qui suit le curseur, propre au héros (Milio, 2026-09-15 :
+	// étendue à tout le site un temps, puis revenue ici seulement — les
+	// retours étaient partagés sur le reste du site). Coûte juste deux
+	// variables CSS mises à jour, rien créé ni supprimé.
+	hero?.addEventListener('mousemove', (e) => {
+		const r = hero.getBoundingClientRect();
+		const x = (e.clientX - r.left) / r.width;
+		const y = (e.clientY - r.top) / r.height;
+		hero.style.setProperty('--cx', (x * 100).toFixed(1) + '%');
+		hero.style.setProperty('--cy', (y * 100).toFixed(1) + '%');
+	});
 
 	// Import différé (comme sur /personnaliser) : la bibliothèque
 	// @google/model-viewer (WebGL) et le modèle 3D ne bloquent plus le
@@ -117,6 +128,18 @@
 		background-image: linear-gradient(rgba(157, 131, 207, 0.22) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(157, 131, 207, 0.22) 1.5px, transparent 1.5px);
 		background-size: 44px 44px;
 		overflow: hidden;
+	}
+	.hero::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: radial-gradient(420px circle at var(--cx, 70%) var(--cy, 40%), rgba(157, 131, 207, 0.1), transparent 70%);
+		pointer-events: none;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.hero::before {
+			display: none;
+		}
 	}
 	@keyframes heroSpinBounce {
 		0% {

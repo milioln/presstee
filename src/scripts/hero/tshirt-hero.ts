@@ -67,17 +67,23 @@ const ASPEN_LOTUS: Design = {
 // mockup) mais recréée directement en 3 aplats verticaux (vert-crème-
 // vert, mêmes proportions que le mockup) — plus fiable que d'essayer de
 // détourer un vert à peine différent du t-shirt lui-même.
+// V2 (Milio, 2026-09-15 : « ça remplace entièrement ce qui est déjà en
+// place, c'était bugué ») — chaque élément extrait de la planche fournie
+// (roundel Lotus + F.LASAIRES et GSR/ASPEN sur la face, LOTUS ELAN 2+2 et
+// Green Spirit Racing/ASPEN au dos, chiffres "9"/"2" séparés). Positions
+// posées au jugé à partir des proportions de la planche d'origine, à
+// ajuster une fois vues sur le vrai modèle 3D.
 const GREEN_ASPEN: Design = {
 	elements: [
 		{ url: '/hero-designs/aspen-lotus-green/bande.png', place: 'face', xFrac: 0.5, yFrac: 0.5, wFrac: 0.24 },
-		{ url: '/hero-designs/aspen-lotus-green/numero-lasaires.png', place: 'face', xFrac: 0.203, yFrac: 0.88, wFrac: 0.256 },
-		{ url: '/hero-designs/aspen-lotus-green/brand-lockup.png', place: 'face', xFrac: 0.79, yFrac: 0.874, wFrac: 0.269 },
+		{ url: '/hero-designs/aspen-lotus-green/roundel-lasaires.png', place: 'face', xFrac: 0.5, yFrac: 0.76, wFrac: 0.3 },
+		{ url: '/hero-designs/aspen-lotus-green/gsr-aspen.png', place: 'face', xFrac: 0.82, yFrac: 0.78, wFrac: 0.32 },
+		{ url: '/hero-designs/aspen-lotus-green/chiffre-9.png', place: 'face', xFrac: 0.1, yFrac: 0.78, wFrac: 0.14 },
+		{ url: '/hero-designs/aspen-lotus-green/chiffre-2.png', place: 'face', xFrac: 0.95, yFrac: 0.78, wFrac: 0.14 },
 		{ url: '/hero-designs/aspen-lotus-green/bande.png', place: 'dos', xFrac: 0.5, yFrac: 0.5, wFrac: 0.24 },
-		// "2" et "9" séparés (plutôt qu'une seule image "29" collée à la
-		// bande) pour pouvoir aligner chaque chiffre sur la bande centrale
-		// avec un vrai espace entre les deux, comme demandé par Milio.
-		{ url: '/hero-designs/aspen-lotus-green/dos-2.png', place: 'dos', xFrac: 0.21, yFrac: 0.611, wFrac: 0.3 },
-		{ url: '/hero-designs/aspen-lotus-green/dos-9.png', place: 'dos', xFrac: 0.79, yFrac: 0.611, wFrac: 0.3 },
+		{ url: '/hero-designs/aspen-lotus-green/lotus-elan.png', place: 'dos', xFrac: 0.5, yFrac: 0.72, wFrac: 0.8 },
+		{ url: '/hero-designs/aspen-lotus-green/green-spirit-aspen.png', place: 'dos', xFrac: 0.5, yFrac: 0.32, wFrac: 0.45 },
+		{ url: '/hero-designs/aspen-lotus-green/chiffre-2.png', place: 'dos', xFrac: 0.87, yFrac: 0.5, wFrac: 0.14 },
 		{ url: '/hero-designs/aspen-lotus-green/manche-aspen.png', place: 'manche-droite', xFrac: 0.5, yFrac: 0.5, wFrac: 0.55 },
 		{ url: '/hero-designs/aspen-lotus-green/manche-presstee.png', place: 'manche-gauche', xFrac: 0.5, yFrac: 0.5, wFrac: 0.55 },
 	],
