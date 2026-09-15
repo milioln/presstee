@@ -23,6 +23,20 @@ const { s } = Astro.props as { s: (typeof SECTEURS)[number] };
 const autres = SECTEURS.filter((x) => x.slug !== s.slug);
 const technique = getTechnique(s.techniqueSlug)!;
 
+// Une photo par secteur (Milio, 2026-09-16 : « t'as mis une bonne image
+// pour les associations, fais pareil pour les autres ») — chacune choisie
+// pour son secteur (libre de droits, sans marque tierce identifiable),
+// pas une seule image générique réutilisée partout. Fichiers nommés
+// `{slug}-hero(.webp|-mobile.webp)` dans public/secteurs/.
+const HERO_ALT: Record<string, string> = {
+	associations: 'Association sportive amateur en tenue personnalisée, vue de loin sur le terrain.',
+	'bde-ecoles': 'Étudiants fêtant leur remise de diplômes, en t-shirts personnalisés.',
+	'bars-restaurants': 'Équipe de restaurant en tabliers et t-shirts personnalisés au nom de l’établissement.',
+	evenements: 'Foule enthousiaste, bras levés, lors d’un concert.',
+	commerces: 'Vitrine d’une boutique de vêtements, mannequins habillés en devanture.',
+	'marques-de-vetements': 'Sweats à capuche floqués du logo d’une marque, alignés sur un portant.',
+};
+
 const serviceLd = {
 	'@context': 'https://schema.org',
 	'@type': 'Service',
@@ -66,8 +80,8 @@ const breadcrumbLd = {
 
 				<div class="secteur-photo">
 					<picture>
-						<source media="(max-width: 700px)" srcset="/secteurs/sport-association-loin-mobile.webp" />
-						<img src="/secteurs/sport-association-loin.webp" alt="Association sportive amateur en tenue personnalisée, vue de loin sur le terrain." loading="lazy" />
+						<source media="(max-width: 700px)" srcset={`/secteurs/${s.slug}-hero-mobile.webp`} />
+						<img src={`/secteurs/${s.slug}-hero.webp`} alt={HERO_ALT[s.slug] ?? ''} loading="lazy" />
 					</picture>
 				</div>
 			</div>
