@@ -30,6 +30,40 @@
 .tcard h3{font-size:1.1rem;margin-bottom:8px}
 .tcard p{color:var(--gris);font-size:.92rem;margin:0}
 
+/* ---------- hub : cases "par activité" ---------- */
+/* Pas de pictogramme par secteur (déjà tenté deux fois — cœur, chapeau,
+   puis des icônes plus littérales — jamais vraiment convaincant, "ça fait
+   IA"). On reprend plutôt deux clins d'œil déjà propres à Presstee :
+   le tampon incliné à initiales façon steps-list (.n) et le repère de
+   calage .regmark (déjà utilisé pour la chaîne de valeur de l'accueil
+   précisément pour éviter "un numéro ou une icône générique") en accent
+   posé dessus, comme un coin de tampon encreur. */
+.techsect-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:26px}
+.techsect-card{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;background:#fff;border:1.5px solid var(--ligne);border-radius:18px;padding:26px 12px 22px;text-decoration:none;color:var(--encre);font-size:13.5px;font-weight:600;transition:border-color .15s,transform .15s}
+.techsect-card:hover{border-color:var(--indigo);transform:translateY(-3px)}
+.techsect-stamp{position:relative;width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;transition:transform .2s}
+.techsect-card:hover .techsect-stamp{transform:rotate(0deg) scale(1.08)}
+.techsect-stamp-mono{font-family:'Sora',sans-serif;font-weight:700;font-size:15px;letter-spacing:.02em}
+.techsect-stamp-mark{position:absolute;top:-7px;right:-7px;width:17px;height:17px;background:#fff;opacity:1;border-radius:50%;box-shadow:0 1px 3px rgba(23,19,31,.18)}
+.techsect-card:nth-child(4n+1) .techsect-stamp{background:var(--indigo);transform:rotate(-6deg)}
+.techsect-card:nth-child(4n+1) .techsect-stamp-mono{color:#fff}
+.techsect-card:nth-child(4n+1) .techsect-stamp-mark{color:var(--indigo)}
+.techsect-card:nth-child(4n+2) .techsect-stamp{background:var(--jaune);transform:rotate(4deg)}
+.techsect-card:nth-child(4n+2) .techsect-stamp-mono{color:var(--encre)}
+.techsect-card:nth-child(4n+2) .techsect-stamp-mark{color:var(--jaune)}
+.techsect-card:nth-child(4n+3) .techsect-stamp{background:#fff;border:2px solid var(--indigo);transform:rotate(-3deg)}
+.techsect-card:nth-child(4n+3) .techsect-stamp-mono{color:var(--indigo)}
+.techsect-card:nth-child(4n+3) .techsect-stamp-mark{color:var(--indigo)}
+.techsect-card:nth-child(4n+4) .techsect-stamp{background:var(--encre);transform:rotate(5deg)}
+.techsect-card:nth-child(4n+4) .techsect-stamp-mono{color:var(--jaune)}
+.techsect-card:nth-child(4n+4) .techsect-stamp-mark{color:var(--encre)}
+@media(max-width:700px){
+  .techsect-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(prefers-reduced-motion:reduce){
+  .techsect-card,.techsect-stamp{transition:none}
+}
+
 /* ---------- teaser quiz (renvoie vers /commencer) ---------- */
 .tech-hero .btn{margin-top:26px}
 .simteaser{position:relative;overflow:hidden;scroll-margin-top:96px;background-color:var(--indigo);background-image:radial-gradient(circle,rgba(255,255,255,.13) 1.2px,transparent 1.6px);background-size:16px 16px;border-radius:28px;padding:44px 40px;margin:36px 0 60px;color:#fff;box-shadow:0 24px 56px rgba(75,58,120,.32)}

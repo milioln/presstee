@@ -269,7 +269,7 @@ function bindResetView(): void {
   el('vReset').addEventListener('click', () => {
     const mv = el<any>('stage');
     mv.fieldOfView = 'auto';
-    syncCamera();
+    syncCamera(true);
   });
 }
 
@@ -277,40 +277,26 @@ function bindResetView(): void {
 // rejoignent) — le bouton change d'icône selon l'état plutôt que de
 // garder la même en permanence, pour qu'un bouton "quitter le plein
 // écran" soit vraiment visible une fois dedans (Milio, 2026-09).
-const ICON_EXPAND = '<path d="M8 3H5a2 2 0 0 0-2 2v3" /><path d="M16 3h3a2 2 0 0 1 2 2v3" /><path d="M8 21H5a2 2 0 0 1-2-2v-3" /><path d="M16 21h3a2 2 0 0 0 2-2v-3" />';
 const ICON_COMPRESS = '<path d="M9 3v3a2 2 0 0 1-2 2H4" /><path d="M15 3v3a2 2 0 0 0 2 2h3" /><path d="M9 21v-3a2 2 0 0 0-2-2H4" /><path d="M15 21v-3a2 2 0 0 1 2-2h3" />';
 function svgIcon(inner: string): string {
   return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
 }
 
-// Deux plein écrans distincts (demande Milio) : #fullscreenBtn couvre
-// l'outil complet (#configBoard — composition, modèle 3D, technique/
-// livraison), pour vraiment travailler le projet sans rien perdre des
-// contrôles ; #fullscreenModelBtn ne couvre que le visualiseur (#frame),
-// pour simplement examiner le rendu de près. La Fullscreen API n'accepte
-// qu'un seul élément en plein écran à la fois : cliquer l'un pendant que
-// l'autre est actif bascule directement de l'un à l'autre.
+// Un seul plein écran désormais (Milio, 2026-09-15 : celui qui couvrait
+// tout l'outil — #configBoard — n'apportait rien de plus que la page
+// normale et perdait le t-shirt au milieu des panneaux) : #fullscreenModelBtn
+// ne couvre que le visualiseur (#frame), pour examiner le rendu de près.
 function bindFullscreen(): void {
-  const board = el('configBoard');
   const frame = el('frame');
-  const btn = el('fullscreenBtn');
   const modelBtn = el('fullscreenModelBtn');
-  btn.addEventListener('click', () => {
-    if (document.fullscreenElement === board) document.exitFullscreen();
-    else board.requestFullscreen();
-  });
   modelBtn.addEventListener('click', () => {
     if (document.fullscreenElement === frame) document.exitFullscreen();
     else frame.requestFullscreen();
   });
   document.addEventListener('fullscreenchange', () => {
-    const boardActive = document.fullscreenElement === board;
     const frameActive = document.fullscreenElement === frame;
-    board.classList.toggle('is-fullscreen', boardActive);
     frame.classList.toggle('is-fullscreen', frameActive);
-    btn.setAttribute('aria-label', boardActive ? 'Quitter le plein écran' : 'Afficher l’outil en plein écran');
     modelBtn.setAttribute('aria-label', frameActive ? 'Quitter le plein écran' : 'Afficher le modèle 3D seul en plein écran');
-    btn.innerHTML = svgIcon(boardActive ? ICON_COMPRESS : ICON_EXPAND);
     modelBtn.innerHTML = svgIcon(frameActive ? ICON_COMPRESS : '<rect x="4" y="4" width="16" height="16" rx="2" /><rect x="9" y="9" width="6" height="6" rx="1" />');
   });
 }

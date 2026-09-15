@@ -44,11 +44,17 @@ import '../../styles/techniques.css';
 			<div class="head-center" style="margin-top:60px">
 				<h2>Des conseils selon votre activité</h2>
 				<p>Association, entreprise, restaurant, boulangerie, club sportif... chaque secteur a ses contraintes et ses habitudes de commande.</p>
-				<div class="chips" style="justify-content:center">
-					{SECTEURS.map((s) => (
-						<a class="chip" href={`/secteurs/${s.slug}`}>{s.nom}</a>
-					))}
-				</div>
+			</div>
+			<div class="techsect-grid">
+				{SECTEURS.map((s) => (
+					<a class="techsect-card" href={`/secteurs/${s.slug}`}>
+						<span class="techsect-stamp" aria-hidden="true">
+							<span class="techsect-stamp-mono">{s.nom.slice(0, 2).toUpperCase()}</span>
+							<span class="regmark techsect-stamp-mark"></span>
+						</span>
+						<span class="techsect-name">{s.nom}</span>
+					</a>
+				))}
 			</div>
 
 			<div class="tcompare">

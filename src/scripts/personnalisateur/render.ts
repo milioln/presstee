@@ -134,10 +134,23 @@ async function applyTexture(): Promise<void> {
   }
 }
 
-export function syncCamera(): void {
+// render() est appelé très souvent (glisser un calque, ajuster sa
+// taille/rotation, changer de coloris ou de technique...), pas
+// seulement quand on bascule face/dos. Réassigner cameraOrbit à chaque
+// fois écrasait le zoom/l'angle que le visiteur venait de régler à la
+// main, donnant l'impression que le t-shirt "décentrait" tout seul au
+// moindre clic (Milio, 2026-09-15). On ne recadre donc la caméra que
+// lorsque la face affichée change réellement ; force=true (bouton
+// "réinitialiser la vue") l'impose malgré tout.
+let lastSyncedPlace: 'face' | 'dos' | null = null;
+
+export function syncCamera(force = false): void {
   const mv = stage();
   if (!mv) return;
-  mv.cameraOrbit = place() === 'dos' ? '180deg 85deg 105%' : '0deg 85deg 105%';
+  const target = place() === 'dos' ? 'dos' : 'face';
+  if (!force && target === lastSyncedPlace) return;
+  lastSyncedPlace = target;
+  mv.cameraOrbit = target === 'dos' ? '180deg 85deg 105%' : '0deg 85deg 105%';
 }
 
 export function render(): void {

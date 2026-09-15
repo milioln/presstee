@@ -380,10 +380,10 @@ export function initHero3D(): void {
 		refresh();
 	}
 
-	// Le survol déclenche le même aperçu ludique que le clic (sans arrêter
-	// la démo automatique : un simple passage de souris en lisant le texte
-	// ne doit pas geler la vitrine) — seul un clic explicite compte comme
-	// une vraie interaction.
+	// Seul un clic explicite déclenche l'aperçu ludique (couleur/placement/
+	// spin) : au survol, le texte se surligne (CSS pur) mais le t-shirt 3D
+	// ne bouge plus — ça perturbait trop les visiteurs qui lisaient juste
+	// le texte (retour Milio du 2026-09-15).
 	document.querySelectorAll<HTMLElement>('[data-jeu]').forEach((el) => {
 		const type = el.dataset.jeu;
 		const jouer = () => {
@@ -391,7 +391,6 @@ export function initHero3D(): void {
 			else if (type === 'placement') setLogoIndex(il + 1);
 			else spin();
 		};
-		el.addEventListener('mouseenter', jouer);
 		el.addEventListener('click', () => {
 			jouer();
 			markInteracted();
