@@ -164,6 +164,11 @@ header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.55);backdro
 /* ---------- écran 2 : positionnement ---------- */
 .split{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(40px,7vw,92px);align-items:center}
 h2{font-size:clamp(2.05rem,5.2vw,3.5rem)}
+/* Petit bonhomme-bâton à côté du titre, clin d'œil littéral à "à taille
+   humaine" (Milio, 2026-09-16) — sur mobile comme sur ordinateur, donc
+   pas d'absolute positioning qui dépendrait de la largeur du texte. */
+.humanScale{display:flex;align-items:flex-end;gap:18px}
+.humanScale-figure{flex-shrink:0;width:clamp(34px,4vw,46px);height:auto;margin-bottom:6px}
 .lede{margin-top:26px;font-size:1.08rem}
 .lede + .lede{margin-top:10px}
 /* Les 4 points ne sont pas des avantages génériques : c'est la chaîne de
@@ -264,13 +269,15 @@ footer .regmark{top:44px;right:28px;color:var(--gris)}
 
 @media(max-width:940px){
   .mobileMenu{display:none}
-  /* Transparent/vitré comme le header (Milio, 2026-09-15), et
-     .links-left/.links-right recentrés sur toute la largeur du panneau :
-     .links-right gardait son margin-left:auto de la mise en page
-     ordinateur, qui le rétrécissait à son propre contenu et décalait ses
-     liens vers la droite plutôt que de les aligner avec ceux de
-     .links-left. */
-  .mobileMenu.open{display:flex;flex-direction:column;position:absolute;top:76px;left:0;right:0;background:rgba(255,255,255,.7);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding:14px 28px 26px;border-bottom:1px solid var(--ligne)}
+  /* Vitré comme le header (Milio, 2026-09-15), mais un peu plus opaque
+     (Milio, 2026-09-16 : « un peu trop transparent, il faudrait que ça
+     se voit un peu plus ») — .7 laissait trop deviner le contenu de la
+     page derrière une fois ouvert. .links-left/.links-right recentrés
+     sur toute la largeur du panneau : .links-right gardait son
+     margin-left:auto de la mise en page ordinateur, qui le rétrécissait
+     à son propre contenu et décalait ses liens vers la droite plutôt
+     que de les aligner avec ceux de .links-left. */
+  .mobileMenu.open{display:flex;flex-direction:column;position:absolute;top:76px;left:0;right:0;background:rgba(255,255,255,.94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding:14px 28px 26px;border-bottom:1px solid var(--ligne);box-shadow:0 16px 32px rgba(23,19,31,.12)}
   .mobileMenu.open .links{flex-direction:column;gap:0;width:100%;margin-left:0}
   .mobileMenu.open .links a{padding:12px 0;font-size:16px;border-bottom:0}
   .mobileMenu.open .account-link{justify-content:center}

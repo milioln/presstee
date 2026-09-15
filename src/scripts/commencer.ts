@@ -362,7 +362,7 @@ function screenQuantite(): string {
     <div class="qzField">
       <span class="qzLabel">Votre visuel <span class="qzOptional">par emplacement choisi, facultatif</span></span>
       <div class="qzVisuelList">${[...state.places].map((p) => visuelRowHtml(p)).join('')}</div>
-      <p class="qzHint" style="margin:8px 0 0">${hasVisuels ? 'Chaque visuel importé demande son propre nombre de couleurs, juste au-dessus de son emplacement.' : "Pas encore de fichier ? Pas de souci, notre équipe vous accompagne pour le créer — ça ne bloque pas votre commande."}</p>
+      <p class="qzHint" style="margin:8px 0 0">${hasVisuels ? 'Chaque visuel importé demande son propre nombre de couleurs, juste au-dessus de son emplacement.' : 'Pas encore de fichier ? Pas de souci, nous vous accompagnons pour le créer — ça ne bloque pas votre commande.'}</p>
     </div>
   </div>`;
 }

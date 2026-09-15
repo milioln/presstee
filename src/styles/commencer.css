@@ -141,4 +141,9 @@
 @media(max-width:640px){
   .qzCard{padding:20px;border-radius:16px}
   .qzResultCard{padding:14px 16px}
+  /* "Voir ma recommandation" déborde de son bouton à côté de "Précédent"
+     sur téléphone, les deux se partageant la largeur à parts égales
+     (Milio, 2026-09-16). Empilés en pleine largeur, le texte le plus
+     long tient sans réduire la police. */
+  .qzNav{flex-direction:column}
 }
