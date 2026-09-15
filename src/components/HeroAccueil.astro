@@ -266,6 +266,16 @@
 		text-decoration-thickness: 1.5px;
 		text-underline-offset: 10px;
 	}
+	/* "3 clics." porte déjà son fond jaune par défaut, pas seulement au
+	   survol (Milio, 2026-09-15 : « que le 3 clics soit déjà encadré par
+	   ce jaune en arrière-plan ») — sans le soulignement partagé par les
+	   autres mots-jeu, qui ne s'applique pas ici (« enlève le soulignement
+	   violet de trois clics »). */
+	.hero-title .jeu-jaune {
+		background: #FFC500;
+		color: #17131f;
+		text-decoration: none;
+	}
 	.hero-title .jeu-jaune:hover {
 		background: #FFC500;
 		color: #17131f;
@@ -341,21 +351,19 @@
 		/* <model-viewer> se comporte comme un élément remplacé (cf. <img>,
 		   <video>) : position:absolute + inset seuls ne l'étirent pas, il
 		   retombe sur sa taille par défaut de 300×150px. width/height
-		   explicites forcent l'étirement. Marges resserrées au plus près
-		   de ce qu'elles doivent vraiment dégager (Milio, 2026-09-15 : « il
-		   y a de l'espace en bas jusqu'à la palette et en haut jusqu'à
-		   atelier ») — 62px en haut pour dégager le bouton plein écran
-		   (top:22px, 38px de haut), 58px en bas pour dégager la barre de
-		   coloris, au lieu de 70/78px choisis avec une marge trop large.
-		   Le t-shirt dispose ainsi d'une zone plus grande, moins souvent
-		   coupé au bord en tournant. */
+		   explicites forcent l'étirement. Insets réduits de 22px (Milio,
+		   2026-09-15, capture annotée : « le héros n'est pas aligné » —
+		   les repères de coin et la barre de coloris démarraient 22px à
+		   l'intérieur de la colonne alors que le texte, lui, touche ses
+		   deux bords) pour suivre le bouton plein écran et la barre de
+		   coloris, désormais posés à même le bord. */
 		position: absolute;
 		left: 0;
 		right: 0;
-		top: 62px;
-		bottom: 58px;
+		top: 40px;
+		bottom: 36px;
 		width: 100%;
-		height: calc(100% - 120px);
+		height: calc(100% - 76px);
 	}
 
 	.mark {
@@ -365,28 +373,28 @@
 	}
 	.mark-tl {
 		left: 22px;
-		top: 22px;
+		top: 0;
 		border-left: 1.5px solid #9B07FF;
 		border-top: 1.5px solid #9B07FF;
 		border-radius: 5px 0 0 0;
 	}
 	.mark-tr {
 		right: 22px;
-		top: 22px;
+		top: 0;
 		border-right: 1.5px solid #9B07FF;
 		border-top: 1.5px solid #9B07FF;
 		border-radius: 0 5px 0 0;
 	}
 	.mark-bl {
 		left: 22px;
-		bottom: 22px;
+		bottom: 0;
 		border-left: 1.5px solid #9B07FF;
 		border-bottom: 1.5px solid #9B07FF;
 		border-radius: 0 0 0 5px;
 	}
 	.mark-br {
 		right: 22px;
-		bottom: 22px;
+		bottom: 0;
 		border-right: 1.5px solid #9B07FF;
 		border-bottom: 1.5px solid #9B07FF;
 		border-radius: 0 0 5px 0;
@@ -396,7 +404,7 @@
 		position: absolute;
 		left: 8%;
 		right: 8%;
-		bottom: 74px;
+		bottom: 52px;
 		height: 26px;
 		border-radius: 999px;
 		background: radial-gradient(50% 50%, rgba(23, 19, 31, 0.16), transparent 72%);
@@ -407,7 +415,7 @@
 		position: absolute;
 		left: 22px;
 		right: 22px;
-		bottom: 22px;
+		bottom: 0;
 		display: flex;
 		align-items: center;
 		gap: 14px;
@@ -416,7 +424,7 @@
 
 	.fullscreen-btn {
 		position: absolute;
-		top: 22px;
+		top: 0;
 		right: 22px;
 		z-index: 2;
 		width: 38px;

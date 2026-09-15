@@ -43,6 +43,11 @@
 /* "Des conseils selon votre activité" — même alignement à gauche que le
    hero de la page (cf. .likeH1 plus haut). */
 .techIntro p{color:var(--gris);margin-top:14px;max-width:64ch;font-size:1.02rem}
+/* Même petit trait de séparation que .tech-hero, sous le sous-texte,
+   avant la grille des cases (Milio, 2026-09-15 : « rajoute le petit
+   trait que tu as mis en dessous du sous-texte qui sépare des
+   images »). */
+.techIntro{padding-bottom:40px;border-bottom:1px solid var(--ligne)}
 
 /* ---------- hub : cartes techniques + cases "par activité" ---------- */
 /* Les deux grilles (techniques et secteurs) partagent maintenant la même
