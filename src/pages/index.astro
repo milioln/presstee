@@ -181,7 +181,14 @@ import '../styles/techniques.css';
 		}
 		function goTo(i: number): void {
 			setActive(i);
-			cards[index].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+			// scrollIntoView() a été essayé ici, mais même avec block:'nearest'
+			// il peut aussi faire défiler la PAGE verticalement pour amener la
+			// carte dans le viewport si la section n'y est pas déjà (bug
+			// signalé par Milio, 2026-09-15 : la page sautait toute seule
+			// jusqu'à cette section peu après le chargement). track.scrollTo()
+			// ne touche que le défilement horizontal du rail lui-même.
+			const card = cards[index];
+			track.scrollTo({ left: card.offsetLeft - (track.clientWidth - card.clientWidth) / 2, behavior: 'smooth' });
 		}
 		function stop(): void {
 			if (timer != null) {

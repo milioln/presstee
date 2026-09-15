@@ -10,18 +10,10 @@
 	<div class="hero-inner">
 		<div class="hero-copy">
 			<h1 class="hero-title">
-				<span class="hero-title-line">
-					<span>Obtenez</span>
-					<span>vos</span>
-				</span>
-				<span class="hero-title-line">
-					<span class="jeu" data-jeu="couleur">textiles</span>
-					<span class="jeu" data-jeu="placement">personnalisés</span>
-				</span>
-				<span class="hero-title-line">
-					<span>en</span>
-					<span class="jeu jeu-jaune" data-jeu="spin">3 clics.</span>
-				</span>
+				<span class="jeu" data-jeu="couleur">Textile</span>
+				<span class="jeu" data-jeu="placement">personnalisé</span>
+				<span>en</span>
+				<span class="jeu jeu-jaune" data-jeu="spin">3 clics.</span>
 			</h1>
 
 			<div class="hero-actions">
@@ -233,13 +225,6 @@
 		flex-wrap: wrap;
 		gap: 0 0.26em;
 		color: var(--jaune);
-	}
-	/* Regroupements de mots par ligne, utilisés seulement sur mobile pour
-	   forcer 3 lignes précises (cf. media query plus bas) — display:contents
-	   les rend invisibles ici : leurs mots rejoignent directement le flex
-	   de .hero-title, comme si ces spans n'existaient pas. */
-	.hero-title-line {
-		display: contents;
 	}
 	.hero-title span {
 		border-radius: 10px;
@@ -552,44 +537,19 @@
 			white-space: nowrap;
 			pointer-events: none;
 		}
-		/* Titre du hero en 3 lignes fixes et justifiées (Milio, 2026-09-15,
-		   précisé après un premier essai en simple text-align:justify qui
-		   ne tenait pas compte des vrais regroupements voulus) :
-		   "Obtenez vos" / "textiles personnalisés" / "en 3 clics.", quelle
-		   que soit la largeur — plus fiable qu'un retour à la ligne naturel
-		   qui dépend de la largeur de l'écran. Chaque .hero-title-line est
-		   un mini flex en space-between : les deux mots de la ligne sont
-		   poussés chacun vers un bord, ce qui donne le même effet visuel
-		   qu'un texte justifié même sur une ligne de 2 mots courts (là où
-		   text-align:justify n'a pas vraiment de prise). Sur ordinateur,
-		   .hero-title-line reste display:contents (cf. règle de base) : ces
-		   groupes n'existent pas visuellement, le flex-wrap d'origine reste
-		   inchangé. */
+		/* Titre du hero raccourci et centré (Milio, 2026-09-15) : après un
+		   essai en 3 lignes forcées justifiées ("Obtenez vos" / "textiles
+		   personnalisés" / "en 3 clics.") jugé peu réussi une fois en ligne
+		   — trop d'éléments étirés bord à bord d'affilée, texte/H1 +
+		   boutons —, texte raccourci ("Textile personnalisé en 3 clics.",
+		   sans perdre le sens ni les mots interactifs) et retour à un
+		   simple retour à la ligne naturel, centré. */
 		.hero-copy {
 			text-align: center;
 		}
 		.hero-title {
-			flex-direction: column;
-			flex-wrap: nowrap;
-			gap: 0.06em 0;
-			/* 19ch (pensé pour l'agencement libre d'origine) coupait
-			   "personnalisés" sur sa propre ligne — chaque ligne fixe a
-			   besoin de toute la largeur disponible pour se justifier. */
+			justify-content: center;
 			max-width: none;
-			/* Le clamp d'origine (2.7rem mini) débordait largement sur
-			   "textiles personnalisés" — la ligne la plus longue des 3 —
-			   dès qu'on force exactement 3 lignes plutôt qu'un retour à la
-			   ligne libre. Recalibré pour que cette ligne tienne sur toute
-			   la plage mobile (jusqu'à 900px). */
-			font-size: clamp(1.3rem, 6.4vw, 2.1rem);
-		}
-		.hero-title-line {
-			display: flex;
-			justify-content: space-between;
-			width: 100%;
-			padding: 0;
-			border-radius: 0;
-			background: none;
 		}
 		.hero-actions {
 			justify-content: center;
