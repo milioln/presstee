@@ -4,6 +4,7 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import QuizTeaser from '../../components/QuizTeaser.astro';
 import { TECHNIQUES } from '../../lib/techniques-data';
+import { SECTEURS } from '../../data/secteurs';
 import '../../styles/global.css';
 import '../../styles/techniques.css';
 ---
@@ -77,6 +78,16 @@ import '../../styles/techniques.css';
 						</tr>
 					</tbody>
 				</table>
+			</div>
+
+			<div class="head-center" style="margin-top:70px">
+				<h2>Des conseils selon votre activité</h2>
+				<p>Association, entreprise, restaurant, boulangerie, club sportif... chaque secteur a ses contraintes et ses habitudes de commande.</p>
+				<div class="chips" style="justify-content:center">
+					{SECTEURS.map((s) => (
+						<a class="chip" href={`/secteurs/${s.slug}`}>{s.nom}</a>
+					))}
+				</div>
 			</div>
 
 			<QuizTeaser />

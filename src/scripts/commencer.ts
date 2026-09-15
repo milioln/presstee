@@ -9,7 +9,6 @@
 import { reco, TECHS, type TechKey } from './personnalisateur/recommendation';
 import { seedFromItem } from './personnalisateur/state';
 import { emplacementsValides } from './personnalisateur/garments';
-import { getProfil, setProfil, type ProfilClient } from '../lib/profil-client';
 import { catalogueColoris, coutBaseSupportUnique, getZoneImpressionCm, repartitionTaillesParDefaut, TAILLES, PLACE_LABEL, type Garment, type Emplacement, type TailleCode } from '../config/parametres-metier';
 import { LABELS_COUPE, LABELS_GENRE } from '../lib/produits-types';
 import { grilleTarifaire, prixVente } from '../config/tarification';
@@ -46,7 +45,6 @@ interface ColorLot {
 }
 
 interface QuizState {
-  profil: ProfilClient | null;
   garment: Garment;
   coupe: string | null;
   genre: string | null;
@@ -127,7 +125,7 @@ function effectiveColors(p: QuizState): number | null {
   return visuels.reduce((s, v) => s + (v.colors ?? 1), 0);
 }
 
-function nouveauProduit(): Omit<QuizState, 'profil'> {
+function nouveauProduit(): QuizState {
   return {
     garment: 'tshirt',
     coupe: null,
@@ -178,14 +176,14 @@ function toggleColor(hex: string): void {
   }
 }
 
-const state: QuizState = { profil: null, ...nouveauProduit() };
+const state: QuizState = nouveauProduit();
 // Produits déjà validés dans cette session de quiz, en plus de celui en
 // cours d'édition dans `state` — permet d'ajouter plusieurs produits sans
 // repartir de zéro ni ouvrir un second outil.
 const produits: QuizState[] = [];
 
-type Screen = 'profil' | 'projet' | 'quantite' | 'resultat';
-let order: Screen[] = ['profil', 'projet', 'quantite', 'resultat'];
+type Screen = 'projet' | 'quantite' | 'resultat';
+const order: Screen[] = ['projet', 'quantite', 'resultat'];
 let current = 0;
 // Zone vers laquelle faire pivoter le modèle 3D au prochain render() —
 // posé à chaque clic sur une pastille d'emplacement (ajout ou retrait) :
@@ -275,17 +273,6 @@ function calcProduit(p: QuizState): ProduitCalcule {
   const prixUnitaire = Math.round(prixVente(coutBase, palier.marge) * 100) / 100;
   const prixTotal = Math.round(prixUnitaire * qty * 100) / 100;
   return { techKey: r.k, why: r.why, candidats, ref, prixUnitaire, prixTotal, qty };
-}
-
-function screenProfil(): string {
-  return `<div class="qzStep">
-    <h2>Vous êtes…</h2>
-    <p class="qzHint">Pour mieux vous accompagner — ce choix ne vous prive de rien : vous gardez accès à tous les outils du site, quelle que soit votre réponse.</p>
-    <div class="qzChoices qzChoices-big">
-      <button type="button" class="qzBig" data-action="set-profil" data-value="particulier"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"></path></svg></span>Un particulier</button>
-      <button type="button" class="qzBig" data-action="set-profil" data-value="entreprise"><span><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"></rect><path d="M9 21v-4h6v4"></path><path d="M8 7h1M8 11h1M15 7h1M15 11h1"></path></svg></span>Une structure</button>
-    </div>
-  </div>`;
 }
 
 function screenProjet(): string {
@@ -502,18 +489,14 @@ function briefVisuels(): { fileName: string; dataUrl: string }[] {
 function render(): void {
   const screen = order[current];
   const screenHtml =
-    screen === 'profil' ? screenProfil() :
     screen === 'projet' ? screenProjet() :
     screen === 'quantite' ? screenQuantite() :
     screenResultat();
-  // Le rappel des produits déjà ajoutés n'a pas sa place sur l'écran
-  // profil (avant même d'avoir commencé un produit).
-  el('qzScreen').innerHTML = (screen === 'profil' ? '' : dejaAjoutesHtml()) + screenHtml;
+  el('qzScreen').innerHTML = dejaAjoutesHtml() + screenHtml;
 
   const dots = el('qzProgress');
   const visibleSteps: Screen[] = ['projet', 'quantite', 'resultat'];
   dots.innerHTML = visibleSteps.map((s) => `<span class="qzDot${order[current] === s ? ' on' : ''}${visibleSteps.indexOf(order[current] as Screen) > visibleSteps.indexOf(s) ? ' done' : ''}"></span>`).join('');
-  dots.style.display = screen === 'profil' ? 'none' : 'flex';
 
   el('qzNav').style.display = screen === 'projet' || screen === 'quantite' ? 'flex' : 'none';
   el<HTMLButtonElement>('qzPrev').disabled = current === 0;
@@ -588,14 +571,6 @@ function goTo(delta: number): void {
 }
 
 export function initCommencer(): void {
-  // Le profil est sauté d'emblée s'il est déjà connu (venant de l'accueil
-  // ou d'une visite précédente) — pas la peine de reposer la question.
-  const knownProfil = getProfil();
-  if (knownProfil) {
-    state.profil = knownProfil;
-    order = order.filter((s) => s !== 'profil');
-  }
-
   void initQuiz3d((place) => {
     togglePlace(place);
     pendingFocus = place;
@@ -608,11 +583,6 @@ export function initCommencer(): void {
     const action = b.dataset.action!;
     const value = b.dataset.value ?? '';
     switch (action) {
-      case 'set-profil':
-        state.profil = value as ProfilClient;
-        setProfil(state.profil);
-        goTo(1);
-        return;
       case 'set-garment': {
         state.garment = value as Garment;
         // Un changement de vêtement peut rendre certains emplacements déjà

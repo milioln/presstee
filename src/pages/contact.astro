@@ -197,19 +197,17 @@ const typesTextile = Object.keys(LABELS_TYPE_TEXTILE) as TypeTextile[];
 
 <script>
 	import { siteConfig } from '../config/site';
-	import { getProfil } from '../lib/profil-client';
 
 	function el<T extends HTMLElement = HTMLElement>(id: string): T {
 		return document.getElementById(id) as T;
 	}
 
-	// Bloc SIRET/facturation affiché dès que "Structure" est renseigné, ou
-	// d'emblée si le visiteur s'est déjà déclaré professionnel ailleurs sur
-	// le site (la question "Vous êtes..." du quiz) — jamais un champ obligatoire.
+	// Bloc SIRET/facturation affiché dès que "Structure" est renseigné —
+	// jamais un champ obligatoire.
 	const proBlock = el('contactPro');
 	const structureInput = el<HTMLInputElement>('cStructure');
 	function syncProBlock(): void {
-		proBlock.hidden = !structureInput.value.trim() && getProfil() !== 'entreprise';
+		proBlock.hidden = !structureInput.value.trim();
 	}
 	structureInput.addEventListener('input', syncProBlock);
 	syncProBlock();

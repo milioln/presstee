@@ -1,12 +1,14 @@
 // Source unique du contenu par secteur d'activité — utilisée par la
-// liste de puces "Des conseils par activité" de l'accueil (teaser :
-// juste le nom) et par les pages dédiées /secteurs/[slug] (contenu
-// complet, pour être trouvable depuis une recherche Google propre à ce
-// secteur — Milio, 2026-09-10 : « développer beaucoup plus, écrire pour
-// le référencement, parler au client, l'aider à commander »).
+// liste de puces "Des conseils par activité" de l'accueil et du guide
+// (teaser : juste le nom) et par les pages dédiées /secteurs/[slug]
+// (contenu complet, pour être trouvable depuis une recherche Google
+// propre à ce secteur — Milio, 2026-09-10 : « développer beaucoup plus,
+// écrire pour le référencement, parler au client, l'aider à commander »,
+// puis 2026-09-15 : « plus d'éléments graphiques, un meilleur article »).
 //
-// Contenu éditorial (fourchettes de volumes, grammages, techniques
-// conseillées par secteur) — à valider par Milio avant publication.
+// Pas de photo réelle par secteur pour l'instant (aucune fournie) — les
+// icônes ci-dessous tiennent cette place en attendant de vraies images ;
+// à remplacer dès que Milio en fournit (cf. échange du 2026-09-15).
 export interface Secteur {
 	slug: string;
 	nom: string;
@@ -17,20 +19,21 @@ export interface Secteur {
 	// du textile, ce qui coince en général avant de commander.
 	motivation: string;
 	// Un angle métier propre à ce secteur, au-delà du simple besoin
-	// d'uniforme (Milio, 2026-09-10 : « pour bar et restaurant, tu dis
-	// qu'ils habillent leurs équipes mais peuvent aussi en vendre, ça se
-	// fait de plus en plus à l'étranger, ça marche bien, belle marge » —
-	// même exercice pour chaque secteur plutôt qu'un contenu générique).
+	// d'uniforme.
 	insight: string;
 	// Pourquoi ce textile et cette technique précisément, pas une autre —
-	// relié aux trois repères ci-dessous plutôt qu'une simple liste.
+	// inclut déjà le marquage conseillé, pas besoin d'une fiche à part.
 	conseil: string;
-	textile: string;
-	marquage: string;
-	volumes: string;
+	// Un cas de figure concret et réaliste, pour rendre la page plus
+	// parlante qu'une simple liste de repères — clairement présenté comme
+	// un exemple type, jamais comme un vrai client cité.
+	exemple: string;
 	// Technique la plus pertinente pour ce secteur — lien direct vers sa
 	// fiche technique (cf. src/lib/techniques-data.ts).
 	techniqueSlug: string;
+	// Icône (contenu SVG brut, sans balise <svg> englobante) illustrant le
+	// secteur en tête de page, en l'absence de vraie photo.
+	icon: string;
 }
 
 export const SECTEURS: Secteur[] = [
@@ -45,10 +48,10 @@ export const SECTEURS: Secteur[] = [
 			"Vendu aux adhérents ou lors d'un événement — loto, kermesse, tournoi —, le t-shirt de l'association devient une petite source de financement : sur une série de 50 pièces revendues 12 à 15 € l'unité, la marge couvre souvent une bonne partie du coût de la commande, sans toucher à la cotisation.",
 		conseil:
 			"Pour une association, le bon compromis est presque toujours un t-shirt coton 150 à 180 g/m² : assez épais pour ne pas être transparent, assez léger pour être porté toute l'année. Au-delà d'une trentaine de pièces, la sérigraphie devient la technique la plus économique — son coût de calage se répartit sur toute la série, ce qui fait mécaniquement baisser le prix unitaire à mesure que la commande grossit.",
-		textile: 'T-shirt coton 150 à 180 g/m²',
-		marquage: 'Sérigraphie à partir d’une trentaine de pièces',
-		volumes: '30 à 150 pièces',
+		exemple:
+			"Une association sportive qui organise son tournoi de fin de saison commande par exemple 60 t-shirts en sérigraphie, aux couleurs du club, pour ses joueurs et son bureau — une partie est ensuite vendue aux familles présentes, ce qui finance une bonne part de la commande.",
 		techniqueSlug: 'serigraphie',
+		icon: '<path d="M12 21s-6.5-4.2-9-8.6C1.3 8.9 2.4 5 6 5c2 0 3.6 1.4 6 4 2.4-2.6 4-4 6-4 3.6 0 4.7 3.9 3 7.4-2.5 4.4-9 8.6-9 8.6z"/>',
 	},
 	{
 		slug: 'bde-ecoles',
@@ -61,10 +64,10 @@ export const SECTEURS: Secteur[] = [
 			"Beaucoup d'anciens élèves commandent le sweat ou le t-shirt de promo des années après avoir quitté l'école : l'objet dépasse largement le cercle des présents le jour J, ce qui justifie de prévoir plus de pièces que de participants annoncés.",
 		conseil:
 			"Sur ces volumes, souvent 80 à 400 pièces, un sweat molleton 280 à 320 g/m² en sérigraphie est la combinaison la plus rentable : un visuel unique, valable pour toute la promo, imprimé en une seule fois sur des écrans qui serviront pour toute la série.",
-		textile: 'Sweat molleton 280 à 320 g/m²',
-		marquage: 'Sérigraphie, très rentable sur ces volumes',
-		volumes: '80 à 400 pièces',
+		exemple:
+			"Un BDE qui prépare son week-end d'intégration commande souvent 150 sweats à capuche floqués du nom de la promo, livrés avant le départ — largement au-delà du nombre d'étudiants inscrits, pour couvrir aussi ceux qui les commandent après coup.",
 		techniqueSlug: 'serigraphie',
+		icon: '<path d="M12 3 2 8l10 5 10-5-10-5z"/><path d="M6 10.5V16c0 1.7 2.7 3 6 3s6-1.3 6-3v-5.5"/><path d="M22 8v6"/>',
 	},
 	{
 		slug: 'entreprises',
@@ -77,10 +80,10 @@ export const SECTEURS: Secteur[] = [
 			"Un polo floqué croisé dans la rue ou sur les réseaux vaut largement son coût de fabrication en visibilité : porté par les salariés en dehors du travail — trajet, sport, weekend —, le vêtement aux couleurs de l'entreprise devient une publicité mobile gratuite.",
 		conseil:
 			"Pour une entreprise, la broderie sur le cœur reste la référence sur polo ou chemise : elle tient particulièrement bien dans le temps et donne un rendu plus qualitatif qu'un marquage imprimé. Le transfert monochrome est une alternative plus économique sur de petites séries, ou pour un logo très détaillé que la broderie rendrait mal.",
-		textile: 'Polo piqué ou chemise',
-		marquage: 'Broderie sur le cœur, ou transfert monochrome',
-		volumes: '10 à 100 pièces',
+		exemple:
+			"Une entreprise qui recrute régulièrement commande par exemple 20 polos brodés à chaque nouvelle arrivée, plutôt qu'une grosse série ponctuelle — la référence et le prix restent identiques d'une commande à l'autre grâce au projet enregistré.",
 		techniqueSlug: 'broderie',
+		icon: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/>',
 	},
 	{
 		slug: 'bars-restaurants',
@@ -93,10 +96,10 @@ export const SECTEURS: Secteur[] = [
 			"Certains établissements vont plus loin que l'uniforme de service : ils vendent le t-shirt ou le tote bag directement à leur clientèle, une pratique déjà courante à l'étranger. Entre le prix d'achat en gros et le prix de vente à l'unité, la marge est confortable pour un produit qui ne demande presque pas de stock.",
 		conseil:
 			"Sous 25 pièces, le transfert monochrome est le plus économique et suffisant pour un logo simple ; au-delà, la sérigraphie prend le relais et tient mieux sur le long terme. Un t-shirt épais (185 g/m²) ou un tablier en toile résistante encaissent mieux les lavages répétés qu'un textile plus léger.",
-		textile: 'T-shirt épais 185 g/m² ou tablier',
-		marquage: 'Transfert monochrome sous 25 pièces, sérigraphie au-delà',
-		volumes: '10 à 60 pièces',
+		exemple:
+			"Un restaurant qui renouvelle sa tenue de salle chaque saison commande une trentaine de t-shirts floqués pour l'équipe, et en profite pour en faire imprimer quelques-uns de plus, vendus ensuite au comptoir.",
 		techniqueSlug: 'transfert-monochrome',
+		icon: '<path d="M6 3h12l-1.4 11.2a4 4 0 0 1-4 3.5h-1.2a4 4 0 0 1-4-3.5L6 3z"/><path d="M9 21h6"/><path d="M12 17.7V21"/>',
 	},
 	{
 		slug: 'evenements',
@@ -109,10 +112,10 @@ export const SECTEURS: Secteur[] = [
 			"Une fois la soirée terminée, le t-shirt de l'événement est souvent tout ce qu'il en reste concrètement — porté ensuite dans la rue par les participants, il continue de faire de la publicité pour l'édition suivante, longtemps après coup.",
 		conseil:
 			"Le transfert quadrichromie est la technique la plus adaptée : couleurs et dégradés illimités, sans frais de calage à amortir, ce qui le rend rentable même sur une série décidée dans l'urgence. Un t-shirt léger (150 g/m²) reste le plus confortable à porter toute une journée, en intérieur comme en extérieur.",
-		textile: 'T-shirt léger 150 g/m²',
-		marquage: 'Transfert quadrichromie, sans frais de calage',
-		volumes: '20 à 300 pièces',
+		exemple:
+			"Un festival local commande 200 t-shirts en transfert quadrichromie quelques semaines avant la date, avec un visuel finalisé au dernier moment — sans frais de calage à amortir, le prix ne change pas si le nombre de couleurs augmente.",
 		techniqueSlug: 'transfert-quadrichromie',
+		icon: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>',
 	},
 	{
 		slug: 'commerces',
@@ -125,10 +128,10 @@ export const SECTEURS: Secteur[] = [
 			"À l'effigie du commerce ou du quartier, une petite série en édition limitée devient un produit à part entière que le client achète en plus de son passage habituel, pas un simple support de communication offert. Tester une petite quantité avant de réassortir limite le risque si le visuel ne rencontre pas son public.",
 		conseil:
 			"Un coton lourd (200 g/m² et plus) donne un tombé plus qualitatif, apprécié sur un produit vendu plutôt qu'offert. La sérigraphie reste la référence pour un rendu net sur de petites séries (20 à 100 pièces) ; le transfert monochrome convient mieux à un visuel unique très détaillé.",
-		textile: 'Coton lourd 200 g/m² et plus',
-		marquage: 'Sérigraphie ou transfert monochrome',
-		volumes: '20 à 100 pièces',
+		exemple:
+			"Une boutique de quartier commande une série limitée de 40 t-shirts à l'occasion d'un anniversaire ou d'une ouverture, pour les offrir aux premiers clients ou les vendre en édition limitée.",
 		techniqueSlug: 'serigraphie',
+		icon: '<path d="M4 9.5 5 4h14l1 5.5"/><path d="M4 9.5a2.2 2.2 0 0 0 4.4 0 2.2 2.2 0 0 0 4.4 0 2.2 2.2 0 0 0 4.4 0 2.2 2.2 0 0 0 4.4 0"/><path d="M5.5 9.5V20h13V9.5"/>',
 	},
 	{
 		slug: 'boulangeries',
@@ -141,10 +144,10 @@ export const SECTEURS: Secteur[] = [
 			"Certaines boulangeries ajoutent en caisse un petit tote bag personnalisé à prix doux, en plus du tablier de l'équipe : un produit d'appel qui fidélise sans effort commercial et se glisse facilement dans le panier moyen.",
 		conseil:
 			"La broderie est le choix le plus adapté sur tablier ou polo : elle tient mieux dans la durée que n'importe quel marquage imprimé face à la chaleur et aux lavages répétés. Sur de petites séries (10 à 30 pièces), le surcoût de la broderie reste raisonnable au regard de sa longévité.",
-		textile: 'Tablier ou polo',
-		marquage: 'Broderie, pour le rendu et la tenue',
-		volumes: '10 à 30 pièces',
+		exemple:
+			"Une boulangerie qui renouvelle ses tabliers chaque année en commande une dizaine, brodés au nom de l'enseigne, en même temps que quelques tote bags proposés en caisse.",
 		techniqueSlug: 'broderie',
+		icon: '<path d="M4 13c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 4-8 4-8 .4-8-4z"/><path d="M8 13h.01M12 13h.01M16 13h.01"/>',
 	},
 	{
 		slug: 'clubs-sportifs',
@@ -157,10 +160,10 @@ export const SECTEURS: Secteur[] = [
 			"Floqué au nom du joueur, le maillot crée un attachement individuel qui pousse à l'achat même hors saison — beaucoup de clubs le revendent aussi aux familles ou aux supporters en plus de l'équipement officiel, une source de revenu complémentaire.",
 		conseil:
 			"Le transfert monochrome est la technique la plus adaptée aux textiles techniques (polyester respirant) : il adhère bien à une matière que la sérigraphie classique accroche mal, et permet un flocage individuel nom et numéro sans repartir de zéro pour chaque joueur.",
-		textile: 'Maillot polyester respirant',
-		marquage: 'Transfert monochrome, adapté aux textiles techniques',
-		volumes: '15 à 60 pièces',
+		exemple:
+			"Un club de football qui lance sa nouvelle saison commande 25 maillots floqués au nom et au numéro de chaque joueur, avec la possibilité d'en recommander en cours de saison pour les nouvelles recrues.",
 		techniqueSlug: 'transfert-monochrome',
+		icon: '<path d="M7 3h10v4a5 5 0 0 1-10 0V3z"/><path d="M7 4H4a1 1 0 0 0-1 1c0 2.8 1.8 5 4 5"/><path d="M17 4h3a1 1 0 0 1 1 1c0 2.8-1.8 5-4 5"/><path d="M12 12v4"/><path d="M9 20h6"/><path d="M10 16h4v4h-4z"/>',
 	},
 ];
 

@@ -40,11 +40,6 @@
 .qzLabel{display:block;font-family:'Sora',sans-serif;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--gris);margin-bottom:10px;font-weight:600}
 .qzOptional{text-transform:none;letter-spacing:0;font-weight:400;opacity:.75}
 
-.qzChoices-big{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
-.qzBig{display:flex;flex-direction:column;align-items:center;gap:10px;border:1.5px solid var(--ligne);border-radius:18px;padding:28px 16px;background:var(--lavande);font:inherit;font-weight:600;font-size:1rem;color:var(--encre);cursor:pointer;transition:.15s}
-.qzBig span{display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:14px;background:#fff;color:var(--indigo)}
-.qzBig:hover{border-color:var(--indigo);transform:translateY(-2px)}
-
 /* ---------- navigation ---------- */
 .qzNav{display:flex;justify-content:space-between;gap:12px;margin-top:28px;padding-top:24px;border-top:1px solid var(--ligne)}
 .qzNav .btn{flex:1}
@@ -131,5 +126,4 @@
 @media(max-width:640px){
   .qzCard{padding:20px;border-radius:16px}
   .qzResultCard{padding:14px 16px}
-  .qzChoices-big{grid-template-columns:1fr}
 }

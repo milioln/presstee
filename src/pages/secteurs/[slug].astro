@@ -3,11 +3,10 @@
 // depuis une recherche propre à ce secteur (« t-shirt personnalisé
 // association », « polo brodé entreprise »…) et pour vraiment aider le
 // visiteur à se décider et à commander — pas seulement une fiche
-// technique (Milio, 2026-09-10 : « développer beaucoup plus, écrire
-// pour le référencement, parler au client, l'aider à commander, un CTA
-// simple »). Contenu : src/data/secteurs.ts (source commune avec la
-// liste de puces "Des conseils par activité" de l'accueil, seul point
-// d'entrée restant vers ces pages depuis l'accueil).
+// technique (Milio, 2026-09-10 puis 2026-09-15 : « plus d'éléments
+// graphiques, un meilleur article, un CTA qui ne prétend pas plus qu'il
+// ne fait »). Contenu : src/data/secteurs.ts (source commune avec la
+// liste de puces "Des conseils par activité" de l'accueil et du guide).
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
@@ -39,7 +38,7 @@ const serviceLd = {
 
 <Layout
 	title={`Textile personnalisé pour ${s.nom.toLowerCase()} — Presstee`}
-	description={`${s.textile} en ${technique.nom.toLowerCase()} : ce que Presstee conseille pour ${s.nom.toLowerCase()}, avec une recommandation et un prix en quelques clics.`}
+	description={`${s.texte} Technique conseillée : ${technique.nom.toLowerCase()}.`}
 >
 	<script type="application/ld+json" set:html={JSON.stringify(serviceLd)} />
 	<Header />
@@ -53,6 +52,12 @@ const serviceLd = {
 			</div>
 		</section>
 
+		<div class="secteur-visual">
+			<span class="secteur-visual-icon" set:html={`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:clamp(56px,8vw,84px);height:clamp(56px,8vw,84px)">${s.icon}</svg>`} />
+			<span class="regmark secteur-visual-mark secteur-visual-mark-a" aria-hidden="true"></span>
+			<span class="regmark secteur-visual-mark secteur-visual-mark-b" aria-hidden="true"></span>
+		</div>
+
 		<section class="secteur-body">
 			<div class="wrap">
 				<h2>Pourquoi personnaliser votre textile</h2>
@@ -63,14 +68,13 @@ const serviceLd = {
 					<p>{s.insight}</p>
 				</div>
 
-				<div class="secteur-facts">
-					<div class="fact"><b>Textile souvent retenu</b><span>{s.textile}</span></div>
-					<div class="fact"><b>Marquage conseillé</b><span>{s.marquage}</span></div>
-					<div class="fact"><b>Volumes habituels</b><span>{s.volumes}</span></div>
-				</div>
-
 				<h2>Notre conseil</h2>
 				<p class="secteur-p">{s.conseil} <a href={`/techniques/${s.techniqueSlug}`}>En savoir plus sur la technique {technique.nom.toLowerCase()} →</a></p>
+
+				<div class="secteur-exemple">
+					<span class="secteur-exemple-label">Exemple type</span>
+					<p>{s.exemple}</p>
+				</div>
 
 				<h2>Comment commander</h2>
 				<div class="secteur-steps">
@@ -98,17 +102,22 @@ const serviceLd = {
 				</div>
 
 				<div class="secteur-cta">
-					<a class="btn" href="/commencer">Faire le test pour {s.nom.toLowerCase()}</a>
+					<a class="btn" href="/commencer">Faire le test</a>
 					<span class="secteur-cta-or">ou <a href="/contact">contactez-nous directement</a></span>
 				</div>
+			</div>
+		</section>
 
-				<div class="secteur-autres">
-					<h2>Les autres secteurs</h2>
-					<div class="secteur-chips">
-						{autres.map((a) => (
-							<a class="chip" href={`/secteurs/${a.slug}`}>{a.nom}</a>
-						))}
-					</div>
+		<section class="secteur-autres">
+			<div class="wrap">
+				<h2>Les autres secteurs</h2>
+				<div class="secteur-autres-grid">
+					{autres.map((a) => (
+						<a class="secteur-autres-card" href={`/secteurs/${a.slug}`}>
+							<span class="secteur-autres-icon" set:html={`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:26px;height:26px">${a.icon}</svg>`} />
+							<span>{a.nom}</span>
+						</a>
+					))}
 				</div>
 			</div>
 		</section>
@@ -117,8 +126,40 @@ const serviceLd = {
 </Layout>
 
 <style>
+	/* ---------- bandeau visuel (tient lieu de photo, en attendant de
+	   vraies images par secteur — cf. commentaire de secteurs.ts) ---------- */
+	.secteur-visual {
+		position: relative;
+		overflow: hidden;
+		aspect-ratio: 21 / 6;
+		max-height: 220px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: var(--indigo);
+		background-image: radial-gradient(circle, rgba(255, 255, 255, 0.14) 1.2px, transparent 1.6px);
+		background-size: 16px 16px;
+	}
+	.secteur-visual-icon {
+		display: flex;
+		color: #fff;
+		opacity: 0.92;
+	}
+	.secteur-visual-mark {
+		color: #fff;
+		opacity: 0.5;
+	}
+	.secteur-visual-mark-a {
+		top: 22px;
+		left: 26px;
+	}
+	.secteur-visual-mark-b {
+		bottom: 22px;
+		right: 26px;
+	}
+
 	.secteur-body {
-		padding: 44px 0 80px;
+		padding: 44px 0 60px;
 		max-width: 760px;
 		margin: 0 auto;
 	}
@@ -138,50 +179,42 @@ const serviceLd = {
 		color: var(--indigo);
 	}
 
-	.secteur-insight {
-		background: var(--lavande);
-		border-left: 3px solid var(--indigo);
+	.secteur-insight,
+	.secteur-exemple {
 		border-radius: 0 14px 14px 0;
 		padding: 18px 22px;
 		margin: 24px 0;
 	}
-	.secteur-insight-label {
+	.secteur-insight {
+		background: var(--lavande);
+		border-left: 3px solid var(--indigo);
+	}
+	.secteur-exemple {
+		background: #fff;
+		border: 1.5px solid var(--ligne);
+		border-left: 3px solid var(--jaune);
+		border-radius: 14px;
+	}
+	.secteur-insight-label,
+	.secteur-exemple-label {
 		display: block;
 		font-family: 'Sora', sans-serif;
 		font-size: 12px;
 		letter-spacing: 0.04em;
 		text-transform: uppercase;
-		color: var(--indigo);
 		font-weight: 600;
 		margin-bottom: 8px;
 	}
-	.secteur-insight p {
+	.secteur-insight-label {
+		color: var(--indigo);
+	}
+	.secteur-exemple-label {
+		color: #96650f;
+	}
+	.secteur-insight p,
+	.secteur-exemple p {
 		margin: 0;
 		font-size: 0.95rem;
-	}
-
-	.secteur-facts {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 14px;
-		margin: 24px 0;
-	}
-	.secteur-facts .fact {
-		border: 1.5px solid var(--ligne);
-		border-radius: 14px;
-		padding: 18px 20px;
-	}
-	.secteur-facts .fact b {
-		display: block;
-		font-family: 'Sora', sans-serif;
-		font-size: 12px;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
-		color: var(--gris);
-		margin-bottom: 8px;
-	}
-	.secteur-facts .fact span {
-		font-size: 15px;
 	}
 
 	.secteur-steps {
@@ -236,31 +269,48 @@ const serviceLd = {
 		color: var(--indigo);
 	}
 
+	/* ---------- les autres secteurs ---------- */
+	.secteur-autres {
+		background: var(--lavande);
+		padding: 50px 0 64px;
+	}
 	.secteur-autres h2 {
-		font-size: 1.1rem;
+		font-size: 1.2rem;
+		margin: 0 0 22px;
 	}
-	.secteur-chips {
+	.secteur-autres-grid {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 12px;
+	}
+	.secteur-autres-card {
 		display: flex;
-		flex-wrap: wrap;
-		gap: 8px;
-	}
-	.secteur-chips .chip {
-		display: inline-flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 10px;
+		text-align: center;
+		background: #fff;
 		border: 1.5px solid var(--ligne);
-		border-radius: 999px;
-		padding: 8px 16px;
-		font-size: 13.5px;
+		border-radius: 16px;
+		padding: 20px 12px;
 		text-decoration: none;
 		color: var(--encre);
-		transition: border-color 0.15s;
+		font-size: 13.5px;
+		font-weight: 600;
+		transition: border-color 0.15s, transform 0.15s;
 	}
-	.secteur-chips .chip:hover {
+	.secteur-autres-card:hover {
 		border-color: var(--indigo);
+		transform: translateY(-2px);
+	}
+	.secteur-autres-icon {
+		display: flex;
 		color: var(--indigo);
 	}
+
 	@media (max-width: 700px) {
-		.secteur-facts {
-			grid-template-columns: 1fr;
+		.secteur-autres-grid {
+			grid-template-columns: repeat(2, 1fr);
 		}
 	}
 </style>
