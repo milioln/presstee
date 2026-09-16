@@ -1,9 +1,11 @@
 // Point d'entrée du personnalisateur — assemble les modules et branche
 // les contrôles du panneau (couleur, emplacement, taille du visuel,
-// répartition des tailles, technique, délai). Le vêtement est fixe
-// ("T-shirt col rond unisexe, 180 g/m²") : le choix du support et des
-// caractéristiques (col/manches/coupe) reviendra quand chaque référence
-// du catalogue aura son propre personnalisateur.
+// répartition des tailles, technique, délai). Le nom/la fiche du
+// support (paintSupport) et le modèle 3D (syncModel, render.ts) suivent
+// déjà S.garment ; il n'y a en revanche pas encore de sélecteur visible
+// dans ce panneau pour le changer une fois ici — le vêtement vient pour
+// l'instant du quiz (commencer.ts) ou d'un projet repris depuis le
+// panier.
 import { S, activeLayer, loadState, saveState, addColorLot, removeColorLot, switchColorLot } from './state';
 import { showEggToast } from '../../lib/easter-egg';
 import { catalogueColoris, TAILLES } from '../../config/parametres-metier';
@@ -22,9 +24,30 @@ import { bindOnLoaded } from './cart';
 import { bindBATView } from './bat-view';
 import { TECHS } from './recommendation';
 import { TSHIRTS } from '../../data/tshirts';
+import { GARMENTS } from './garments';
+import type { Garment } from '../../config/parametres-metier';
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T {
   return document.getElementById(id) as T;
+}
+
+// Fiche technique par vêtement, affichée dans le panneau "1 — Support" —
+// seuls le nom et l'aperçu 3D changeaient déjà avec S.garment (cf.
+// render.ts), ce texte restait figé sur le t-shirt (Milio, 2026-09-16 :
+// « modélise-moi un sweat »). Chemise/casquette n'ont pas encore leur
+// propre modèle 3D (render.ts retombe sur le t-shirt pour elles), mais
+// gardent quand même leur propre fiche ici pour rester cohérentes.
+const SUPPORT_SPEC: Record<Garment, string> = {
+  tshirt: '100 % coton · manches courtes · XS à XXL',
+  sweat: '80 % coton, 20 % polyester · manches longues · XS à XXL',
+  chemise: '100 % coton · manches longues · XS à XXL',
+  casquette: '100 % coton · taille réglable',
+};
+
+function paintSupport(): void {
+  const g = GARMENTS[S.garment];
+  el('supportName').textContent = `${g.name}${S.garment === 'casquette' ? '' : ' unisexe'}`;
+  el('supportSpec').textContent = SUPPORT_SPEC[S.garment];
 }
 
 function paintColorName(): void {
@@ -328,6 +351,7 @@ function applyProduitFromUrl(): void {
 // bloc : coloris, calques, répartition des tailles, technique, délai
 // peuvent tous avoir changé d'un coup).
 function refreshAll(): void {
+  paintSupport();
   paintColors();
   syncDelai();
   syncPlace();
@@ -338,6 +362,11 @@ function refreshAll(): void {
 
 export function init(): void {
   loadState();
+  // Le modèle 3D chargé par défaut dans le HTML est toujours le t-shirt
+  // (Astro ne connaît pas le vêtement choisi, restauré ici depuis le
+  // stockage local) : on corrige tout de suite si un autre vêtement a
+  // son propre modèle (cf. syncModel() dans render.ts).
+  render();
   applyTechFromUrl();
   applyProduitFromUrl();
 

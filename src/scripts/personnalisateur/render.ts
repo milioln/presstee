@@ -11,12 +11,26 @@ import { place, widthCm, heightCm, dpi, qtyTotal, qtyActiveColor, palierActuel, 
 import { lum, lumRGB } from './color-utils';
 import { TECHS, reco } from './recommendation';
 import { saveState } from './state';
-import { TAILLES, seuils, PLACE_LABEL } from '../../config/parametres-metier';
+import { TAILLES, seuils, PLACE_LABEL, type Garment } from '../../config/parametres-metier';
 import { PRINT_RECT, PANEL_SCALE, TEXTURE_SIZE } from './print-zones';
 
 export const activeTech = () => (S.tech === 'auto' ? reco(totalColors(), qtyTotal()).k : S.tech);
 
 const TEXTURE_URL = '/personnalisateur/model/textures/Material_baseColor.png';
+
+// Un seul modèle 3D pour l'instant en dehors du t-shirt : le sweat garde
+// le même patron (torse, col, UV) et prolonge juste les manches — la
+// texture et les zones d'impression (print-zones.ts) restent donc
+// valables sans changement. Les autres familles (polo, chemise,
+// casquette) retombent sur le t-shirt en attendant leur propre modèle.
+const MODEL_URL: Partial<Record<Garment, string>> = {
+  sweat: '/personnalisateur/model/sweat/scene.gltf',
+};
+const DEFAULT_MODEL_URL = '/personnalisateur/model/scene.gltf';
+
+export function modelUrlForGarment(garment: Garment): string {
+  return MODEL_URL[garment] ?? DEFAULT_MODEL_URL;
+}
 
 let baseImgPromise: Promise<HTMLImageElement> | null = null;
 function loadBaseImg(): Promise<HTMLImageElement> {
@@ -153,8 +167,23 @@ export function syncCamera(force = false): void {
   mv.cameraOrbit = target === 'dos' ? '180deg 85deg 105%' : '0deg 85deg 105%';
 }
 
+// Même logique que syncCamera : ne change le src du <model-viewer> que
+// lorsque le vêtement change vraiment (pas à chaque render()), sinon le
+// modèle se recharge en boucle et perd son angle de vue à chaque clic.
+let lastSyncedGarment: Garment | null = null;
+
+export function syncModel(): void {
+  const mv = stage();
+  if (!mv) return;
+  if (S.garment === lastSyncedGarment) return;
+  lastSyncedGarment = S.garment;
+  mv.src = modelUrlForGarment(S.garment);
+  mv.addEventListener('load', () => applyTexture(), { once: true });
+}
+
 export function render(): void {
   const mv = stage();
+  syncModel();
   if (mv && mv.loaded) {
     applyTexture();
   } else if (mv) {
