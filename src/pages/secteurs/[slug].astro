@@ -10,7 +10,7 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import { SECTEURS } from '../../data/secteurs';
+import { SECTEURS, SECTEUR_IMG_V } from '../../data/secteurs';
 import { getTechnique } from '../../lib/techniques-data';
 import { siteConfig } from '../../config/site';
 import '../../styles/global.css';
@@ -77,8 +77,8 @@ const breadcrumbLd = {
 
 				<div class="secteur-photo">
 					<picture>
-						<source media="(max-width: 700px)" srcset={`/secteurs/${s.slug}-hero-mobile.webp`} />
-						<img src={`/secteurs/${s.slug}-hero.webp`} alt={HERO_ALT[s.slug] ?? ''} loading="lazy" />
+						<source media="(max-width: 700px)" srcset={`/secteurs/${s.slug}-hero-mobile.webp?v=${SECTEUR_IMG_V}`} />
+						<img src={`/secteurs/${s.slug}-hero.webp?v=${SECTEUR_IMG_V}`} alt={HERO_ALT[s.slug] ?? ''} loading="lazy" />
 					</picture>
 				</div>
 			</div>

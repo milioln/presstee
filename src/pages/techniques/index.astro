@@ -3,7 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { TECHNIQUES } from '../../lib/techniques-data';
-import { SECTEURS } from '../../data/secteurs';
+import { SECTEURS, SECTEUR_IMG_V } from '../../data/secteurs';
 import '../../styles/global.css';
 import '../../styles/techniques.css';
 
@@ -92,7 +92,7 @@ const TECHNIQUE_ICON: Record<string, string> = {
 				{SECTEURS.map((s) => (
 					<a class="tcard" href={`/secteurs/${s.slug}`}>
 						<div class="tcard-photo">
-							{s.image && <img class="tcard-bg" src={s.image} alt="" aria-hidden="true" loading="lazy" />}
+							{s.image && <img class="tcard-bg" src={`${s.image}?v=${SECTEUR_IMG_V}`} alt="" aria-hidden="true" loading="lazy" />}
 							<span class="techsect-stamp" aria-hidden="true">
 								{SECTEUR_ICON[s.slug] ? (
 									<span

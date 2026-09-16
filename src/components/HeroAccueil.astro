@@ -15,16 +15,18 @@
 				<span>en</span> <span class="jeu jeu-jaune" data-jeu="spin">3 clics.</span>
 			</h1>
 
-			<svg class="hero-cta-figure" viewBox="0 0 30 34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-				<circle cx="10" cy="4.4" r="3.4" fill="#FFC500" stroke="none" />
-				<path d="M10 7.8v10" />
-				<path d="M10 10.4l-5 4" />
-				<path d="M10 10.8l9.5 5.2" />
-				<path d="M10 17.8l-4 14" />
-				<path d="M10 17.8l4.5 13.6" />
-			</svg>
 			<div class="hero-actions">
-				<a class="btn btn-primary" href="/commencer">Lancez le test</a>
+				<a class="btn btn-primary" href="/commencer">
+					Lancez le test
+					<svg class="hero-cta-figure" viewBox="0 0 16 27" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<path d="M3 1L6.3 9.3" />
+						<path d="M13 1L9.7 9.3" />
+						<circle cx="8" cy="6.5" r="3" fill="#FFC500" stroke="none" />
+						<path d="M8 9.3v6.7" />
+						<path d="M8 16l-3.5 5 2 5" />
+						<path d="M8 16l4 4-2 5.5" />
+					</svg>
+				</a>
 				<a class="btn btn-secondary" href="/produits/t-shirts">Voir le catalogue</a>
 			</div>
 
@@ -208,7 +210,6 @@
 		}
 	}
 	.hero-title,
-	.hero-cta-figure,
 	.hero-actions,
 	.hero-atelier,
 	.hero-zone-wrap {
@@ -216,9 +217,6 @@
 	}
 	.hero-title {
 		animation-delay: 0.02s;
-	}
-	.hero-cta-figure {
-		animation-delay: 0.09s;
 	}
 	.hero-actions {
 		animation-delay: 0.14s;
@@ -231,24 +229,56 @@
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.hero-title,
-		.hero-cta-figure,
 		.hero-actions,
 		.hero-atelier,
 		.hero-zone-wrap {
 			animation: none;
 		}
 	}
-	/* Grand bonhomme-bâton qui pointe vers le premier CTA (Milio,
-	   2026-09-16 : « un petit bonhomme un peu plus grand qui pourrait
-	   interagir avec le CTA... pointer vers le, lancer le test ») — un
-	   bras tendu qui rejoint visuellement le coin du bouton juste
-	   en dessous. */
+	/* Bonhomme-bâton suspendu au CTA (Milio, 2026-09-16 : d'abord un
+	   bonhomme qui pointait vers le bouton — « on ne comprend pas » —,
+	   puis 2026-09-17 : « qu'il se retienne avec ses bras au bas de la
+	   case lancer le test comme s'il était en train de tomber ») —
+	   accroché par les deux bras au bord inférieur du bouton, le corps
+	   dans le vide. Enfant de .hero-actions (positionné en absolu par
+	   rapport à lui) pour rester calé sur ce bouton à toutes les tailles
+	   d'écran, sans logique de centrage séparée pour le mobile. */
+	@keyframes heroFigureSwing {
+		0% {
+			opacity: 0;
+			transform: translateY(-6px) rotate(-4deg);
+		}
+		60% {
+			opacity: 1;
+			transform: translateY(2px) rotate(3deg);
+		}
+		100% {
+			opacity: 1;
+			transform: translateY(0) rotate(0);
+		}
+	}
+	.hero-actions .btn-primary {
+		/* Ancre le bonhomme suspendu (cf. .hero-cta-figure) : positionné
+		   par rapport au bouton lui-même plutôt qu'à la rangée .hero-actions,
+		   pour rester calé sous "Lancez le test" même quand la rangée est
+		   centrée ou que les boutons passent à largeur égale (mobile). */
+		position: relative;
+	}
 	.hero-cta-figure {
-		display: block;
-		width: 60px;
+		position: absolute;
+		top: 100%;
+		left: 14px;
+		transform: translateY(-8px);
+		width: 42px;
 		height: auto;
-		margin: 26px 0 -4px 6px;
 		color: var(--encre);
+		z-index: 1;
+		animation: heroFigureSwing 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.hero-cta-figure {
+			animation: none;
+		}
 	}
 
 	.hero-title {
@@ -286,10 +316,17 @@
 	}
 	.hero-title .jeu {
 		cursor: pointer;
-		/* Trait plein et fin plutôt que pointillé (Milio, 2026-09-15). */
-		text-decoration: underline solid var(--indigo);
-		text-decoration-thickness: 1.5px;
-		text-underline-offset: 10px;
+	}
+	/* Contour violet plutôt qu'un soulignement (Milio, 2026-09-16 : « ne
+	   souligne pas, essaie de faire un contour assez sympa violet ») —
+	   remplace le trait plein utilisé jusque-là ; "3 clics." garde son
+	   traitement à part (fond jaune plein, cf. .jeu-jaune plus bas). */
+	.hero-title .jeu:not(.jeu-jaune) {
+		border: 1.5px solid var(--indigo);
+		padding: 0 0.14em;
+	}
+	.hero-title .jeu:not(.jeu-jaune):hover {
+		border-color: transparent;
 	}
 	/* "3 clics." porte déjà son fond jaune par défaut, pas seulement au
 	   survol (Milio, 2026-09-15 : « que le 3 clics soit déjà encadré par
@@ -316,6 +353,11 @@
 		gap: 16px;
 		flex-wrap: nowrap;
 		margin-top: 30px;
+		position: relative;
+		/* Réserve la place du bonhomme suspendu sous le bouton (cf.
+		   .hero-cta-figure), plutôt que de le laisser chevaucher le texte
+		   "Atelier à Angoulême" juste en dessous. */
+		padding-bottom: 60px;
 	}
 	.hero-actions .btn {
 		/* Transparents plutôt que pleins noirs (Milio, 2026-09-15) — .btn
@@ -626,10 +668,6 @@
 		}
 		.hero-actions {
 			justify-content: center;
-		}
-		.hero-cta-figure {
-			margin-left: auto;
-			margin-right: auto;
 		}
 		/* Les 8 coloris tiennent sur une seule ligne plutôt que de passer à
 		   la ligne sur les petits écrans. */

@@ -11,6 +11,14 @@
 // pas grave de ce qu'on voit dessus, il faut juste qu'on comprenne que
 // ça soit en lien ») — le flou appliqué en case (.tcard-bg) rend le
 // détail exact de la photo secondaire, seule l'ambiance générale compte.
+// Anti-cache pour les photos de secteur (Milio, 2026-09-16 : après avoir
+// remplacé ces fichiers, le rendu affiché restait l'ancien — même nom de
+// fichier, donc le navigateur (voire le cache OVH) sert la version en
+// cache au lieu de la nouvelle). À incrémenter à chaque remplacement de
+// ces fichiers pour forcer le rechargement, plutôt que de compter sur un
+// vidage de cache manuel.
+export const SECTEUR_IMG_V = 2;
+
 export interface Secteur {
 	slug: string;
 	nom: string;
