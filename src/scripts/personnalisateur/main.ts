@@ -1,11 +1,8 @@
 // Point d'entrée du personnalisateur — assemble les modules et branche
 // les contrôles du panneau (couleur, emplacement, taille du visuel,
-// répartition des tailles, technique, délai). Le nom/la fiche du
-// support (paintSupport) et le modèle 3D (syncModel, render.ts) suivent
-// déjà S.garment ; il n'y a en revanche pas encore de sélecteur visible
-// dans ce panneau pour le changer une fois ici — le vêtement vient pour
-// l'instant du quiz (commencer.ts) ou d'un projet repris depuis le
-// panier.
+// répartition des tailles, technique, délai, vêtement). Le sélecteur de
+// vêtement (garmentPicker) ne propose que t-shirt/sweat pour l'instant :
+// ce sont les deux seuls à avoir leur propre modèle 3D (cf. render.ts).
 import { S, activeLayer, loadState, saveState, addColorLot, removeColorLot, switchColorLot } from './state';
 import { showEggToast } from '../../lib/easter-egg';
 import { catalogueColoris, TAILLES } from '../../config/parametres-metier';
@@ -48,6 +45,32 @@ function paintSupport(): void {
   const g = GARMENTS[S.garment];
   el('supportName').textContent = `${g.name}${S.garment === 'casquette' ? '' : ' unisexe'}`;
   el('supportSpec').textContent = SUPPORT_SPEC[S.garment];
+}
+
+// Seuls le t-shirt et le sweat ont aujourd'hui leur propre modèle 3D
+// (render.ts retombe sur le t-shirt pour chemise/casquette) : le
+// sélecteur ne propose que ces deux-là pour l'instant, pour ne pas
+// laisser croire qu'une chemise ou une casquette s'affiche correctement
+// (Milio, 2026-09-16 : « laisse une possibilité pour choisir le
+// sweat »). À étendre en seg4 quand chemise/casquette auront leur modèle.
+function syncGarmentPicker(): void {
+  document.querySelectorAll<HTMLButtonElement>('#garmentPicker [data-g]').forEach((b) => {
+    b.classList.toggle('on', b.dataset.g === S.garment);
+  });
+}
+
+function bindGarmentPicker(): void {
+  el('garmentPicker').addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-g]');
+    if (!b) return;
+    S.garment = b.dataset.g as Garment;
+    syncGarmentPicker();
+    paintSupport();
+    syncPlace();
+    syncEditor();
+    saveState();
+    render();
+  });
 }
 
 function paintColorName(): void {
@@ -352,6 +375,7 @@ function applyProduitFromUrl(): void {
 // peuvent tous avoir changé d'un coup).
 function refreshAll(): void {
   paintSupport();
+  syncGarmentPicker();
   paintColors();
   syncDelai();
   syncPlace();
@@ -370,6 +394,7 @@ export function init(): void {
   applyTechFromUrl();
   applyProduitFromUrl();
 
+  bindGarmentPicker();
   bindColors();
   bindDelai();
   bindTechs();
