@@ -2,7 +2,7 @@
   "asset": {
     "version": "2.0",
     "extras": {
-      "credit": "Maillage casquette cr\u00e9\u00e9 en interne pour Presstee (d\u00f4me 6 pans + visi\u00e8re), texture partag\u00e9e avec le t-shirt (Chirag.Vijay, Sketchfab, CC-BY-4.0)."
+      "credit": "Mod\u00e8le \"Baseball cap\" par Poly by Google (Poly Pizza, CC-BY 3.0) ; UV repeinte en interne pour Presstee (zones d'impression face/dos vers l'atlas partag\u00e9 avec le t-shirt)."
     }
   },
   "scene": 0,
@@ -72,38 +72,38 @@
       "bufferView": 0,
       "byteOffset": 0,
       "componentType": 5125,
-      "count": 486,
+      "count": 1248,
       "type": "SCALAR"
     },
     {
       "bufferView": 1,
       "byteOffset": 0,
       "componentType": 5126,
-      "count": 102,
+      "count": 316,
       "type": "VEC3",
       "min": [
-        -9.902680687415703,
-        -0.9082689903993455,
-        -8.575973040867547
+        -1.3322540521621704,
+        -0.44564300775527954,
+        -1.6115469932556152
       ],
       "max": [
-        9.902680687415703,
-        10.0,
-        12.951340343707852
+        0.4827420115470886,
+        1.0481410026550293,
+        1.4811630249023438
       ]
     },
     {
       "bufferView": 1,
-      "byteOffset": 1224,
+      "byteOffset": 3792,
       "componentType": 5126,
-      "count": 102,
+      "count": 316,
       "type": "VEC3"
     },
     {
       "bufferView": 2,
       "byteOffset": 0,
       "componentType": 5126,
-      "count": 102,
+      "count": 316,
       "type": "VEC2"
     }
   ],
@@ -111,20 +111,20 @@
     {
       "buffer": 0,
       "byteOffset": 0,
-      "byteLength": 1944,
+      "byteLength": 4992,
       "target": 34963
     },
     {
       "buffer": 0,
-      "byteOffset": 1944,
-      "byteLength": 2448,
+      "byteOffset": 4992,
+      "byteLength": 7584,
       "byteStride": 12,
       "target": 34962
     },
     {
       "buffer": 0,
-      "byteOffset": 4392,
-      "byteLength": 816,
+      "byteOffset": 12576,
+      "byteLength": 2528,
       "byteStride": 8,
       "target": 34962
     }
@@ -132,7 +132,7 @@
   "buffers": [
     {
       "uri": "scene.bin",
-      "byteLength": 5208
+      "byteLength": 15104
     }
   ]
 }

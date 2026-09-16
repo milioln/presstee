@@ -2,7 +2,7 @@
   "asset": {
     "version": "2.0",
     "extras": {
-      "credit": "Base : 'T-Shirt Low Poly' par Chirag.Vijay (Sketchfab, CC-BY-4.0), col/boutons ajout\u00e9s en interne pour Presstee (polo)."
+      "credit": "Base : \"Business Man\" (pack Ultimate Modular Men) par Quaternius (Poly Pizza, CC0) ; pose fig\u00e9e depuis l'animation Idle, UV repeinte en interne pour Presstee (polo)."
     }
   },
   "scene": 0,
@@ -72,38 +72,38 @@
       "bufferView": 0,
       "byteOffset": 0,
       "componentType": 5125,
-      "count": 183438,
+      "count": 2280,
       "type": "SCALAR"
     },
     {
       "bufferView": 1,
       "byteOffset": 0,
       "componentType": 5126,
-      "count": 32191,
+      "count": 1511,
       "type": "VEC3",
       "min": [
-        -16.931665420532227,
-        -0.3427729606628418,
-        -8.872771263122559
+        -0.25190774528785204,
+        0.9844339644242525,
+        -0.07105330386200852
       ],
       "max": [
-        16.957473754882812,
-        39.0,
-        7.802740097045898
+        0.25813306492520405,
+        1.523349735517768,
+        0.217
       ]
     },
     {
       "bufferView": 1,
-      "byteOffset": 386292,
+      "byteOffset": 18132,
       "componentType": 5126,
-      "count": 32191,
+      "count": 1511,
       "type": "VEC3"
     },
     {
       "bufferView": 2,
       "byteOffset": 0,
       "componentType": 5126,
-      "count": 32191,
+      "count": 1511,
       "type": "VEC2"
     }
   ],
@@ -111,20 +111,20 @@
     {
       "buffer": 0,
       "byteOffset": 0,
-      "byteLength": 733752,
+      "byteLength": 9120,
       "target": 34963
     },
     {
       "buffer": 0,
-      "byteOffset": 733752,
-      "byteLength": 772584,
+      "byteOffset": 9120,
+      "byteLength": 36264,
       "byteStride": 12,
       "target": 34962
     },
     {
       "buffer": 0,
-      "byteOffset": 1506336,
-      "byteLength": 257528,
+      "byteOffset": 45384,
+      "byteLength": 12088,
       "byteStride": 8,
       "target": 34962
     }
@@ -132,7 +132,7 @@
   "buffers": [
     {
       "uri": "scene.bin",
-      "byteLength": 1763864
+      "byteLength": 57472
     }
   ]
 }

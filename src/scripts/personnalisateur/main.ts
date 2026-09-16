@@ -44,6 +44,25 @@ function paintSupport(): void {
   el('supportSpec').textContent = SUPPORT_SPEC[S.garment];
 }
 
+// Crédit du modèle 3D — chaque vêtement vient d'une source différente
+// (licences ouvertes distinctes) : t-shirt/sweat dérivent du même
+// maillage de base (Chirag.Vijay, CC BY 4.0) ; chemise/polo viennent
+// d'un personnage Quaternius (pack "Ultimate Modular Men", CC0), pose
+// figée depuis son animation "Idle" ; casquette réutilise un modèle
+// indépendant (Poly by Google via Poly Pizza, CC BY 3.0) — cf.
+// render.ts pour le détail des fichiers.
+const MODEL_CREDIT: Record<Garment, string> = {
+  tshirt: 'Modèle 3D « T-Shirt Low Poly » par <a href="https://sketchfab.com/Chirag.Vijay" target="_blank" rel="noopener">Chirag.Vijay</a>, sous licence <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.',
+  sweat: 'Modèle 3D basé sur « T-Shirt Low Poly » par <a href="https://sketchfab.com/Chirag.Vijay" target="_blank" rel="noopener">Chirag.Vijay</a> (manches et capuche modifiées), sous licence <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.',
+  chemise: 'Modèle 3D basé sur « Business Man » (pack Ultimate Modular Men) par <a href="https://poly.pizza/bundle/Ultimate-Modular-Men-Pack-ZiH8muWqwQ" target="_blank" rel="noopener">Quaternius</a> (via Poly Pizza), licence <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0</a>.',
+  polo: 'Modèle 3D basé sur « Casual Character » (pack Ultimate Modular Men) par <a href="https://poly.pizza/bundle/Ultimate-Modular-Men-Pack-ZiH8muWqwQ" target="_blank" rel="noopener">Quaternius</a> (via Poly Pizza), licence <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0</a>.',
+  casquette: 'Modèle 3D « Baseball cap » par <a href="https://poly.pizza/m/aaC5GgcWEhM" target="_blank" rel="noopener">Poly by Google</a> (via Poly Pizza), sous licence <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener">CC BY 3.0</a>.',
+};
+
+function paintCredit(): void {
+  el('modelCredit').innerHTML = MODEL_CREDIT[S.garment];
+}
+
 function syncGarmentPicker(): void {
   document.querySelectorAll<HTMLButtonElement>('#garmentPicker [data-g]').forEach((b) => {
     b.classList.toggle('on', b.dataset.g === S.garment);
@@ -57,6 +76,7 @@ function bindGarmentPicker(): void {
     S.garment = b.dataset.g as Garment;
     syncGarmentPicker();
     paintSupport();
+    paintCredit();
     syncPlace();
     syncEditor();
     saveState();
@@ -366,6 +386,7 @@ function applyProduitFromUrl(): void {
 // peuvent tous avoir changé d'un coup).
 function refreshAll(): void {
   paintSupport();
+  paintCredit();
   syncGarmentPicker();
   paintColors();
   syncDelai();

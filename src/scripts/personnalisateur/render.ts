@@ -18,15 +18,16 @@ export const activeTech = () => (S.tech === 'auto' ? reco(totalColors(), qtyTota
 
 const TEXTURE_URL = '/personnalisateur/model/textures/Material_baseColor.png';
 
-// Sweat, chemise et polo gardent le même patron que le t-shirt (torse,
-// UV) et prolongent/ajoutent juste des sommets (manches, col) : la
-// texture et les zones d'impression (print-zones.ts) restent donc
-// valables sans changement. La casquette a une toute autre topologie
-// (dôme + visière, sans rapport avec le patron t-shirt) mais réutilise
-// la MÊME texture partagée : son panneau avant est UV-mappé dans le
-// rectangle d'impression "face" et son panneau arrière dans "dos", donc
-// les visuels déposés dans le configurateur s'y affichent aussi
-// correctement sans rien changer ici.
+// Sweat garde le même patron que le t-shirt (torse, UV) et prolonge
+// juste des sommets (manches, capuche) : la texture et les zones
+// d'impression (print-zones.ts) restent donc valables sans changement.
+// Chemise, polo et casquette ont une topologie totalement différente
+// (personnages Quaternius posés, dôme+visière pour la casquette — cf.
+// leur crédit dans main.ts) mais réutilisent la MÊME texture partagée :
+// chaque maillage a été repeint avec un UV qui pointe panneau avant
+// vers le rectangle d'impression "face", panneau arrière vers "dos",
+// manches vers "manche-droite/gauche", donc les visuels déposés dans le
+// configurateur s'y affichent correctement sans rien changer ici.
 const MODEL_URL: Partial<Record<Garment, string>> = {
   sweat: '/personnalisateur/model/sweat/scene.gltf',
   chemise: '/personnalisateur/model/chemise/scene.gltf',
