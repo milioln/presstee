@@ -168,7 +168,12 @@ h2{font-size:clamp(2.05rem,5.2vw,3.5rem)}
    humaine" (Milio, 2026-09-16) — sur mobile comme sur ordinateur, donc
    pas d'absolute positioning qui dépendrait de la largeur du texte. */
 .humanScale{display:flex;align-items:flex-end;gap:18px}
+.humanScale.center{justify-content:center}
 .humanScale-figure{flex-shrink:0;width:clamp(34px,4vw,46px);height:auto;margin-bottom:6px}
+/* Même bonhomme-bâton, décliné en petit dessin par carte (Milio,
+   2026-09-16 : « la même chose » que le bonhomme de l'accueil, sur
+   chaque case du bloc "Bien choisir »). */
+.card-figure{width:38px;height:auto;margin-bottom:14px;color:var(--indigo)}
 .lede{margin-top:26px;font-size:1.08rem}
 .lede + .lede{margin-top:10px}
 /* Les 4 points ne sont pas des avantages génériques : c'est la chaîne de

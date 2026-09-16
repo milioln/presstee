@@ -15,6 +15,14 @@
 				<span>en</span> <span class="jeu jeu-jaune" data-jeu="spin">3 clics.</span>
 			</h1>
 
+			<svg class="hero-cta-figure" viewBox="0 0 30 34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+				<circle cx="10" cy="4.4" r="3.4" fill="#FFC500" stroke="none" />
+				<path d="M10 7.8v10" />
+				<path d="M10 10.4l-5 4" />
+				<path d="M10 10.8l9.5 5.2" />
+				<path d="M10 17.8l-4 14" />
+				<path d="M10 17.8l4.5 13.6" />
+			</svg>
 			<div class="hero-actions">
 				<a class="btn btn-primary" href="/commencer">Lancez le test</a>
 				<a class="btn btn-secondary" href="/produits/t-shirts">Voir le catalogue</a>
@@ -200,6 +208,7 @@
 		}
 	}
 	.hero-title,
+	.hero-cta-figure,
 	.hero-actions,
 	.hero-atelier,
 	.hero-zone-wrap {
@@ -207,6 +216,9 @@
 	}
 	.hero-title {
 		animation-delay: 0.02s;
+	}
+	.hero-cta-figure {
+		animation-delay: 0.09s;
 	}
 	.hero-actions {
 		animation-delay: 0.14s;
@@ -219,11 +231,24 @@
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.hero-title,
+		.hero-cta-figure,
 		.hero-actions,
 		.hero-atelier,
 		.hero-zone-wrap {
 			animation: none;
 		}
+	}
+	/* Grand bonhomme-bâton qui pointe vers le premier CTA (Milio,
+	   2026-09-16 : « un petit bonhomme un peu plus grand qui pourrait
+	   interagir avec le CTA... pointer vers le, lancer le test ») — un
+	   bras tendu qui rejoint visuellement le coin du bouton juste
+	   en dessous. */
+	.hero-cta-figure {
+		display: block;
+		width: 60px;
+		height: auto;
+		margin: 26px 0 -4px 6px;
+		color: var(--encre);
 	}
 
 	.hero-title {
@@ -601,6 +626,10 @@
 		}
 		.hero-actions {
 			justify-content: center;
+		}
+		.hero-cta-figure {
+			margin-left: auto;
+			margin-right: auto;
 		}
 		/* Les 8 coloris tiennent sur une seule ligne plutôt que de passer à
 		   la ligne sur les petits écrans. */
