@@ -19,15 +19,14 @@
 import type { Emplacement, Garment } from '../config/parametres-metier';
 import { PRINT_RECT, TEXTURE_SIZE } from './personnalisateur/print-zones';
 
-// Sweat, chemise et polo ont désormais leur propre modèle 3D (mêmes
-// fichiers que le vrai configurateur, cf. personnalisateur/render.ts) ;
-// casquette retombe encore sur le t-shirt en attendant le sien.
+// Chaque vêtement a désormais son propre modèle 3D (mêmes fichiers que
+// le vrai configurateur, cf. personnalisateur/render.ts).
 const MODEL_PAR_GARMENT: Record<Garment, string> = {
   tshirt: '/personnalisateur/model/scene.gltf',
   sweat: '/personnalisateur/model/sweat/scene.gltf',
   chemise: '/personnalisateur/model/chemise/scene.gltf',
   polo: '/personnalisateur/model/polo/scene.gltf',
-  casquette: '/personnalisateur/model/scene.gltf',
+  casquette: '/personnalisateur/model/casquette/scene.gltf',
 };
 const TEXTURE_URL = '/personnalisateur/model/textures/Material_baseColor.png';
 
