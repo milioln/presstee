@@ -26,7 +26,7 @@ const organizationLd = {
 	'@type': 'Organization',
 	name: siteConfig.nom,
 	url: 'https://presstee.fr',
-	logo: new URL('/logo/presstee-horizontal.svg', Astro.site).toString(),
+	logo: new URL('/logo/presstee-horizontal-header.webp', Astro.site).toString(),
 };
 ---
 
@@ -51,7 +51,9 @@ const organizationLd = {
 	<meta name="twitter:title" content={title} />
 	<meta name="twitter:description" content={description} />
 	<meta name="twitter:image" content={new URL('/og-image.png', Astro.site)} />
-	<link rel="icon" type="image/svg+xml" href="/logo/presstee-icone.svg" />
+	<link rel="icon" type="image/png" sizes="32x32" href="/logo/presstee-icone-32.png" />
+	<link rel="icon" type="image/png" sizes="512x512" href="/logo/presstee-icone-512.png" />
+	<link rel="apple-touch-icon" href="/logo/presstee-icone-180.png" />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 	<link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;600&family=Shantell+Sans:wght@500;600&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
