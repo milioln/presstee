@@ -38,6 +38,14 @@
     background:#fff;
     box-shadow:4px 0 8px -4px rgba(23,19,31,.18);
   }
+  /* Les libellés de ligne ("Quantité conseillée", "Le prix dépend de"…)
+     forçaient la première colonne (fixe pendant le défilement) à être
+     aussi large que leur plus long mot sur une seule ligne, ce qui
+     grignotait trop de place sur téléphone et coupait la colonne
+     suivante (Milio, 2026-09-17 : « ça coupe trop »). Autorisés à passer
+     sur deux lignes et la colonne plafonnée en largeur : le reste du
+     tableau (qui, lui, défile) regagne l'espace. */
+  .tcompare tbody th{white-space:normal;max-width:96px}
 }
 
 /* "Des conseils selon votre activité" — même alignement à gauche que le

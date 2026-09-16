@@ -107,11 +107,14 @@
 .posrow{display:flex;align-items:center;gap:6px}
 
 .viewer{display:flex;flex-direction:column}
-/* Bandeau au-dessus du modèle 3D (Milio, 2026-09-16 : « ce modèle ne
-   correspond pas exactement au modèle choisi mais en reprend les
-   caractéristiques ») — les modèles 3D du configurateur sont partagés
-   entre plusieurs références produit et ne sont pas le rendu final. */
-.model-disclaimer{display:flex;gap:10px;align-items:flex-start;padding:12px 16px;margin-bottom:12px;border-radius:12px;background:var(--warn-bg);color:var(--warn)}
+/* Bandeau posé directement sur le modèle 3D, pas au-dessus dans un bloc
+   séparé (Milio, 2026-09-17 : « je voudrais pas qu'il y ait le blanc en
+   dessous [...] qu'il n'y ait pas cette délimitation » — un bloc avant
+   .frame retombait sur le fond blanc de la page, créant deux bandeaux
+   apparents l'un sur l'autre). Enfant de .frame (position:relative),
+   overlay en haut avec sa propre ombre pour rester lisible sur la trame
+   grise comme sur le vêtement. */
+.model-disclaimer{position:absolute;left:16px;right:16px;top:16px;z-index:2;display:flex;gap:10px;align-items:flex-start;padding:12px 16px;border-radius:12px;background:rgba(253,244,229,.92);color:var(--warn);box-shadow:0 6px 18px rgba(0,0,0,.14);backdrop-filter:blur(6px)}
 .model-disclaimer svg{flex-shrink:0;margin-top:1px}
 .model-disclaimer p{font-family:'Manrope',system-ui,sans-serif;font-size:13px;line-height:1.5;margin:0}
 /* Hauteur minimale figée à 620px quelle que soit la taille de l'écran :
@@ -136,7 +139,10 @@
 @keyframes frameSpinBounce{0%{transform:scale(1) rotate(0)}30%{transform:scale(1.015) rotate(-.6deg)}60%{transform:scale(.994) rotate(.35deg)}100%{transform:scale(1) rotate(0)}}
 .frame.spin-bounce{animation:frameSpinBounce .5s ease}
 @media(prefers-reduced-motion:reduce){.frame.spin-bounce{animation:none}}
-#vReset{position:absolute;left:20px;top:20px;background:var(--bg)}
+/* En bas plutôt qu'en haut à gauche (Milio, 2026-09-17) : le bandeau
+   d'avertissement occupe maintenant ce coin, posé directement sur le
+   modèle. */
+#vReset{position:absolute;left:20px;bottom:20px;background:var(--bg)}
 .frame-actions{position:absolute;right:20px;bottom:20px;display:flex;align-items:center;gap:10px}
 .frame-actions .btn-icon{border-radius:100px;background:var(--bg);box-shadow:0 6px 18px rgba(0,0,0,.18)}
 .frame-add-btn{display:flex;align-items:center;gap:7px;background:var(--accent);color:var(--bg);border-radius:100px;padding:11px 18px 11px 14px;font-family:'Sora',sans-serif;font-weight:800;font-size:12.5px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.18);transition:background .15s}

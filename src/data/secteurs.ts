@@ -17,7 +17,7 @@
 // cache au lieu de la nouvelle). À incrémenter à chaque remplacement de
 // ces fichiers pour forcer le rechargement, plutôt que de compter sur un
 // vidage de cache manuel.
-export const SECTEUR_IMG_V = 2;
+export const SECTEUR_IMG_V = 3;
 
 export interface Secteur {
 	slug: string;

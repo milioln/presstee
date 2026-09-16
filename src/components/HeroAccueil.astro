@@ -317,17 +317,6 @@
 	.hero-title .jeu {
 		cursor: pointer;
 	}
-	/* Contour violet plutôt qu'un soulignement (Milio, 2026-09-16 : « ne
-	   souligne pas, essaie de faire un contour assez sympa violet ») —
-	   remplace le trait plein utilisé jusque-là ; "3 clics." garde son
-	   traitement à part (fond jaune plein, cf. .jeu-jaune plus bas). */
-	.hero-title .jeu:not(.jeu-jaune) {
-		border: 1.5px solid var(--indigo);
-		padding: 0 0.14em;
-	}
-	.hero-title .jeu:not(.jeu-jaune):hover {
-		border-color: transparent;
-	}
 	/* "3 clics." porte déjà son fond jaune par défaut, pas seulement au
 	   survol (Milio, 2026-09-15 : « que le 3 clics soit déjà encadré par
 	   ce jaune en arrière-plan ») — sans le soulignement partagé par les

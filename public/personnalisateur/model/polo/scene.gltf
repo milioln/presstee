@@ -2,7 +2,7 @@
   "asset": {
     "version": "2.0",
     "extras": {
-      "credit": "Base : \"Business Man\" (pack Ultimate Modular Men) par Quaternius (Poly Pizza, CC0) ; pose fig\u00e9e depuis l'animation Idle, UV repeinte en interne pour Presstee (polo)."
+      "credit": "Base : \"Casual Character\" (pack Ultimate Modular Men) par Quaternius (Poly Pizza, CC0) ; pose fig\u00e9e depuis l'animation Idle, liss\u00e9e et retravaill\u00e9e en interne pour Presstee (polo)."
     }
   },
   "scene": 0,
@@ -82,14 +82,14 @@
       "count": 1490,
       "type": "VEC3",
       "min": [
-        -0.25190774528785204,
-        0.9844339644242525,
-        -0.07105330386200852
+        -0.25209462603474536,
+        0.9906895412708159,
+        -0.03494407350542767
       ],
       "max": [
-        0.25813306492520405,
-        1.523349735517768,
-        0.19313565749910716
+        0.2589831899238073,
+        1.51488291936785,
+        0.1803694954741583
       ]
     },
     {
