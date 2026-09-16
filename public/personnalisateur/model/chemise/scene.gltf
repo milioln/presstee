@@ -1,0 +1,138 @@
+{
+  "asset": {
+    "version": "2.0",
+    "extras": {
+      "credit": "Base : 'T-Shirt Low Poly' par Chirag.Vijay (Sketchfab, CC-BY-4.0), manches et col modifi\u00e9s/ajout\u00e9s en interne pour Presstee (chemise)."
+    }
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "name": "chemise"
+    }
+  ],
+  "materials": [
+    {
+      "name": "Material",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 1
+        },
+        "metallicFactor": 1.0,
+        "roughnessFactor": 1.0
+      },
+      "doubleSided": true,
+      "alphaMode": "OPAQUE"
+    }
+  ],
+  "textures": [
+    {
+      "source": 0
+    },
+    {
+      "source": 1
+    }
+  ],
+  "images": [
+    {
+      "uri": "../textures/Material_baseColor.png"
+    },
+    {
+      "uri": "../textures/Material_metallicRoughness.png"
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 1,
+            "NORMAL": 2,
+            "TEXCOORD_0": 3
+          },
+          "indices": 0,
+          "material": 0
+        }
+      ]
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "byteOffset": 0,
+      "componentType": 5125,
+      "count": 194598,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 34011,
+      "type": "VEC3",
+      "min": [
+        -16.931665420532227,
+        -0.3427729606628418,
+        -8.872771263122559
+      ],
+      "max": [
+        16.957473754882812,
+        38.867164611816406,
+        7.802740097045898
+      ]
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 408132,
+      "componentType": 5126,
+      "count": 34011,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 34011,
+      "type": "VEC2"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteOffset": 0,
+      "byteLength": 778392,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 778392,
+      "byteLength": 816264,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 1594656,
+      "byteLength": 272088,
+      "byteStride": 8,
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "uri": "scene.bin",
+      "byteLength": 1866744
+    }
+  ]
+}

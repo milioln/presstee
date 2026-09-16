@@ -1,8 +1,9 @@
 // Point d'entrée du personnalisateur — assemble les modules et branche
 // les contrôles du panneau (couleur, emplacement, taille du visuel,
 // répartition des tailles, technique, délai, vêtement). Le sélecteur de
-// vêtement (garmentPicker) ne propose que t-shirt/sweat pour l'instant :
-// ce sont les deux seuls à avoir leur propre modèle 3D (cf. render.ts).
+// vêtement (garmentPicker) ne propose que t-shirt/sweat/chemise pour
+// l'instant : ce sont les seuls à avoir leur propre modèle 3D (cf.
+// render.ts).
 import { S, activeLayer, loadState, saveState, addColorLot, removeColorLot, switchColorLot } from './state';
 import { showEggToast } from '../../lib/easter-egg';
 import { catalogueColoris, TAILLES } from '../../config/parametres-metier';
@@ -28,12 +29,10 @@ function el<T extends HTMLElement = HTMLElement>(id: string): T {
   return document.getElementById(id) as T;
 }
 
-// Fiche technique par vêtement, affichée dans le panneau "1 — Support" —
-// seuls le nom et l'aperçu 3D changeaient déjà avec S.garment (cf.
-// render.ts), ce texte restait figé sur le t-shirt (Milio, 2026-09-16 :
-// « modélise-moi un sweat »). Chemise/casquette n'ont pas encore leur
-// propre modèle 3D (render.ts retombe sur le t-shirt pour elles), mais
-// gardent quand même leur propre fiche ici pour rester cohérentes.
+// Fiche technique par vêtement, affichée dans le panneau "1 — Support".
+// Casquette n'a pas encore son propre modèle 3D (render.ts retombe sur
+// le t-shirt pour elle), mais garde quand même sa propre fiche ici pour
+// rester cohérente.
 const SUPPORT_SPEC: Record<Garment, string> = {
   tshirt: '100 % coton · manches courtes · XS à XXL',
   sweat: '80 % coton, 20 % polyester · manches longues · XS à XXL',
@@ -47,12 +46,11 @@ function paintSupport(): void {
   el('supportSpec').textContent = SUPPORT_SPEC[S.garment];
 }
 
-// Seuls le t-shirt et le sweat ont aujourd'hui leur propre modèle 3D
-// (render.ts retombe sur le t-shirt pour chemise/casquette) : le
-// sélecteur ne propose que ces deux-là pour l'instant, pour ne pas
-// laisser croire qu'une chemise ou une casquette s'affiche correctement
-// (Milio, 2026-09-16 : « laisse une possibilité pour choisir le
-// sweat »). À étendre en seg4 quand chemise/casquette auront leur modèle.
+// T-shirt, sweat et chemise ont chacun leur propre modèle 3D (cf.
+// render.ts) : le sélecteur ne propose qu'eux pour l'instant, pour ne
+// pas laisser croire que polo/casquette s'affichent correctement tant
+// qu'ils retombent sur le t-shirt. À étendre en seg4 une fois leur
+// propre modèle prêt.
 function syncGarmentPicker(): void {
   document.querySelectorAll<HTMLButtonElement>('#garmentPicker [data-g]').forEach((b) => {
     b.classList.toggle('on', b.dataset.g === S.garment);
