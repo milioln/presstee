@@ -19,17 +19,14 @@
 import type { Emplacement, Garment } from '../config/parametres-metier';
 import { PRINT_RECT, TEXTURE_SIZE } from './personnalisateur/print-zones';
 
-// Un seul modèle 3D existe aujourd'hui (le t-shirt low poly, licence
-// CC-BY-4.0) : pas de quoi représenter fidèlement un sweat, une chemise
-// ou une casquette. Demande de Milio (2026-09-09) notée pour la suite :
-// un vrai modèle par vêtement demande une modélisation 3D dédiée, hors de
-// portée de ce qui peut être fait ici en code — cette table est prête à
-// recevoir ces fichiers dès qu'ils existent (un par vêtement), en
-// attendant elle retombe partout sur le même modèle.
+// Sweat, chemise et polo ont désormais leur propre modèle 3D (mêmes
+// fichiers que le vrai configurateur, cf. personnalisateur/render.ts) ;
+// casquette retombe encore sur le t-shirt en attendant le sien.
 const MODEL_PAR_GARMENT: Record<Garment, string> = {
   tshirt: '/personnalisateur/model/scene.gltf',
-  sweat: '/personnalisateur/model/scene.gltf',
-  chemise: '/personnalisateur/model/scene.gltf',
+  sweat: '/personnalisateur/model/sweat/scene.gltf',
+  chemise: '/personnalisateur/model/chemise/scene.gltf',
+  polo: '/personnalisateur/model/polo/scene.gltf',
   casquette: '/personnalisateur/model/scene.gltf',
 };
 const TEXTURE_URL = '/personnalisateur/model/textures/Material_baseColor.png';

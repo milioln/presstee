@@ -17,7 +17,7 @@ import { setDemandeBrief } from '../lib/demande-brief';
 import { initQuiz3d, updateQuiz3d } from './commencer-3d';
 import type { TShirtCatalogue } from '../data/tshirts';
 
-const GARMENT_LABELS: Record<Garment, string> = { tshirt: 'T-shirt', sweat: 'Sweat', chemise: 'Chemise', casquette: 'Casquette' };
+const GARMENT_LABELS: Record<Garment, string> = { tshirt: 'T-shirt', sweat: 'Sweat', chemise: 'Chemise', polo: 'Polo', casquette: 'Casquette' };
 
 interface VisuelImporte {
   dataUrl: string;

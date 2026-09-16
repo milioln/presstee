@@ -15,11 +15,13 @@ export const VARIANT_DEFAUT: Variant = { coupe: 'droite', manche: 'courte', col:
 
 // Caractéristiques pertinentes par famille — une casquette n'a ni col ni
 // manches, un sweat n'a pas de version manches courtes, une chemise a un
-// col fixe (patte de boutonnage) donc pas de variante rond/V.
+// col fixe (patte de boutonnage) donc pas de variante rond/V, un polo a
+// lui aussi un col fixe et une seule longueur de manche (courte).
 export const CARACTERISTIQUES: Record<Garment, { col?: Col[]; manche?: Manche[]; coupe?: Coupe[] }> = {
   tshirt: { col: ['rond', 'v'], manche: ['courte', 'longue'], coupe: ['droite', 'oversize'] },
   sweat: { coupe: ['droite', 'oversize'] },
   chemise: { manche: ['courte', 'longue'], coupe: ['droite', 'oversize'] },
+  polo: { coupe: ['droite', 'oversize'] },
   casquette: {},
 };
 
@@ -107,6 +109,25 @@ export const GARMENTS: Record<Garment, GarmentDef> = {
       face: { flat: { x: 53, y: 28, w: 14, h: 12 }, worn: { x: 54, y: 52, w: 11, h: 10 } },
       coeur: { flat: { x: 53, y: 28, w: 14, h: 12 }, worn: { x: 54, y: 52, w: 11, h: 10 } },
       dos: { flat: { x: 33, y: 24, w: 34, h: 34 }, worn: { x: 39, y: 48, w: 22, h: 24 } },
+    },
+  },
+  polo: {
+    name: 'Polo',
+    icon: TEE_F,
+    flat: [
+      {
+        body: TEE_F,
+        lines: ['M122,136 L122,150', 'M278,136 L278,150'],
+        collar: ['M156,52 L200,86 L176,48 Z', 'M244,52 L200,86 L224,48 Z'],
+        placket: 'M194,80 L194,140 L206,140 L206,80 Z',
+        buttons: [92, 118],
+      },
+      { body: TEE_B, lines: ['M148,54 Q200,78 252,54', 'M122,136 L122,150', 'M278,136 L278,150'] },
+    ],
+    print: {
+      face: { flat: { x: 53, y: 28, w: 14, h: 12 }, worn: { x: 54, y: 52, w: 11, h: 10 } },
+      coeur: { flat: { x: 53, y: 28, w: 14, h: 12 }, worn: { x: 54, y: 52, w: 11, h: 10 } },
+      dos: { flat: { x: 33, y: 22, w: 34, h: 38 }, worn: { x: 39, y: 47, w: 22, h: 26 } },
     },
   },
   casquette: {

@@ -18,14 +18,16 @@ export const activeTech = () => (S.tech === 'auto' ? reco(totalColors(), qtyTota
 
 const TEXTURE_URL = '/personnalisateur/model/textures/Material_baseColor.png';
 
-// Sweat et chemise gardent le même patron que le t-shirt (torse, UV) et
-// prolongent/ajoutent juste des sommets (manches, col) : la texture et
-// les zones d'impression (print-zones.ts) restent donc valables sans
-// changement. Polo et casquette retombent sur le t-shirt en attendant
-// leur propre modèle.
+// Sweat, chemise et polo gardent le même patron que le t-shirt (torse,
+// UV) et prolongent/ajoutent juste des sommets (manches, col) : la
+// texture et les zones d'impression (print-zones.ts) restent donc
+// valables sans changement. Casquette retombe sur le t-shirt en
+// attendant son propre modèle (topologie trop différente pour la même
+// technique).
 const MODEL_URL: Partial<Record<Garment, string>> = {
   sweat: '/personnalisateur/model/sweat/scene.gltf',
   chemise: '/personnalisateur/model/chemise/scene.gltf',
+  polo: '/personnalisateur/model/polo/scene.gltf',
 };
 const DEFAULT_MODEL_URL = '/personnalisateur/model/scene.gltf';
 

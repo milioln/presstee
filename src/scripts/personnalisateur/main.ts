@@ -1,8 +1,8 @@
 // Point d'entrée du personnalisateur — assemble les modules et branche
 // les contrôles du panneau (couleur, emplacement, taille du visuel,
 // répartition des tailles, technique, délai, vêtement). Le sélecteur de
-// vêtement (garmentPicker) ne propose que t-shirt/sweat/chemise pour
-// l'instant : ce sont les seuls à avoir leur propre modèle 3D (cf.
+// vêtement (garmentPicker) ne propose que t-shirt/sweat/chemise/polo
+// pour l'instant : ce sont les seuls à avoir leur propre modèle 3D (cf.
 // render.ts).
 import { S, activeLayer, loadState, saveState, addColorLot, removeColorLot, switchColorLot } from './state';
 import { showEggToast } from '../../lib/easter-egg';
@@ -37,6 +37,7 @@ const SUPPORT_SPEC: Record<Garment, string> = {
   tshirt: '100 % coton · manches courtes · XS à XXL',
   sweat: '80 % coton, 20 % polyester · manches longues · XS à XXL',
   chemise: '100 % coton · manches longues · XS à XXL',
+  polo: '95 % coton, 5 % élasthanne · manches courtes · XS à XXL',
   casquette: '100 % coton · taille réglable',
 };
 
@@ -46,11 +47,11 @@ function paintSupport(): void {
   el('supportSpec').textContent = SUPPORT_SPEC[S.garment];
 }
 
-// T-shirt, sweat et chemise ont chacun leur propre modèle 3D (cf.
+// T-shirt, sweat, chemise et polo ont chacun leur propre modèle 3D (cf.
 // render.ts) : le sélecteur ne propose qu'eux pour l'instant, pour ne
-// pas laisser croire que polo/casquette s'affichent correctement tant
-// qu'ils retombent sur le t-shirt. À étendre en seg4 une fois leur
-// propre modèle prêt.
+// pas laisser croire que la casquette s'affiche correctement tant
+// qu'elle retombe sur le t-shirt. À étendre une fois son propre modèle
+// prêt.
 function syncGarmentPicker(): void {
   document.querySelectorAll<HTMLButtonElement>('#garmentPicker [data-g]').forEach((b) => {
     b.classList.toggle('on', b.dataset.g === S.garment);
