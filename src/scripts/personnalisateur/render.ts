@@ -163,15 +163,26 @@ async function applyTexture(): Promise<void> {
 // moindre clic (Milio, 2026-09-15). On ne recadre donc la caméra que
 // lorsque la face affichée change réellement ; force=true (bouton
 // "réinitialiser la vue") l'impose malgré tout.
-let lastSyncedPlace: 'face' | 'dos' | null = null;
+let lastSyncedKey: string | null = null;
+
+// La casquette n'a pas de face plate comme un t-shirt : vue de face
+// pile (0deg), la visière se voit à peine (raccourci) et le dôme
+// paraît juste rond. Un angle 3/4 la montre bien mieux — cf. Milio,
+// 2026-09-16 : « elle tire la gueule » (le dôme+visière vus de face se
+// confondaient en silhouette ronde).
+function cameraOrbitFor(target: 'face' | 'dos'): string {
+  if (S.garment === 'casquette') return target === 'dos' ? '205deg 80deg 100%' : '25deg 80deg 100%';
+  return target === 'dos' ? '180deg 85deg 105%' : '0deg 85deg 105%';
+}
 
 export function syncCamera(force = false): void {
   const mv = stage();
   if (!mv) return;
   const target = place() === 'dos' ? 'dos' : 'face';
-  if (!force && target === lastSyncedPlace) return;
-  lastSyncedPlace = target;
-  mv.cameraOrbit = target === 'dos' ? '180deg 85deg 105%' : '0deg 85deg 105%';
+  const key = `${S.garment}:${target}`;
+  if (!force && key === lastSyncedKey) return;
+  lastSyncedKey = key;
+  mv.cameraOrbit = cameraOrbitFor(target);
 }
 
 // Même logique que syncCamera : ne change le src du <model-viewer> que

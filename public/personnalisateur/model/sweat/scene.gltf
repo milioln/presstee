@@ -1,12 +1,8 @@
 {
   "asset": {
     "version": "2.0",
-    "generator": "Presstee mesh tool (base garment CC-BY-4.0 Chirag.Vijay, sleeves modelled in-house)",
     "extras": {
-      "title": "Sweat (d\u00e9riv\u00e9 du T-Shirt Low Poly)",
-      "author": "Chirag.Vijay (base) + Presstee (manches longues)",
-      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
-      "source": "https://sketchfab.com/3d-models/t-shirt-low-poly-3e4b13a502884acfbd79cee0f9cd8876"
+      "credit": "Base : 'T-Shirt Low Poly' par Chirag.Vijay (Sketchfab, CC-BY-4.0), manches et capuche modifi\u00e9es/ajout\u00e9es en interne pour Presstee (sweat \u00e0 capuche)."
     }
   },
   "scene": 0,
@@ -20,29 +16,11 @@
   "nodes": [
     {
       "mesh": 0,
-      "name": "Sweat_Material_0"
-    }
-  ],
-  "meshes": [
-    {
-      "name": "Sweat_Material_0",
-      "primitives": [
-        {
-          "attributes": {
-            "POSITION": 1,
-            "NORMAL": 2,
-            "TEXCOORD_0": 3
-          },
-          "indices": 0,
-          "material": 0,
-          "mode": 4
-        }
-      ]
+      "name": "sweat"
     }
   ],
   "materials": [
     {
-      "doubleSided": true,
       "name": "Material",
       "pbrMetallicRoughness": {
         "baseColorTexture": {
@@ -50,26 +28,20 @@
         },
         "metallicRoughnessTexture": {
           "index": 1
-        }
-      }
+        },
+        "metallicFactor": 1.0,
+        "roughnessFactor": 1.0
+      },
+      "doubleSided": true,
+      "alphaMode": "OPAQUE"
     }
   ],
   "textures": [
     {
-      "sampler": 0,
       "source": 0
     },
     {
-      "sampler": 0,
       "source": 1
-    }
-  ],
-  "samplers": [
-    {
-      "magFilter": 9729,
-      "minFilter": 9987,
-      "wrapS": 10497,
-      "wrapT": 10497
     }
   ],
   "images": [
@@ -80,83 +52,87 @@
       "uri": "../textures/Material_metallicRoughness.png"
     }
   ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 1,
+            "NORMAL": 2,
+            "TEXCOORD_0": 3
+          },
+          "indices": 0,
+          "material": 0
+        }
+      ]
+    }
+  ],
   "accessors": [
     {
       "bufferView": 0,
+      "byteOffset": 0,
       "componentType": 5125,
-      "count": 194592,
+      "count": 194856,
       "type": "SCALAR"
     },
     {
       "bufferView": 1,
+      "byteOffset": 0,
       "componentType": 5126,
-      "count": 34006,
+      "count": 34061,
       "type": "VEC3",
+      "min": [
+        -16.931665420532227,
+        -0.3427729606628418,
+        -16.3
+      ],
       "max": [
-        17.972732543945312,
+        16.957473754882812,
         38.867164611816406,
         7.802740097045898
-      ],
-      "min": [
-        -17.98359489440918,
-        -0.3427729606628418,
-        -8.872771263122559
       ]
     },
     {
-      "bufferView": 2,
+      "bufferView": 1,
+      "byteOffset": 408732,
       "componentType": 5126,
-      "count": 34006,
+      "count": 34061,
       "type": "VEC3"
     },
     {
-      "bufferView": 3,
+      "bufferView": 2,
+      "byteOffset": 0,
       "componentType": 5126,
-      "count": 34006,
-      "type": "VEC2",
-      "max": [
-        2.9861931800842285,
-        0.9428186416625977
-      ],
-      "min": [
-        2.090378522872925,
-        0.03865760564804077
-      ]
+      "count": 34061,
+      "type": "VEC2"
     }
   ],
   "bufferViews": [
     {
       "buffer": 0,
       "byteOffset": 0,
-      "byteLength": 778368,
+      "byteLength": 779424,
       "target": 34963
     },
     {
       "buffer": 0,
-      "byteOffset": 778368,
-      "byteLength": 408072,
-      "target": 34962,
-      "byteStride": 12
+      "byteOffset": 779424,
+      "byteLength": 817464,
+      "byteStride": 12,
+      "target": 34962
     },
     {
       "buffer": 0,
-      "byteOffset": 1186440,
-      "byteLength": 408072,
-      "target": 34962,
-      "byteStride": 12
-    },
-    {
-      "buffer": 0,
-      "byteOffset": 1594512,
-      "byteLength": 272048,
-      "target": 34962,
-      "byteStride": 8
+      "byteOffset": 1596888,
+      "byteLength": 272488,
+      "byteStride": 8,
+      "target": 34962
     }
   ],
   "buffers": [
     {
       "uri": "scene.bin",
-      "byteLength": 1866560
+      "byteLength": 1869376
     }
   ]
 }

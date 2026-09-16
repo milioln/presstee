@@ -2,7 +2,7 @@
   "asset": {
     "version": "2.0",
     "extras": {
-      "credit": "Base : 'T-Shirt Low Poly' par Chirag.Vijay (Sketchfab, CC-BY-4.0), manches et col modifi\u00e9s/ajout\u00e9s en interne pour Presstee (chemise)."
+      "credit": "Base : 'T-Shirt Low Poly' par Chirag.Vijay (Sketchfab, CC-BY-4.0), manches/col/boutons modifi\u00e9s/ajout\u00e9s en interne pour Presstee (chemise)."
     }
   },
   "scene": 0,
@@ -72,14 +72,14 @@
       "bufferView": 0,
       "byteOffset": 0,
       "componentType": 5125,
-      "count": 194598,
+      "count": 194838,
       "type": "SCALAR"
     },
     {
       "bufferView": 1,
       "byteOffset": 0,
       "componentType": 5126,
-      "count": 34011,
+      "count": 34093,
       "type": "VEC3",
       "min": [
         -16.931665420532227,
@@ -94,16 +94,16 @@
     },
     {
       "bufferView": 1,
-      "byteOffset": 408132,
+      "byteOffset": 409116,
       "componentType": 5126,
-      "count": 34011,
+      "count": 34093,
       "type": "VEC3"
     },
     {
       "bufferView": 2,
       "byteOffset": 0,
       "componentType": 5126,
-      "count": 34011,
+      "count": 34093,
       "type": "VEC2"
     }
   ],
@@ -111,20 +111,20 @@
     {
       "buffer": 0,
       "byteOffset": 0,
-      "byteLength": 778392,
+      "byteLength": 779352,
       "target": 34963
     },
     {
       "buffer": 0,
-      "byteOffset": 778392,
-      "byteLength": 816264,
+      "byteOffset": 779352,
+      "byteLength": 818232,
       "byteStride": 12,
       "target": 34962
     },
     {
       "buffer": 0,
-      "byteOffset": 1594656,
-      "byteLength": 272088,
+      "byteOffset": 1597584,
+      "byteLength": 272744,
       "byteStride": 8,
       "target": 34962
     }
@@ -132,7 +132,7 @@
   "buffers": [
     {
       "uri": "scene.bin",
-      "byteLength": 1866744
+      "byteLength": 1870328
     }
   ]
 }
