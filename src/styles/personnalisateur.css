@@ -113,12 +113,17 @@
    petit sur mon ordinateur, ça ne prend pas assez tout l'espace »). Liée
    à la hauteur de la fenêtre plutôt qu'à une valeur fixe, plafonnée pour
    ne pas déborder sur un écran très haut. */
+/* Fond gris (pas blanc) : un support blanc ou clair se distinguait mal
+   du fond, masquant des défauts de modélisation (Milio, 2026-09-16 :
+   « il ne faudrait pas qu'il soit blanc [...] ce blanc autour qui nous
+   empêche de voir la grille »). */
 .frame{position:relative;flex:1;min-height:min(74vh,760px);overflow:hidden;
-  background-image:linear-gradient(color-mix(in srgb,var(--text) 6%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--text) 6%,transparent) 1px,transparent 1px);
+  background-color:#D8D7DE;
+  background-image:linear-gradient(color-mix(in srgb,var(--text) 10%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--text) 10%,transparent) 1px,transparent 1px);
   background-size:26px 26px;background-position:center center}
 /* Plein écran du modèle seul (bouton dédié, distinct du plein écran de
    tout l'outil) : occupe tout l'écran, garde la trame de fond. */
-.frame:fullscreen{width:100vw;height:100vh;background-color:var(--bg)}
+.frame:fullscreen{width:100vw;height:100vh;background-color:#D8D7DE}
 #stage{position:absolute;inset:0;width:100%;height:100%;--poster-color:transparent}
 /* Clin d'œil : un tour complet du modèle fait à la main (cf. spin-egg.ts). */
 @keyframes frameSpinBounce{0%{transform:scale(1) rotate(0)}30%{transform:scale(1.015) rotate(-.6deg)}60%{transform:scale(.994) rotate(.35deg)}100%{transform:scale(1) rotate(0)}}
