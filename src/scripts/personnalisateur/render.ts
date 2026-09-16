@@ -71,6 +71,67 @@ function loadImgCached(src: string): Promise<HTMLImageElement> {
   return p;
 }
 
+// Boutons de la chemise/du polo (Milio, 2026-09-17 : « il ne faut pas
+// que les boutons soient par-dessus le textile », puis « le polo il n'y
+// a pas les trois boutons sur le col de devant ») — peints à même la
+// texture plutôt que modélisés en relief : un petit bombé 3D collé sur
+// la surface se voyait toujours comme un objet posé au-dessus du tissu,
+// quels que soient ses normales. Un décalque ton sur ton (assombrissement
+// semi-transparent, pas une couleur fixe) s'adapte automatiquement au
+// coloris choisi et reste toujours à plat sur le tissu.
+// Repères en pixels dans le rectangle d'impression "face" de l'atlas
+// (PRINT_RECT.face, 2048×2048) — le panneau y est inversé verticalement
+// (cf. PANEL_SCALE.face.y = -1) : le haut physique du vêtement (près du
+// col) correspond au bas du rectangle en pixels, pas au haut.
+const BUTTON_COLUMN_V_FRAC: Partial<Record<Garment, number[]>> = {
+  polo: [0.82, 0.72, 0.62],
+  chemise: [0.92, 0.78, 0.64, 0.5, 0.36, 0.22],
+};
+const BUTTON_RADIUS_PX = 15;
+
+function drawButtons(ctx: CanvasRenderingContext2D): void {
+  const vFracs = BUTTON_COLUMN_V_FRAC[S.garment];
+  if (!vFracs) return;
+  const rect = PRINT_RECT.face;
+  const cx = rect.x + rect.w * 0.5;
+  // Un décalque à assombrissement fixe devient invisible sur un coloris
+  // déjà foncé (noir sur noir) : un léger "emboss" (ombre + reflet des
+  // deux côtés) reste lisible quel que soit le coloris choisi, sans
+  // avoir à connaître sa luminosité. Les trous de couture, eux, changent
+  // de teinte selon la luminance du coloris pour rester visibles.
+  const dark = lum(S.color.hex) > 0.4;
+  const holeColor = dark ? 'rgba(0,0,0,0.55)' : 'rgba(255,255,255,0.6)';
+  for (const vFrac of vFracs) {
+    // v_frac=1 (haut physique, près du col) -> bas du rectangle pixel
+    // (rect.y + rect.h) : mapping direct, comme dans le script Python qui
+    // peint cet UV (v = v0 + v_frac*(v1-v0)) — PANEL_SCALE ne compense que
+    // l'orientation d'une IMAGE dessinée, pas un point posé directement.
+    const cy = rect.y + rect.h * vFrac;
+    const r = BUTTON_RADIUS_PX;
+    ctx.beginPath();
+    ctx.arc(cx + 1.6, cy + 1.6, r, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0,0,0,0.16)';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx - 1.6, cy - 1.6, r, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.16)';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.lineWidth = 1.6;
+    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+    ctx.stroke();
+    // deux petits trous de couture, discrets.
+    ctx.fillStyle = holeColor;
+    ctx.beginPath();
+    ctx.arc(cx - 4, cy, 1.6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx + 4, cy, 1.6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
 async function buildTextureDataUrl(): Promise<string> {
   const base = await loadBaseImg();
   const c = document.createElement('canvas');
@@ -83,6 +144,7 @@ async function buildTextureDataUrl(): Promise<string> {
   ctx.fillStyle = S.color.hex;
   ctx.fillRect(0, 0, c.width, c.height);
   ctx.globalCompositeOperation = 'source-over';
+  drawButtons(ctx);
   for (const layer of S.layers) {
     const rect = PRINT_RECT[layer.place];
     const logo = await loadImgCached(layer.img);
