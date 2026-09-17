@@ -36,7 +36,7 @@ const TEXTURE_URL = '/personnalisateur/model/textures/Material_baseColor.png';
 const MODEL_URL: Partial<Record<Garment, string>> = {
   sweat: '/personnalisateur/model/sweat/scene.gltf',
   chemise: '/personnalisateur/model/chemise/scene.gltf?v=4',
-  polo: '/personnalisateur/model/polo/scene.gltf?v=2',
+  polo: '/personnalisateur/model/polo/scene.gltf?v=3',
   casquette: '/personnalisateur/model/casquette/scene.gltf?v=2',
 };
 const DEFAULT_MODEL_URL = '/personnalisateur/model/scene.gltf';
@@ -89,7 +89,7 @@ function loadImgCached(src: string): Promise<HTMLImageElement> {
 // (cf. PANEL_SCALE.face.y = -1) : le haut physique du vêtement (près du
 // col) correspond au bas du rectangle en pixels, pas au haut.
 const BUTTON_COLUMN_V_FRAC: Partial<Record<Garment, number[]>> = {
-  polo: [0.82, 0.72, 0.62],
+  polo: [0.87, 0.77, 0.67],
   chemise: [0.92, 0.78, 0.64, 0.5, 0.36, 0.22],
 };
 const BUTTON_RADIUS_PX = 15;
