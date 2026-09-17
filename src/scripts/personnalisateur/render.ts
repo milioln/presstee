@@ -28,9 +28,14 @@ const TEXTURE_URL = '/personnalisateur/model/textures/Material_baseColor.png';
 // vers le rectangle d'impression "face", panneau arrière vers "dos",
 // manches vers "manche-droite/gauche", donc les visuels déposés dans le
 // configurateur s'y affichent correctement sans rien changer ici.
+// Le nom de fichier ne change jamais d'un correctif à l'autre : sans
+// paramètre de version, OVH/le navigateur peuvent continuer à servir
+// l'ancien .gltf en cache après un déploiement (cf. la même remarque déjà
+// faite pour les photos secteurs). On ne bump la version que pour les
+// modèles réellement retouchés.
 const MODEL_URL: Partial<Record<Garment, string>> = {
   sweat: '/personnalisateur/model/sweat/scene.gltf',
-  chemise: '/personnalisateur/model/chemise/scene.gltf',
+  chemise: '/personnalisateur/model/chemise/scene.gltf?v=2',
   polo: '/personnalisateur/model/polo/scene.gltf',
   casquette: '/personnalisateur/model/casquette/scene.gltf',
 };
