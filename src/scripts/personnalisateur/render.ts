@@ -35,7 +35,7 @@ const TEXTURE_URL = '/personnalisateur/model/textures/Material_baseColor.png';
 // modèles réellement retouchés.
 const MODEL_URL: Partial<Record<Garment, string>> = {
   sweat: '/personnalisateur/model/sweat/scene.gltf',
-  chemise: '/personnalisateur/model/chemise/scene.gltf?v=3',
+  chemise: '/personnalisateur/model/chemise/scene.gltf?v=4',
   polo: '/personnalisateur/model/polo/scene.gltf?v=2',
   casquette: '/personnalisateur/model/casquette/scene.gltf?v=2',
 };
