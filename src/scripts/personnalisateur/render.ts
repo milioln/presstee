@@ -196,7 +196,7 @@ function stage(): any {
 let applying = false;
 let reapplyQueued = false;
 
-async function applyTexture(): Promise<void> {
+async function applyTexture(attempt = 0): Promise<void> {
   const mv = stage();
   if (!mv || !mv.model) return;
   if (applying) {
@@ -209,6 +209,14 @@ async function applyTexture(): Promise<void> {
     const material = mv.model.materials[0];
     const texture = await mv.createTexture(dataUrl);
     material.pbrMetallicRoughness.baseColorTexture.setTexture(texture);
+  } catch (err) {
+    // Juste après 'load', le matériau interne de <model-viewer> peut ne
+    // pas encore être prêt à recevoir une texture (upload GPU du glTF
+    // encore en cours) : setTexture() échoue alors silencieusement et la
+    // silhouette brute du PNG (non teintée) reste affichée indéfiniment
+    // (Milio, 2026-09-17). On retente sur quelques frames plutôt que
+    // d'abandonner.
+    if (attempt < 5) requestAnimationFrame(() => applyTexture(attempt + 1));
   } finally {
     applying = false;
     if (reapplyQueued) {
@@ -253,22 +261,45 @@ export function syncCamera(force = false): void {
 // modèle se recharge en boucle et perd son angle de vue à chaque clic.
 let lastSyncedGarment: Garment | null = null;
 
-export function syncModel(): void {
+// 'load' se déclenche parfois avant que <model-viewer> ait vraiment fini
+// de préparer son matériau interne — on attend qu'il ait digéré ce
+// premier cycle de rendu (updateComplete + deux frames) avant de peindre
+// notre texture, sinon le setTexture() de applyTexture() atterrit trop
+// tôt et la silhouette brute du glTF (non teintée) reste affichée
+// indéfiniment au premier chargement (Milio, 2026-09-17).
+async function applyTextureWhenReady(): Promise<void> {
   const mv = stage();
   if (!mv) return;
-  if (S.garment === lastSyncedGarment) return;
+  if (mv.updateComplete) await mv.updateComplete;
+  await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
+  await applyTexture();
+}
+
+// Retourne true si le vêtement vient de changer (un nouveau modèle est en
+// cours de chargement) : render() ne doit alors pas poser son propre
+// listener 'load' en plus de celui-ci, ni s'appuyer sur mv.loaded qui
+// reste momentanément à sa valeur précédente juste après avoir modifié
+// mv.src (Milio, 2026-09-17 : sweat/chemise/polo/casquette affichés en
+// noir et blanc au tout premier chargement, à cause de ce double listener
+// et de ce mv.loaded pas encore fiable).
+export function syncModel(): boolean {
+  const mv = stage();
+  if (!mv) return false;
+  if (S.garment === lastSyncedGarment) return false;
   lastSyncedGarment = S.garment;
+  // Le listener est posé AVANT de changer mv.src : si le glTF est déjà en
+  // cache et que 'load' se déclenche très vite, on ne veut pas risquer de
+  // le manquer en l'attachant après coup.
+  mv.addEventListener('load', () => { void applyTextureWhenReady(); }, { once: true });
   mv.src = modelUrlForGarment(S.garment);
-  mv.addEventListener('load', () => applyTexture(), { once: true });
+  return true;
 }
 
 export function render(): void {
   const mv = stage();
-  syncModel();
-  if (mv && mv.loaded) {
+  const justSwitchedModel = syncModel();
+  if (!justSwitchedModel && mv && mv.loaded) {
     applyTexture();
-  } else if (mv) {
-    mv.addEventListener('load', () => applyTexture(), { once: true });
   }
   syncCamera();
   paintTechs();
