@@ -201,9 +201,26 @@ function stage(): any {
 let applying = false;
 let reapplyQueued = false;
 
-async function applyTexture(attempt = 0): Promise<void> {
+// Budget large (3s) plutôt qu'un compte de frames : sur les modèles
+// custom (chemise/polo/casquette), qui ont depuis gagné pas mal de
+// sommets (uv seamless, cf. assign_uv_seamless), mv.model peut mettre
+// plus de quelques frames à être prêt après 'load' selon la machine —
+// avec seulement 5 tentatives, ce cas restait bloqué sur la silhouette
+// brute indéfiniment (Milio, 2026-09-18 : "la manche droite est buggée"
+// — en réalité la texture pas encore appliquée, pas une vraie casse de
+// géométrie, confirmé en forçant un nouveau rendu à la main).
+const APPLY_TEXTURE_RETRY_MS = 3000;
+const APPLY_TEXTURE_RETRY_STEP_MS = 100;
+
+async function applyTexture(elapsedMs = 0): Promise<void> {
   const mv = stage();
-  if (!mv || !mv.model) return;
+  if (!mv) return;
+  if (!mv.model) {
+    if (elapsedMs < APPLY_TEXTURE_RETRY_MS) {
+      window.setTimeout(() => applyTexture(elapsedMs + APPLY_TEXTURE_RETRY_STEP_MS), APPLY_TEXTURE_RETRY_STEP_MS);
+    }
+    return;
+  }
   if (applying) {
     reapplyQueued = true;
     return;
@@ -219,9 +236,11 @@ async function applyTexture(attempt = 0): Promise<void> {
     // pas encore être prêt à recevoir une texture (upload GPU du glTF
     // encore en cours) : setTexture() échoue alors silencieusement et la
     // silhouette brute du PNG (non teintée) reste affichée indéfiniment
-    // (Milio, 2026-09-17). On retente sur quelques frames plutôt que
-    // d'abandonner.
-    if (attempt < 5) requestAnimationFrame(() => applyTexture(attempt + 1));
+    // (Milio, 2026-09-17). On retente pendant quelques secondes plutôt
+    // que d'abandonner.
+    if (elapsedMs < APPLY_TEXTURE_RETRY_MS) {
+      window.setTimeout(() => applyTexture(elapsedMs + APPLY_TEXTURE_RETRY_STEP_MS), APPLY_TEXTURE_RETRY_STEP_MS);
+    }
   } finally {
     applying = false;
     if (reapplyQueued) {
