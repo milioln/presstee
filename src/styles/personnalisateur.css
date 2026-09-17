@@ -114,11 +114,21 @@
    apparents l'un sur l'autre). Enfant de .frame (position:relative),
    overlay en haut avec sa propre ombre pour rester lisible sur la trame
    grise comme sur le vêtement. */
-.model-disclaimer{position:absolute;left:16px;right:16px;top:16px;z-index:2;display:flex;gap:10px;align-items:flex-start;padding:12px 16px;border-radius:12px;background:rgba(253,244,229,.92);color:var(--warn);box-shadow:0 6px 18px rgba(0,0,0,.14);backdrop-filter:blur(6px)}
-.model-disclaimer svg{flex-shrink:0;margin-top:1px}
-.model-disclaimer p{font-family:'Manrope',system-ui,sans-serif;font-size:13px;line-height:1.5;margin:0;flex:1}
-.model-disclaimer-ok{flex-shrink:0;font-family:'Sora',sans-serif;font-weight:600;font-size:12.5px;color:var(--warn);background:transparent;border:1.5px solid currentColor;border-radius:100px;padding:6px 14px;cursor:pointer;transition:background .15s,color .15s}
+.model-disclaimer{position:absolute;left:16px;right:16px;top:16px;z-index:2;display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:16px 20px;border-radius:14px;background:rgba(253,244,229,.94);color:var(--warn);box-shadow:0 8px 22px rgba(0,0,0,.16);backdrop-filter:blur(6px)}
+.model-disclaimer svg{flex-shrink:0;align-self:flex-start;margin-top:2px;width:20px;height:20px}
+.model-disclaimer p{font-family:'Manrope',system-ui,sans-serif;font-size:14.5px;line-height:1.55;margin:0;flex:1 1 260px}
+.model-disclaimer-ok{flex-shrink:0;margin-left:auto;font-family:'Sora',sans-serif;font-weight:600;font-size:13px;color:var(--warn);background:transparent;border:1.5px solid currentColor;border-radius:100px;padding:8px 18px;cursor:pointer;transition:background .15s,color .15s}
 .model-disclaimer-ok:hover{background:var(--warn);color:#fff}
+/* Sur mobile, la ligne icône+texte+bouton se retrouvait bien trop
+   étroite pour tenir sur une ligne : le texte s'enroulait sur near dix
+   lignes avec le bouton coincé sur le côté, à mi-hauteur du paragraphe
+   (Milio, 2026-09-17 : bandeau "mal affiché"). Le bouton passe pleine
+   largeur sous le texte, qui garde toute la largeur pour respirer. */
+@media (max-width: 640px) {
+  .model-disclaimer{padding:14px 16px}
+  .model-disclaimer p{flex-basis:100%}
+  .model-disclaimer-ok{width:100%;margin-left:0;text-align:center;padding:9px 18px}
+}
 /* Hauteur minimale figée à 620px quelle que soit la taille de l'écran :
    sur un grand moniteur, le modèle restait petit alors que la fenêtre
    avait largement la place de l'agrandir (Milio, 2026-09-09 : « trop
