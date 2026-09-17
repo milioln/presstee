@@ -19,12 +19,14 @@
 				<a class="btn btn-primary" href="/commencer">
 					Lancez le test
 					<svg class="hero-cta-figure" viewBox="0 0 16 27" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-						<path d="M3 1L6.3 9.3" />
 						<path d="M13 1L9.7 9.3" />
-						<circle cx="8" cy="6.5" r="3" fill="#FFC500" stroke="none" />
-						<path d="M8 9.3v6.7" />
-						<path d="M8 16l-3.5 5 2 5" />
-						<path d="M8 16l4 4-2 5.5" />
+						<circle cx="8.5" cy="6.5" r="3" fill="#FFC500" stroke="none" />
+						<path d="M8.5 9.3v6.7" />
+						<path d="M8.5 16l-3.5 5 2 5" />
+						<path d="M8.5 16l4 4-2 5.5" />
+						<g class="hero-cta-figure-arm">
+							<path d="M7.2 9.3L3 14.5" />
+						</g>
 					</svg>
 				</a>
 				<a class="btn btn-secondary" href="/produits/t-shirts">Voir le catalogue</a>
@@ -277,6 +279,28 @@
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.hero-cta-figure {
+			animation: none;
+		}
+	}
+	/* Ne s'accroche plus que d'une main, l'autre bras pend et se balance
+	   comme s'il glissait (Milio, 2026-09-17 : « anime ce mouvement comme
+	   tu le peux ») — rotation autour de l'épaule (transform-origin sur
+	   les coordonnées du viewBox, en px). */
+	@keyframes heroArmDangle {
+		0%,
+		100% {
+			transform: rotate(-6deg);
+		}
+		50% {
+			transform: rotate(16deg);
+		}
+	}
+	.hero-cta-figure-arm {
+		transform-origin: 7.2px 9.3px;
+		animation: heroArmDangle 1.6s ease-in-out 1.2s infinite;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.hero-cta-figure-arm {
 			animation: none;
 		}
 	}
@@ -598,6 +622,17 @@
 	}
 
 	@media (max-width: 900px) {
+		/* Le bonhomme suspendu est désormais le dernier élément visible de
+		   la colonne de texte sur téléphone (Milio, 2026-09-17 : « ses
+		   pieds au niveau du début de la section violette ») — le padding
+		   bas du hero (pensé pour la ligne "Atelier à Angoulême", masquée
+		   sur mobile) laissait un vide blanc entre ses pieds et la section
+		   suivante. Réduit au minimum pour que le violet démarre presque
+		   tout de suite après.
+		   */
+		.hero {
+			padding-bottom: 8px;
+		}
 		.hero-inner {
 			grid-template-columns: minmax(0, 1fr);
 		}

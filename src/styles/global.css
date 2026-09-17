@@ -76,7 +76,13 @@ section{padding:clamp(56px,9vw,120px) 0}
 /* Plus transparent, effet "bulle" (Milio, 2026-09-15) — le blur fait
    le travail de lisibilité, le fond n'a plus besoin d'être presque
    opaque. */
-header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.55);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid rgba(231,227,242,.7)}
+/* Se lit comme une vraie vitre même tout en haut d'une page blanche, où
+   le fond translucide se distinguait à peine du blanc en dessous
+   (Milio, 2026-09-17 : « l'effet bulle apple même quand il y a rien en
+   dessous ») — saturate() (recette classique du flou "vibrancy" iOS/
+   macOS) et une ombre légère donnent du relief même sans contraste de
+   couleur derrière. */
+header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.55);backdrop-filter:blur(18px) saturate(180%);-webkit-backdrop-filter:blur(18px) saturate(180%);border-bottom:1px solid rgba(231,227,242,.7);box-shadow:0 8px 30px rgba(23,19,31,.06)}
 /* Logo centré (Milio, 2026-09-15), sur ordinateur comme sur téléphone :
    une grille 1fr/auto/1fr ne centrait le logo QUE si les deux colonnes
    de liens faisaient exactement la même largeur — avec 3 liens à gauche
@@ -174,6 +180,12 @@ h2{font-size:clamp(2.05rem,5.2vw,3.5rem)}
    2026-09-16 : « la même chose » que le bonhomme de l'accueil, sur
    chaque case du bloc "Bien choisir »). */
 .card-figure{width:38px;height:auto;margin-bottom:14px;color:var(--indigo)}
+/* Plusieurs petits bonhomme-bâtons plutôt qu'un seul (Milio, 2026-09-17)
+   pour la case "Des conseils par activité" : un par activité (foot,
+   service, chant, karting), pour rendre concrète la diversité des
+   secteurs plutôt qu'une seule silhouette générique. */
+.card-figure-row{display:flex;gap:10px;margin-bottom:14px}
+.card-figure-row svg{width:30px;height:auto;color:var(--indigo)}
 .lede{margin-top:26px;font-size:1.08rem}
 .lede + .lede{margin-top:10px}
 /* Les 4 points ne sont pas des avantages génériques : c'est la chaîne de

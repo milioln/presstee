@@ -88,9 +88,10 @@ import '../styles/personnalisateur.css';
 
 							<div id="editView">
 							<div class="frame" id="frame">
-								<div class="model-disclaimer">
+								<div class="model-disclaimer" id="modelDisclaimer">
 									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 11v5" /><path d="M12 8v.01" /></svg>
 									<p>Ce modèle 3D ne correspond pas exactement au vêtement choisi, mais en reprend les caractéristiques. Nous vous réaliserons un bon à tirer qui vous permettra de valider l'emplacement de votre personnalisation sur le vrai modèle.</p>
+									<button type="button" class="model-disclaimer-ok" id="modelDisclaimerOk">J'ai compris</button>
 								</div>
 								<model-viewer
 									id="stage"
@@ -350,6 +351,26 @@ import '../styles/personnalisateur.css';
 		// du parcours rapide. Le modèle reste chargé à la demande (import
 		// dynamique) plutôt qu'au chargement du bundle de la page.
 		import('@google/model-viewer').then(() => import('./../scripts/personnalisateur/main')).then(({ init }) => init());
+
+		// Bandeau d'avertissement du modèle 3D masquable (Milio, 2026-09-17 :
+		// « un système de j'ai compris pour le faire disparaître ») — mémorisé
+		// pour ne plus le réafficher une fois lu.
+		const disclaimer = document.getElementById('modelDisclaimer');
+		const DISMISS_KEY = 'presstee:personnalisateur:disclaimerVu';
+		if (disclaimer) {
+			if (localStorage.getItem(DISMISS_KEY) === '1') {
+				disclaimer.style.display = 'none';
+			}
+			document.getElementById('modelDisclaimerOk')?.addEventListener('click', () => {
+				disclaimer.style.display = 'none';
+				try {
+					localStorage.setItem(DISMISS_KEY, '1');
+				} catch {
+					// Stockage indisponible (navigation privée...) : réapparaîtra
+					// à la prochaine visite, sans gravité.
+				}
+			});
+		}
 	</script>
 </Layout>
 

@@ -25,7 +25,7 @@
 				</a>
 			</nav>
 		</div>
-		<a class="brand" href="/#top">
+		<a class="brand" href="/" id="brandLink">
 			<img src="/logo/presstee-horizontal-header.webp" alt="Presstee" height="36" style="height:36px;width:auto" />
 		</a>
 		<button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false">
@@ -90,6 +90,18 @@
 	// vrai rôle de retour en haut de page (bloqué par le preventDefault
 	// tant que l'easter egg se déclenchait au premier clic, surtout gênant
 	// sur mobile où on ne remontait jamais en haut).
+	// Clic sur le logo : remonte tout en haut plutôt que de compter sur
+	// l'ancre "#top" (Milio, 2026-09-17 : « ça nous remonte pas
+	// exactement tout en haut ») — une navigation par ancre peut s'arrêter
+	// un peu avant selon la mise en page déjà chargée. window.scrollTo
+	// garantit un vrai retour à 0, sur toutes les pages.
+	document.getElementById('brandLink')!.addEventListener('click', (e) => {
+		if (location.pathname === '/') {
+			e.preventDefault();
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+		}
+	});
+
 	if (location.pathname === '/') {
 		const brand = document.querySelector<HTMLAnchorElement>('.brand')!;
 		brand.addEventListener('dblclick', () => {

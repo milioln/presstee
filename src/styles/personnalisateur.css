@@ -116,7 +116,9 @@
    grise comme sur le vêtement. */
 .model-disclaimer{position:absolute;left:16px;right:16px;top:16px;z-index:2;display:flex;gap:10px;align-items:flex-start;padding:12px 16px;border-radius:12px;background:rgba(253,244,229,.92);color:var(--warn);box-shadow:0 6px 18px rgba(0,0,0,.14);backdrop-filter:blur(6px)}
 .model-disclaimer svg{flex-shrink:0;margin-top:1px}
-.model-disclaimer p{font-family:'Manrope',system-ui,sans-serif;font-size:13px;line-height:1.5;margin:0}
+.model-disclaimer p{font-family:'Manrope',system-ui,sans-serif;font-size:13px;line-height:1.5;margin:0;flex:1}
+.model-disclaimer-ok{flex-shrink:0;font-family:'Sora',sans-serif;font-weight:600;font-size:12.5px;color:var(--warn);background:transparent;border:1.5px solid currentColor;border-radius:100px;padding:6px 14px;cursor:pointer;transition:background .15s,color .15s}
+.model-disclaimer-ok:hover{background:var(--warn);color:#fff}
 /* Hauteur minimale figée à 620px quelle que soit la taille de l'écran :
    sur un grand moniteur, le modèle restait petit alors que la fenêtre
    avait largement la place de l'agrandir (Milio, 2026-09-09 : « trop

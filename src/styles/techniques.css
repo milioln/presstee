@@ -120,6 +120,12 @@
 .steps-list strong{display:block;font-family:'Sora',sans-serif;font-size:.98rem;margin-bottom:4px}
 .steps-list span{font-size:.92rem;color:var(--gris)}
 .steps-list .step-photo{width:100%;height:auto;max-height:360px;object-fit:cover;border-radius:12px;margin-top:12px;display:block}
+/* Dessins bonhomme-bâton à la place des photos d'atelier, sur la page
+   sérigraphie uniquement (Milio, 2026-09-17 : « change les visuels des
+   étapes de la sérigraphie par le bonhomme du site qui les démontre »)
+   — un fond neutre remplace la photo, le dessin reste net (pas d'effet
+   "développement", propre aux vraies photos). */
+.steps-list .step-figure{width:100%;height:160px;margin-top:12px;display:block;border-radius:12px;background:var(--voile);color:var(--indigo);padding:12px 0}
 /* Clin d'œil : la photo d'une étape se "révèle" au survol, comme un
    tirage qui se développe (Milio, 2026-09-09, round 2 du menu d'easter
    eggs — validé). Repos = photo normale (jamais invisible par défaut) ;
